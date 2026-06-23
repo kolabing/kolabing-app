@@ -2266,6 +2266,84 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get kolabCompletionDoneClose;
 
+  /// Pre-completion note explaining the mutual feedback requirement.
+  ///
+  /// In en, this message translates to:
+  /// **'Both you and {partnerName} confirm to complete this Kolab. You will share quick feedback first.'**
+  String kolabCompletionConfirmMutualNote(String partnerName);
+
+  /// Yes/No feedback question: expectation match.
+  ///
+  /// In en, this message translates to:
+  /// **'Did it match your expectations?'**
+  String get kolabCompletionFeedbackExpectationMatch;
+
+  /// Yes/No feedback question: would recommend.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you recommend this partner?'**
+  String get kolabCompletionFeedbackWouldRecommend;
+
+  /// Yes/No feedback question: would the user collaborate (kolab) with this partner again.
+  ///
+  /// In en, this message translates to:
+  /// **'Would you kolab again?'**
+  String get kolabCompletionFeedbackWouldCollaborateAgain;
+
+  /// Section header for optional metrics in the feedback form.
+  ///
+  /// In en, this message translates to:
+  /// **'Results (optional)'**
+  String get kolabCompletionFeedbackMetricsOptional;
+
+  /// Optional metric: number of posts or reels published.
+  ///
+  /// In en, this message translates to:
+  /// **'Posts / reels published'**
+  String get kolabCompletionFeedbackPostsReels;
+
+  /// Optional business metric: number of stories posted.
+  ///
+  /// In en, this message translates to:
+  /// **'Stories posted'**
+  String get kolabCompletionFeedbackStoriesPosted;
+
+  /// Optional business metric: revenue generated.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue generated'**
+  String get kolabCompletionFeedbackRevenue;
+
+  /// Optional community metric: free-text benefits received.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefits received'**
+  String get kolabCompletionFeedbackBenefits;
+
+  /// Soft-success title when the caller is done but the partner has not confirmed yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks! Your feedback is in ✅'**
+  String get kolabCompletionAwaitingPartnerTitle;
+
+  /// Soft-success body shown when waiting on the partner's feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'This Kolab completes once {partnerName} confirms too. We will let you know.'**
+  String kolabCompletionAwaitingPartnerBody(String partnerName);
+
+  /// Dismiss the awaiting-partner soft-success step.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get kolabCompletionAwaitingPartnerClose;
+
+  /// Shown when the partner already completed the Kolab.
+  ///
+  /// In en, this message translates to:
+  /// **'This Kolab is already completed.'**
+  String get kolabCompletionAlreadyCompleted;
+
   /// Shown when the collaboration cannot be loaded.
   ///
   /// In en, this message translates to:
@@ -2524,23 +2602,29 @@ abstract class AppLocalizations {
   /// **'QR Code'**
   String get collaborationDetailQrPlaceholder;
 
-  /// QR placeholder subtitle.
+  /// QR placeholder subtitle: the QR is generated when you tap the button.
   ///
   /// In en, this message translates to:
-  /// **'Generated on event day'**
-  String get collaborationDetailQrGeneratedOnDay;
+  /// **'Generated on demand'**
+  String get collaborationDetailQrGeneratedOnDemand;
 
   /// QR section description.
   ///
   /// In en, this message translates to:
-  /// **'Attendees scan this QR code at your event to check in and start completing challenges.'**
+  /// **'Tap below to generate your check-in QR. Attendees scan it at your event to check in and start completing challenges.'**
   String get collaborationDetailQrDescription;
 
-  /// Snackbar when QR is not yet available.
+  /// QR button label while the QR is being generated.
   ///
   /// In en, this message translates to:
-  /// **'QR code will be available when the event is created'**
-  String get collaborationDetailQrUnavailable;
+  /// **'GENERATING…'**
+  String get collaborationDetailQrGenerating;
+
+  /// Snackbar when generating the check-in QR fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t generate the QR code: {error}'**
+  String collaborationDetailQrGenerateError(String error);
 
   /// Button to view the QR code.
   ///
@@ -2619,6 +2703,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yes, it happened ✨'**
   String get collaborationDetailItHappened;
+
+  /// Shown after the viewer submits feedback while the partner still has to.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve confirmed ✓'**
+  String get collaborationDetailFeedbackConfirmedTitle;
+
+  /// Body of the awaiting-partner confirmation state.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for {partnerName} to confirm too. The Kolab completes once you both do.'**
+  String collaborationDetailFeedbackConfirmedBody(String partnerName);
+
+  /// Subtle line on the My Kolabs Active card after the viewer submits feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'You confirmed — waiting for partner'**
+  String get collaborationCardWaitingForPartner;
 
   /// Confirmation that a review was submitted.
   ///

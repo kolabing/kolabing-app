@@ -198,6 +198,10 @@ class Collaboration {
     this.myRole,
     this.viewerMustResubscribe = false,
     this.hasReviewed = false,
+    this.viewerMustSubmitFeedback = true,
+    this.ownFeedbackSubmitted = false,
+    this.partnerFeedbackSubmitted = false,
+    this.pendingFeedbackFrom = const [],
   });
 
   factory Collaboration.fromJson(Map<String, dynamic> json) {
@@ -260,6 +264,21 @@ class Collaboration {
             json['must_resubscribe'] ??
             json['viewer_resubscribe_required'],
       ),
+      // Two-sided feedback gate. The Kolab only flips to `completed` once BOTH
+      // parties submit feedback; these fields let the UI show a "you confirmed,
+      // waiting for partner" state instead of looking like nothing happened.
+      // All keys are tolerated as missing (self-gated, safe defaults): when the
+      // backend omits them the viewer is treated as still owing feedback so the
+      // Complete CTA stays available rather than vanishing.
+      viewerMustSubmitFeedback: json.containsKey('viewer_must_submit_feedback')
+          ? _parseBool(json['viewer_must_submit_feedback'])
+          : true,
+      ownFeedbackSubmitted: json['own_feedback'] != null,
+      partnerFeedbackSubmitted: json['partner_feedback'] != null,
+      pendingFeedbackFrom: (json['pending_feedback_from'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          const [],
     );
   }
 
@@ -308,6 +327,24 @@ class Collaboration {
 
   /// True when the current viewer has already submitted a review for this collab.
   final bool hasReviewed;
+
+  /// True when the backend still expects post-Kolab feedback from the viewer to
+  /// satisfy the completion gate. Defaults to true when the key is absent so the
+  /// Complete CTA is never hidden by a missing field.
+  final bool viewerMustSubmitFeedback;
+
+  /// True when the viewer has already submitted their own feedback
+  /// (`own_feedback != null`). Drives the "you confirmed, waiting for partner"
+  /// state once one side has acted but the Kolab is not yet `completed`.
+  final bool ownFeedbackSubmitted;
+
+  /// True when the partner has already submitted their feedback
+  /// (`partner_feedback != null`).
+  final bool partnerFeedbackSubmitted;
+
+  /// `user_type` strings (e.g. `business`, `community`) still owed feedback
+  /// before the Kolab can complete. Empty once both sides have submitted.
+  final List<String> pendingFeedbackFrom;
 
   /// True only when the VIEWER is a business whose subscription lapsed while
   /// this collaboration is still ongoing (docs/ROLES-AND-PERMISSIONS.md §2.8).

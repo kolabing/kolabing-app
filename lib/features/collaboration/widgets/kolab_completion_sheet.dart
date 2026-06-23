@@ -1,20 +1,18 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 
-import '../../../config/constants/api.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../../services/analytics/analytics_service.dart';
+import '../../auth/models/user_model.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/collaboration.dart';
-import '../services/collaboration_completion_service.dart';
+import '../providers/collaboration_detail_provider.dart';
 
 /// Result returned after the completion sheet closes.
 class KolabCompletionResult {
@@ -29,19 +27,22 @@ class KolabCompletionResult {
 
 /// The gamified, multi-step Kolab completion bottom sheet.
 ///
-/// Flow (feedback is forced — the sheet is non-dismissible and you cannot reach
-/// the celebration / close without submitting feedback):
-///   Step 0 — "Did the Kolab happen?" confirmation → marks complete
-///   Step 1 — **Required feedback** (star rating required + optional comment +
-///            would-Kolab-again) → submits before celebrating
-///   Step 2 — Celebration + XP preview
-///   Step 3 — Done with confetti summary
+/// The backend enforces a FEEDBACK GATE: `POST /collaborations/{id}/complete`
+/// only succeeds once BOTH participant user types have POSTed
+/// `POST /collaborations/{id}/feedback`. So this sheet is **feedback-first**:
+///   Step 0 — "Did the Kolab happen?" confirmation (notes the mutual rule)
+///   Step 1 — **Required feedback** (rating + expectation-match +
+///            would-recommend, all required; plus optional role-aware metrics)
+///            → POSTs `/feedback`, THEN POSTs `/complete`
+///   Step 2 — Celebration + XP preview (only on full `/complete` success)
+///   Step 3 — Done with summary
+///   Step 4 — Awaiting-partner SOFT SUCCESS (the caller's part is done; the
+///            Kolab completes once the partner confirms too)
 ///
-/// NOTE: until the backend adds `POST /collaborations/{id}/feedback` and makes
-/// `/complete` require it (BACKLOG IF-5 / docs/tickets/2026-06-01-feedback-flow),
-/// completion is marked first and the feedback (the lean `/review` endpoint) is
-/// forced immediately after as an un-skippable closing step. Once the backend
-/// gate ships this becomes atomic server-side with richer fields.
+/// `/feedback` is the gate endpoint — NOT the decoupled public `/review` (which
+/// remains the separate post-completion "leave a review" flow). Sending a
+/// role-reserved field for the wrong user type is rejected, so the caller's role
+/// is resolved from the signed-in user before building the payload.
 ///
 /// Shows [KolabCompletionResult] on close, or null if user dismissed early.
 class KolabCompletionSheet extends StatefulWidget {
@@ -79,15 +80,25 @@ class KolabCompletionSheet extends StatefulWidget {
 class _KolabCompletionSheetState extends State<KolabCompletionSheet>
     with TickerProviderStateMixin {
   int _step = 0;
-  bool _isLoading = false;
-  String? _error;
 
-  // Required-feedback step state (forced before celebration).
+  // Resolved once on init: the signed-in user's role decides which feedback
+  // fields are allowed (business-only vs community-only).
+  bool _isBusiness = false;
+
+  // Required-feedback step state. Submitting POSTs /feedback THEN /complete.
   int? _rating;
-  bool? _wouldAgain;
-  final _commentController = TextEditingController();
-  bool _isSubmittingFeedback = false;
+  bool? _expectationMatch;
+  bool? _wouldRecommend;
+  bool? _wouldCollaborateAgain;
+  final _postsReelsController = TextEditingController();
+  final _storiesController = TextEditingController(); // business only
+  final _revenueController = TextEditingController(); // business only
+  final _benefitsController = TextEditingController(); // community only
+  bool _isSubmitting = false;
   String? _feedbackError;
+
+  // Awaiting-partner soft-success copy (Step 4).
+  String? _awaitingPartnerMessage;
 
   // Result tracking
   Collaboration? _updatedCollaboration;
@@ -117,103 +128,133 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
       parent: _celebrationController,
       curve: Curves.easeIn,
     );
+    // Resolve the caller's role for the role-aware feedback payload.
+    AuthService().getStoredUser().then((user) {
+      if (!mounted) return;
+      setState(() => _isBusiness = user?.userType == UserType.business);
+    });
   }
 
   @override
   void dispose() {
-    _commentController.dispose();
+    _postsReelsController.dispose();
+    _storiesController.dispose();
+    _revenueController.dispose();
+    _benefitsController.dispose();
     _celebrationController.dispose();
     _xpCountController.dispose();
     super.dispose();
   }
 
-  /// Step 0 → marks the collaboration complete, then advances to the REQUIRED
-  /// feedback step (no celebration yet — feedback must be given first).
-  Future<void> _onConfirmComplete() async {
+  /// Step 0 → advances straight to the REQUIRED feedback step. No network call
+  /// here: completion is gated on feedback, so we collect feedback first.
+  void _onConfirmComplete() => setState(() => _step = 1);
+
+  /// Step 1 → submit feedback (`/feedback`), THEN attempt `/complete`, branching
+  /// on the backend `error_code`. Rating + expectation-match + would-recommend
+  /// are required; the optional role-aware metrics are sent when filled.
+  Future<void> _onSubmitFeedback() async {
+    final rating = _rating;
+    final expectationMatch = _expectationMatch;
+    final wouldRecommend = _wouldRecommend;
+    final wouldCollaborateAgain = _wouldCollaborateAgain;
+    if (rating == null ||
+        expectationMatch == null ||
+        wouldRecommend == null ||
+        wouldCollaborateAgain == null) {
+      return;
+    }
+
     setState(() {
-      _isLoading = true;
-      _error = null;
+      _isSubmitting = true;
+      _feedbackError = null;
     });
 
+    final l10n = AppLocalizations.of(context);
+
     try {
-      final collab = await completeCollaboration(widget.collaborationId);
+      // 1) Satisfy the gate: POST /feedback with the role-aware payload.
+      await submitCollaborationFeedback(
+        widget.collaborationId,
+        isBusiness: _isBusiness,
+        rating: rating,
+        expectationMatch: expectationMatch,
+        wouldRecommend: wouldRecommend,
+        wouldCollaborateAgain: wouldCollaborateAgain,
+        postsReels: _parseInt(_postsReelsController.text),
+        storiesPosted: _isBusiness ? _parseInt(_storiesController.text) : null,
+        revenue: _isBusiness ? _parseNum(_revenueController.text) : null,
+        benefits: _isBusiness ? null : _benefitsController.text,
+      );
+
+      unawaited(
+        AnalyticsService.instance.capture(
+          AnalyticsEvents.feedbackSubmitted,
+          properties: {
+            'collaboration_id': widget.collaborationId,
+            'rating': rating,
+          },
+        ),
+      );
+
+      // 2) Now try to complete — the gate may still be waiting on the partner.
+      final collab = await markCollaborationCompleted(widget.collaborationId);
       _updatedCollaboration = collab;
+      if (!mounted) return;
       setState(() {
-        _step = 1; // required feedback
-        _isLoading = false;
+        _isSubmitting = false;
+        _step = 2; // celebration
       });
-    } catch (e) {
+      _celebrationController.forward();
+      HapticFeedback.mediumImpact();
+    } on CollaborationCompletionException catch (e) {
+      if (!mounted) return;
+      switch (e.errorCode) {
+        case CollaborationCompletionErrorCode.awaitingPartnerFeedback:
+          // SOFT SUCCESS — our part is done; close with a friendly message.
+          setState(() {
+            _isSubmitting = false;
+            _awaitingPartnerMessage =
+                l10n.kolabCompletionAwaitingPartnerBody(widget.partnerName);
+            _step = 4; // awaiting-partner soft success
+          });
+          HapticFeedback.lightImpact();
+        case CollaborationCompletionErrorCode.cannotComplete:
+        case CollaborationCompletionErrorCode.invalidStatusTransition:
+          // Most likely the partner already completed it → treat as completed.
+          setState(() {
+            _isSubmitting = false;
+            _awaitingPartnerMessage = l10n.kolabCompletionAlreadyCompleted;
+            _step = 4;
+          });
+        case CollaborationCompletionErrorCode.awaitingOwnFeedback:
+        default:
+          // Shouldn't happen (we just submitted) — keep the form open with the
+          // backend message so the user can retry.
+          setState(() {
+            _isSubmitting = false;
+            _feedbackError = e.message;
+          });
+      }
+    } catch (_) {
+      if (!mounted) return;
       setState(() {
-        _isLoading = false;
-        _error = AppLocalizations.of(context).commonErrorGeneric;
+        _isSubmitting = false;
+        _feedbackError = l10n.kolabCompletionSheetFeedbackError;
       });
     }
   }
 
-  /// Step 1 → submits the required feedback, then unlocks the celebration.
-  /// Rating is mandatory; the sheet cannot be closed without it.
-  Future<void> _onSubmitFeedback() async {
-    final rating = _rating;
-    if (rating == null) return;
+  int? _parseInt(String raw) {
+    final v = raw.trim();
+    if (v.isEmpty) return null;
+    return int.tryParse(v);
+  }
 
-    setState(() {
-      _isSubmittingFeedback = true;
-      _feedbackError = null;
-    });
-
-    try {
-      final token = await AuthService().getToken();
-      if (token == null || token.isEmpty) {
-        throw Exception('Session expired');
-      }
-      final comment = _commentController.text.trim();
-      final payload = <String, dynamic>{
-        'rating': rating,
-        if (comment.isNotEmpty) 'body': comment,
-        if (_wouldAgain != null) 'would_collaborate_again': _wouldAgain,
-      };
-      final response = await http.post(
-        Uri.parse(
-          '${ApiConfig.baseUrl}/collaborations/${widget.collaborationId}/review',
-        ),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(payload),
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        unawaited(
-          AnalyticsService.instance.capture(
-            AnalyticsEvents.feedbackSubmitted,
-            properties: {
-              'collaboration_id': widget.collaborationId,
-              'rating': rating,
-            },
-          ),
-        );
-        setState(() {
-          _isSubmittingFeedback = false;
-          _step = 2; // celebration
-        });
-        _celebrationController.forward();
-        HapticFeedback.mediumImpact();
-      } else {
-        setState(() {
-          _isSubmittingFeedback = false;
-          _feedbackError =
-              AppLocalizations.of(context).kolabCompletionSheetFeedbackError;
-        });
-      }
-    } catch (_) {
-      setState(() {
-        _isSubmittingFeedback = false;
-        _feedbackError =
-            AppLocalizations.of(context).kolabCompletionSheetFeedbackError;
-      });
-    }
+  num? _parseNum(String raw) {
+    final v = raw.trim().replaceAll(',', '.');
+    if (v.isEmpty) return null;
+    return num.tryParse(v);
   }
 
   void _goToDone() => setState(() => _step = 3);
@@ -272,27 +313,34 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
         return _StepConfirm(
           key: const ValueKey(0),
           partnerName: widget.partnerName,
-          isLoading: _isLoading,
-          error: _error,
           onConfirm: _onConfirmComplete,
           onDismiss: _close,
         );
       case 1:
+        final canSubmit = _rating != null &&
+            _expectationMatch != null &&
+            _wouldRecommend != null &&
+            _wouldCollaborateAgain != null;
         return _StepFeedback(
           key: const ValueKey(1),
           partnerName: widget.partnerName,
+          isBusiness: _isBusiness,
           rating: _rating,
-          wouldAgain: _wouldAgain,
-          commentController: _commentController,
-          isSubmitting: _isSubmittingFeedback,
+          expectationMatch: _expectationMatch,
+          wouldRecommend: _wouldRecommend,
+          wouldCollaborateAgain: _wouldCollaborateAgain,
+          postsReelsController: _postsReelsController,
+          storiesController: _storiesController,
+          revenueController: _revenueController,
+          benefitsController: _benefitsController,
+          isSubmitting: _isSubmitting,
           error: _feedbackError,
           onRatingChanged: (v) => setState(() => _rating = v),
-          onWouldAgainChanged: (v) => setState(() => _wouldAgain = v),
-          onSubmit: _rating == null ? null : _onSubmitFeedback,
-          // Escape hatch: completion already succeeded server-side, so if
-          // feedback keeps failing don't trap the user — let them finish later.
-          // (They're re-prompted for feedback on next open per IF-5.)
-          onFinishLater: _feedbackError != null ? _close : null,
+          onExpectationChanged: (v) => setState(() => _expectationMatch = v),
+          onRecommendChanged: (v) => setState(() => _wouldRecommend = v),
+          onCollaborateAgainChanged: (v) =>
+              setState(() => _wouldCollaborateAgain = v),
+          onSubmit: canSubmit ? _onSubmitFeedback : null,
         );
       case 2:
         return _StepCelebration(
@@ -306,6 +354,12 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
         return _StepDone(
           key: const ValueKey(3),
           totalXp: _baseXp,
+          onClose: _close,
+        );
+      case 4:
+        return _StepAwaitingPartner(
+          key: const ValueKey(4),
+          message: _awaitingPartnerMessage ?? '',
           onClose: _close,
         );
       default:
@@ -322,15 +376,11 @@ class _StepConfirm extends StatelessWidget {
   const _StepConfirm({
     super.key,
     required this.partnerName,
-    required this.isLoading,
-    required this.error,
     required this.onConfirm,
     required this.onDismiss,
   });
 
   final String partnerName;
-  final bool isLoading;
-  final String? error;
   final VoidCallback onConfirm;
   final VoidCallback onDismiss;
 
@@ -355,30 +405,41 @@ class _StepConfirm extends StatelessWidget {
             color: context.colors.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 32),
-        if (error != null) ...[
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: context.colors.errorBg,
-              borderRadius: KolabingRadius.borderRadiusMd,
-            ),
-            child: Text(
-              error!,
-              style: KolabingTextStyles.bodySmall.copyWith(
-                fontSize: 13,
-                color: context.colors.error,
-              ),
-            ),
+        const SizedBox(height: 16),
+        // Make the mutual feedback requirement explicit.
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: context.colors.background,
+            borderRadius: KolabingRadius.borderRadiusMd,
+            border: Border.all(color: context.colors.darkBorder),
           ),
-          const SizedBox(height: 16),
-        ],
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.handshake_outlined,
+                size: 18,
+                color: context.colors.onSurfaceVariant,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l10n.kolabCompletionConfirmMutualNote(partnerName),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 13,
+                    color: context.colors.onSurfaceVariant,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
         _PrimaryButton(
-          label: isLoading
-              ? l10n.kolabCompletionConfirmLoading
-              : l10n.kolabCompletionConfirmCta,
-          isLoading: isLoading,
-          onTap: isLoading ? null : onConfirm,
+          label: l10n.kolabCompletionConfirmCta,
+          onTap: onConfirm,
         ),
         const SizedBox(height: 12),
         _SecondaryButton(
@@ -398,30 +459,41 @@ class _StepFeedback extends StatelessWidget {
   const _StepFeedback({
     super.key,
     required this.partnerName,
+    required this.isBusiness,
     required this.rating,
-    required this.wouldAgain,
-    required this.commentController,
+    required this.expectationMatch,
+    required this.wouldRecommend,
+    required this.wouldCollaborateAgain,
+    required this.postsReelsController,
+    required this.storiesController,
+    required this.revenueController,
+    required this.benefitsController,
     required this.isSubmitting,
     required this.error,
     required this.onRatingChanged,
-    required this.onWouldAgainChanged,
+    required this.onExpectationChanged,
+    required this.onRecommendChanged,
+    required this.onCollaborateAgainChanged,
     required this.onSubmit,
-    this.onFinishLater,
   });
 
   final String partnerName;
+  final bool isBusiness;
   final int? rating;
-  final bool? wouldAgain;
-  final TextEditingController commentController;
+  final bool? expectationMatch;
+  final bool? wouldRecommend;
+  final bool? wouldCollaborateAgain;
+  final TextEditingController postsReelsController;
+  final TextEditingController storiesController;
+  final TextEditingController revenueController;
+  final TextEditingController benefitsController;
   final bool isSubmitting;
   final String? error;
   final ValueChanged<int> onRatingChanged;
-  final ValueChanged<bool> onWouldAgainChanged;
+  final ValueChanged<bool> onExpectationChanged;
+  final ValueChanged<bool> onRecommendChanged;
+  final ValueChanged<bool> onCollaborateAgainChanged;
   final VoidCallback? onSubmit;
-
-  /// Shown only after a feedback submission error: completion already
-  /// happened, so this lets the user exit instead of being trapped.
-  final VoidCallback? onFinishLater;
 
   @override
   Widget build(BuildContext context) {
@@ -465,50 +537,73 @@ class _StepFeedback extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        // Optional comment
-        TextField(
-          controller: commentController,
-          maxLines: 3,
-          maxLength: 300,
-          decoration: InputDecoration(
-            hintText: l10n.kolabCompletionFeedbackCommentHint,
-            filled: true,
-            fillColor: context.colors.background,
-            border: OutlineInputBorder(
-              borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(color: context.colors.darkBorder),
-            ),
-          ),
+        // Expectation match (required yes/no)
+        _YesNoQuestion(
+          label: l10n.kolabCompletionFeedbackExpectationMatch,
+          value: expectationMatch,
+          onChanged: onExpectationChanged,
+          yesLabel: l10n.kolabCompletionFeedbackYes,
+          noLabel: l10n.kolabCompletionFeedbackNo,
         ),
-        const SizedBox(height: 8),
-        // Would Kolab again
+        const SizedBox(height: 16),
+        // Would recommend (required yes/no)
+        _YesNoQuestion(
+          label: l10n.kolabCompletionFeedbackWouldRecommend,
+          value: wouldRecommend,
+          onChanged: onRecommendChanged,
+          yesLabel: l10n.kolabCompletionFeedbackYes,
+          noLabel: l10n.kolabCompletionFeedbackNo,
+        ),
+        const SizedBox(height: 16),
+        // Would kolab again (required yes/no). This feedback now BECOMES the
+        // public review (backend auto-mirrors it), so we no longer ask the user
+        // to leave a separate review post-completion.
+        _YesNoQuestion(
+          label: l10n.kolabCompletionFeedbackWouldCollaborateAgain,
+          value: wouldCollaborateAgain,
+          onChanged: onCollaborateAgainChanged,
+          yesLabel: l10n.kolabCompletionFeedbackYes,
+          noLabel: l10n.kolabCompletionFeedbackNo,
+        ),
+        const SizedBox(height: 20),
+        // Optional, role-aware metrics
         Text(
-          l10n.kolabCompletionFeedbackWouldAgain,
+          l10n.kolabCompletionFeedbackMetricsOptional,
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontWeight: FontWeight.w600,
             color: context.colors.onSurface,
           ),
         ),
         const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: _ChoiceChip(
-                label: l10n.kolabCompletionFeedbackYes,
-                selected: wouldAgain == true,
-                onTap: () => onWouldAgainChanged(true),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _ChoiceChip(
-                label: l10n.kolabCompletionFeedbackNo,
-                selected: wouldAgain == false,
-                onTap: () => onWouldAgainChanged(false),
-              ),
-            ),
-          ],
+        _MetricField(
+          controller: postsReelsController,
+          label: l10n.kolabCompletionFeedbackPostsReels,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         ),
+        if (isBusiness) ...[
+          const SizedBox(height: 8),
+          _MetricField(
+            controller: storiesController,
+            label: l10n.kolabCompletionFeedbackStoriesPosted,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          ),
+          const SizedBox(height: 8),
+          _MetricField(
+            controller: revenueController,
+            label: l10n.kolabCompletionFeedbackRevenue,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          ),
+        ] else ...[
+          const SizedBox(height: 8),
+          _MetricField(
+            controller: benefitsController,
+            label: l10n.kolabCompletionFeedbackBenefits,
+            maxLines: 3,
+            maxLength: 2000,
+          ),
+        ],
         const SizedBox(height: 20),
         if (error != null) ...[
           Text(
@@ -537,14 +632,99 @@ class _StepFeedback extends StatelessWidget {
             ),
           ),
         ],
-        if (onFinishLater != null && !isSubmitting) ...[
-          const SizedBox(height: 4),
-          _SecondaryButton(
-            label: l10n.kolabCompletionFeedbackFinishLater,
-            onTap: onFinishLater!,
-          ),
-        ],
       ],
+    );
+  }
+}
+
+/// A required yes/no question rendered as a labelled pair of choice chips.
+class _YesNoQuestion extends StatelessWidget {
+  const _YesNoQuestion({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    required this.yesLabel,
+    required this.noLabel,
+  });
+
+  final String label;
+  final bool? value;
+  final ValueChanged<bool> onChanged;
+  final String yesLabel;
+  final String noLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+            color: context.colors.onSurface,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: _ChoiceChip(
+                label: yesLabel,
+                selected: value == true,
+                onTap: () => onChanged(true),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _ChoiceChip(
+                label: noLabel,
+                selected: value == false,
+                onTap: () => onChanged(false),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// A compact, optional metric text field used in the feedback form.
+class _MetricField extends StatelessWidget {
+  const _MetricField({
+    required this.controller,
+    required this.label,
+    this.keyboardType,
+    this.inputFormatters,
+    this.maxLines = 1,
+    this.maxLength,
+  });
+
+  final TextEditingController controller;
+  final String label;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final int maxLines;
+  final int? maxLength;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      maxLines: maxLines,
+      maxLength: maxLength,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: context.colors.background,
+        border: OutlineInputBorder(
+          borderRadius: KolabingRadius.borderRadiusMd,
+          borderSide: BorderSide(color: context.colors.darkBorder),
+        ),
+      ),
     );
   }
 }
@@ -746,6 +926,55 @@ class _StepDone extends StatelessWidget {
         ),
         const SizedBox(height: 32),
         _PrimaryButton(label: l10n.kolabCompletionDoneClose, onTap: onClose),
+      ],
+    );
+  }
+}
+
+// =============================================================================
+// Step 4 — Awaiting partner (soft success)
+// =============================================================================
+
+class _StepAwaitingPartner extends StatelessWidget {
+  const _StepAwaitingPartner({
+    super.key,
+    required this.message,
+    required this.onClose,
+  });
+
+  final String message;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: 16),
+        const Text('🤝', style: TextStyle(fontSize: 64)),
+        const SizedBox(height: 24),
+        Text(
+          l10n.kolabCompletionAwaitingPartnerTitle,
+          style: KolabingTextStyles.headlineMedium.copyWith(
+            color: context.colors.onSurface,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          message,
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+            height: 1.4,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 32),
+        _PrimaryButton(
+          label: l10n.kolabCompletionAwaitingPartnerClose,
+          onTap: onClose,
+        ),
       ],
     );
   }

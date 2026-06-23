@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_status_badge.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -166,6 +167,35 @@ class _CollaborationCard extends ConsumerWidget {
               Icon(LucideIcons.chevronRight, size: 16, color: context.colors.textTertiary),
             ],
           ),
+          // Two-sided feedback gate: once the viewer confirmed but the Kolab is
+          // not yet completed, surface a subtle line so the Active card doesn't
+          // look like nothing happened after submitting feedback.
+          if (collaboration.ownFeedbackSubmitted &&
+              collaboration.status != CollaborationStatus.completed &&
+              collaboration.status != CollaborationStatus.cancelled) ...[
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Icon(
+                  LucideIcons.checkCircle2,
+                  size: 12,
+                  color: context.colors.success,
+                ),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    AppLocalizations.of(context)
+                        .collaborationCardWaitingForPartner,
+                    style: KolabingTextStyles.labelSmall.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.onSurfaceVariant,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );

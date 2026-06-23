@@ -12,13 +12,12 @@ import '../../../l10n/app_localizations.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
-import '../../rewards/widgets/collaboration_reward_nudge.dart';
 import '../../../widgets/blurred_identity.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../models/collaboration.dart';
 import '../providers/collaboration_detail_provider.dart';
+import '../providers/collaborations_list_provider.dart';
 import '../widgets/kolab_completion_sheet.dart';
-import '../widgets/kolab_review_sheet.dart';
 import '../../../widgets/category_icon.dart';
 
 /// Collaboration detail screen shown after a kolabing request is accepted.
@@ -220,46 +219,43 @@ class _CollaborationBody extends ConsumerWidget {
                 : collaboration.businessPartner.name,
           ),
 
-        // Complete Kolab CTA — only when active (inProgress)
+        // Complete Kolab CTA — only when active (inProgress).
+        // Two-sided feedback gate: once the viewer has submitted their own
+        // feedback the Kolab stays active until the partner confirms too. Show
+        // a clear "you confirmed, waiting for partner" state instead of the
+        // Complete button (which would re-open the sheet and look like nothing
+        // happened).
         if (interactive && collaboration.status.canBeCompleted)
-          _CompleteKolabSection(
-            collaborationId: collaborationId,
-            partnerName: isBusiness
-                ? collaboration.communityPartner.name
-                : collaboration.businessPartner.name,
-            isToday: collaboration.isToday,
-          ),
+          collaboration.ownFeedbackSubmitted
+              ? _AwaitingPartnerConfirmation(
+                  partnerName: isBusiness
+                      ? collaboration.communityPartner.name
+                      : collaboration.businessPartner.name,
+                )
+              : _CompleteKolabSection(
+                  collaborationId: collaborationId,
+                  partnerName: isBusiness
+                      ? collaboration.communityPartner.name
+                      : collaboration.businessPartner.name,
+                  isToday: collaboration.isToday,
+                ),
 
-        // Post-completion: leave review CTA
-        if (interactive &&
-            collaboration.status == CollaborationStatus.completed)
-          _PostCompletionReviewSection(
-            collaborationId: collaborationId,
-            partnerName: isBusiness
-                ? collaboration.communityPartner.name
-                : collaboration.businessPartner.name,
-            hasReviewed: collaboration.hasReviewed,
-          ),
+        // Post-completion review CTA removed: the required completion feedback
+        // (KolabCompletionSheet → POST /feedback, which now carries
+        // would_collaborate_again) is mirrored by the backend into the public
+        // review automatically, so a separate "Leave a review" ask here would be
+        // a duplicate rating. `hasReviewed` parsing on the model is untouched.
 
-        // Post-completion: community users see a reward nudge (+1 point earned,
-        // prompt to post a review for another point).
-        if (interactive &&
-            collaboration.status == CollaborationStatus.completed &&
-            !isBusiness)
-          const Padding(
-            padding: EdgeInsets.only(bottom: KolabingSpacing.md),
-            child: CollaborationRewardNudge(),
-          ),
+        // (Removed the post-completion "Post a review" reward nudge: the
+        // completion feedback is mirrored into the public review by the backend,
+        // so a separate review ask here was a dead, duplicate CTA.)
 
         // Gamification: Challenges Setup
         _ChallengesSection(collaborationId: collaborationId),
         const SizedBox(height: KolabingSpacing.lg),
 
         // QR Code Section
-        _QRCodeSection(
-          collaborationId: collaborationId,
-          eventId: collaboration.eventId,
-        ),
+        _QRCodeSection(collaborationId: collaborationId),
       ],
     );
   }
@@ -1427,11 +1423,54 @@ class _ChallengeCard extends StatelessWidget {
 // QR Code Section
 // =============================================================================
 
-class _QRCodeSection extends StatelessWidget {
-  const _QRCodeSection({required this.collaborationId, required this.eventId});
+class _QRCodeSection extends ConsumerStatefulWidget {
+  const _QRCodeSection({required this.collaborationId});
 
   final String collaborationId;
-  final String? eventId;
+
+  @override
+  ConsumerState<_QRCodeSection> createState() => _QRCodeSectionState();
+}
+
+class _QRCodeSectionState extends ConsumerState<_QRCodeSection> {
+  bool _isGenerating = false;
+
+  /// Generate (or fetch) the check-in QR on demand, then open the QR screen.
+  /// The backend creates the event if the collaboration has none yet, so this
+  /// always works — there is no "event must be created first" dead-end.
+  Future<void> _openQr() async {
+    if (_isGenerating) return;
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final router = GoRouter.of(context);
+
+    setState(() => _isGenerating = true);
+    try {
+      final qr = await generateCollaborationQr(widget.collaborationId);
+      if (!mounted) return;
+      // Refresh the detail so `eventId` is populated for next time.
+      ref.invalidate(collaborationDetailProvider(widget.collaborationId));
+      router.push(
+        '/attendee/events/${qr.eventId}/qr?name=Collaboration%20Event',
+      );
+    } on Exception catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            l10n.collaborationDetailQrGenerateError(e.toString()),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.textOnDark,
+            ),
+          ),
+          backgroundColor: context.colors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isGenerating = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1498,10 +1537,11 @@ class _QRCodeSection extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      l10n.collaborationDetailQrGeneratedOnDay,
+                      l10n.collaborationDetailQrGeneratedOnDemand,
                       style: KolabingTextStyles.labelSmall.copyWith(
                         color: context.colors.textTertiary,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -1520,30 +1560,36 @@ class _QRCodeSection extends StatelessWidget {
 
               const SizedBox(height: KolabingSpacing.md),
 
-              // Generate QR button
-              KolabingButton(
-                label: l10n.collaborationDetailViewQr,
-                onPressed: () {
-                  if (eventId != null) {
-                    context.push(
-                      '/attendee/events/$eventId/qr?name=Collaboration%20Event',
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          l10n.collaborationDetailQrUnavailable,
-                          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
-                        ),
-                        backgroundColor: context.colors.onSurfaceVariant,
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  }
-                },
-                variant: KolabingButtonVariant.primary,
-                size: KolabingButtonSize.compact,
-                icon: const Icon(LucideIcons.qrCode),
+              // Generate QR button — always calls the idempotent qr-code
+              // endpoint, which creates the event on demand if needed.
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton.icon(
+                  onPressed: _isGenerating ? null : _openQr,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                  ),
+                  icon: _isGenerating
+                      ? SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: context.colors.onPrimary,
+                          ),
+                        )
+                      : const Icon(LucideIcons.qrCode, size: 18),
+                  label: Text(
+                    _isGenerating
+                        ? l10n.collaborationDetailQrGenerating
+                        : l10n.collaborationDetailViewQr,
+                    style: KolabingTextStyles.button.copyWith(
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
@@ -1919,14 +1965,18 @@ class _CompleteKolabSection extends ConsumerWidget {
           const SizedBox(height: 12),
           GestureDetector(
             onTap: () async {
-              final result = await KolabCompletionSheet.show(
+              await KolabCompletionSheet.show(
                 context,
                 collaborationId: collaborationId,
                 partnerName: partnerName,
               );
-              if (result != null) {
-                ref.invalidate(collaborationDetailProvider(collaborationId));
-              }
+              // Always refresh: the sheet may have submitted feedback and/or
+              // completed the Kolab (full success OR awaiting-partner soft
+              // success), all of which change the collaboration's server state.
+              ref.invalidate(collaborationDetailProvider(collaborationId));
+              // Also refresh the My Kolabs list so the Active card's
+              // "Waiting for partner" badge appears without a manual reload.
+              ref.invalidate(collaborationsListProvider);
             },
             child: Container(
               height: 48,
@@ -1954,117 +2004,63 @@ class _CompleteKolabSection extends ConsumerWidget {
 }
 
 // =============================================================================
-// Post-completion review section
+// Awaiting-partner confirmation — viewer already submitted feedback
 // =============================================================================
 
-class _PostCompletionReviewSection extends ConsumerWidget {
-  const _PostCompletionReviewSection({
-    required this.collaborationId,
-    required this.partnerName,
-    required this.hasReviewed,
-  });
+/// Shown in place of the Complete CTA once the viewer has submitted their own
+/// feedback but the partner has not. The Kolab only flips to `completed` when
+/// both sides confirm, so this reassures the viewer their part is done instead
+/// of leaving the Complete button up (which would re-open the sheet and look
+/// like nothing changed).
+class _AwaitingPartnerConfirmation extends StatelessWidget {
+  const _AwaitingPartnerConfirmation({required this.partnerName});
 
-  final String collaborationId;
   final String partnerName;
-  final bool hasReviewed;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: hasReviewed ? context.colors.activeBg : context.colors.surface,
+        color: context.colors.activeBg,
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(
-          color: hasReviewed ? context.colors.activeBg : context.colors.darkBorder,
-        ),
+        border: Border.all(color: context.colors.activeBg),
       ),
-      child: hasReviewed
-          ? _buildReviewed(context)
-          : _buildUnreviewed(context, ref),
-    );
-  }
-
-  Widget _buildReviewed(BuildContext context) => Row(
-    children: [
-      Icon(
-        Icons.check_circle_rounded,
-        color: context.colors.activeText,
-        size: 18,
-      ),
-      const SizedBox(width: 8),
-      Text(
-        AppLocalizations.of(context).collaborationDetailReviewSubmitted,
-        style: KolabingTextStyles.bodySmall.copyWith(
-          fontWeight: FontWeight.w600,
-          color: context.colors.activeText,
-        ),
-      ),
-    ],
-  );
-
-  Widget _buildUnreviewed(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    return Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Row(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('⭐', style: TextStyle(fontSize: 18)),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              l10n.collaborationDetailLeaveReview,
-              style: KolabingTextStyles.bodySmall.copyWith(
-                fontWeight: FontWeight.w700,
-                color: context.colors.onSurface,
-              ),
-            ),
+          Icon(
+            Icons.check_circle_rounded,
+            size: 20,
+            color: context.colors.activeText,
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.sm,
-              vertical: 2,
-            ),
-            decoration: BoxDecoration(
-              color: context.colors.primary.withValues(alpha: 0.15),
-              borderRadius: KolabingRadius.borderRadiusRound,
-            ),
-            child: Text(
-              l10n.collaborationDetailXpBadge,
-              style: KolabingTextStyles.labelSmall.copyWith(
-                fontWeight: FontWeight.w700,
-                color: context.colors.onSurface,
-              ),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.collaborationDetailFeedbackConfirmedTitle,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.activeText,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  l10n.collaborationDetailFeedbackConfirmedBody(partnerName),
+                  style: KolabingTextStyles.captionSecondary.copyWith(
+                    color: context.colors.activeText,
+                    height: 1.4,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
-      const SizedBox(height: 4),
-      Text(
-        l10n.collaborationDetailReviewHelp(partnerName),
-        style: KolabingTextStyles.captionSecondary.copyWith(
-          color: context.colors.onSurfaceVariant,
-        ),
-      ),
-      const SizedBox(height: 12),
-      KolabingButton(
-        label: l10n.collaborationDetailLeaveReviewCta,
-        onPressed: () async {
-          final submitted = await KolabReviewSheet.show(
-            context,
-            collaborationId: collaborationId,
-            partnerName: partnerName,
-          );
-          if (submitted) {
-            ref.invalidate(collaborationDetailProvider(collaborationId));
-          }
-        },
-        variant: KolabingButtonVariant.primary,
-        size: KolabingButtonSize.compact,
-      ),
-    ],
     );
   }
 }

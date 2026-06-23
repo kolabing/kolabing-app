@@ -1217,6 +1217,54 @@ class AppLocalizationsCa extends AppLocalizations {
   String get kolabCompletionDoneClose => 'Tanca';
 
   @override
+  String kolabCompletionConfirmMutualNote(String partnerName) {
+    return 'Tant tu com $partnerName heu de confirmar per completar aquest Kolab. Primer compartiràs una valoració ràpida.';
+  }
+
+  @override
+  String get kolabCompletionFeedbackExpectationMatch =>
+      'Va complir les teves expectatives?';
+
+  @override
+  String get kolabCompletionFeedbackWouldRecommend =>
+      'Recomanaries aquest partner?';
+
+  @override
+  String get kolabCompletionFeedbackWouldCollaborateAgain =>
+      'Tornaries a kolaborar?';
+
+  @override
+  String get kolabCompletionFeedbackMetricsOptional => 'Resultats (opcional)';
+
+  @override
+  String get kolabCompletionFeedbackPostsReels => 'Posts / reels publicats';
+
+  @override
+  String get kolabCompletionFeedbackStoriesPosted => 'Stories publicades';
+
+  @override
+  String get kolabCompletionFeedbackRevenue => 'Ingressos generats';
+
+  @override
+  String get kolabCompletionFeedbackBenefits => 'Beneficis rebuts';
+
+  @override
+  String get kolabCompletionAwaitingPartnerTitle =>
+      'Gràcies! La teva valoració està enviada ✅';
+
+  @override
+  String kolabCompletionAwaitingPartnerBody(String partnerName) {
+    return 'Aquest Kolab es completarà quan $partnerName també ho confirmi. T\'avisarem.';
+  }
+
+  @override
+  String get kolabCompletionAwaitingPartnerClose => 'Entesos';
+
+  @override
+  String get kolabCompletionAlreadyCompleted =>
+      'Aquest Kolab ja està completat.';
+
+  @override
   String get collaborationDetailNotFound => 'Kolab no trobat';
 
   @override
@@ -1368,19 +1416,22 @@ class AppLocalizationsCa extends AppLocalizations {
   String get collaborationDetailQrPlaceholder => 'Codi QR';
 
   @override
-  String get collaborationDetailQrGeneratedOnDay =>
-      'Es genera el dia de l\'esdeveniment';
+  String get collaborationDetailQrGeneratedOnDemand => 'Es genera a l\'instant';
 
   @override
   String get collaborationDetailQrDescription =>
-      'Els assistents escanegen aquest codi QR al teu esdeveniment per registrar-se i començar a completar reptes.';
+      'Toca a sota per generar el teu codi QR de registre. Els assistents l\'escanegen al teu esdeveniment per registrar-se i començar a completar reptes.';
 
   @override
-  String get collaborationDetailQrUnavailable =>
-      'El codi QR estarà disponible quan es creï l\'esdeveniment';
+  String get collaborationDetailQrGenerating => 'GENERANT…';
 
   @override
-  String get collaborationDetailViewQr => 'Veure el codi QR';
+  String collaborationDetailQrGenerateError(String error) {
+    return 'No s\'ha pogut generar el codi QR: $error';
+  }
+
+  @override
+  String get collaborationDetailViewQr => 'VEURE EL CODI QR';
 
   @override
   String get collaborationDetailResubscribeTitle =>
@@ -1426,6 +1477,18 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get collaborationDetailItHappened => 'Sí, s\'ha fet ✨';
+
+  @override
+  String get collaborationDetailFeedbackConfirmedTitle => 'Ho has confirmat ✓';
+
+  @override
+  String collaborationDetailFeedbackConfirmedBody(String partnerName) {
+    return 'Esperant que $partnerName també ho confirmi. El Kolab es completa quan ho feu tots dos.';
+  }
+
+  @override
+  String get collaborationCardWaitingForPartner =>
+      'Has confirmat — esperant el soci';
 
   @override
   String get collaborationDetailReviewSubmitted => 'Ressenya enviada ✓';
