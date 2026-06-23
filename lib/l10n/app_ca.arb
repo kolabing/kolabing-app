@@ -1935,5 +1935,27 @@
   "businessProductPhotosEmptyTitle": "Afegeix fotos",
   "businessProductPhotosEmptyDescription": "Mostra el que ofereixes. Puja les teves fotos, elimina les que no vulguis i ordena-les aquí.",
 
-  "communityStep1SizeHelper": "Aproximadament, quants membres té la teva comunitat?"
+  "communityStep1SizeHelper": "Aproximadament, quants membres té la teva comunitat?",
+
+  "missionsTitle": "Missions",
+  "missionsProgress": "{progress}/{target}",
+  "@missionsProgress": {
+    "placeholders": {
+      "progress": { "type": "int" },
+      "target": { "type": "int" }
+    }
+  },
+  "missionsPointsLabel": "pts",
+  "missionsEmptyTitle": "Encara no hi ha missions",
+  "missionsEmptyMessage": "Continua fent servir Kolabing i aquí apareixeran noves missions.",
+  "missionsLoadError": "No s'han pogut carregar les teves missions",
+  "missionsCategoryOnboarding": "Primers passos",
+  "missionsCategoryAttendance": "Assistència",
+  "missionsCategoryEngagement": "Participació",
+  "missionsCategoryContent": "Contingut",
+  "missionsCategoryReferral": "Recomanacions",
+  "missionsCategoryGrowth": "Creixement",
+  "missionsCategorySocial": "Social",
+  "missionsCategoryMilestone": "Fites",
+  "missionsCategoryOther": "Altres"
 }

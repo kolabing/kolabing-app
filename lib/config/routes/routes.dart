@@ -27,6 +27,7 @@ import '../../features/friends/screens/add_friend_screen.dart';
 import '../../features/friends/screens/friends_screen.dart';
 import '../../features/gamification/gamification.dart';
 import '../../features/kolab/models/kolab.dart';
+import '../../features/missions/screens/missions_screen.dart';
 import '../../features/kolab/screens/intent_selection_screen.dart';
 import '../../features/kolab/screens/kolab_flow_screen.dart';
 import '../../features/notification/screens/notifications_screen.dart';
@@ -260,6 +261,10 @@ abstract final class KolabingRoutes {
   /// Personal Rewards Screen (P3) — global XP "Redeem your XP" surface +
   /// per-community points & redeemable rewards. Fed by /me/rewards-overview.
   static const String rewards = '/rewards';
+
+  /// Gamification missions — the signed-in user's missions + progress.
+  /// Fed by GET /me/missions (role-scoped + filtered server-side).
+  static const String missions = '/missions';
 
   /// Friends list (self) — NF-17 friend graph
   static const String friends = '/me/friends';
@@ -857,6 +862,12 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'rewards',
       builder: (BuildContext context, GoRouterState state) =>
           const PersonalRewardsScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.missions,
+      name: 'missions',
+      builder: (BuildContext context, GoRouterState state) =>
+          const MissionsScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.friends,

@@ -7088,5 +7088,42 @@
   "@businessProductPhotosEmptyDescription": { "description": "Business product path: photos empty-state description (non-venue)" },
 
   "communityStep1SizeHelper": "Roughly how many members are in your community?",
-  "@communityStep1SizeHelper": { "description": "Community onboarding step 1: community size helper text" }
+  "@communityStep1SizeHelper": { "description": "Community onboarding step 1: community size helper text" },
+
+  "missionsTitle": "Missions",
+  "@missionsTitle": { "description": "Missions screen app-bar title and profile entry label" },
+  "missionsProgress": "{progress}/{target}",
+  "@missionsProgress": {
+    "description": "Mission progress as current over target, e.g. 2/5",
+    "placeholders": {
+      "progress": { "type": "int", "example": "2" },
+      "target": { "type": "int", "example": "5" }
+    }
+  },
+  "missionsPointsLabel": "pts",
+  "@missionsPointsLabel": { "description": "Short label for points awarded by a mission, shown after the amount (e.g. +50 pts)" },
+  "missionsEmptyTitle": "No missions yet",
+  "@missionsEmptyTitle": { "description": "Missions screen empty-state title" },
+  "missionsEmptyMessage": "Keep using Kolabing and new missions will show up here.",
+  "@missionsEmptyMessage": { "description": "Missions screen empty-state message" },
+  "missionsLoadError": "Could not load your missions",
+  "@missionsLoadError": { "description": "Missions screen error-state message" },
+  "missionsCategoryOnboarding": "Getting started",
+  "@missionsCategoryOnboarding": { "description": "Mission category header: onboarding" },
+  "missionsCategoryAttendance": "Attendance",
+  "@missionsCategoryAttendance": { "description": "Mission category header: attendance" },
+  "missionsCategoryEngagement": "Engagement",
+  "@missionsCategoryEngagement": { "description": "Mission category header: engagement" },
+  "missionsCategoryContent": "Content",
+  "@missionsCategoryContent": { "description": "Mission category header: content" },
+  "missionsCategoryReferral": "Referrals",
+  "@missionsCategoryReferral": { "description": "Mission category header: referral" },
+  "missionsCategoryGrowth": "Growth",
+  "@missionsCategoryGrowth": { "description": "Mission category header: growth" },
+  "missionsCategorySocial": "Social",
+  "@missionsCategorySocial": { "description": "Mission category header: social" },
+  "missionsCategoryMilestone": "Milestones",
+  "@missionsCategoryMilestone": { "description": "Mission category header: milestone" },
+  "missionsCategoryOther": "Other",
+  "@missionsCategoryOther": { "description": "Mission category header: unknown/other category fallback" }
 }

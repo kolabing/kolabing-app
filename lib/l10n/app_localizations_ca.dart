@@ -6568,4 +6568,52 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get communityStep1SizeHelper =>
       'Aproximadament, quants membres té la teva comunitat?';
+
+  @override
+  String get missionsTitle => 'Missions';
+
+  @override
+  String missionsProgress(int progress, int target) {
+    return '$progress/$target';
+  }
+
+  @override
+  String get missionsPointsLabel => 'pts';
+
+  @override
+  String get missionsEmptyTitle => 'Encara no hi ha missions';
+
+  @override
+  String get missionsEmptyMessage =>
+      'Continua fent servir Kolabing i aquí apareixeran noves missions.';
+
+  @override
+  String get missionsLoadError => 'No s\'han pogut carregar les teves missions';
+
+  @override
+  String get missionsCategoryOnboarding => 'Primers passos';
+
+  @override
+  String get missionsCategoryAttendance => 'Assistència';
+
+  @override
+  String get missionsCategoryEngagement => 'Participació';
+
+  @override
+  String get missionsCategoryContent => 'Contingut';
+
+  @override
+  String get missionsCategoryReferral => 'Recomanacions';
+
+  @override
+  String get missionsCategoryGrowth => 'Creixement';
+
+  @override
+  String get missionsCategorySocial => 'Social';
+
+  @override
+  String get missionsCategoryMilestone => 'Fites';
+
+  @override
+  String get missionsCategoryOther => 'Altres';
 }
