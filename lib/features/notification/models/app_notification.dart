@@ -14,6 +14,9 @@ enum NotificationType {
   /// Your application was declined
   applicationDeclined,
 
+  /// Your application was withdrawn
+  applicationWithdrawn,
+
   /// A rewards badge was awarded to the user
   badgeAwarded,
 
@@ -57,6 +60,8 @@ enum NotificationType {
         return NotificationType.applicationAccepted;
       case 'application_declined':
         return NotificationType.applicationDeclined;
+      case 'application_withdrawn':
+        return NotificationType.applicationWithdrawn;
       case 'badge_awarded':
         return NotificationType.badgeAwarded;
       case 'challenge_verified':
@@ -92,6 +97,8 @@ enum NotificationType {
         return 'application_accepted';
       case NotificationType.applicationDeclined:
         return 'application_declined';
+      case NotificationType.applicationWithdrawn:
+        return 'application_withdrawn';
       case NotificationType.badgeAwarded:
         return 'badge_awarded';
       case NotificationType.challengeVerified:

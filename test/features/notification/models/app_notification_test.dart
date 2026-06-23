@@ -57,6 +57,26 @@ void main() {
     });
   });
 
+  test('fromJson parses application_withdrawn with round-trip toJson', () {
+    final notification = AppNotification.fromJson(<String, dynamic>{
+      'id': 'notif-withdrawn',
+      'type': 'application_withdrawn',
+      'title': 'Application withdrawn',
+      'body': 'Ayse withdrew their application',
+      'deeplink': '/application/app-1',
+      'priority': 'normal',
+      'is_read': false,
+      'created_at': '2026-05-09T10:20:30Z',
+      'target_id': 'app-1',
+      'target_type': 'application',
+    });
+
+    expect(notification.type, NotificationType.applicationWithdrawn);
+    expect(notification.rawType, 'application_withdrawn');
+    expect(notification.type.toJson(), 'application_withdrawn');
+    expect(notification.deeplink, '/application/app-1');
+  });
+
   test('fromJson maps unsupported types to unknown instead of new message', () {
     final notification = AppNotification.fromJson(<String, dynamic>{
       'id': 'notif-2',

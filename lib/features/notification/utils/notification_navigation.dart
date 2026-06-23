@@ -32,6 +32,7 @@ String resolveNotificationRoute({
     case 'application_received':
     case 'application_accepted':
     case 'application_declined':
+    case 'application_withdrawn':
       return KolabingRoutes.applicationDetails.replaceFirst(
         ':id',
         normalizedId,

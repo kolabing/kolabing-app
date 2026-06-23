@@ -356,7 +356,8 @@ class _NotificationTile extends StatelessWidget {
           context.colors.success.withValues(alpha: 0.15),
           context.colors.activeText,
         ),
-      NotificationType.applicationDeclined => (
+      NotificationType.applicationDeclined ||
+      NotificationType.applicationWithdrawn => (
           LucideIcons.xCircle,
           context.colors.error.withValues(alpha: 0.12),
           context.colors.error,

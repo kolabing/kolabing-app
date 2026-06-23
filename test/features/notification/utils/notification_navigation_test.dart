@@ -47,6 +47,19 @@ void main() {
     });
   }
 
+  test('resolveNotificationRoute routes application_withdrawn to detail', () {
+    final route = resolveNotificationRoute(
+      type: 'application_withdrawn',
+      id: 'app-9',
+      targetType: 'application',
+    );
+
+    expect(
+      route,
+      KolabingRoutes.applicationDetails.replaceFirst(':id', 'app-9'),
+    );
+  });
+
   test(
     'resolveNotificationRoute falls back to notifications for unsupported input',
     () {
