@@ -377,7 +377,12 @@ class _NotificationTile extends StatelessWidget {
           context.colors.activeText,
         ),
       NotificationType.collabDayReminder ||
-      NotificationType.collabFollowUpReminder => (
+      NotificationType.collabFollowUpReminder ||
+      NotificationType.collaborationCreated ||
+      NotificationType.collaborationActivated ||
+      NotificationType.collaborationFeedbackReceived ||
+      NotificationType.collaborationCompleted ||
+      NotificationType.collaborationCancelled => (
           LucideIcons.calendarCheck,
           context.colors.primary.withValues(alpha: 0.15),
           context.colors.accentOrangeText,
