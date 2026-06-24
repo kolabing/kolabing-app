@@ -295,6 +295,8 @@ class Kolab {
     // Phase 5 discovery & matching (2026-05-21 backend contract update)
     this.offerHeadline,
     this.baseOffer,
+    this.goal,
+    this.highlights = const [],
     this.negotiationTriggers = const [],
     this.matchScore,
     this.matchBreakdown = const [],
@@ -394,6 +396,10 @@ class Kolab {
     createdAt: _parseDateTimeNullable(json['created_at']),
     offerHeadline: json['offer_headline']?.toString(),
     baseOffer: json['base_offer']?.toString(),
+    goal: json['goal']?.toString(),
+    highlights: json['highlights'] is List
+        ? (json['highlights'] as List).map((e) => e.toString()).toList()
+        : const [],
     negotiationTriggers: json['negotiation_triggers'] is List
         ? (json['negotiation_triggers'] as List)
               .map(
@@ -470,6 +476,8 @@ class Kolab {
   // offerHeadline + baseOffer + negotiationTriggers are write-on-publish).
   final String? offerHeadline;
   final String? baseOffer;
+  final String? goal;
+  final List<String> highlights;
   final List<NegotiationTrigger> negotiationTriggers;
   final int? matchScore;
   final List<MatchSignal> matchBreakdown;
@@ -532,6 +540,8 @@ class Kolab {
     if (offerHeadline != null && offerHeadline!.isNotEmpty)
       'offer_headline': offerHeadline,
     if (baseOffer != null && baseOffer!.isNotEmpty) 'base_offer': baseOffer,
+    if (goal != null && goal!.isNotEmpty) 'goal': goal,
+    if (highlights.isNotEmpty) 'highlights': highlights,
     if (negotiationTriggers.isNotEmpty)
       'negotiation_triggers': negotiationTriggers
           .map((t) => t.toJson())
@@ -578,11 +588,14 @@ class Kolab {
     DateTime? createdAt,
     String? offerHeadline,
     String? baseOffer,
+    String? goal,
+    List<String>? highlights,
     List<NegotiationTrigger>? negotiationTriggers,
     int? matchScore,
     List<MatchSignal>? matchBreakdown,
     bool clearOfferHeadline = false,
     bool clearBaseOffer = false,
+    bool clearGoal = false,
     bool clearId = false,
     bool clearArea = false,
     bool clearAvailabilityMode = false,
@@ -650,6 +663,8 @@ class Kolab {
         ? null
         : (offerHeadline ?? this.offerHeadline),
     baseOffer: clearBaseOffer ? null : (baseOffer ?? this.baseOffer),
+    goal: clearGoal ? null : (goal ?? this.goal),
+    highlights: highlights ?? this.highlights,
     negotiationTriggers: negotiationTriggers ?? this.negotiationTriggers,
     matchScore: matchScore ?? this.matchScore,
     matchBreakdown: matchBreakdown ?? this.matchBreakdown,
