@@ -10,20 +10,25 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../../../services/upload_service.dart';
 import '../../../../utils/image_picker_normalize.dart';
-import '../../../../l10n/app_localizations.dart';
 import '../../../../utils/remote_media_url.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../../event/models/event.dart';
 import '../../../event/providers/event_provider.dart';
 import '../../models/kolab.dart';
+import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
+import '../../providers/offer_option_provider.dart';
+import '../../widgets/multi_select_chips.dart';
 import '../../widgets/profile_event_picker_sheet.dart';
 
-/// Step 4 (venue / product flows): "PAST COLLABORATIONS (optional)"
+/// Step 5 (venue / product flows): "WHY COMMUNITIES WILL LIKE THIS"
 ///
-/// Lists existing past events and lets the user add up to 5 entries.
-/// Each entry has: name, date picker, partner name, and photo placeholders.
+/// Collects highlight chips + optional free text, with past collaboration
+/// entries kept below as optional supporting evidence (up to 5 entries: name,
+/// date picker, partner name, photo placeholders).
 ///
 /// This is a plain widget -- the parent provides Scaffold, AppBar, step
 /// indicator, and action bar.
@@ -35,6 +40,23 @@ class PastEventsScreen extends ConsumerStatefulWidget {
 }
 
 class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
+  final _extraNotesController = TextEditingController();
+  bool _didInitNotes = false;
+
+  @override
+  void dispose() {
+    _extraNotesController.dispose();
+    super.dispose();
+  }
+
+  void _syncNotesController(Kolab kolab) {
+    if (_didInitNotes) return;
+    _didInitNotes = true;
+    final match = RegExp(r'\n\nNote: (.*)$', dotAll: true)
+        .firstMatch(kolab.description);
+    _extraNotesController.text = match?.group(1) ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     final formState = ref.watch(kolabFormProvider);
@@ -50,6 +72,8 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
     final showImportButton =
         canAdd && (profileEventsState.isLoading || importableEvents.isNotEmpty);
 
+    _syncNotesController(kolab);
+
     return ListView(
       padding: const EdgeInsets.symmetric(
         horizontal: KolabingSpacing.md,
@@ -58,7 +82,7 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
       children: [
         // -- Section header
         Text(
-          l10n.pastEventsStepHeader,
+          'WHY COMMUNITIES WILL LIKE THIS',
           style: KolabingTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
             letterSpacing: 1.0,
@@ -67,6 +91,72 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
         ),
         const SizedBox(height: KolabingSpacing.xs),
 
+        Text(
+          'Add a few reasons that make your Kolab attractive.',
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+
+        // -- Highlight chips
+        Builder(builder: (context) {
+          final highlightsAsync = ref.watch(kolabHighlightsProvider);
+          final options = highlightsAsync.when(
+            data: (options) => options,
+            loading: () => const <OfferOption>[],
+            error: (_, _) => const <OfferOption>[],
+          );
+          return MultiSelectChips<OfferOption>(
+            items: options,
+            selected: kolab.highlights
+                .map((slug) => options.firstWhere(
+                      (o) => o.slug == slug,
+                      orElse: () => OfferOption(id: slug, slug: slug, name: slug),
+                    ))
+                .toList(),
+            labelBuilder: (o) => o.name,
+            onToggle: (option) => notifier.toggleHighlight(option.slug),
+          );
+        }),
+        const SizedBox(height: KolabingSpacing.lg),
+
+        // -- Anything else communities should know (optional free text)
+        Text(
+          'ANYTHING ELSE COMMUNITIES SHOULD KNOW? (OPTIONAL)',
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.0,
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
+        KolabingInput(
+          controller: _extraNotesController,
+          maxLength: 500,
+          maxLines: 3,
+          hint:
+              'e.g. "We have space for groups of 20–30 and can prepare a special post-run menu."',
+          onChanged: (value) {
+            final base = kolab.description.split('\n\nNote:').first.trim();
+            notifier.updateDescription(
+              value.trim().isEmpty ? base : '$base\n\nNote: ${value.trim()}',
+            );
+          },
+          onTapOutside: (_) => FocusScope.of(context).unfocus(),
+        ),
+        const SizedBox(height: KolabingSpacing.lg),
+
+        // -- Past collaborations (optional supporting evidence)
+        Text(
+          'PAST COLLABORATIONS (OPTIONAL)',
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.0,
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
         Text(
           l10n.pastEventsSubtitle,
           style: KolabingTextStyles.bodySmall.copyWith(

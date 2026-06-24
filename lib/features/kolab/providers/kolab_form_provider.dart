@@ -636,6 +636,19 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
+  void toggleHighlight(String slug) {
+    final list = List<String>.from(state.kolab.highlights);
+    if (list.contains(slug)) {
+      list.remove(slug);
+    } else {
+      list.add(slug);
+    }
+    state = state.copyWith(
+      kolab: state.kolab.copyWith(highlights: list),
+      clearError: true,
+    );
+  }
+
   void updateExpects(List<DeliverableType> expects) {
     state = state.copyWith(
       kolab: state.kolab.copyWith(expects: expects),
