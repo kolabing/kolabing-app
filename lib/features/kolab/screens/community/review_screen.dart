@@ -355,6 +355,8 @@ class ReviewScreen extends ConsumerWidget {
         return LucideIcons.calendarCheck;
       case AvailabilityMode.recurring:
         return LucideIcons.repeat;
+      case AvailabilityMode.immediate:
+        return LucideIcons.zap;
     }
   }
 }

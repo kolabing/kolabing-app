@@ -40,8 +40,12 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
   ];
 
   Future<void> _pickDateRange(KolabFormNotifier notifier, Kolab kolab) async {
-    final today = DateUtils.dateOnly(DateTime.now());
-    final firstAllowedDate = today;
+    // Only reachable from the oneTime/recurring sections below — immediate
+    // mode shows no date picker and defaults to today via
+    // KolabFormNotifier.updateAvailabilityMode. Non-immediate modes require
+    // tomorrow or later.
+    final firstAllowedDate =
+        DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
     final initialStart =
         kolab.availabilityStart != null &&
             !DateUtils.dateOnly(
@@ -146,6 +150,19 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
           const SizedBox(height: KolabingSpacing.md),
           _buildDateRangeSection(kolab, notifier, errors),
         ],
+
+        if (kolab.availabilityMode == AvailabilityMode.immediate)
+          Container(
+            padding: const EdgeInsets.all(KolabingSpacing.sm),
+            decoration: BoxDecoration(
+              color: context.colors.softYellow,
+              borderRadius: KolabingRadius.borderRadiusSm,
+            ),
+            child: Text(
+              'This Kolab is ready to start today — no dates needed.',
+              style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurface, height: 1.4),
+            ),
+          ),
 
         const SizedBox(height: KolabingSpacing.lg),
       ],
@@ -279,6 +296,8 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
         return LucideIcons.calendarCheck;
       case AvailabilityMode.recurring:
         return LucideIcons.repeat;
+      case AvailabilityMode.immediate:
+        return LucideIcons.zap;
     }
   }
 }

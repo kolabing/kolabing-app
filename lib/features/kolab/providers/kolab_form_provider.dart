@@ -367,6 +367,12 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       end ??= DateTime(tomorrow.year, tomorrow.month + 1, tomorrow.day);
     }
 
+    // Immediate is always-available-from-today; no date picker is shown for
+    // it, so default the start date to today so submission validates.
+    if (mode == AvailabilityMode.immediate) {
+      start = DateUtils.dateOnly(DateTime.now());
+    }
+
     state = state.copyWith(
       kolab: kolab.copyWith(
         availabilityMode: mode,
@@ -769,6 +775,10 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
               if (kolab.selectedTime == null) {
                 errors['selected_time'] = 'Select a time for your availability';
               }
+            case AvailabilityMode.immediate:
+              // Business-Kolab-only mode; unreachable on the
+              // community-seeking flow's availability picker.
+              break;
           }
         }
         if (kolab.preferredCity.isEmpty) {
@@ -828,10 +838,15 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['availability_start'] =
               'Pick a start date for your availability window';
         } else {
-          final today = DateUtils.dateOnly(DateTime.now());
+          final isImmediate = kolab.availabilityMode == AvailabilityMode.immediate;
+          final floor = isImmediate
+              ? DateUtils.dateOnly(DateTime.now())
+              : DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
           final start = DateUtils.dateOnly(kolab.availabilityStart!);
-          if (start.isBefore(today)) {
-            errors['availability_start'] = 'Start date cannot be in the past';
+          if (start.isBefore(floor)) {
+            errors['availability_start'] = isImmediate
+                ? 'Start date cannot be in the past'
+                : 'Start date must be tomorrow or later';
           }
         }
       case 7: // Review
@@ -894,10 +909,15 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['availability_start'] =
               'Pick a start date for your availability window';
         } else {
-          final today = DateUtils.dateOnly(DateTime.now());
+          final isImmediate = kolab.availabilityMode == AvailabilityMode.immediate;
+          final floor = isImmediate
+              ? DateUtils.dateOnly(DateTime.now())
+              : DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
           final start = DateUtils.dateOnly(kolab.availabilityStart!);
-          if (start.isBefore(today)) {
-            errors['availability_start'] = 'Start date cannot be in the past';
+          if (start.isBefore(floor)) {
+            errors['availability_start'] = isImmediate
+                ? 'Start date cannot be in the past'
+                : 'Start date must be tomorrow or later';
           }
         }
       case 7: // Review
