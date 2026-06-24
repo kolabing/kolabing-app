@@ -39,3 +39,27 @@ final productTypesProvider = FutureProvider.autoDispose<List<OfferOption>>(
 final venueTypesProvider = FutureProvider.autoDispose<List<OfferOption>>(
   (ref) => ref.watch(offerOptionServiceProvider).getVenueTypes(),
 );
+
+/// "Goal" options — what a business Kolab is meant to achieve. From
+/// `GET /lookup/goals`.
+final goalsProvider = FutureProvider.autoDispose<List<OfferOption>>(
+  (ref) => ref.watch(offerOptionServiceProvider).getGoals(),
+);
+
+/// "Product interaction" options — how communities can engage with a product
+/// promotion. From `GET /lookup/product-interactions`.
+final productInteractionsProvider = FutureProvider.autoDispose<List<OfferOption>>(
+  (ref) => ref.watch(offerOptionServiceProvider).getProductInteractions(),
+);
+
+/// "Venue fit" options — the venue-promotion "Best for:" chips. From
+/// `GET /lookup/venue-fits`.
+final venueFitsProvider = FutureProvider.autoDispose<List<OfferOption>>(
+  (ref) => ref.watch(offerOptionServiceProvider).getVenueFits(),
+);
+
+/// "Kolab highlight" options — "Why communities will like this" chips. From
+/// `GET /lookup/kolab-highlights`.
+final kolabHighlightsProvider = FutureProvider.autoDispose<List<OfferOption>>(
+  (ref) => ref.watch(offerOptionServiceProvider).getKolabHighlights(),
+);
