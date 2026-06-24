@@ -11,7 +11,9 @@ import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
+import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
+import '../../providers/offer_option_provider.dart';
 
 /// Step 6 (venue / product flows): Review & Publish.
 ///
@@ -34,6 +36,31 @@ class ReviewScreen extends ConsumerWidget {
     final missingCount = sections.where((s) => s.status == _Status.missing).length;
     final readyToPublish = missingCount == 0;
 
+    final goalLabel = kolab.goal == null
+        ? null
+        : ref.watch(goalsProvider).maybeWhen(
+            data: (options) => options
+                .firstWhere(
+                  (o) => o.slug == kolab.goal,
+                  orElse: () => OfferOption(id: kolab.goal!, slug: kolab.goal!, name: kolab.goal!),
+                )
+                .name,
+            orElse: () => kolab.goal!,
+          );
+    final highlightLabels = kolab.highlights.isEmpty
+        ? const <String>[]
+        : ref.watch(kolabHighlightsProvider).maybeWhen(
+            data: (options) => kolab.highlights
+                .map((slug) => options
+                    .firstWhere(
+                      (o) => o.slug == slug,
+                      orElse: () => OfferOption(id: slug, slug: slug, name: slug),
+                    )
+                    .name)
+                .toList(),
+            orElse: () => kolab.highlights,
+          );
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(
         KolabingSpacing.md,
@@ -43,7 +70,12 @@ class ReviewScreen extends ConsumerWidget {
       ),
       children: [
         // Hero preview — what communities will see
-        _PreviewCard(kolab: kolab, isVenue: isVenue),
+        _PreviewCard(
+          kolab: kolab,
+          isVenue: isVenue,
+          goalLabel: goalLabel,
+          highlightLabels: highlightLabels,
+        ),
         const SizedBox(height: KolabingSpacing.md),
 
         // Readiness status banner
@@ -129,7 +161,16 @@ class ReviewScreen extends ConsumerWidget {
       ));
     }
 
-    // Step 1 — Media
+    // Step 1 — Goal (optional)
+    sections.add(_Section(
+      icon: LucideIcons.target,
+      title: 'Goal',
+      status: kolab.goal != null ? _Status.complete : _Status.optional,
+      summary: kolab.goal ?? 'Optional — helps communities understand this Kolab',
+      onTap: () => notifier.goToStep(1),
+    ));
+
+    // Step 2 — Media
     final photoCount = kolab.media.where((m) => m.type == 'image').length;
     sections.add(_Section(
       icon: LucideIcons.image,
@@ -138,10 +179,10 @@ class ReviewScreen extends ConsumerWidget {
       summary: photoCount > 0
           ? '$photoCount photo${photoCount == 1 ? '' : 's'} added'
           : 'Add at least 1 photo',
-      onTap: () => notifier.goToStep(1),
+      onTap: () => notifier.goToStep(2),
     ));
 
-    // Step 2 — Offering
+    // Step 3 — Offering
     sections.add(_Section(
       icon: LucideIcons.gift,
       title: 'Offering',
@@ -149,10 +190,10 @@ class ReviewScreen extends ConsumerWidget {
       summary: kolab.offering.isNotEmpty
           ? _formatOffering(kolab.offering)
           : 'Pick what you offer',
-      onTap: () => notifier.goToStep(2),
+      onTap: () => notifier.goToStep(3),
     ));
 
-    // Step 3 — Ideal community (optional)
+    // Step 4 — Ideal community (optional)
     final hasIdealCommunity = kolab.seekingCommunities.isNotEmpty ||
         kolab.minCommunitySize != null ||
         kolab.expects.isNotEmpty;
@@ -163,10 +204,10 @@ class ReviewScreen extends ConsumerWidget {
       summary: hasIdealCommunity
           ? _summarizeIdealCommunity(kolab)
           : 'Optional — leave open to all',
-      onTap: () => notifier.goToStep(3),
+      onTap: () => notifier.goToStep(4),
     ));
 
-    // Step 4 — Past events (optional)
+    // Step 5 — Past events (optional)
     sections.add(_Section(
       icon: LucideIcons.history,
       title: 'Past Kolabs',
@@ -174,10 +215,10 @@ class ReviewScreen extends ConsumerWidget {
       summary: kolab.pastEvents.isNotEmpty
           ? '${kolab.pastEvents.length} event${kolab.pastEvents.length == 1 ? '' : 's'} added'
           : 'Optional — adds credibility',
-      onTap: () => notifier.goToStep(4),
+      onTap: () => notifier.goToStep(5),
     ));
 
-    // Step 5 — Availability
+    // Step 6 — Availability
     sections.add(_Section(
       icon: LucideIcons.calendar,
       title: 'Availability',
@@ -185,7 +226,7 @@ class ReviewScreen extends ConsumerWidget {
       summary: kolab.availabilityMode != null
           ? _summarizeAvailability(kolab)
           : 'Set when you are available',
-      onTap: () => notifier.goToStep(5),
+      onTap: () => notifier.goToStep(6),
     ));
 
     return sections;
@@ -244,23 +285,35 @@ class ReviewScreen extends ConsumerWidget {
 // =============================================================================
 
 class _PreviewCard extends StatelessWidget {
-  const _PreviewCard({required this.kolab, required this.isVenue});
+  const _PreviewCard({
+    required this.kolab,
+    required this.isVenue,
+    this.goalLabel,
+    this.highlightLabels = const [],
+  });
 
   final Kolab kolab;
   final bool isVenue;
+  final String? goalLabel;
+  final List<String> highlightLabels;
 
   @override
   Widget build(BuildContext context) {
     final media = kolab.media.where((m) => m.type == 'image').toList();
     final coverUrl = media.isNotEmpty ? media.first.url : null;
 
-    final headline = isVenue
+    final venueOrProductLabel = isVenue
         ? (kolab.venueName?.isNotEmpty ?? false)
             ? kolab.venueName!
             : kolab.title
         : (kolab.productName?.isNotEmpty ?? false)
             ? kolab.productName!
             : kolab.title;
+    // Offer headline (H2) is the primary listing hook; fall back to the
+    // venue/product name when not yet filled in.
+    final headline = (kolab.offerHeadline?.isNotEmpty ?? false)
+        ? kolab.offerHeadline!
+        : venueOrProductLabel;
 
     final subhead = isVenue
         ? [
@@ -297,21 +350,43 @@ class _PreviewCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Eyebrow tag
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.sm,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: context.colors.softYellow,
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: context.colors.softYellowBorder),
-                  ),
-                  child: Text(
-                    isVenue ? 'VENUE PROMOTION' : 'PRODUCT PROMOTION',
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w700, color: context.colors.accentOrangeText, letterSpacing: 1.0),
-                  ),
+                // Eyebrow tags: type label + goal badge
+                Wrap(
+                  spacing: KolabingSpacing.xs,
+                  runSpacing: KolabingSpacing.xs,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: KolabingSpacing.sm,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: context.colors.softYellow,
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(color: context.colors.softYellowBorder),
+                      ),
+                      child: Text(
+                        isVenue ? 'VENUE PROMOTION' : 'PRODUCT PROMOTION',
+                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w700, color: context.colors.accentOrangeText, letterSpacing: 1.0),
+                      ),
+                    ),
+                    if (goalLabel != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: KolabingSpacing.sm,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: context.colors.surfaceVariant,
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(color: context.colors.darkBorder),
+                        ),
+                        child: Text(
+                          goalLabel!,
+                          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w700, color: context.colors.onSurface, letterSpacing: 0.5),
+                        ),
+                      ),
+                  ],
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
 
@@ -358,6 +433,51 @@ class _PreviewCard extends StatelessWidget {
                     ],
                   ),
                 ],
+
+                if (kolab.baseOffer?.isNotEmpty ?? false) ...[
+                  const SizedBox(height: KolabingSpacing.md),
+                  const _PreviewLabel(label: 'YOUR OFFER'),
+                  const SizedBox(height: 4),
+                  Text(
+                    kolab.baseOffer!,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface, height: 1.4),
+                  ),
+                ],
+
+                if (kolab.seekingCommunities.isNotEmpty) ...[
+                  const SizedBox(height: KolabingSpacing.md),
+                  const _PreviewLabel(label: 'BEST-FIT COMMUNITIES'),
+                  const SizedBox(height: 4),
+                  _PreviewChipRow(labels: kolab.seekingCommunities),
+                ],
+
+                if (kolab.expects.isNotEmpty) ...[
+                  const SizedBox(height: KolabingSpacing.md),
+                  const _PreviewLabel(label: "WHAT WE'D LIKE FROM THE COMMUNITY"),
+                  const SizedBox(height: 4),
+                  _PreviewChipRow(
+                    labels: kolab.expects.map((d) => d.displayName).toList(),
+                  ),
+                ],
+
+                if (highlightLabels.isNotEmpty) ...[
+                  const SizedBox(height: KolabingSpacing.md),
+                  const _PreviewLabel(label: 'WHY COMMUNITIES WILL LIKE THIS'),
+                  const SizedBox(height: 4),
+                  _PreviewChipRow(labels: highlightLabels),
+                ],
+
+                if (kolab.availabilityMode != null) ...[
+                  const SizedBox(height: KolabingSpacing.md),
+                  const _PreviewLabel(label: 'AVAILABILITY'),
+                  const SizedBox(height: 4),
+                  Text(
+                    ReviewScreen._summarizeAvailability(kolab),
+                    style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface),
+                  ),
+                ],
               ],
             ),
           ),
@@ -365,6 +485,46 @@ class _PreviewCard extends StatelessWidget {
       ),
     );
   }
+}
+
+class _PreviewLabel extends StatelessWidget {
+  const _PreviewLabel({required this.label});
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Text(
+        label,
+        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w700, color: context.colors.textTertiary, letterSpacing: 0.8),
+      );
+}
+
+class _PreviewChipRow extends StatelessWidget {
+  const _PreviewChipRow({required this.labels});
+  final List<String> labels;
+
+  @override
+  Widget build(BuildContext context) => Wrap(
+        spacing: KolabingSpacing.xs,
+        runSpacing: KolabingSpacing.xs,
+        children: labels
+            .map(
+              (label) => Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.sm,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: context.colors.surfaceVariant,
+                  borderRadius: KolabingRadius.borderRadiusSm,
+                ),
+                child: Text(
+                  label,
+                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurface),
+                ),
+              ),
+            )
+            .toList(),
+      );
 }
 
 class _CoverImage extends StatelessWidget {
