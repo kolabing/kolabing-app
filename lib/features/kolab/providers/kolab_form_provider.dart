@@ -11,6 +11,7 @@ import '../../auth/models/user_model.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
+import '../../profile/providers/gallery_provider.dart';
 import '../enums/deliverable_type.dart';
 import '../enums/intent_type.dart';
 import '../enums/need_type.dart';
@@ -200,6 +201,23 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     } on Exception {
       return null;
     }
+  }
+
+  /// Whether a default photo (profile gallery or, for venue Kolabs, the
+  /// venue's own photos) exists that the Media step can fall back on instead
+  /// of hard-blocking when `kolab.media` is still empty.
+  bool _hasUsableDefaultPhoto(Kolab kolab) {
+    if (kolab.media.isNotEmpty) return true;
+    try {
+      if (ref.read(galleryProvider).photos.isNotEmpty) return true;
+    } on Exception {
+      // Gallery not loaded yet — fall through to the venue-photo check.
+    }
+    if (kolab.intentType == IntentType.venuePromotion) {
+      final venuePhotos = _readBusinessProfile()?.primaryVenue?.photos;
+      if (venuePhotos != null && venuePhotos.isNotEmpty) return true;
+    }
+    return false;
   }
 
   VenueType? _resolveVenueType(String? rawType) {
@@ -815,7 +833,10 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       case 1: // Goal (optional — encouraged, not blocking)
         break;
       case 2: // Media
-        if (kolab.media.isEmpty) {
+        // Soft requirement: don't block when a default photo exists
+        // (profile gallery or venue photos) — Next stays enabled and the
+        // Media screen shows a tip instead of a hard error in that case.
+        if (kolab.media.isEmpty && !_hasUsableDefaultPhoto(kolab)) {
           errors['media'] = 'Add at least 1 photo';
         }
       case 3: // What you offer
@@ -886,7 +907,10 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       case 1: // Goal (optional — encouraged, not blocking)
         break;
       case 2: // Media
-        if (kolab.media.isEmpty) {
+        // Soft requirement: don't block when a default photo exists
+        // (profile gallery or venue photos) — Next stays enabled and the
+        // Media screen shows a tip instead of a hard error in that case.
+        if (kolab.media.isEmpty && !_hasUsableDefaultPhoto(kolab)) {
           errors['media'] = 'Add at least 1 photo';
         }
       case 3: // What you offer

@@ -189,10 +189,12 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       profileProvider.select((s) => s.profile?.businessProfile?.primaryVenue?.photos),
     );
     final galleryState = ref.watch(galleryProvider);
-    final showReuseCta = kolab.media.length < 5 &&
-        (galleryState.isLoading ||
-            galleryState.photos.isNotEmpty ||
-            (isVenue && (venuePhotoUrls?.isNotEmpty ?? false)));
+    final hasUsableDefault = galleryState.photos.isNotEmpty ||
+        (isVenue && (venuePhotoUrls?.isNotEmpty ?? false));
+    final showReuseCta =
+        kolab.media.length < 5 && (galleryState.isLoading || hasUsableDefault);
+    final hasNoPhotoAnywhere =
+        kolab.media.isEmpty && !galleryState.isLoading && !hasUsableDefault;
 
     return ListView(
       padding: const EdgeInsets.symmetric(
@@ -215,6 +217,24 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(errors['media']!, style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error)),
+          ),
+
+        // Soft tip (not a hard block) when no photo exists anywhere —
+        // business profile gallery, venue photos, or kolab.media are all
+        // empty. Mirrors KolabFormNotifier._hasUsableDefaultPhoto.
+        if (hasNoPhotoAnywhere)
+          Container(
+            margin: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+            padding: const EdgeInsets.all(KolabingSpacing.sm),
+            decoration: BoxDecoration(
+              color: context.colors.softYellow,
+              borderRadius: KolabingRadius.borderRadiusSm,
+            ),
+            child: Text(
+              'Kolabs with photos get more interest. Add one from your gallery '
+              'or upload a new one.',
+              style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurface, height: 1.4),
+            ),
           ),
 
         // Reuse previously uploaded profile gallery photos, plus venue fallback.
