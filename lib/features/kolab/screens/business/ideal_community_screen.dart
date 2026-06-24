@@ -8,15 +8,18 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../widgets/kolabing_input.dart';
+import '../../../onboarding/providers/onboarding_provider.dart';
 import '../../enums/deliverable_type.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
 import '../../widgets/multi_select_chips.dart';
 
-/// Step 3 (venue / product flows): "IDEAL COMMUNITY"
+/// Step 4 (venue / product flows): "BEST-FIT COMMUNITIES"
 ///
 /// Collects:
-///   - Community type chips (max 5)
+///   - Community type chips (max 5), fetched from the existing
+///     /lookup/community-types endpoint (shared with onboarding) — no longer
+///     hardcoded client-side.
 ///   - Minimum community size (optional)
 ///   - What you expect from the community (deliverable toggle cards)
 ///
@@ -34,25 +37,6 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
   final _minSizeController = TextEditingController();
 
   bool _didInit = false;
-
-  static const List<String> _communityTypes = [
-    'Food & Drink',
-    'Sports',
-    'Wellness',
-    'Culture',
-    'Technology',
-    'Education',
-    'Entertainment',
-    'Fashion',
-    'Music',
-    'Art',
-    'Travel',
-    'Networking',
-    'Business / Coworking',
-    'Fitness',
-    'Social',
-    'Gaming',
-  ];
 
   @override
   void dispose() {
@@ -90,25 +74,49 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
         children: [
           // -- Section header
           Text(
-            'IDEAL COMMUNITY',
+            'BEST-FIT COMMUNITIES',
             style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
           ),
           const SizedBox(height: KolabingSpacing.xs),
 
           Text(
-            'What kind of communities would be a great fit?',
+            'Who would this Kolab be perfect for?',
+            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+          ),
+          const SizedBox(height: KolabingSpacing.xxs),
+          Text(
+            'Choose a few. This helps the right communities understand the opportunity faster.',
             style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.md),
 
-          // -- Community type chips
-          MultiSelectChips<String>(
-            items: _communityTypes,
-            selected: kolab.seekingCommunities,
-            labelBuilder: (t) => t,
-            onToggle: notifier.toggleSeekingCommunity,
-            maxSelect: 5,
-          ),
+          // -- Community type chips (dynamic, via the existing shared
+          // /lookup/community-types endpoint)
+          Builder(builder: (context) {
+            final communityTypesAsync = ref.watch(communityTypesProvider);
+            final types = communityTypesAsync.when(
+              data: (options) => options.map((o) => o.name).toList(),
+              loading: () => const <String>[],
+              error: (_, _) => const <String>[],
+            );
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MultiSelectChips<String>(
+                  items: types,
+                  selected: kolab.seekingCommunities,
+                  labelBuilder: (t) => t,
+                  onToggle: notifier.toggleSeekingCommunity,
+                  maxSelect: 5,
+                ),
+                if (communityTypesAsync.isLoading)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+              ],
+            );
+          }),
           const SizedBox(height: KolabingSpacing.lg),
 
           // -- Minimum Community Size

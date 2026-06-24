@@ -15,6 +15,7 @@ import '../../models/kolab.dart';
 import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
 import '../../providers/offer_option_provider.dart';
+import '../../widgets/multi_select_chips.dart';
 
 /// Step 0 for the product promotion flow: "YOUR PRODUCT OR SERVICE"
 ///
@@ -35,6 +36,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   final _descriptionController = TextEditingController();
   // H2: offer headline pinned to the discovery card.
   final _headlineController = TextEditingController();
+  final List<OfferOption> _selectedProductInteractions = [];
 
   bool _didInit = false;
 
@@ -45,6 +47,19 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     _descriptionController.dispose();
     _headlineController.dispose();
     super.dispose();
+  }
+
+  void _appendInteractionsToDescription(
+    KolabFormNotifier notifier,
+    Kolab kolab,
+  ) {
+    final base = kolab.description.split('\n\nInteraction:').first.trim();
+    if (_selectedProductInteractions.isEmpty) {
+      notifier.updateDescription(base);
+      return;
+    }
+    final labels = _selectedProductInteractions.map((o) => o.name).join(', ');
+    notifier.updateDescription('$base\n\nInteraction: $labels');
   }
 
   void _syncControllersFromState(Kolab kolab) {
@@ -199,6 +214,36 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           onChanged: notifier.updateDescription,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
+        const SizedBox(height: KolabingSpacing.md),
+
+        // -- Product interaction chips
+        const _FieldLabel(
+          label: 'How do you want communities to interact with your product?',
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
+        Builder(builder: (context) {
+          final productInteractionsAsync = ref.watch(productInteractionsProvider);
+          final options = productInteractionsAsync.when(
+            data: (options) => options,
+            loading: () => const <OfferOption>[],
+            error: (_, _) => const <OfferOption>[],
+          );
+          return MultiSelectChips<OfferOption>(
+            items: options,
+            selected: _selectedProductInteractions,
+            labelBuilder: (o) => o.name,
+            onToggle: (option) {
+              setState(() {
+                if (_selectedProductInteractions.contains(option)) {
+                  _selectedProductInteractions.remove(option);
+                } else {
+                  _selectedProductInteractions.add(option);
+                }
+              });
+              _appendInteractionsToDescription(notifier, kolab);
+            },
+          );
+        }),
         const SizedBox(height: KolabingSpacing.md),
         // H2: short, one-line offer headline shown on the discovery card.
         _FieldLabel(label: l10n.productDetailsOfferHeadlineLabel),
