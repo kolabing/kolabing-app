@@ -10,11 +10,13 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../widgets/category_icon.dart';
 import '../../../../widgets/kolabing_button.dart';
 import '../../../../widgets/kolabing_input.dart';
+import '../../enums/deliverable_type.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
 import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
 import '../../providers/offer_option_provider.dart';
+import '../../widgets/multi_select_chips.dart';
 
 /// Step 2 (venue / product flows): "WHAT YOU'RE OFFERING"
 ///
@@ -66,6 +68,34 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         vertical: KolabingSpacing.lg,
       ),
       children: [
+        // -- Main offer (primary, offer-first): the headline itself is
+        // collected on the Details step (required there); this is the
+        // longer-form public offer description.
+        _SectionLabel(label: l10n.offeringBaseOfferLabel),
+        const SizedBox(height: KolabingSpacing.xxs),
+        Text(
+          l10n.offeringBaseOfferHelper,
+          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
+        if (errors.containsKey('base_offer'))
+          Padding(
+            padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+            child: Text(
+              errors['base_offer']!,
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
+            ),
+          ),
+        KolabingInput(
+          controller: _baseOfferController,
+          maxLength: 400,
+          maxLines: 3,
+          hint: l10n.offeringBaseOfferHint,
+          onChanged: notifier.updateBaseOffer,
+          onTapOutside: (_) => FocusScope.of(context).unfocus(),
+        ),
+        const SizedBox(height: KolabingSpacing.lg),
+
         // -- Section header
         Text(
           l10n.offeringTitle,
@@ -132,23 +162,41 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
 
         const SizedBox(height: KolabingSpacing.lg),
 
-        // H3: Base offer (public to all viewers).
-        _SectionLabel(label: l10n.offeringBaseOfferLabel),
+        // -- What would you like from the community?
+        const _SectionLabel(label: 'WHAT WOULD YOU LIKE FROM THE COMMUNITY?'),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          l10n.offeringBaseOfferHelper,
+          'You can choose more than one. This is not a strict contract yet — '
+          'it helps communities understand your expectations.',
           style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
         ),
-        const SizedBox(height: KolabingSpacing.xs),
-        KolabingInput(
-          controller: _baseOfferController,
-          maxLength: 400,
-          maxLines: 3,
-          hint: l10n.offeringBaseOfferHint,
-          onChanged: notifier.updateBaseOffer,
-          onTapOutside: (_) => FocusScope.of(context).unfocus(),
+        const SizedBox(height: KolabingSpacing.sm),
+        MultiSelectChips<OfferOption>(
+          items: ref.watch(deliverablesProvider).when(
+                data: (options) => options,
+                loading: () => const <OfferOption>[],
+                error: (_, _) => const <OfferOption>[],
+              ),
+          selected: kolab.expects
+              .map((d) => OfferOption(id: d.toApiValue(), slug: d.toApiValue(), name: d.displayName))
+              .toList(),
+          labelBuilder: (o) => o.name,
+          onToggle: (option) => notifier.toggleExpect(DeliverableType.fromString(option.slug)),
         ),
-
+        const SizedBox(height: KolabingSpacing.md),
+        Container(
+          padding: const EdgeInsets.all(KolabingSpacing.sm),
+          decoration: BoxDecoration(
+            color: context.colors.softYellow,
+            borderRadius: KolabingRadius.borderRadiusSm,
+          ),
+          child: Text(
+            'Tip: good Kolabs usually include a clear perk for the community — '
+            'free samples, a discount, a space, an experience, content, or '
+            'something members will actually enjoy.',
+            style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurface, height: 1.4),
+          ),
+        ),
         const SizedBox(height: KolabingSpacing.lg),
 
         // H3: Negotiation triggers — surfaces only after a community applies.

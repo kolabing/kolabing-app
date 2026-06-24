@@ -799,6 +799,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
         if (kolab.offering.isEmpty) {
           errors['offering'] = 'Select at least 1 offering';
         }
+        if (kolab.baseOffer == null || kolab.baseOffer!.trim().isEmpty) {
+          errors['base_offer'] = 'Describe your offer so communities know what to expect';
+        }
       case 4: // Seeking communities
         // No required validation
         break;
@@ -861,6 +864,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       case 3: // What you offer
         if (kolab.offering.isEmpty) {
           errors['offering'] = 'Select at least 1 offering';
+        }
+        if (kolab.baseOffer == null || kolab.baseOffer!.trim().isEmpty) {
+          errors['base_offer'] = 'Describe your offer so communities know what to expect';
         }
       case 4: // Seeking communities
         // No required validation
