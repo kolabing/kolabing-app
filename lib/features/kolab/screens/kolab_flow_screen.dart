@@ -18,6 +18,7 @@ import '../providers/my_kolabs_provider.dart';
 import '../widgets/kolab_action_bar.dart';
 import '../widgets/kolab_step_indicator.dart';
 import 'business/availability_screen.dart';
+import 'business/goal_screen.dart';
 import 'business/ideal_community_screen.dart';
 import 'business/media_screen.dart';
 import 'business/offering_screen.dart';
@@ -248,23 +249,25 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
       case IntentType.venuePromotion:
         return switch (step) {
           0 => const VenueDetailsScreen(),
-          1 => const MediaScreen(),
-          2 => const OfferingScreen(),
-          3 => const IdealCommunityScreen(),
-          4 => const PastEventsScreen(),
-          5 => const AvailabilityScreen(),
-          6 => const business_review.ReviewScreen(),
+          1 => const GoalScreen(),
+          2 => const MediaScreen(),
+          3 => const OfferingScreen(),
+          4 => const IdealCommunityScreen(),
+          5 => const PastEventsScreen(),
+          6 => const AvailabilityScreen(),
+          7 => const business_review.ReviewScreen(),
           _ => const SizedBox(),
         };
       case IntentType.productPromotion:
         return switch (step) {
           0 => const ProductDetailsScreen(),
-          1 => const MediaScreen(),
-          2 => const OfferingScreen(),
-          3 => const IdealCommunityScreen(),
-          4 => const PastEventsScreen(),
-          5 => const AvailabilityScreen(),
-          6 => const business_review.ReviewScreen(),
+          1 => const GoalScreen(),
+          2 => const MediaScreen(),
+          3 => const OfferingScreen(),
+          4 => const IdealCommunityScreen(),
+          5 => const PastEventsScreen(),
+          6 => const AvailabilityScreen(),
+          7 => const business_review.ReviewScreen(),
           _ => const SizedBox(),
         };
     }

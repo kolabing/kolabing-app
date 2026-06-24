@@ -288,6 +288,18 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
+  /// New goal step: what the Kolab is meant to achieve, shown as a badge on
+  /// Review.
+  void updateGoal(String? goal) {
+    state = state.copyWith(
+      kolab: state.kolab.copyWith(
+        goal: goal,
+        clearGoal: goal == null,
+      ),
+      clearError: true,
+    );
+  }
+
   /// H3: negotiation triggers (gated until a community applies).
   void updateNegotiationTriggers(List<NegotiationTrigger> triggers) {
     state = state.copyWith(
@@ -777,21 +789,23 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['offer_headline'] =
               'Add a one-line offer headline (e.g. "20% off Tuesdays")';
         }
-      case 1: // Media
+      case 1: // Goal (optional — encouraged, not blocking)
+        break;
+      case 2: // Media
         if (kolab.media.isEmpty) {
           errors['media'] = 'Add at least 1 photo';
         }
-      case 2: // What you offer
+      case 3: // What you offer
         if (kolab.offering.isEmpty) {
           errors['offering'] = 'Select at least 1 offering';
         }
-      case 3: // Seeking communities
+      case 4: // Seeking communities
         // No required validation
         break;
-      case 4: // Expectations
+      case 5: // Expectations
         // No required validation
         break;
-      case 5: // Availability
+      case 6: // Availability
         if (kolab.availabilityMode == null) {
           errors['availability_mode'] = 'Select an availability mode';
         } else if (kolab.availabilityStart == null) {
@@ -804,7 +818,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
             errors['availability_start'] = 'Start date cannot be in the past';
           }
         }
-      case 6: // Review
+      case 7: // Review
         // Review step has no additional validation
         break;
     }
@@ -838,21 +852,23 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['offer_headline'] =
               'Add a one-line offer headline (e.g. "Free with any 5+ order")';
         }
-      case 1: // Media
+      case 1: // Goal (optional — encouraged, not blocking)
+        break;
+      case 2: // Media
         if (kolab.media.isEmpty) {
           errors['media'] = 'Add at least 1 photo';
         }
-      case 2: // What you offer
+      case 3: // What you offer
         if (kolab.offering.isEmpty) {
           errors['offering'] = 'Select at least 1 offering';
         }
-      case 3: // Seeking communities
+      case 4: // Seeking communities
         // No required validation
         break;
-      case 4: // Expectations
+      case 5: // Expectations
         // No required validation
         break;
-      case 5: // Availability
+      case 6: // Availability
         if (kolab.availabilityMode == null) {
           errors['availability_mode'] = 'Select an availability mode';
         } else if (kolab.availabilityStart == null) {
@@ -865,7 +881,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
             errors['availability_start'] = 'Start date cannot be in the past';
           }
         }
-      case 6: // Review
+      case 7: // Review
         // Review step has no additional validation
         break;
     }
