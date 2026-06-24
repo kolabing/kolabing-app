@@ -8,6 +8,7 @@ import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../widgets/category_icon.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../../opportunity/providers/opportunity_provider.dart';
 import '../../enums/product_type.dart';
 import '../../models/kolab.dart';
@@ -91,15 +92,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         // -- Listing Title
         _FieldLabel(label: l10n.productDetailsListingTitleLabel),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _titleController,
           maxLength: 255,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.productDetailsListingTitleHint,
-            error: errors['title'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.productDetailsListingTitleHint,
+          errorText: errors['title'],
           onChanged: notifier.updateTitle,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -108,15 +105,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         // -- Product Name
         _FieldLabel(label: l10n.productDetailsProductNameLabel),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _nameController,
           maxLength: 255,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.productDetailsProductNameHint,
-            error: errors['product_name'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.productDetailsProductNameHint,
+          errorText: errors['product_name'],
           onChanged: notifier.updateProductName,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -197,16 +190,12 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         // -- Description
         _FieldLabel(label: l10n.productDetailsDescriptionLabel),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _descriptionController,
           maxLength: 2000,
           maxLines: 5,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.productDetailsDescriptionHint,
-            error: errors['description'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.productDetailsDescriptionHint,
+          errorText: errors['description'],
           onChanged: notifier.updateDescription,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -219,15 +208,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _headlineController,
           maxLength: 50,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.productDetailsOfferHeadlineHint,
-            error: errors['offer_headline'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.productDetailsOfferHeadlineHint,
+          errorText: errors['offer_headline'],
           onChanged: notifier.updateOfferHeadline,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),

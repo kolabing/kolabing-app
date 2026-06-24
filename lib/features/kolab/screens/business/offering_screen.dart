@@ -9,6 +9,7 @@ import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../widgets/category_icon.dart';
 import '../../../../widgets/kolabing_button.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
 import '../../models/offer_option.dart';
@@ -139,22 +140,13 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _baseOfferController,
           maxLength: 400,
           maxLines: 3,
+          hint: l10n.offeringBaseOfferHint,
           onChanged: notifier.updateBaseOffer,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
-          decoration: InputDecoration(
-            hintText: l10n.offeringBaseOfferHint,
-            filled: true,
-            fillColor: context.colors.surface,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: context.colors.darkBorder),
-            ),
-          ),
         ),
 
         const SizedBox(height: KolabingSpacing.lg),
@@ -172,12 +164,16 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
 
         Padding(
           padding: const EdgeInsets.only(top: KolabingSpacing.xs),
-          child: OutlinedButton.icon(
-            onPressed: () => _addTrigger(kolab, notifier),
-            icon: const Icon(LucideIcons.plus, size: 16),
-            label: Text(
-              l10n.offeringAddExtraTerm,
-              style: KolabingTextStyles.button.copyWith(fontSize: 13, letterSpacing: 0.5),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: IntrinsicWidth(
+              child: KolabingButton(
+                label: l10n.offeringAddExtraTerm,
+                onPressed: () => _addTrigger(kolab, notifier),
+                variant: KolabingButtonVariant.secondary,
+                size: KolabingButtonSize.small,
+                icon: const Icon(LucideIcons.plus, size: 16),
+              ),
             ),
           ),
         ),
@@ -392,24 +388,20 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
             style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.md),
-          TextField(
+          KolabingInput(
             controller: _conditionController,
             maxLength: 100,
-            decoration: InputDecoration(
-              labelText: l10n.offeringTriggerWhenLabel,
-              hintText: l10n.offeringTriggerWhenHint,
-            ),
+            label: l10n.offeringTriggerWhenLabel,
+            hint: l10n.offeringTriggerWhenHint,
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
           ),
           const SizedBox(height: KolabingSpacing.sm),
-          TextField(
+          KolabingInput(
             controller: _offerController,
             maxLength: 200,
             maxLines: 2,
-            decoration: InputDecoration(
-              labelText: l10n.offeringTriggerThenLabel,
-              hintText: l10n.offeringTriggerThenHint,
-            ),
+            label: l10n.offeringTriggerThenLabel,
+            hint: l10n.offeringTriggerThenHint,
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
           ),
           const SizedBox(height: KolabingSpacing.lg),

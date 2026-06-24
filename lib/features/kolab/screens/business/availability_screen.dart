@@ -7,6 +7,7 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../../../widgets/time_picker.dart';
 import '../../../opportunity/models/opportunity.dart';
 import '../../models/kolab.dart';
@@ -175,36 +176,15 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
           style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        GestureDetector(
+        KolabingInput(
+          controller: TextEditingController(text: hasRange ? rangeText : ''),
+          readOnly: true,
+          hint: hasRange ? null : rangeText,
           onTap: () => _pickDateRange(notifier, kolab),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: 14,
-            ),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: KolabingRadius.borderRadiusSm,
-              border: Border.all(color: context.colors.darkBorder),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    rangeText,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: hasRange
-                          ? context.colors.onSurface
-                          : context.colors.textTertiary),
-                  ),
-                ),
-                Icon(
-                  LucideIcons.calendar,
-                  size: 18,
-                  color: context.colors.onSurfaceVariant,
-                ),
-              ],
-            ),
+          suffix: Icon(
+            LucideIcons.calendar,
+            size: 18,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
         if (errors['availability_start'] != null)
@@ -233,36 +213,15 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
           style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        GestureDetector(
+        KolabingInput(
+          controller: TextEditingController(text: hasTime ? timeText : ''),
+          readOnly: true,
+          hint: hasTime ? null : timeText,
           onTap: () => _pickTime(notifier, kolab),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: 14,
-            ),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: KolabingRadius.borderRadiusSm,
-              border: Border.all(color: context.colors.darkBorder),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    timeText,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: hasTime
-                          ? context.colors.onSurface
-                          : context.colors.textTertiary),
-                  ),
-                ),
-                Icon(
-                  LucideIcons.clock,
-                  size: 18,
-                  color: context.colors.onSurfaceVariant,
-                ),
-              ],
-            ),
+          suffix: Icon(
+            LucideIcons.clock,
+            size: 18,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
       ],

@@ -7,6 +7,7 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../enums/deliverable_type.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
@@ -117,19 +118,14 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
           ),
           const SizedBox(height: KolabingSpacing.xs),
 
-          TextField(
+          KolabingInput(
             controller: _minSizeController,
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.done,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: _inputDecoration(
-              context,
-              hint: 'e.g. 500',
-              error: errors['min_community_size'],
-            ),
-            style: _inputTextStyle(context),
+            hint: 'e.g. 500',
+            errorText: errors['min_community_size'],
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
-            onSubmitted: (_) => FocusScope.of(context).unfocus(),
             onChanged: (v) {
               final parsed = int.tryParse(v);
               notifier.updateMinCommunitySize(parsed);
@@ -167,46 +163,6 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
 // =============================================================================
 // Shared helpers (file-private)
 // =============================================================================
-
-InputDecoration _inputDecoration(
-  BuildContext context, {
-  required String hint,
-  String? error,
-}) => InputDecoration(
-  hintText: hint,
-  hintStyle: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
-  errorText: error,
-  errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
-  filled: true,
-  fillColor: context.colors.surface,
-  contentPadding: const EdgeInsets.symmetric(
-    horizontal: KolabingSpacing.md,
-    vertical: 14,
-  ),
-  border: OutlineInputBorder(
-    borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: BorderSide(color: context.colors.darkBorder),
-  ),
-  enabledBorder: OutlineInputBorder(
-    borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: BorderSide(color: context.colors.darkBorder),
-  ),
-  focusedBorder: OutlineInputBorder(
-    borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: BorderSide(color: context.colors.borderFocus, width: 1.5),
-  ),
-  errorBorder: OutlineInputBorder(
-    borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: BorderSide(color: context.colors.borderError),
-  ),
-  focusedErrorBorder: OutlineInputBorder(
-    borderRadius: KolabingRadius.borderRadiusSm,
-    borderSide: BorderSide(color: context.colors.borderError, width: 1.5),
-  ),
-);
-
-TextStyle _inputTextStyle(BuildContext context) =>
-    KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface);
 
 // =============================================================================
 // Toggle Card

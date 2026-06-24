@@ -7,6 +7,7 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
 
@@ -80,15 +81,11 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
         ],
         _FieldLabel(label: l10n.venueDetailsListingTitleLabel),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _titleController,
           maxLength: 255,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.venueDetailsListingTitleHint,
-            error: errors['title'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.venueDetailsListingTitleHint,
+          errorText: errors['title'],
           onChanged: notifier.updateTitle,
           // C1: dismiss keyboard on tap-outside so the action bar is reachable.
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
@@ -96,16 +93,12 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
         const SizedBox(height: KolabingSpacing.md),
         _FieldLabel(label: l10n.venueDetailsCampaignDescriptionLabel),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _descriptionController,
           maxLength: 2000,
           maxLines: 5,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.venueDetailsCampaignDescriptionHint,
-            error: errors['description'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.venueDetailsCampaignDescriptionHint,
+          errorText: errors['description'],
           onChanged: notifier.updateDescription,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -118,15 +111,11 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _headlineController,
           maxLength: 50,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.venueDetailsOfferHeadlineHint,
-            error: errors['offer_headline'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.venueDetailsOfferHeadlineHint,
+          errorText: errors['offer_headline'],
           onChanged: notifier.updateOfferHeadline,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -214,47 +203,6 @@ class _SummaryRow extends StatelessWidget {
         ],
       );
 }
-
-InputDecoration _inputDecoration(
-  BuildContext context, {
-  required String hint,
-  String? error,
-}) =>
-    InputDecoration(
-      hintText: hint,
-      hintStyle: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
-      errorText: error,
-      errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
-      filled: true,
-      fillColor: context.colors.surface,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.md,
-        vertical: 14,
-      ),
-      border: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.darkBorder),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.darkBorder),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.borderFocus, width: 1.5),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.error),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.error, width: 1.5),
-      ),
-    );
-
-TextStyle _inputTextStyle(BuildContext context) =>
-    KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface);
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.label});

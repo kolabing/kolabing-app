@@ -670,9 +670,9 @@ class _FeedSegment extends StatelessWidget {
       duration: const Duration(milliseconds: 180),
       padding: const EdgeInsets.symmetric(vertical: 7),
       decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFFFF4C2) : Colors.transparent,
+        color: isSelected ? context.colors.softYellow : Colors.transparent,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: isSelected ? Border.all(color: const Color(0xFFFFE28C)) : null,
+        border: isSelected ? Border.all(color: context.colors.primary) : null,
       ),
       alignment: Alignment.center,
       child: Text(
