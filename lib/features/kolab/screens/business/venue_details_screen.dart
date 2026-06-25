@@ -12,6 +12,7 @@ import '../../models/kolab.dart';
 import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
 import '../../providers/offer_option_provider.dart';
+import '../../widgets/kolab_examples_box.dart';
 import '../../widgets/multi_select_chips.dart';
 
 /// Step 0 for the venue promotion flow.
@@ -116,6 +117,12 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           onChanged: notifier.updateDescription,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
+        const SizedBox(height: KolabingSpacing.xs),
+        const KolabExamplesBox(examples: [
+          'A cozy café for post-run coffee and brunch.',
+          'A wellness studio for yoga, pilates, or community workshops.',
+          'A concept store for creative meetups, try-ons, or content days.',
+        ]),
         const SizedBox(height: KolabingSpacing.md),
         // H2: short, one-line offer headline shown on the discovery card.
         _FieldLabel(label: l10n.venueDetailsOfferHeadlineLabel),

@@ -13,7 +13,7 @@ String deliverableLabel(String slug, List<OfferOption> options) {
 }
 
 String _humanizeSlug(String slug) => slug
-    .split(RegExp(r'[_-]'))
+    .split(RegExp('[_-]'))
     .where((part) => part.isNotEmpty)
     .map((part) => '${part[0].toUpperCase()}${part.substring(1).toLowerCase()}')
     .join(' ');

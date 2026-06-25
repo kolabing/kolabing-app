@@ -21,6 +21,7 @@ import '../../models/kolab.dart';
 import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
 import '../../providers/offer_option_provider.dart';
+import '../../widgets/kolab_examples_box.dart';
 import '../../widgets/multi_select_chips.dart';
 import '../../widgets/profile_event_picker_sheet.dart';
 
@@ -119,6 +120,12 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
             onToggle: (option) => notifier.toggleHighlight(option.slug),
           );
         }),
+        const SizedBox(height: KolabingSpacing.xs),
+        const KolabExamplesBox(examples: [
+          'Central location and space for groups.',
+          'Free samples members can actually use.',
+          'A unique experience that creates good content.',
+        ]),
         const SizedBox(height: KolabingSpacing.lg),
 
         // -- Anything else communities should know (optional free text)

@@ -15,6 +15,7 @@ import '../../models/kolab.dart';
 import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
 import '../../providers/offer_option_provider.dart';
+import '../../widgets/kolab_examples_box.dart';
 import '../../widgets/multi_select_chips.dart';
 
 /// Step 0 for the product promotion flow: "YOUR PRODUCT OR SERVICE"
@@ -214,11 +215,22 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           onChanged: notifier.updateDescription,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
+        const SizedBox(height: KolabingSpacing.xs),
+        const KolabExamplesBox(examples: [
+          'Protein bars for runners to try after training.',
+          'Skincare samples for a wellness or self-care community.',
+          'A local clothing brand looking for try-ons, feedback, and content.',
+        ]),
         const SizedBox(height: KolabingSpacing.md),
 
         // -- Product interaction chips
         const _FieldLabel(
           label: 'How do you want communities to interact with your product?',
+        ),
+        const SizedBox(height: KolabingSpacing.xxs),
+        Text(
+          'Choose how communities could experience your product.',
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Builder(builder: (context) {
@@ -244,6 +256,13 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             },
           );
         }),
+        const SizedBox(height: KolabingSpacing.xs),
+        const KolabExamplesBox(label: 'EXAMPLES', examples: [
+          'Samples after a run',
+          'Giveaway for members',
+          'Content day with the product',
+          'Feedback from real users',
+        ]),
         const SizedBox(height: KolabingSpacing.md),
         // H2: short, one-line offer headline shown on the discovery card.
         _FieldLabel(label: l10n.productDetailsOfferHeadlineLabel),
