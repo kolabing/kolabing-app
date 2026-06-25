@@ -14,5 +14,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('More Visits'), findsOneWidget);
+    expect(find.text('Bring a community to your space.'), findsOneWidget);
   });
 }

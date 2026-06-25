@@ -41,12 +41,12 @@ class GoalScreen extends ConsumerWidget {
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
-          'What do you want this Kolab to achieve?',
+          'What would make this Kolab a success?',
           style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
-          'Pick the main goal. This helps communities understand the opportunity.',
+          'Pick the main goal so communities understand what you’re looking for.',
           style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -104,12 +104,24 @@ class GoalScreen extends ConsumerWidget {
                     CategoryIcon(name: option.name, iconUrl: option.iconUrl, size: 24),
                     const SizedBox(width: KolabingSpacing.sm),
                     Expanded(
-                      child: Text(
-                        option.name,
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                          color: context.colors.onSurface,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            option.name,
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                              color: context.colors.onSurface,
+                            ),
+                          ),
+                          if (option.description?.isNotEmpty ?? false) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              option.description!,
+                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                   ],

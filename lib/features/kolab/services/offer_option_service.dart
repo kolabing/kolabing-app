@@ -179,40 +179,66 @@ class OfferOptionService {
   ];
 
   static const List<OfferOption> _fallbackGoals = [
-    OfferOption(id: 'more_visits', slug: 'more_visits', name: 'More Visits'),
+    OfferOption(
+      id: 'more_visits',
+      slug: 'more_visits',
+      name: 'More Visits',
+      description: 'Bring a community to your space.',
+    ),
     OfferOption(
       id: 'product_awareness',
       slug: 'product_awareness',
       name: 'Product Awareness',
+      description: 'Get your product discovered by the right people.',
     ),
     OfferOption(
       id: 'content_tagged_posts',
       slug: 'content_tagged_posts',
       name: 'Content / Tagged Posts',
+      description: 'Turn real experiences into social content.',
     ),
-    OfferOption(id: 'reviews', slug: 'reviews', name: 'Reviews'),
-    OfferOption(id: 'sales_revenue', slug: 'sales_revenue', name: 'Sales / Revenue'),
+    OfferOption(
+      id: 'reviews',
+      slug: 'reviews',
+      name: 'Reviews',
+      description: 'Get honest feedback and social proof.',
+    ),
+    OfferOption(
+      id: 'sales_revenue',
+      slug: 'sales_revenue',
+      name: 'Sales / Revenue',
+      description: 'Drive direct spend or purchases.',
+    ),
     OfferOption(
       id: 'community_event',
       slug: 'community_event',
       name: 'Community Event',
+      description: 'Host a real-life moment with a group.',
     ),
     OfferOption(
       id: 'product_testing',
       slug: 'product_testing',
       name: 'Product Testing',
+      description: 'Let people try it and share feedback.',
     ),
     OfferOption(
       id: 'recurring_partnership',
       slug: 'recurring_partnership',
       name: 'Recurring Partnership',
+      description: 'Build an ongoing community relationship.',
     ),
     OfferOption(
       id: 'community_perk',
       slug: 'community_perk',
       name: 'Community Perk / Member Discount',
+      description: 'Offer a discount or benefit to members.',
     ),
-    OfferOption(id: 'open_to_ideas', slug: 'open_to_ideas', name: 'Open to Ideas'),
+    OfferOption(
+      id: 'open_to_ideas',
+      slug: 'open_to_ideas',
+      name: 'Open to Ideas',
+      description: 'Let communities suggest the best format.',
+    ),
   ];
 
   static const List<OfferOption> _fallbackProductInteractions = [
