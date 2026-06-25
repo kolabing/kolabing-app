@@ -8,7 +8,6 @@ import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../widgets/category_icon.dart';
 import '../../../../widgets/kolabing_input.dart';
-import '../../enums/deliverable_type.dart';
 import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
 import '../../providers/offer_option_provider.dart';
@@ -20,10 +19,10 @@ import '../../providers/offer_option_provider.dart';
 /// The "what you offer in return" option LIST is admin-managed: it comes from
 /// [deliverablesProvider] (`GET /lookup/deliverables`, self-gating to the
 /// hardcoded launch list on 404/empty), so admins can edit labels/order or add
-/// options without an app release. STORAGE stays on the typed [DeliverableType]
-/// enum (the `offers_in_return[]` wire contract): each option's `slug` maps back
-/// via [DeliverableType.fromString], so the payload and backend validation are
-/// unchanged.
+/// options without an app release. STORAGE is the option's raw `slug` string
+/// (the `offers_in_return[]` wire contract) — never a closed enum, so a new
+/// admin-added option works immediately without an app release or risk of an
+/// unrecognized slug being silently miscoded as a different option.
 class EventDetailsScreen extends ConsumerStatefulWidget {
   const EventDetailsScreen({super.key});
 
@@ -138,25 +137,17 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
           const SizedBox(height: KolabingSpacing.md),
 
           // Deliverable type toggle cards (admin-managed list via
-          // deliverablesProvider; slug maps back onto DeliverableType for
-          // storage/wire).
+          // deliverablesProvider; storage is the raw slug string).
           ...deliverableOptions.map((option) {
-            final deliverable = DeliverableType.fromString(option.slug);
-            final isSelected = kolab.offersInReturn.contains(deliverable);
-            // Prefer the admin-provided label/description; fall back to the
-            // enum's static copy so a mid-flight empty value never renders blank.
-            final label = option.name.isNotEmpty
-                ? option.name
-                : deliverable.displayName;
-            final subtitle = (option.description?.isNotEmpty ?? false)
-                ? option.description!
-                : deliverable.subtitle;
+            final isSelected = kolab.offersInReturn.contains(option.slug);
+            final label = option.name;
+            final subtitle = option.description ?? '';
             return Padding(
               padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
               child: GestureDetector(
                 onTap: () => ref
                     .read(kolabFormProvider.notifier)
-                    .toggleOfferInReturn(deliverable),
+                    .toggleOfferInReturn(option.slug),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.all(KolabingSpacing.sm),

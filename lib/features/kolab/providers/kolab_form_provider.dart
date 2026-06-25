@@ -12,7 +12,6 @@ import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 import '../../profile/providers/gallery_provider.dart';
-import '../enums/deliverable_type.dart';
 import '../enums/intent_type.dart';
 import '../enums/need_type.dart';
 import '../enums/product_type.dart';
@@ -505,12 +504,12 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
-  void toggleOfferInReturn(DeliverableType deliverable) {
-    final offers = List<DeliverableType>.from(state.kolab.offersInReturn);
-    if (offers.contains(deliverable)) {
-      offers.remove(deliverable);
+  void toggleOfferInReturn(String slug) {
+    final offers = List<String>.from(state.kolab.offersInReturn);
+    if (offers.contains(slug)) {
+      offers.remove(slug);
     } else {
-      offers.add(deliverable);
+      offers.add(slug);
     }
     state = state.copyWith(
       kolab: state.kolab.copyWith(offersInReturn: offers),
@@ -518,7 +517,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
-  void updateOffersInReturn(List<DeliverableType> offers) {
+  void updateOffersInReturn(List<String> offers) {
     state = state.copyWith(
       kolab: state.kolab.copyWith(offersInReturn: offers),
       clearError: true,
@@ -647,12 +646,12 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
-  void toggleExpect(DeliverableType deliverable) {
-    final list = List<DeliverableType>.from(state.kolab.expects);
-    if (list.contains(deliverable)) {
-      list.remove(deliverable);
+  void toggleExpect(String slug) {
+    final list = List<String>.from(state.kolab.expects);
+    if (list.contains(slug)) {
+      list.remove(slug);
     } else {
-      list.add(deliverable);
+      list.add(slug);
     }
     state = state.copyWith(
       kolab: state.kolab.copyWith(expects: list),
@@ -673,7 +672,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
-  void updateExpects(List<DeliverableType> expects) {
+  void updateExpects(List<String> expects) {
     state = state.copyWith(
       kolab: state.kolab.copyWith(expects: expects),
       clearError: true,

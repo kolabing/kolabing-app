@@ -10,7 +10,6 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../widgets/category_icon.dart';
 import '../../../../widgets/kolabing_button.dart';
 import '../../../../widgets/kolabing_input.dart';
-import '../../enums/deliverable_type.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
 import '../../models/offer_option.dart';
@@ -171,18 +170,21 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
         ),
         const SizedBox(height: KolabingSpacing.sm),
-        MultiSelectChips<OfferOption>(
-          items: ref.watch(deliverablesProvider).when(
+        Builder(builder: (context) {
+          final deliverableOptions = ref.watch(deliverablesProvider).when(
                 data: (options) => options,
                 loading: () => const <OfferOption>[],
                 error: (_, _) => const <OfferOption>[],
-              ),
-          selected: kolab.expects
-              .map((d) => OfferOption(id: d.toApiValue(), slug: d.toApiValue(), name: d.displayName))
-              .toList(),
-          labelBuilder: (o) => o.name,
-          onToggle: (option) => notifier.toggleExpect(DeliverableType.fromString(option.slug)),
-        ),
+              );
+          return MultiSelectChips<OfferOption>(
+            items: deliverableOptions,
+            selected: deliverableOptions
+                .where((o) => kolab.expects.contains(o.slug))
+                .toList(),
+            labelBuilder: (o) => o.name,
+            onToggle: (option) => notifier.toggleExpect(option.slug),
+          );
+        }),
         const SizedBox(height: KolabingSpacing.md),
         Container(
           padding: const EdgeInsets.all(KolabingSpacing.sm),

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
 import 'package:kolabing_app/features/business/providers/profile_provider.dart';
-import 'package:kolabing_app/features/kolab/enums/deliverable_type.dart';
 import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
 import 'package:kolabing_app/features/kolab/enums/need_type.dart';
 import 'package:kolabing_app/features/kolab/models/kolab.dart';
@@ -39,7 +38,7 @@ void main() {
       communityTypes: const ['Founders'],
       communitySize: 120,
       typicalAttendance: 45,
-      offersInReturn: const [DeliverableType.socialMedia],
+      offersInReturn: const ['social_media'],
       media: const [
         KolabMedia(url: 'https://example.com/photo.jpg', type: 'photo'),
       ],

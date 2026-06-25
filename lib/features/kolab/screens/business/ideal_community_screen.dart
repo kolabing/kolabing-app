@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
-import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../widgets/kolabing_input.dart';
 import '../../../onboarding/providers/onboarding_provider.dart';
-import '../../enums/deliverable_type.dart';
 import '../../models/kolab.dart';
 import '../../providers/kolab_form_provider.dart';
 import '../../widgets/multi_select_chips.dart';
@@ -21,7 +18,10 @@ import '../../widgets/multi_select_chips.dart';
 ///     /lookup/community-types endpoint (shared with onboarding) — no longer
 ///     hardcoded client-side.
 ///   - Minimum community size (optional)
-///   - What you expect from the community (deliverable toggle cards)
+///
+/// "What you expect from the community" lives on the Offering step instead
+/// (the same kolab.expects field, via the dynamic deliverablesProvider
+/// multi-select) — not duplicated here.
 ///
 /// This is a plain widget -- the parent provides Scaffold, AppBar, step
 /// indicator, and action bar.
@@ -140,114 +140,8 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
             },
           ),
           const SizedBox(height: KolabingSpacing.lg),
-
-          // -- What you expect from the community
-          Text(
-            'WHAT DO YOU EXPECT FROM THE COMMUNITY?',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
-          ),
-          const SizedBox(height: KolabingSpacing.md),
-
-          ...DeliverableType.values.map((deliverable) {
-            final isSelected = kolab.expects.contains(deliverable);
-            return Padding(
-              padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-              child: _ToggleCard(
-                title: deliverable.displayName,
-                subtitle: deliverable.subtitle,
-                isSelected: isSelected,
-                onTap: () => notifier.toggleExpect(deliverable),
-              ),
-            );
-          }),
-
-          const SizedBox(height: KolabingSpacing.lg),
         ],
       ),
     );
   }
-}
-
-// =============================================================================
-// Shared helpers (file-private)
-// =============================================================================
-
-// =============================================================================
-// Toggle Card
-// =============================================================================
-
-class _ToggleCard extends StatelessWidget {
-  const _ToggleCard({
-    required this.title,
-    required this.subtitle,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap,
-    child: AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      decoration: BoxDecoration(
-        color: isSelected ? context.colors.softYellow : context.colors.surface,
-        borderRadius: KolabingRadius.borderRadiusMd,
-        border: Border.all(
-          color: isSelected ? context.colors.primary : context.colors.darkBorder,
-        ),
-      ),
-      child: Row(
-        children: [
-          // Checkbox
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: isSelected ? context.colors.primary : Colors.transparent,
-              borderRadius: KolabingRadius.borderRadiusXs,
-              border: Border.all(
-                color: isSelected
-                    ? context.colors.primary
-                    : context.colors.darkBorder,
-                width: 1.5,
-              ),
-            ),
-            child: isSelected
-                ? Icon(
-                    LucideIcons.check,
-                    size: 14,
-                    color: context.colors.onPrimary,
-                  )
-                : null,
-          ),
-          const SizedBox(width: KolabingSpacing.sm),
-
-          // Title + subtitle
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
 }

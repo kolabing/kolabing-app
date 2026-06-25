@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kolabing_app/features/kolab/enums/deliverable_type.dart';
 import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
 import 'package:kolabing_app/features/kolab/enums/need_type.dart';
 import 'package:kolabing_app/features/kolab/enums/product_type.dart';
@@ -356,9 +355,7 @@ class Kolab {
     communitySize: _parseInt(json['community_size']),
     typicalAttendance: _parseInt(json['typical_attendance']),
     offersInReturn: json['offers_in_return'] is List
-        ? (json['offers_in_return'] as List)
-              .map((e) => DeliverableType.fromString(e.toString()))
-              .toList()
+        ? (json['offers_in_return'] as List).map((e) => e.toString()).toList()
         : const [],
     venuePreference: json['venue_preference'] != null
         ? VenuePreference.fromString(json['venue_preference'].toString())
@@ -383,9 +380,7 @@ class Kolab {
         : const [],
     minCommunitySize: _parseInt(json['min_community_size']),
     expects: json['expects'] is List
-        ? (json['expects'] as List)
-              .map((e) => DeliverableType.fromString(e.toString()))
-              .toList()
+        ? (json['expects'] as List).map((e) => e.toString()).toList()
         : const [],
     pastEvents: json['past_events'] is List
         ? (json['past_events'] as List)
@@ -446,7 +441,7 @@ class Kolab {
   final List<String> communityTypes;
   final int? communitySize;
   final int? typicalAttendance;
-  final List<DeliverableType> offersInReturn;
+  final List<String> offersInReturn;
   final VenuePreference? venuePreference;
 
   // Venue promotion fields
@@ -463,7 +458,7 @@ class Kolab {
   final List<String> offering;
   final List<String> seekingCommunities;
   final int? minCommunitySize;
-  final List<DeliverableType> expects;
+  final List<String> expects;
 
   // Portfolio
   final List<PastEvent> pastEvents;
@@ -514,7 +509,7 @@ class Kolab {
     if (communitySize != null) 'community_size': communitySize,
     if (typicalAttendance != null) 'typical_attendance': typicalAttendance,
     if (offersInReturn.isNotEmpty)
-      'offers_in_return': offersInReturn.map((o) => o.toApiValue()).toList(),
+      'offers_in_return': offersInReturn,
     if (venuePreference != null)
       'venue_preference': venuePreference!.toApiValue(),
     if (venueName != null && venueName!.isNotEmpty) 'venue_name': venueName,
@@ -530,7 +525,7 @@ class Kolab {
       'seeking_communities': seekingCommunities,
     if (minCommunitySize != null) 'min_community_size': minCommunitySize,
     if (expects.isNotEmpty)
-      'expects': expects.map((e) => e.toApiValue()).toList(),
+      'expects': expects,
     if (pastEvents.isNotEmpty)
       'past_events': pastEvents.map((e) => e.toJson()).toList(),
     if (publishedAt != null) 'published_at': publishedAt!.toIso8601String(),
@@ -571,7 +566,7 @@ class Kolab {
     List<String>? communityTypes,
     int? communitySize,
     int? typicalAttendance,
-    List<DeliverableType>? offersInReturn,
+    List<String>? offersInReturn,
     VenuePreference? venuePreference,
     String? venueName,
     VenueType? venueType,
@@ -582,7 +577,7 @@ class Kolab {
     List<String>? offering,
     List<String>? seekingCommunities,
     int? minCommunitySize,
-    List<DeliverableType>? expects,
+    List<String>? expects,
     List<PastEvent>? pastEvents,
     DateTime? publishedAt,
     DateTime? createdAt,

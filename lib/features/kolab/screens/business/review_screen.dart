@@ -14,6 +14,7 @@ import '../../models/kolab.dart';
 import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
 import '../../providers/offer_option_provider.dart';
+import '../../utils/deliverable_label.dart';
 
 /// Step 6 (venue / product flows): Review & Publish.
 ///
@@ -60,6 +61,12 @@ class ReviewScreen extends ConsumerWidget {
                 .toList(),
             orElse: () => kolab.highlights,
           );
+    final deliverableOptions = ref.watch(deliverablesProvider).maybeWhen(
+          data: (options) => options,
+          orElse: () => const <OfferOption>[],
+        );
+    final expectLabels =
+        kolab.expects.map((slug) => deliverableLabel(slug, deliverableOptions)).toList();
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(
@@ -75,6 +82,7 @@ class ReviewScreen extends ConsumerWidget {
           isVenue: isVenue,
           goalLabel: goalLabel,
           highlightLabels: highlightLabels,
+          expectLabels: expectLabels,
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -290,12 +298,14 @@ class _PreviewCard extends StatelessWidget {
     required this.isVenue,
     this.goalLabel,
     this.highlightLabels = const [],
+    this.expectLabels = const [],
   });
 
   final Kolab kolab;
   final bool isVenue;
   final String? goalLabel;
   final List<String> highlightLabels;
+  final List<String> expectLabels;
 
   @override
   Widget build(BuildContext context) {
@@ -453,13 +463,11 @@ class _PreviewCard extends StatelessWidget {
                   _PreviewChipRow(labels: kolab.seekingCommunities),
                 ],
 
-                if (kolab.expects.isNotEmpty) ...[
+                if (expectLabels.isNotEmpty) ...[
                   const SizedBox(height: KolabingSpacing.md),
                   const _PreviewLabel(label: "WHAT WE'D LIKE FROM THE COMMUNITY"),
                   const SizedBox(height: 4),
-                  _PreviewChipRow(
-                    labels: kolab.expects.map((d) => d.displayName).toList(),
-                  ),
+                  _PreviewChipRow(labels: expectLabels),
                 ],
 
                 if (highlightLabels.isNotEmpty) ...[

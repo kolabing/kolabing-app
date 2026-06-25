@@ -8,7 +8,10 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../opportunity/models/opportunity.dart';
+import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
+import '../../providers/offer_option_provider.dart';
+import '../../utils/deliverable_label.dart';
 
 /// Community step 5: Review & Publish
 ///
@@ -32,6 +35,10 @@ class ReviewScreen extends ConsumerWidget {
     final state = ref.watch(kolabFormProvider);
     final kolab = state.kolab;
     final dateFormat = DateFormat('MMM d, yyyy');
+    final deliverableOptions = ref.watch(deliverablesProvider).maybeWhen(
+          data: (options) => options,
+          orElse: () => const <OfferOption>[],
+        );
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -142,7 +149,10 @@ class ReviewScreen extends ConsumerWidget {
                           spacing: KolabingSpacing.xs,
                           runSpacing: KolabingSpacing.xs,
                           children: kolab.offersInReturn
-                              .map((d) => _buildChip(context, d.displayName))
+                              .map((slug) => _buildChip(
+                                    context,
+                                    deliverableLabel(slug, deliverableOptions),
+                                  ))
                               .toList(),
                         ),
                     ],

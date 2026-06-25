@@ -11,6 +11,9 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../enums/intent_type.dart';
 import '../models/kolab.dart';
+import '../models/offer_option.dart';
+import '../providers/offer_option_provider.dart';
+import '../utils/deliverable_label.dart';
 
 /// Review card that displays a summary of the Kolab before publishing.
 ///
@@ -33,6 +36,10 @@ class KolabReviewCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final deliverableOptions = ref.watch(deliverablesProvider).maybeWhen(
+          data: (options) => options,
+          orElse: () => const <OfferOption>[],
+        );
     return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -40,7 +47,7 @@ class KolabReviewCard extends ConsumerWidget {
         border: Border.all(color: context.colors.hairline),
         boxShadow: [KolabingShadows.card],
       ),
-      child: Column(children: _buildSections(l10n)),
+      child: Column(children: _buildSections(l10n, deliverableOptions)),
     );
   }
 
@@ -48,10 +55,10 @@ class KolabReviewCard extends ConsumerWidget {
   // Section dispatcher based on intent type
   // ---------------------------------------------------------------------------
 
-  List<Widget> _buildSections(AppLocalizations l10n) {
+  List<Widget> _buildSections(AppLocalizations l10n, List<OfferOption> deliverableOptions) {
     switch (kolab.intentType) {
       case IntentType.communitySeeking:
-        return _buildCommunitySeekingSections(l10n);
+        return _buildCommunitySeekingSections(l10n, deliverableOptions);
       case IntentType.venuePromotion:
         return _buildVenuePromotionSections(l10n);
       case IntentType.productPromotion:
@@ -63,7 +70,7 @@ class KolabReviewCard extends ConsumerWidget {
   // Community Seeking sections
   // ---------------------------------------------------------------------------
 
-  List<Widget> _buildCommunitySeekingSections(AppLocalizations l10n) => [
+  List<Widget> _buildCommunitySeekingSections(AppLocalizations l10n, List<OfferOption> deliverableOptions) => [
     // Step 0 -- Title & Description
     _ReviewSection(
       icon: LucideIcons.fileText,
@@ -141,7 +148,9 @@ class KolabReviewCard extends ConsumerWidget {
       onEdit: onEditSection,
       child: kolab.offersInReturn.isNotEmpty
           ? _ChipList(
-              items: kolab.offersInReturn.map((o) => o.displayName).toList(),
+              items: kolab.offersInReturn
+                  .map((slug) => deliverableLabel(slug, deliverableOptions))
+                  .toList(),
             )
           : _EmptyHint(text: l10n.kolabReviewEmptyOffers),
     ),
