@@ -179,9 +179,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     final errors = formState.fieldErrors;
     final notifier = ref.read(kolabFormProvider.notifier);
 
-    final l10n = AppLocalizations.of(context);
     final isVenue = formState.intentType == IntentType.venuePromotion;
-    final title = isVenue ? l10n.mediaTitleVenue : l10n.mediaTitleProduct;
 
     // C7: surface a "Use venue photos" CTA only on venue promotion when the
     // business profile actually has photos to reuse.
@@ -203,12 +201,12 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       ),
       children: [
         Text(
-          title,
+          'ADD PHOTOS',
           style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
-          l10n.mediaSubtitle,
+          'Use your business photo, choose from existing photos, or upload a new one.',
           style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -219,31 +217,30 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
             child: Text(errors['media']!, style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error)),
           ),
 
-        // Soft tip (not a hard block) when no photo exists anywhere —
-        // business profile gallery, venue photos, or kolab.media are all
-        // empty. Mirrors KolabFormNotifier._hasUsableDefaultPhoto.
-        if (hasNoPhotoAnywhere)
-          Container(
-            margin: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-            padding: const EdgeInsets.all(KolabingSpacing.sm),
-            decoration: BoxDecoration(
-              color: context.colors.softYellow,
-              borderRadius: KolabingRadius.borderRadiusSm,
-            ),
-            child: Text(
-              'Kolabs with photos get more interest. Add one from your gallery '
-              'or upload a new one.',
-              style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurface, height: 1.4),
-            ),
+        // Standing tip (always visible, never a hard block) — sets the
+        // expectation that a photo helps but isn't required to continue.
+        Container(
+          margin: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+          padding: const EdgeInsets.all(KolabingSpacing.sm),
+          decoration: BoxDecoration(
+            color: context.colors.softYellow,
+            borderRadius: KolabingRadius.borderRadiusSm,
           ),
+          child: Text(
+            hasNoPhotoAnywhere
+                ? 'Kolabs with photos usually get more interest, but you can continue and add one later.'
+                : 'Kolabs with photos usually get more interest.',
+            style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurface, height: 1.4),
+          ),
+        ),
 
-        // Reuse previously uploaded profile gallery photos, plus venue fallback.
+        // Reuse previously uploaded profile gallery photos, plus venue/profile fallback.
         if (showReuseCta) ...[
           OutlinedButton.icon(
             onPressed: _isUploading ? null : _selectExistingPhotos,
             icon: const Icon(LucideIcons.imagePlus, size: 18),
             label: Text(
-              l10n.mediaSelectFromLibrary,
+              isVenue ? 'Use business photo or choose existing' : 'Choose existing photo',
               style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
             ),
             style: OutlinedButton.styleFrom(
@@ -263,7 +260,7 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
         // Upload progress
         if (_isUploading)
           Padding(
-            padding: EdgeInsets.only(bottom: KolabingSpacing.sm),
+            padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
             child: LinearProgressIndicator(color: context.colors.primary),
           ),
 
