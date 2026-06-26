@@ -47,9 +47,9 @@ enum IntentType {
       case IntentType.communitySeeking:
         return 6;
       case IntentType.venuePromotion:
-        return 7;
+        return 8;
       case IntentType.productPromotion:
-        return 7;
+        return 8;
     }
   }
 

@@ -12,7 +12,8 @@ import '../../../utils/remote_media_url.dart';
 /// Availability mode for an opportunity
 enum AvailabilityMode {
   oneTime,
-  recurring;
+  recurring,
+  immediate;
 
   String get displayName {
     switch (this) {
@@ -20,6 +21,8 @@ enum AvailabilityMode {
         return 'One Time';
       case AvailabilityMode.recurring:
         return 'Recurring';
+      case AvailabilityMode.immediate:
+        return 'Immediate / Always Available';
     }
   }
 
@@ -29,6 +32,8 @@ enum AvailabilityMode {
         return 'Available for one occasion';
       case AvailabilityMode.recurring:
         return 'Open to multiple sessions';
+      case AvailabilityMode.immediate:
+        return 'Ready to start today';
     }
   }
 
@@ -38,6 +43,8 @@ enum AvailabilityMode {
         return 'one_time';
       case AvailabilityMode.recurring:
         return 'recurring';
+      case AvailabilityMode.immediate:
+        return 'immediate';
     }
   }
 
@@ -47,6 +54,8 @@ enum AvailabilityMode {
         return AvailabilityMode.oneTime;
       case 'recurring':
         return AvailabilityMode.recurring;
+      case 'immediate':
+        return AvailabilityMode.immediate;
       case 'flexible':
       default:
         return AvailabilityMode.oneTime;

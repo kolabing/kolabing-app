@@ -126,14 +126,17 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
 
           const SizedBox(height: KolabingSpacing.md),
 
-          // 3 availability mode cards
+          // Availability mode cards. `immediate` is business-Kolab-only (per
+          // the business flow redesign) and stays out of this picker.
           Row(
-            children: AvailabilityMode.values.map((mode) {
+            children: AvailabilityMode.values
+                .where((mode) => mode != AvailabilityMode.immediate)
+                .map((mode) {
               final isSelected = kolab.availabilityMode == mode;
               return Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    right: mode != AvailabilityMode.values.last
+                    right: mode != AvailabilityMode.recurring
                         ? KolabingSpacing.xs
                         : 0,
                   ),
@@ -309,6 +312,10 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         return _buildOneTimeFields(kolab, formState);
       case AvailabilityMode.recurring:
         return _buildRecurringFields(kolab, formState);
+      case AvailabilityMode.immediate:
+        // Business-Kolab-only mode; unreachable on the community-seeking
+        // flow's availability picker.
+        return const [];
     }
   }
 
@@ -672,6 +679,8 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         return LucideIcons.calendarCheck;
       case AvailabilityMode.recurring:
         return LucideIcons.repeat;
+      case AvailabilityMode.immediate:
+        return LucideIcons.zap;
     }
   }
 }

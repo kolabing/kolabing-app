@@ -932,12 +932,16 @@ class _CreateOpportunityScreenState
         _buildLabel(l10n.createOpportunityAvailabilityLabel),
         const SizedBox(height: KolabingSpacing.xs),
         Row(
-          children: AvailabilityMode.values.map((mode) {
+          // `immediate` is business-Kolab-only (per the business flow
+          // redesign) and stays out of this picker.
+          children: AvailabilityMode.values
+              .where((mode) => mode != AvailabilityMode.immediate)
+              .map((mode) {
             final isSelected = opp.availabilityMode == mode;
             return Expanded(
               child: Padding(
                 padding: EdgeInsets.only(
-                  right: mode != AvailabilityMode.values.last
+                  right: mode != AvailabilityMode.recurring
                       ? KolabingSpacing.xs
                       : 0,
                 ),
@@ -1657,6 +1661,10 @@ class _CreateOpportunityScreenState
         return _buildOneTimeFields(opp, formState);
       case AvailabilityMode.recurring:
         return _buildRecurringFields(opp, formState);
+      case AvailabilityMode.immediate:
+        // Business-Kolab-only mode; unreachable on the Opportunity
+        // creation flow's availability picker.
+        return const [];
     }
   }
 
@@ -2035,6 +2043,8 @@ class _CreateOpportunityScreenState
         return LucideIcons.calendarCheck;
       case AvailabilityMode.recurring:
         return LucideIcons.repeat;
+      case AvailabilityMode.immediate:
+        return LucideIcons.zap;
     }
   }
 

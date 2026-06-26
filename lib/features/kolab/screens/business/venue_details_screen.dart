@@ -7,8 +7,13 @@ import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../models/kolab.dart';
+import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
+import '../../providers/offer_option_provider.dart';
+import '../../widgets/kolab_examples_box.dart';
+import '../../widgets/multi_select_chips.dart';
 
 /// Step 0 for the venue promotion flow.
 ///
@@ -27,8 +32,19 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
   final _descriptionController = TextEditingController();
   // H2: offer headline pinned to the discovery card.
   final _headlineController = TextEditingController();
+  final List<OfferOption> _selectedVenueFits = [];
 
   bool _didInit = false;
+
+  void _appendVenueFitsToDescription(KolabFormNotifier notifier, Kolab kolab) {
+    final base = kolab.description.split('\n\nBest for:').first.trim();
+    if (_selectedVenueFits.isEmpty) {
+      notifier.updateDescription(base);
+      return;
+    }
+    final fitLabels = _selectedVenueFits.map((o) => o.name).join(', ');
+    notifier.updateDescription('$base\n\nBest for: $fitLabels');
+  }
 
   @override
   void dispose() {
@@ -80,15 +96,11 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
         ],
         _FieldLabel(label: l10n.venueDetailsListingTitleLabel),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _titleController,
           maxLength: 255,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.venueDetailsListingTitleHint,
-            error: errors['title'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.venueDetailsListingTitleHint,
+          errorText: errors['title'],
           onChanged: notifier.updateTitle,
           // C1: dismiss keyboard on tap-outside so the action bar is reachable.
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
@@ -96,19 +108,21 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
         const SizedBox(height: KolabingSpacing.md),
         _FieldLabel(label: l10n.venueDetailsCampaignDescriptionLabel),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _descriptionController,
           maxLength: 2000,
           maxLines: 5,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.venueDetailsCampaignDescriptionHint,
-            error: errors['description'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.venueDetailsCampaignDescriptionHint,
+          errorText: errors['description'],
           onChanged: notifier.updateDescription,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
+        const SizedBox(height: KolabingSpacing.xs),
+        const KolabExamplesBox(examples: [
+          'A cozy café for post-run coffee and brunch.',
+          'A wellness studio for yoga, pilates, or community workshops.',
+          'A concept store for creative meetups, try-ons, or content days.',
+        ]),
         const SizedBox(height: KolabingSpacing.md),
         // H2: short, one-line offer headline shown on the discovery card.
         _FieldLabel(label: l10n.venueDetailsOfferHeadlineLabel),
@@ -118,18 +132,40 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _headlineController,
           maxLength: 50,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.venueDetailsOfferHeadlineHint,
-            error: errors['offer_headline'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.venueDetailsOfferHeadlineHint,
+          errorText: errors['offer_headline'],
           onChanged: notifier.updateOfferHeadline,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
+        const SizedBox(height: KolabingSpacing.lg),
+        const _FieldLabel(label: 'BEST FOR:'),
+        const SizedBox(height: KolabingSpacing.xs),
+        Builder(builder: (context) {
+          final venueFitsAsync = ref.watch(venueFitsProvider);
+          final options = venueFitsAsync.when(
+            data: (options) => options,
+            loading: () => const <OfferOption>[],
+            error: (_, _) => const <OfferOption>[],
+          );
+          return MultiSelectChips<OfferOption>(
+            items: options,
+            selected: _selectedVenueFits,
+            labelBuilder: (o) => o.name,
+            onToggle: (option) {
+              setState(() {
+                if (_selectedVenueFits.contains(option)) {
+                  _selectedVenueFits.remove(option);
+                } else {
+                  _selectedVenueFits.add(option);
+                }
+              });
+              _appendVenueFitsToDescription(notifier, kolab);
+            },
+          );
+        }),
       ],
     );
   }
@@ -214,47 +250,6 @@ class _SummaryRow extends StatelessWidget {
         ],
       );
 }
-
-InputDecoration _inputDecoration(
-  BuildContext context, {
-  required String hint,
-  String? error,
-}) =>
-    InputDecoration(
-      hintText: hint,
-      hintStyle: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
-      errorText: error,
-      errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
-      filled: true,
-      fillColor: context.colors.surface,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.md,
-        vertical: 14,
-      ),
-      border: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.darkBorder),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.darkBorder),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.borderFocus, width: 1.5),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.error),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.error, width: 1.5),
-      ),
-    );
-
-TextStyle _inputTextStyle(BuildContext context) =>
-    KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface);
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.label});

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
 import 'package:kolabing_app/features/business/providers/profile_provider.dart';
-import 'package:kolabing_app/features/kolab/enums/deliverable_type.dart';
 import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
 import 'package:kolabing_app/features/kolab/enums/need_type.dart';
 import 'package:kolabing_app/features/kolab/models/kolab.dart';
@@ -39,7 +38,7 @@ void main() {
       communityTypes: const ['Founders'],
       communitySize: 120,
       typicalAttendance: 45,
-      offersInReturn: const [DeliverableType.socialMedia],
+      offersInReturn: const ['social_media'],
       media: const [
         KolabMedia(url: 'https://example.com/photo.jpg', type: 'photo'),
       ],
@@ -61,6 +60,42 @@ void main() {
     expect(state.kolab.media.single.url, 'https://example.com/photo.jpg');
     expect(state.kolab.venuePreference, VenuePreference.noVenue);
   });
+
+  test('useDefaultCover adds a single default-cover media entry for the given '
+      'intent', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final notifier = container.read(kolabFormProvider.notifier);
+    notifier.selectIntent(IntentType.venuePromotion);
+
+    notifier.useDefaultCover(IntentType.venuePromotion);
+
+    final media = container.read(kolabFormProvider).kolab.media;
+    expect(media, hasLength(1));
+    expect(media.single.isDefaultCover, isTrue);
+    expect(media.single.url, contains('/storage/default-kolab-covers/venue_'));
+    expect(media.single.type, 'image');
+    expect(media.single.sortOrder, 0);
+  });
+
+  test(
+    'useDefaultCover replaces an existing default cover instead of stacking',
+    () {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+
+      final notifier = container.read(kolabFormProvider.notifier);
+      notifier.selectIntent(IntentType.productPromotion);
+
+      notifier.useDefaultCover(IntentType.productPromotion);
+      notifier.useDefaultCover(IntentType.productPromotion);
+
+      final media = container.read(kolabFormProvider).kolab.media;
+      expect(media, hasLength(1));
+      expect(media.single.isDefaultCover, isTrue);
+    },
+  );
 
   group('community seeking logistics validation', () {
     ProviderContainer createContainer() {

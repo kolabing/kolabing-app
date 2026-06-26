@@ -289,70 +289,77 @@ class _CommunityOfferDetailScreenState
           children: [
             Row(
               children: [
-                GestureDetector(
-                  // When the identity is blurred (free business viewing a
-                  // community post) the profile is not yet unlocked, so the
-                  // tap-through to the public profile is disabled.
-                  onTap:
-                      opportunity.creatorProfile != null && !hideCreatorIdentity
-                      ? () => context.push(
-                          '/profile/${opportunity.creatorProfile!.id}',
-                          extra: opportunity.creatorProfile,
-                        )
-                      : null,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Community LOGO — Gaussian-blurred when hidden.
-                      BlurredIdentity(
-                        enabled: hideCreatorIdentity,
-                        sigma: 14,
-                        borderRadius: BorderRadius.circular(28),
-                        child: _CreatorAvatar(
-                          avatarUrl: opportunity.creatorProfile?.avatarUrl,
-                          initial: opportunity.creatorProfile?.initial ?? '?',
-                          size: 56,
+                Expanded(
+                  child: GestureDetector(
+                    // When the identity is blurred (free business viewing a
+                    // community post) the profile is not yet unlocked, so the
+                    // tap-through to the public profile is disabled.
+                    onTap:
+                        opportunity.creatorProfile != null &&
+                            !hideCreatorIdentity
+                        ? () => context.push(
+                            '/profile/${opportunity.creatorProfile!.id}',
+                            extra: opportunity.creatorProfile,
+                          )
+                        : null,
+                    child: Row(
+                      children: [
+                        // Community LOGO — Gaussian-blurred when hidden.
+                        BlurredIdentity(
+                          enabled: hideCreatorIdentity,
+                          sigma: 14,
+                          borderRadius: BorderRadius.circular(28),
+                          child: _CreatorAvatar(
+                            avatarUrl: opportunity.creatorProfile?.avatarUrl,
+                            initial: opportunity.creatorProfile?.initial ?? '?',
+                            size: 56,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: KolabingSpacing.sm),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Community NAME — Gaussian-blurred when hidden.
-                          BlurredIdentity(
-                            enabled: hideCreatorIdentity,
-                            sigma: 8,
-                            child: Text(
-                              opportunity.creatorProfile?.displayName ??
-                                  AppLocalizations.of(
-                                    context,
-                                  ).communityOfferDetailUnknown,
-                              style: KolabingTextStyles.bodyLarge.copyWith(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: context.colors.onSurface,
+                        const SizedBox(width: KolabingSpacing.sm),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Community NAME — Gaussian-blurred when hidden.
+                              BlurredIdentity(
+                                enabled: hideCreatorIdentity,
+                                sigma: 8,
+                                child: Text(
+                                  opportunity.creatorProfile?.displayName ??
+                                      AppLocalizations.of(
+                                        context,
+                                      ).communityOfferDetailUnknown,
+                                  style: KolabingTextStyles.bodyLarge.copyWith(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                    color: context.colors.onSurface,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                              Text(
+                                hideCreatorIdentity
+                                    ? AppLocalizations.of(
+                                        context,
+                                      ).communityOfferDetailSubscribeToReveal
+                                    : (opportunity.creatorProfile?.userType ??
+                                          ''),
+                                style: KolabingTextStyles.bodySmall.copyWith(
+                                  fontWeight: FontWeight.w500,
+                                  color: context.colors.onSurfaceVariant,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
-                          Text(
-                            hideCreatorIdentity
-                                ? AppLocalizations.of(
-                                    context,
-                                  ).communityOfferDetailSubscribeToReveal
-                                : (opportunity.creatorProfile?.userType ?? ''),
-                            style: KolabingTextStyles.bodySmall.copyWith(
-                              fontWeight: FontWeight.w500,
-                              color: context.colors.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(width: KolabingSpacing.sm),
                 _StatusBadge(status: opportunity.status),
               ],
             ),

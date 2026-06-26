@@ -64,12 +64,12 @@ class MultiSelectChips<T> extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               color: isSelected
-                  ? context.colors.softAccent
+                  ? context.colors.softYellow
                   : context.colors.surface,
               borderRadius: KolabingRadius.borderRadiusSm,
               border: Border.all(
                 color: isSelected
-                    ? context.colors.secondary
+                    ? context.colors.primary
                     : context.colors.darkBorder,
               ),
             ),
@@ -83,17 +83,13 @@ class MultiSelectChips<T> extends StatelessWidget {
                     Icon(
                       icon,
                       size: 16,
-                      color: isSelected
-                          ? context.colors.secondary
-                          : context.colors.onSurface,
+                      color: context.colors.onSurface,
                     ),
                     const SizedBox(width: KolabingSpacing.xxs),
                   ],
                   Text(
                     labelBuilder(item),
-                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected
-                          ? context.colors.secondary
-                          : context.colors.onSurface),
+                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: context.colors.onSurface),
                   ),
                 ],
               ),

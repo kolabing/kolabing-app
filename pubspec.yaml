@@ -112,6 +112,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/defaults/
     - assets/brand/
     - assets/icons/
     - assets/icons/categories/

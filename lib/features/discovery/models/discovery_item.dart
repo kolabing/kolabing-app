@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../utils/remote_media_url.dart';
 import '../../opportunity/models/opportunity.dart';
 
 @immutable
@@ -35,7 +36,9 @@ class DiscoveryItem {
     description: json['description']?.toString() ?? '',
     preferredCity: json['preferred_city']?.toString() ?? '',
     area: json['area']?.toString(),
-    coverPhotoUrl: json['cover_photo_url']?.toString(),
+    coverPhotoUrl: normalizeRemoteMediaUrlOrNull(
+      json['cover_photo_url']?.toString(),
+    ),
     publishedAt: _parseDateTime(json['published_at']),
     offerHeadline: _firstNonEmptyString(<Object?>[
       json['offer_headline'],
@@ -425,7 +428,9 @@ class DiscoveryCreatorProfile {
       DiscoveryCreatorProfile(
         id: json['id']?.toString() ?? '',
         displayName: json['display_name']?.toString() ?? 'Unknown',
-        avatarUrl: json['avatar_url']?.toString(),
+        avatarUrl: normalizeRemoteMediaUrlOrNull(
+          json['avatar_url']?.toString(),
+        ),
       );
 
   final String id;
