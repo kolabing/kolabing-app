@@ -58,4 +58,46 @@ void main() {
       expect(kolab.offersInReturn, ['another_unknown_option']);
     });
   });
+
+  group('KolabMedia.isDefaultCover', () {
+    test('defaults to false for a regular constructed instance', () {
+      const media = KolabMedia(url: 'https://example.com/real-photo.jpg', type: 'image');
+      expect(media.isDefaultCover, isFalse);
+    });
+
+    test('fromJson detects a default cover URL', () {
+      final media = KolabMedia.fromJson({
+        'url': 'https://api.kolabing.com/storage/default-kolab-covers/venue_1.png',
+        'type': 'image',
+        'sort_order': 0,
+      });
+      expect(media.isDefaultCover, isTrue);
+    });
+
+    test('fromJson does not flag a real uploaded photo', () {
+      final media = KolabMedia.fromJson({
+        'url': 'https://api.kolabing.com/storage/kolabs/real-upload.jpg',
+        'type': 'image',
+        'sort_order': 0,
+      });
+      expect(media.isDefaultCover, isFalse);
+    });
+
+    test('toJson omits isDefaultCover (client-only flag)', () {
+      const media = KolabMedia(
+        url: 'https://api.kolabing.com/storage/default-kolab-covers/venue_1.png',
+        type: 'image',
+        isDefaultCover: true,
+      );
+      expect(media.toJson().containsKey('isDefaultCover'), isFalse);
+      expect(media.toJson().containsKey('is_default_cover'), isFalse);
+    });
+
+    test('copyWith preserves isDefaultCover when not overridden', () {
+      const media = KolabMedia(url: 'https://example.com/a.jpg', type: 'image', isDefaultCover: true);
+      final copy = media.copyWith(sortOrder: 5);
+      expect(copy.isDefaultCover, isTrue);
+      expect(copy.sortOrder, 5);
+    });
+  });
 }

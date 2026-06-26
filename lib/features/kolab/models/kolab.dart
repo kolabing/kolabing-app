@@ -7,6 +7,7 @@ import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 
 import '../../../utils/profile_type_formatter.dart';
 import '../../../utils/remote_media_url.dart';
+import '../constants/default_covers.dart';
 
 // =============================================================================
 // Venue Preference
@@ -72,17 +73,31 @@ enum VenuePreference {
 /// A media attachment for a Kolab (photo or video).
 @immutable
 class KolabMedia {
-  const KolabMedia({required this.url, required this.type, this.sortOrder = 0});
+  const KolabMedia({
+    required this.url,
+    required this.type,
+    this.sortOrder = 0,
+    this.isDefaultCover = false,
+  });
 
-  factory KolabMedia.fromJson(Map<String, dynamic> json) => KolabMedia(
-    url: normalizeRemoteMediaUrl(json['url']?.toString() ?? ''),
-    type: json['type']?.toString() ?? 'image',
-    sortOrder: _parseInt(json['sort_order']) ?? 0,
-  );
+  factory KolabMedia.fromJson(Map<String, dynamic> json) {
+    final url = normalizeRemoteMediaUrl(json['url']?.toString() ?? '');
+    return KolabMedia(
+      url: url,
+      type: json['type']?.toString() ?? 'image',
+      sortOrder: _parseInt(json['sort_order']) ?? 0,
+      isDefaultCover: isDefaultCoverUrl(url),
+    );
+  }
 
   final String url;
   final String type;
   final int sortOrder;
+
+  /// Client-only UI flag: true when [url] is one of the Kolabing default
+  /// cover images rather than a business-uploaded photo. Never serialized —
+  /// the backend only ever sees a plain URL.
+  final bool isDefaultCover;
 
   Map<String, dynamic> toJson() => {
     'url': url,
@@ -90,12 +105,17 @@ class KolabMedia {
     'sort_order': sortOrder,
   };
 
-  KolabMedia copyWith({String? url, String? type, int? sortOrder}) =>
-      KolabMedia(
-        url: url ?? this.url,
-        type: type ?? this.type,
-        sortOrder: sortOrder ?? this.sortOrder,
-      );
+  KolabMedia copyWith({
+    String? url,
+    String? type,
+    int? sortOrder,
+    bool? isDefaultCover,
+  }) => KolabMedia(
+    url: url ?? this.url,
+    type: type ?? this.type,
+    sortOrder: sortOrder ?? this.sortOrder,
+    isDefaultCover: isDefaultCover ?? this.isDefaultCover,
+  );
 
   static int? _parseInt(Object? value) {
     if (value == null) return null;
