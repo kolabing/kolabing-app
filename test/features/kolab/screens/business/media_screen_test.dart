@@ -33,6 +33,14 @@ void main() {
     );
     // No hard error shown on initial load.
     expect(find.text('Add at least 1 photo'), findsNothing);
+
+    // The "Use default cover" card shows a local preview thumbnail of the
+    // bundled default-cover asset for the active intent type.
+    final previewImage = tester.widgetList<Image>(find.byType(Image)).firstWhere(
+          (image) => (image.image as AssetImage).assetName ==
+              'assets/images/defaults/product_cover_1.png',
+        );
+    expect(previewImage, isNotNull);
   });
 
   testWidgets('tapping "Use default cover" adds a badged default photo and hides the choice cards', (tester) async {

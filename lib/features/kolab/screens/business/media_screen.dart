@@ -235,6 +235,8 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
             icon: LucideIcons.imagePlus,
             title: 'Use default cover',
             helper: "We'll use a designed Kolabing cover for this type of Kolab.",
+            previewAssetPath:
+                'assets/images/defaults/${intent == IntentType.venuePromotion ? 'venue_1' : 'product_cover_1'}.png',
             onTap: _isUploading ? null : () => _useDefaultCover(intent),
           ),
           const SizedBox(height: KolabingSpacing.xs),
@@ -345,12 +347,14 @@ class _ChoiceCard extends StatelessWidget {
     required this.title,
     required this.helper,
     required this.onTap,
+    this.previewAssetPath,
   });
 
   final IconData icon;
   final String title;
   final String helper;
   final VoidCallback? onTap;
+  final String? previewAssetPath;
 
   @override
   Widget build(BuildContext context) => Material(
@@ -367,15 +371,34 @@ class _ChoiceCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: context.colors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, size: 20, color: context.colors.ink),
-                ),
+                previewAssetPath != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          previewAssetPath!,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: context.colors.primary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(icon, size: 20, color: context.colors.ink),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: context.colors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(icon, size: 20, color: context.colors.ink),
+                      ),
                 const SizedBox(width: KolabingSpacing.sm),
                 Expanded(
                   child: Column(
