@@ -4,7 +4,7 @@ Date: 2026-06-26
 
 ## Problem
 
-The Media step in the venue/product Kolab creation flow (`lib/features/kolab/screens/business/media_screen.dart`) hard-blocks "Next" when a business has no photo and no existing profile/venue photos to reuse. This feels like a forced upload. We want businesses to be able to publish with a Kolabing-designed default cover instead, scoped to exactly 2 types for now (product, venue), matching `IntentType.productPromotion` / `IntentType.venuePromotion`.
+The Media step in the venue/product Kolab creation flow (`lib/features/kolab/screens/business/media_screen.dart`) hard-blocks "Next" when a business has no photo and no existing profile/venue photos to reuse. This feels like a forced upload. We want businesses to be able to publish with a Kolabing default cover instead, scoped to exactly 2 types for now (product, venue), matching `IntentType.productPromotion` / `IntentType.venuePromotion`. Each type has 2 photo variants, picked at random when chosen, for visual variety.
 
 ## Constraint: no fake/broken URLs
 
@@ -29,17 +29,29 @@ class KolabMedia {
 
 ## New constants (Flutter)
 
+**Update (2026-06-26): 2 variants per type were provided, not 1.** Real photos were placed at `assets/images/defaults/product_cover_1.png`, `product_cover_2.png`, `venue_1.png`, `venue_2.png` (note the inconsistent venue filenames — no `_cover` infix; constants below match what's actually on disk rather than renaming files). Since there are 2 options per intent type, we pick one at random when the business taps "Use default cover", so not every product/venue Kolab on Explore looks identical. The pick happens once, at tap time — it is not re-randomized on rebuild (the chosen URL is just a normal `KolabMedia` entry in `kolab.media` after that).
+
 `lib/features/kolab/constants/default_covers.dart`:
 
 ```dart
-const _productDefaultCoverPath = '/storage/default-kolab-covers/product_cover.png';
-const _venueDefaultCoverPath = '/storage/default-kolab-covers/venue_cover.png';
+const _productDefaultCoverPaths = [
+  '/storage/default-kolab-covers/product_cover_1.png',
+  '/storage/default-kolab-covers/product_cover_2.png',
+];
+const _venueDefaultCoverPaths = [
+  '/storage/default-kolab-covers/venue_1.png',
+  '/storage/default-kolab-covers/venue_2.png',
+];
 
-String defaultCoverPathFor(IntentType intent) =>
-    intent == IntentType.venuePromotion ? _venueDefaultCoverPath : _productDefaultCoverPath;
+final _random = Random();
+
+String pickDefaultCoverPathFor(IntentType intent) {
+  final paths = intent == IntentType.venuePromotion ? _venueDefaultCoverPaths : _productDefaultCoverPaths;
+  return paths[_random.nextInt(paths.length)];
+}
 
 bool isDefaultCoverUrl(String url) =>
-    url.endsWith(_productDefaultCoverPath) || url.endsWith(_venueDefaultCoverPath);
+    _productDefaultCoverPaths.any(url.endsWith) || _venueDefaultCoverPaths.any(url.endsWith);
 ```
 
 `KolabMedia.fromJson` sets `isDefaultCover: isDefaultCoverUrl(url)`.
@@ -55,7 +67,7 @@ When `kolab.media.isEmpty` (no choice made yet — applies only to `venuePromoti
 Two equal-weight choice cards replace today's single "Use business photo or choose existing" button:
 
 1. **Upload my photo** (icon: camera/upload) — helper: "Best if you have a real product, venue, food, or event image." Taps into existing `_pickAndUploadPhoto()`.
-2. **Use default cover** (icon: image/sparkles) — helper: "We'll use a designed Kolabing cover for this type of Kolab." Tapping calls a new `notifier.useDefaultCover(intentType)` which pushes `KolabMedia(url: normalizeRemoteMediaUrl(defaultCoverPathFor(intent)), type: 'image', sortOrder: 0, isDefaultCover: true)` — no network call, no loading state.
+2. **Use default cover** (icon: image/sparkles) — helper: "We'll use a designed Kolabing cover for this type of Kolab." Tapping calls a new `notifier.useDefaultCover(intentType)` which pushes `KolabMedia(url: normalizeRemoteMediaUrl(pickDefaultCoverPathFor(intent)), type: 'image', sortOrder: 0, isDefaultCover: true)` — no network call, no loading state.
 
 Below both cards, small text: "You can replace it later with your own photo." The existing gallery/venue "choose existing photo" CTA (`_selectExistingPhotos`) is demoted to a small text link under the two cards (only shown when `showReuseCta` is true, same condition as today).
 
@@ -67,22 +79,21 @@ Once `kolab.media` is non-empty (default chosen or real photo uploaded), show th
 
 No change needed. `kolab.media.isEmpty` becomes `false` the instant a default cover is selected (it's a real entry in `kolab.media`), so the existing checks at lines 838-844 (venue) and 914-920 (product) already pass. `_hasUsableDefaultPhoto` (gallery/venue reuse fallback) is untouched and still works as today's secondary grace path.
 
-## Assets — what's needed before this ships to production
+## Assets — superseded: real photos provided instead of illustrations
 
-Two files need to be generated and placed by the user (not part of this implementation):
+The original style direction (illustrated/semi-abstract, hand-drawn line art) was the brief, but the assets actually placed at `kolabing-app/assets/images/defaults/` are **real lifestyle photos** — generic, staged community/gathering shots not tied to any specific real venue or product:
 
-1. `kolabing-app/assets/images/defaults/product_cover.png` — local bundled copy, used only as an instant preview thumbnail inside the "Use default cover" choice card (avoids a network round-trip just to show the picker UI). Declared in `pubspec.yaml` assets.
-2. `kolabing-app/assets/images/defaults/venue_cover.png` — same, for venue.
-3. `kolabing-v2/storage/app/public/default-kolab-covers/product_cover.png` — the production-serving copy (should be the same artwork as #1), reachable at `{APP_URL}/storage/default-kolab-covers/product_cover.png` once placed (storage symlink already exists, confirmed via the working `category-icons` convention).
-4. `kolabing-v2/storage/app/public/default-kolab-covers/venue_cover.png` — same, for venue.
+- `product_cover_1.png`, `product_cover_2.png` — a group sharing/unboxing food/product items.
+- `venue_1.png`, `venue_2.png` — people gathered at an outdoor café-style table.
 
-Until these files exist: the local choice-card preview falls back to a simple icon+label placeholder via `Image.asset(...).errorBuilder` (dev safety net only, never submitted to the API), and the actual submitted default-cover URL will 404 if a business picks it before the backend file is in place — same as any missing static asset, not a fabricated domain. This is acceptable for development; the two backend files must be in place before this ships to any real users.
+Per direct product decision, we proceed with these as the actual default covers rather than the illustrated style originally specified — they read as generic "community gathering" stock-style photography rather than a specific fake business, which is the main thing the original brief was guarding against (a default cover that looks like it depicts *this* business's real venue/product when it doesn't). The illustrated-style direction is dropped for v1; revisit only if these photos read as misleading in practice.
 
-### Image generation prompts (style: Kolabing-branded illustrated/semi-abstract, NOT realistic stock photo, NOT emoji, NOT cartoon)
+Files needed in two places (already done on the Flutter side):
 
-**Product cover:** "Flat illustrated cover image, warm cream/yellow background (#FFF8E7-ish), black hand-drawn line art style, a simple illustrated table with a product box being unboxed/sampled, small hands reaching toward it, tiny doodle accents (stars, a small speech bubble, a heart) in Kolabing yellow (#FFD861), subtle paper texture, no text, modern friendly premium feel, square or 4:3 aspect ratio, community/product-sampling theme."
+1. ✅ `kolabing-app/assets/images/defaults/product_cover_1.png`, `product_cover_2.png`, `venue_1.png`, `venue_2.png` — done, used as instant local preview thumbnails inside the "Use default cover" choice card. Must be declared under `flutter: assets:` in `pubspec.yaml`.
+2. ⬜ `kolabing-v2/storage/app/public/default-kolab-covers/product_cover_1.png`, `product_cover_2.png`, `venue_1.png`, `venue_2.png` — still needed, same 4 files copied to the backend's public disk so the submitted `KolabMedia.url` actually resolves at `{APP_URL}/storage/default-kolab-covers/...` (storage symlink already exists, confirmed via the working `category-icons` convention). This is a file copy, not a code change.
 
-**Venue cover:** "Flat illustrated cover image, warm cream/yellow background (#FFF8E7-ish), black hand-drawn line art style, a cozy illustrated café/community table scene with a few simple chairs, a plant, and people gathering, small doodle accents in Kolabing yellow (#FFD861), subtle paper texture, no text, modern friendly premium feel, square or 4:3 aspect ratio, local-venue-gathering theme, not based on any real café."
+Until step 2 is done: the local choice-card preview works fine (it's a bundled asset), but the actual default-cover URL submitted to the API will 404 — same as any missing static asset, not a fabricated domain. The 4 backend files must be in place before this ships to real users.
 
 ## Out of scope (explicitly, per product decision)
 
