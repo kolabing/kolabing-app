@@ -12,6 +12,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 import '../../profile/providers/gallery_provider.dart';
+import '../constants/default_covers.dart';
 import '../enums/intent_type.dart';
 import '../enums/need_type.dart';
 import '../enums/product_type.dart';
@@ -309,10 +310,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
   /// Review.
   void updateGoal(String? goal) {
     state = state.copyWith(
-      kolab: state.kolab.copyWith(
-        goal: goal,
-        clearGoal: goal == null,
-      ),
+      kolab: state.kolab.copyWith(goal: goal, clearGoal: goal == null),
       clearError: true,
     );
   }
@@ -351,6 +349,26 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
+  /// Selects a Kolabing-designed default cover for [intent] instead of
+  /// requiring a business upload. Replaces any existing default-cover entry
+  /// rather than stacking duplicates if called twice.
+  void useDefaultCover(IntentType intent) {
+    final path = pickDefaultCoverPathFor(intent);
+    final cover = KolabMedia(
+      url: normalizeRemoteMediaUrl(path),
+      type: 'image',
+      sortOrder: 0,
+      isDefaultCover: true,
+    );
+    final withoutExistingDefault = state.kolab.media
+        .where((m) => !m.isDefaultCover)
+        .toList();
+    state = state.copyWith(
+      kolab: state.kolab.copyWith(media: [cover, ...withoutExistingDefault]),
+      clearError: true,
+    );
+  }
+
   void removeMedia(int index) {
     final updated = List<KolabMedia>.from(state.kolab.media)..removeAt(index);
     state = state.copyWith(
@@ -378,8 +396,9 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     // Pre-fill a one-time kolab with sensible default dates (tomorrow → one
     // month later) so the range isn't empty; still fully editable.
     if (mode == AvailabilityMode.oneTime && start == null) {
-      final tomorrow =
-          DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
+      final tomorrow = DateUtils.dateOnly(
+        DateTime.now(),
+      ).add(const Duration(days: 1));
       start = tomorrow;
       end ??= DateTime(tomorrow.year, tomorrow.month + 1, tomorrow.day);
     }
@@ -843,7 +862,8 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['offering'] = 'Select at least 1 offering';
         }
         if (kolab.baseOffer == null || kolab.baseOffer!.trim().isEmpty) {
-          errors['base_offer'] = 'Describe your offer so communities know what to expect';
+          errors['base_offer'] =
+              'Describe your offer so communities know what to expect';
         }
       case 4: // Seeking communities
         // No required validation
@@ -858,7 +878,8 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['availability_start'] =
               'Pick a start date for your availability window';
         } else {
-          final isImmediate = kolab.availabilityMode == AvailabilityMode.immediate;
+          final isImmediate =
+              kolab.availabilityMode == AvailabilityMode.immediate;
           final floor = isImmediate
               ? DateUtils.dateOnly(DateTime.now())
               : DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
@@ -917,7 +938,8 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['offering'] = 'Select at least 1 offering';
         }
         if (kolab.baseOffer == null || kolab.baseOffer!.trim().isEmpty) {
-          errors['base_offer'] = 'Describe your offer so communities know what to expect';
+          errors['base_offer'] =
+              'Describe your offer so communities know what to expect';
         }
       case 4: // Seeking communities
         // No required validation
@@ -932,7 +954,8 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['availability_start'] =
               'Pick a start date for your availability window';
         } else {
-          final isImmediate = kolab.availabilityMode == AvailabilityMode.immediate;
+          final isImmediate =
+              kolab.availabilityMode == AvailabilityMode.immediate;
           final floor = isImmediate
               ? DateUtils.dateOnly(DateTime.now())
               : DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
@@ -1153,9 +1176,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       availabilityMode: normalizedAvailability,
       media: kolab.media
           .map(
-            (media) => media.copyWith(
-              url: normalizeRemoteMediaUrl(media.url),
-            ),
+            (media) => media.copyWith(url: normalizeRemoteMediaUrl(media.url)),
           )
           .where((media) => media.url.isNotEmpty)
           .toList(growable: false),

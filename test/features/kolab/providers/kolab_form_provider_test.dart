@@ -61,6 +61,42 @@ void main() {
     expect(state.kolab.venuePreference, VenuePreference.noVenue);
   });
 
+  test('useDefaultCover adds a single default-cover media entry for the given '
+      'intent', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    final notifier = container.read(kolabFormProvider.notifier);
+    notifier.selectIntent(IntentType.venuePromotion);
+
+    notifier.useDefaultCover(IntentType.venuePromotion);
+
+    final media = container.read(kolabFormProvider).kolab.media;
+    expect(media, hasLength(1));
+    expect(media.single.isDefaultCover, isTrue);
+    expect(media.single.url, contains('/storage/default-kolab-covers/venue_'));
+    expect(media.single.type, 'image');
+    expect(media.single.sortOrder, 0);
+  });
+
+  test(
+    'useDefaultCover replaces an existing default cover instead of stacking',
+    () {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+
+      final notifier = container.read(kolabFormProvider.notifier);
+      notifier.selectIntent(IntentType.productPromotion);
+
+      notifier.useDefaultCover(IntentType.productPromotion);
+      notifier.useDefaultCover(IntentType.productPromotion);
+
+      final media = container.read(kolabFormProvider).kolab.media;
+      expect(media, hasLength(1));
+      expect(media.single.isDefaultCover, isTrue);
+    },
+  );
+
   group('community seeking logistics validation', () {
     ProviderContainer createContainer() {
       final container = ProviderContainer(
