@@ -1,6 +1,6 @@
 # Kolabing — Roles → Backend → Database Map (Ground-Truth)
 
-**Last updated:** 2026-06-16 (kolab single-source-of-truth migration in flight; goal-based onboarding backend fields; planned community verification — see §17)
+**Last updated:** 2026-06-27 (added §11.1 gamification mission system v1 — `challenges.app_visible` + the three event/general mission filter sites, mirrored from `kolabing-v2` #49; previous: kolab single-source-of-truth migration in flight; goal-based onboarding backend fields; planned community verification — see §17)
 **Status:** Authoritative companion to [`ROLES-AND-PERMISSIONS.md`](./ROLES-AND-PERMISSIONS.md). Read that first (the *what*), then this (the *where*).
 **Sync note:** Duplicated in both repos (`kolabing-app`, `kolabing-v2`). Keep identical, and **bump the Last updated date in both** when role behaviour or backend wiring changes.
 
@@ -164,6 +164,11 @@ Gamification / wallets (§11):
  ├─ wallets, withdrawal_requests, point_ledger
  ├─ badges, badge_awards, earned_badges
  ├─ event_checkins, event_photos, event_rewards
+ ├─ challenges (trigger_action? string(60), target_value uint default 1,
+ │              repeat_interval string(20) default 'once', starts_at?, ends_at?,
+ │              slug string(120) UNIQUE?, app_visible bool default false)   ← mission columns (kolabing-v2 #49)
+ ├─ challenge_progress (challenge_id FK, profile_id FK, progress_count, target_value,
+ │                       completed_at?, period_key?; UNIQUE(challenge_id, profile_id, period_key))
  └─ collaboration_challenges, challenge_completions, referral_codes, referral_redemptions
 
 Lookups / admin:
@@ -188,6 +193,7 @@ Fixed since the last revision:
 - [x] **Paywall helper must role-gate; never call it from a community/attendee path** (2026-06-10, FX-11). `SubscriptionPaywall.checkAndShow` was invoked unconditionally from `community_main_screen._onFabPressed`, paywalling non-subscribed communities (golden-rule violation). The helper now role-gates (business-only); the community FAB no longer calls it at all. **Rule:** the paywall is Business-only on exactly two actions — any new "can I do X?" gate on a community/attendee path must NOT route through the paywall helper, and the helper itself must short-circuit to "allowed" for non-business.
 - [x] **Community Offers list / edit pointed at the wrong post system** (2026-06-16, app branch `feat/onboarding-update`, Phase 3 of the SoT migration). The community Offers list historically read `/me/opportunities` (System A, `collab_opportunities`) while community **creation** writes to `/kolabs` (System B). Because a kolab only materialized into a `collab_opportunity` lazily on first apply (`LegacyOpportunityBridgeService`), a newly created kolab **never listed** in Offers / dashboard and **could not be edited** there. App fix: the community Offers list + edit now use `GET /kolabs/me` and `PUT /kolabs/{id}` (`community_main_screen.dart`), matching what the business role already did. **Rule:** read a role's posts from the same system its create flow writes to. Full unification is the SoT migration (§17); the app-side repoint is shipped on this branch, the backend phases are not yet deployed.
 - [x] **Community create must not blank the leader's picture** (2026-06-10, FX-13). `CommunityService::create` set `avatar_url = null` when the client sent none, so the community-profile surface read a blank primary community. Now inherits `owner->communityProfile->profile_photo` (mirrors `update()`'s same-image sync). **Rule:** a create path must never null an image the user already has — inherit it.
+- [x] **Gamification mission system v1 shipped** (2026-06-27, `kolabing-v2` #49): `challenges.app_visible` curation column, atomic `challenge_progress` upsert, wallet-service delegation + `isLive()` guard on `/me/missions`, the DTO refactor, and the curated 18-mission v1 set (5 attendee / 7 business / 6 community). Event/general mission separation enforced in three backend places. See §11.1.
 
 Still open:
 
@@ -289,6 +295,23 @@ The attendee track ships substantial code despite `ROLES-AND-PERMISSIONS.md §0`
 - Should the canonical permissions doc grow a full §4 covering attendees, replacing the "deferred" stub?
 
 Until those are resolved, treat this section as the source of truth for what attendees can do, and treat `ROLES-AND-PERMISSIONS.md §0` (attendee = deferred) as **stale**.
+
+### 11.1 General missions vs. event challenges (added 2026-06-27, `kolabing-v2` #49)
+
+Backend `MissionController::index()` (`GET /api/v1/me/missions`) returns only missions
+matching every one of: `is_system=true`, `event_id IS NULL`, `app_visible=true`,
+`trigger_action IS NOT NULL`, `trigger_action` in `MissionTrigger::isLive()`'s true set,
+`audience` matching the viewer, and within `[starts_at, ends_at]`. Of the ~45 missions
+`SystemChallengeSeeder` seeds, exactly **18 have `app_visible=true`** (5 attendee,
+7 business, 6 community), all on live triggers; the rest are seeded but inert pending
+trigger wiring or a future product decision.
+
+Event challenges (`trigger_action IS NULL`, peer-verified, attached to a kolab event)
+are excluded from `/me/missions`, and general missions are symmetrically excluded from
+every event-scoped surface. That split is enforced in **three** backend places:
+`SystemChallengeController` (`GET /api/v1/challenges/system`), `Admin\ChallengeDefaultsController`
+(admin defaults matrix), and `ChallengeService::listForEvent()` (`GET /api/v1/events/{event}/challenges`).
+See `ROLES-AND-PERMISSIONS.md §7.4` for the client-facing description.
 
 ---
 
