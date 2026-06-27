@@ -1036,6 +1036,31 @@ class AppLocalizationsCa extends AppLocalizations {
   String get exploreFeedAll => 'Tots';
 
   @override
+  String get exploreFeedSaved => 'Desats';
+
+  @override
+  String get savedKolabsEmptyTitle => 'Encara no tens Kolabs desats';
+
+  @override
+  String get savedKolabsEmptyBody =>
+      'Toca el marcador d\'un Kolab per desar-lo per a més tard.';
+
+  @override
+  String get savedKolabsErrorTitle => 'No s\'han pogut carregar els desats';
+
+  @override
+  String get savedKolabsErrorBody =>
+      'Alguna cosa ha anat malament. Torna-ho a provar.';
+
+  @override
+  String get savedKolabsSaveError =>
+      'No s\'ha pogut desar aquest Kolab. Torna-ho a provar.';
+
+  @override
+  String get savedKolabsUnsaveError =>
+      'No s\'ha pogut treure aquest Kolab. Torna-ho a provar.';
+
+  @override
   String get myKolabsTabPublished => 'Publicats';
 
   @override

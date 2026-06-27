@@ -23,7 +23,9 @@ import '../../discovery/providers/discovery_provider.dart';
 import '../../discovery/widgets/discovery_quick_filters.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../opportunity/models/opportunity.dart';
+import '../../opportunity/providers/saved_kolabs_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
+import '../widgets/opportunity_card.dart';
 
 class ExploreScreen extends ConsumerStatefulWidget {
   const ExploreScreen({
@@ -42,10 +44,21 @@ class ExploreScreen extends ConsumerStatefulWidget {
 class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   late final PageController _pageController;
 
+  /// Local-only third tab. Kept out of [DiscoveryFeed] because the discovery
+  /// endpoint has no `saved` feed — the Saved tab is backed by a separate
+  /// provider (`GET /kolabs?saved=1`).
+  bool _savedSelected = false;
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    // Kick off the saved-kolabs fetch so the deck bookmarks reflect prior saves
+    // even before the user opens the Saved tab (the discovery feed has no
+    // `is_saved` flag; the saved list seeds `savedKolabIdsProvider`).
+    Future.microtask(() {
+      if (mounted) ref.read(savedKolabsProvider);
+    });
   }
 
   @override
@@ -182,22 +195,41 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           children: [
             _buildHeader(),
             const SizedBox(height: 6),
-            _buildTopBar(filters, listState),
-            const SizedBox(height: 6),
+            // The search/filter bar + quick filters drive the discovery feed only.
+            if (!_savedSelected) ...[
+              _buildTopBar(filters, listState),
+              const SizedBox(height: 6),
+            ],
             _FeedToggle(
               feed: filters.feed,
-              onChanged: (DiscoveryFeed value) =>
-                  ref.read(discoveryFiltersProvider.notifier).setFeed(value),
+              savedSelected: _savedSelected,
+              onRecommended: () {
+                setState(() => _savedSelected = false);
+                ref
+                    .read(discoveryFiltersProvider.notifier)
+                    .setFeed(DiscoveryFeed.recommended);
+              },
+              onAll: () {
+                setState(() => _savedSelected = false);
+                ref
+                    .read(discoveryFiltersProvider.notifier)
+                    .setFeed(DiscoveryFeed.all);
+              },
+              onSaved: () => setState(() => _savedSelected = true),
             ),
             const SizedBox(height: KolabingSpacing.xs),
-            DiscoveryQuickFilters(
-              filters: filters,
-              isCommunityViewer: _isCommunityViewer,
-              onOpenFilters: _openFilterSheet,
-            ),
-            const SizedBox(height: KolabingSpacing.xs),
+            if (!_savedSelected) ...[
+              DiscoveryQuickFilters(
+                filters: filters,
+                isCommunityViewer: _isCommunityViewer,
+                onOpenFilters: _openFilterSheet,
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+            ],
             Expanded(
-              child: listState.isLoading
+              child: _savedSelected
+                  ? _SavedKolabsTab(detailRoutePrefix: widget.detailRoutePrefix)
+                  : listState.isLoading
                   ? _buildLoadingState()
                   : listState.error != null
                   ? _buildErrorState(listState.error!)
@@ -206,6 +238,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   : _buildCardPageView(
                       listState,
                       hasBusinessSubscription: hasBusinessSubscription,
+                      savedIds: ref.watch(savedKolabIdsProvider),
                     ),
             ),
           ],
@@ -351,9 +384,22 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     return parts.join(' · ');
   }
 
+  Future<void> _toggleSaved(String id) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await toggleKolabSaved(ref, id);
+    } catch (_) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.savedKolabsSaveError)),
+      );
+    }
+  }
+
   Widget _buildCardPageView(
     DiscoveryListState listState, {
     required bool hasBusinessSubscription,
+    required Set<String> savedIds,
   }) {
     final today = DateTime.now();
     final activeItems = listState.items.where((DiscoveryItem item) {
@@ -388,12 +434,25 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             !_isCommunityViewer &&
             item.isCommunityRequest &&
             !hasBusinessSubscription;
-        return ExploreSwipeCard(
-          item: item,
-          showKolabFirst: !_isCommunityViewer && item.isCommunityRequest,
-          hideCreatorIdentity: hideCreatorIdentity,
-          onTap: () =>
-              _onCardTap(item, hasSubscription: hasBusinessSubscription),
+        return Stack(
+          children: [
+            ExploreSwipeCard(
+              item: item,
+              showKolabFirst: !_isCommunityViewer && item.isCommunityRequest,
+              hideCreatorIdentity: hideCreatorIdentity,
+              onTap: () =>
+                  _onCardTap(item, hasSubscription: hasBusinessSubscription),
+            ),
+            if (item.id.isNotEmpty)
+              Positioned(
+                top: KolabingSpacing.md,
+                right: KolabingSpacing.md,
+                child: _SaveBookmarkButton(
+                  isSaved: savedIds.contains(item.id),
+                  onTap: () => _toggleSaved(item.id),
+                ),
+              ),
+          ],
         );
       },
     );
@@ -615,38 +674,231 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 }
 
 class _FeedToggle extends StatelessWidget {
-  const _FeedToggle({required this.feed, required this.onChanged});
+  const _FeedToggle({
+    required this.feed,
+    required this.savedSelected,
+    required this.onRecommended,
+    required this.onAll,
+    required this.onSaved,
+  });
 
   final DiscoveryFeed feed;
-  final ValueChanged<DiscoveryFeed> onChanged;
+  final bool savedSelected;
+  final VoidCallback onRecommended;
+  final VoidCallback onAll;
+  final VoidCallback onSaved;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-    child: Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: Border.all(color: context.colors.hairline),
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+      child: Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(KolabingRadius.round),
+          border: Border.all(color: context.colors.hairline),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: _FeedSegment(
+                label: l10n.exploreFeedRecommended,
+                isSelected: !savedSelected && feed == DiscoveryFeed.recommended,
+                onTap: onRecommended,
+              ),
+            ),
+            Expanded(
+              child: _FeedSegment(
+                label: l10n.exploreFeedAll,
+                isSelected: !savedSelected && feed == DiscoveryFeed.all,
+                onTap: onAll,
+              ),
+            ),
+            Expanded(
+              child: _FeedSegment(
+                label: l10n.exploreFeedSaved,
+                isSelected: savedSelected,
+                onTap: onSaved,
+              ),
+            ),
+          ],
+        ),
       ),
-      child: Row(
+    );
+  }
+}
+
+/// The Explore "Saved" tab — the viewer's bookmarked kolabs
+/// (`GET /kolabs?saved=1`). Reuses [OpportunityCard]; each card has an unsave
+/// bookmark, and tapping opens the same detail sheet as the discovery feed.
+class _SavedKolabsTab extends ConsumerWidget {
+  const _SavedKolabsTab({required this.detailRoutePrefix});
+
+  final String detailRoutePrefix;
+
+  Future<void> _unsave(BuildContext context, WidgetRef ref, String id) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await toggleKolabSaved(ref, id);
+    } catch (_) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.savedKolabsUnsaveError)),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final asyncSaved = ref.watch(savedKolabsProvider);
+
+    return asyncSaved.when(
+      loading: () => Center(
+        child: CircularProgressIndicator(
+          color: context.colors.primary,
+          strokeWidth: 2,
+        ),
+      ),
+      error: (_, _) => _SavedKolabsMessage(
+        icon: LucideIcons.alertCircle,
+        title: l10n.savedKolabsErrorTitle,
+        body: l10n.savedKolabsErrorBody,
+        actionLabel: l10n.commonRetry,
+        onAction: () => ref.invalidate(savedKolabsProvider),
+      ),
+      data: (saved) {
+        if (saved.isEmpty) {
+          return _SavedKolabsMessage(
+            icon: LucideIcons.bookmark,
+            title: l10n.savedKolabsEmptyTitle,
+            body: l10n.savedKolabsEmptyBody,
+          );
+        }
+        return RefreshIndicator(
+          color: context.colors.primary,
+          onRefresh: () async {
+            ref.invalidate(savedKolabsProvider);
+            await ref.read(savedKolabsProvider.future);
+          },
+          child: ListView.separated(
+            padding: const EdgeInsets.fromLTRB(
+              KolabingSpacing.md,
+              KolabingSpacing.xs,
+              KolabingSpacing.md,
+              KolabingSpacing.xxl,
+            ),
+            itemCount: saved.length,
+            separatorBuilder: (_, _) =>
+                const SizedBox(height: KolabingSpacing.sm),
+            itemBuilder: (context, index) {
+              final opportunity = saved[index];
+              final id = opportunity.id;
+              return Stack(
+                children: [
+                  OpportunityCard(
+                    opportunity: opportunity,
+                    onView: () => ExploreDetailSheet.show(
+                      context,
+                      opportunity: opportunity,
+                    ),
+                  ),
+                  if (id != null)
+                    Positioned(
+                      top: KolabingSpacing.sm,
+                      right: KolabingSpacing.sm,
+                      child: _SaveBookmarkButton(
+                        isSaved: true,
+                        onTap: () => _unsave(context, ref, id),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Centered icon + title + body (+ optional action) used for the Saved tab's
+/// empty and error states.
+class _SavedKolabsMessage extends StatelessWidget {
+  const _SavedKolabsMessage({
+    required this.icon,
+    required this.title,
+    required this.body,
+    this.actionLabel,
+    this.onAction,
+  });
+
+  final IconData icon;
+  final String title;
+  final String body;
+  final String? actionLabel;
+  final VoidCallback? onAction;
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: _FeedSegment(
-              label: AppLocalizations.of(context).exploreFeedRecommended,
-              isSelected: feed == DiscoveryFeed.recommended,
-              onTap: () => onChanged(DiscoveryFeed.recommended),
+          Icon(icon, size: 40, color: context.colors.textTertiary),
+          const SizedBox(height: KolabingSpacing.md),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: KolabingTextStyles.headlineSmall.copyWith(
+              color: context.colors.onSurface,
             ),
           ),
-          Expanded(
-            child: _FeedSegment(
-              label: AppLocalizations.of(context).exploreFeedAll,
-              isSelected: feed == DiscoveryFeed.all,
-              onTap: () => onChanged(DiscoveryFeed.all),
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            body,
+            textAlign: TextAlign.center,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
             ),
           ),
+          if (actionLabel != null && onAction != null) ...[
+            const SizedBox(height: KolabingSpacing.md),
+            TextButton(onPressed: onAction, child: Text(actionLabel!)),
+          ],
         ],
+      ),
+    ),
+  );
+}
+
+/// Circular bookmark toggle button overlaid on a kolab card.
+class _SaveBookmarkButton extends StatelessWidget {
+  const _SaveBookmarkButton({required this.isSaved, required this.onTap});
+
+  final bool isSaved;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: context.colors.surface,
+    shape: const CircleBorder(),
+    elevation: 2,
+    child: InkWell(
+      customBorder: const CircleBorder(),
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Icon(
+          isSaved ? Icons.bookmark : Icons.bookmark_border,
+          size: 20,
+          color: isSaved
+              ? context.colors.primary
+              : context.colors.onSurfaceVariant,
+        ),
       ),
     ),
   );
