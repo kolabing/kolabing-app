@@ -73,23 +73,35 @@ Future<Collaboration?> _fetchCollaborationDetail(
 }
 
 /// Known `error_code` values the backend returns from
-/// `POST /collaborations/{id}/complete` when the feedback gate is not satisfied
-/// (or the status transition is not allowed). These are stable wire contracts.
+/// `POST /collaborations/{id}/complete`. As of the 2026-06-26 completion-flow
+/// simplification (PR 1), `/complete` gates on the lightweight completion
+/// CONFIRMATION (yes/no/not_yet) — not rich `/feedback` — so the
+/// `awaiting*Feedback` codes below are dead on the wire but kept for a brief
+/// transition window in case an old backend deploy is still live.
 class CollaborationCompletionErrorCode {
   CollaborationCompletionErrorCode._();
 
-  /// The caller has not yet submitted their own `/feedback`.
-  static const awaitingOwnFeedback = 'awaiting_own_feedback';
+  /// The caller has not yet submitted their own completion confirmation.
+  static const awaitingOwnCompletionConfirmation =
+      'awaiting_own_completion_confirmation';
 
-  /// The caller's feedback is in; the Kolab only completes once the partner
-  /// submits theirs too. This is a SOFT SUCCESS, not an error.
-  static const awaitingPartnerFeedback = 'awaiting_partner_feedback';
+  /// The caller's confirmation is in; the Kolab only completes once the
+  /// partner confirms too. This is a SOFT SUCCESS, not an error.
+  static const awaitingPartnerCompletionConfirmation =
+      'awaiting_partner_completion_confirmation';
+
+  /// Both parties confirmed, but at least one said 'no' or 'not_yet'.
+  static const completionNotConfirmed = 'completion_not_confirmed';
 
   /// Generic "cannot complete" (e.g. already completed by the partner).
   static const cannotComplete = 'cannot_complete';
 
   /// The status cannot move to `completed` from its current value.
   static const invalidStatusTransition = 'invalid_status_transition';
+
+  // --- Deprecated (pre-PR-1 feedback gate); kept only for transition safety.
+  static const awaitingOwnFeedback = 'awaiting_own_feedback';
+  static const awaitingPartnerFeedback = 'awaiting_partner_feedback';
 }
 
 /// Thrown by [markCollaborationCompleted] when `/complete` fails the feedback
@@ -101,6 +113,7 @@ class CollaborationCompletionException implements Exception {
     required this.errorCode,
     required this.message,
     this.statusCode,
+    this.errors,
   });
 
   /// One of [CollaborationCompletionErrorCode], or null if the body had none.
@@ -108,17 +121,81 @@ class CollaborationCompletionException implements Exception {
   final String message;
   final int? statusCode;
 
+  /// Raw `errors` object from the backend body. For `completion_not_confirmed`
+  /// this carries `own_status` / `partner_status` so the UI can show the
+  /// partner's specific answer (no/not_yet) instead of generic "waiting" copy.
+  final Map<String, dynamic>? errors;
+
+  /// The partner's completion status ('no' | 'not_yet'), if the backend
+  /// reported one in `errors.partner_status`.
+  String? get partnerStatus => errors?['partner_status'] as String?;
+
   @override
   String toString() =>
       'CollaborationCompletionException(errorCode: $errorCode, message: $message)';
 }
 
-/// Submit the REQUIRED post-Kolab feedback that satisfies the backend
-/// completion gate — `POST /api/v1/collaborations/{id}/feedback`.
+/// Submit (or update) the caller's lightweight completion confirmation —
+/// `POST /api/v1/collaborations/{id}/completion`. As of the 2026-06-26
+/// completion-flow simplification (PR 1), THIS — not rich `/feedback` — gates
+/// `/complete`. `status` is one of `yes` / `no` / `not_yet`; `note` is an
+/// optional free-text note (max 500 chars). XP is awarded once, on first
+/// submission; resubmitting to change your answer (e.g. `not_yet` → `yes`)
+/// never re-awards it.
+Future<void> submitCollaborationCompletion(
+  String id, {
+  required String status,
+  String? note,
+}) async {
+  final authService = AuthService();
+  final token = await authService.getToken();
+  if (token == null || token.isEmpty) {
+    throw const AuthException('Session expired. Please sign in again.');
+  }
+
+  final url = '${ApiConfig.baseUrl}/collaborations/$id/completion';
+  final payload = <String, dynamic>{
+    'status': status,
+    if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
+  };
+  debugPrint('[D3] POST $url payload=$payload');
+
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode(payload),
+  );
+
+  debugPrint('[D3] completion response status=${response.statusCode}');
+
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    unawaited(
+      AnalyticsService.instance.capture(
+        AnalyticsEvents.collaborationCompletionConfirmed,
+        properties: {'collaboration_id': id, 'status': status},
+      ),
+    );
+    return;
+  }
+
+  final body = response.body.isEmpty
+      ? <String, dynamic>{'message': 'Failed to submit completion confirmation'}
+      : jsonDecode(response.body) as Map<String, dynamic>;
+  throw ApiException(
+    error: ApiError.fromJson(body, statusCode: response.statusCode),
+  );
+}
+
+/// Submit OPTIONAL post-Kolab feedback — `POST /api/v1/collaborations/{id}/feedback`.
 ///
-/// `/complete` only succeeds once BOTH participant user types have POSTed this
-/// feedback. This is distinct from the public `POST /{id}/review` (a decoupled
-/// star review shown post-completion) — do not conflate the two.
+/// As of PR 1 (2026-06-26) this is optional impact data and no longer gates
+/// `/complete` (see [submitCollaborationCompletion] above). This is distinct
+/// from the public `POST /{id}/review` (a decoupled star review shown
+/// post-completion) — do not conflate the two.
 ///
 /// Payload (per the backend contract):
 ///   - `rating` (int 1-5, required)
@@ -222,9 +299,10 @@ Future<void> submitCollaborationFeedback(
 /// `message` so the UI can branch (notably treating
 /// `awaiting_partner_feedback` as a soft success).
 ///
-/// The backend enforces a FEEDBACK GATE: `/complete` only succeeds once BOTH
-/// participant user types have POSTed `/feedback`. Call
-/// [submitCollaborationFeedback] first.
+/// The backend enforces a COMPLETION-CONFIRMATION GATE (PR 1, 2026-06-26):
+/// `/complete` only succeeds once BOTH participant user types have POSTed
+/// `/completion` with `status: 'yes'`. Call [submitCollaborationCompletion]
+/// first. Rich `/feedback` is now optional and does not affect this gate.
 ///
 /// Callers should `ref.invalidate(collaborationDetailProvider(id))` after
 /// awaiting this to refresh the detail screen.
@@ -285,6 +363,9 @@ Future<Collaboration> _markCompleted(
     errorCode: (body['error_code'] as String?)?.toLowerCase(),
     message: (body['message'] as String?) ?? 'Failed to complete collaboration',
     statusCode: response.statusCode,
+    errors: body['errors'] is Map<String, dynamic>
+        ? body['errors'] as Map<String, dynamic>
+        : null,
   );
 }
 
@@ -614,5 +695,12 @@ Map<String, dynamic> normalizeCollaborationResponse(Map<String, dynamic> raw) {
     'own_feedback': raw['own_feedback'],
     'partner_feedback': raw['partner_feedback'],
     'pending_feedback_from': raw['pending_feedback_from'],
+    // Lightweight completion confirmation (PR 1, 2026-06-26) — this, not
+    // feedback above, gates /complete. Pass through verbatim.
+    if (raw.containsKey('viewer_must_confirm_completion'))
+      'viewer_must_confirm_completion': raw['viewer_must_confirm_completion'],
+    'own_completion': raw['own_completion'],
+    'partner_completion_status': raw['partner_completion_status'],
+    'pending_completion_from': raw['pending_completion_from'],
   };
 }

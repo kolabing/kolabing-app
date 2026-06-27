@@ -27,6 +27,8 @@ class AnalyticsEvents {
   static const String applicationAccepted = 'application_accepted';
   static const String applicationDeclined = 'application_declined';
   static const String collaborationCompleted = 'collaboration_completed';
+  static const String collaborationCompletionConfirmed =
+      'collaboration_completion_confirmed';
   static const String feedbackSubmitted = 'feedback_submitted';
 
   // ── Community ─────────────────────────────────────────────────────
