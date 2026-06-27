@@ -1439,9 +1439,50 @@
   "@kolabCompletionConfirmDismiss": {
     "description": "Dismiss completion confirmation."
   },
+  "kolabCompletionConfirmNo": "No, it didn't happen",
+  "@kolabCompletionConfirmNo": {
+    "description": "Third completion confirmation option: the Kolab did not happen."
+  },
+  "kolabCompletionConfirmedNotYetTitle": "Got it, thanks 👍",
+  "@kolabCompletionConfirmedNotYetTitle": {
+    "description": "Acknowledgement title after answering 'not yet'."
+  },
+  "kolabCompletionConfirmedNotYetBody": "We'll check back later — come back here once the Kolab happens to confirm it.",
+  "@kolabCompletionConfirmedNotYetBody": {
+    "description": "Acknowledgement body after answering 'not yet'."
+  },
+  "kolabCompletionConfirmedNoTitle": "Thanks for letting us know",
+  "@kolabCompletionConfirmedNoTitle": {
+    "description": "Acknowledgement title after answering 'no, it didn't happen'."
+  },
+  "kolabCompletionConfirmedNoBody": "We've recorded that this Kolab didn't happen. Reach out to support if you need help resolving it.",
+  "@kolabCompletionConfirmedNoBody": {
+    "description": "Acknowledgement body after answering 'no, it didn't happen'."
+  },
+  "kolabCompletionConfirmError": "Could not submit your confirmation. Please try again.",
+  "@kolabCompletionConfirmError": {
+    "description": "Error when the completion confirmation submission fails."
+  },
   "kolabCompletionFeedbackTitle": "How was the Kolab? ⭐",
   "@kolabCompletionFeedbackTitle": {
     "description": "Completion sheet feedback step title."
+  },
+  "kolabCompletionFeedbackOptionalTitle": "Add a few details? ⭐",
+  "@kolabCompletionFeedbackOptionalTitle": {
+    "description": "Optional impact-data step title, shown after the Kolab is already confirmed complete."
+  },
+  "kolabCompletionFeedbackOptionalSubtitle": "Got it — your answer is recorded. Sharing a quick rating and a few details helps {partnerName} build trust on Kolabing — and earns you extra XP. Totally optional.",
+  "@kolabCompletionFeedbackOptionalSubtitle": {
+    "description": "Optional impact-data step subtitle.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "kolabCompletionFeedbackSkip": "Skip for now",
+  "@kolabCompletionFeedbackSkip": {
+    "description": "Skip the optional feedback step."
   },
   "kolabCompletionFeedbackSubtitle": "Feedback is required to finish. Your review helps {partnerName} build trust on Kolabing.",
   "@kolabCompletionFeedbackSubtitle": {
@@ -1534,9 +1575,9 @@
   "@kolabCompletionDoneClose": {
     "description": "Close the completion sheet."
   },
-  "kolabCompletionConfirmMutualNote": "Both you and {partnerName} confirm to complete this Kolab. You will share quick feedback first.",
+  "kolabCompletionConfirmMutualNote": "First, confirm whether the Kolab happened. Reviews are optional after that.",
   "@kolabCompletionConfirmMutualNote": {
-    "description": "Pre-completion note explaining the mutual feedback requirement.",
+    "description": "Pre-completion note explaining that confirmation comes first and review is optional after.",
     "placeholders": {
       "partnerName": {
         "type": "String"
@@ -1876,6 +1917,26 @@
   "@collaborationDetailItHappened": {
     "description": "Complete CTA button."
   },
+  "collaborationDetailUpdateStatus": "Update status",
+  "@collaborationDetailUpdateStatus": {
+    "description": "Re-entry CTA button label when the viewer's own answer was 'no' or 'not yet'."
+  },
+  "collaborationDetailCheckAgain": "Check again",
+  "@collaborationDetailCheckAgain": {
+    "description": "Re-entry CTA button label when the viewer said 'yes' and the partner hasn't answered or said 'not yet'."
+  },
+  "collaborationDetailReviewStatus": "Review status",
+  "@collaborationDetailReviewStatus": {
+    "description": "Re-entry CTA button label when the viewer said 'yes' and the partner said 'no'."
+  },
+  "collaborationDetailLeaveFeedbackLater": "Leave optional feedback",
+  "@collaborationDetailLeaveFeedbackLater": {
+    "description": "Post-completion CTA letting a participant who skipped the optional feedback step come back to it later."
+  },
+  "collaborationDetailFeedbackAlreadyLeft": "You've shared your feedback ✓",
+  "@collaborationDetailFeedbackAlreadyLeft": {
+    "description": "Shown post-completion once the viewer has submitted optional feedback."
+  },
   "collaborationDetailFeedbackConfirmedTitle": "You've confirmed ✓",
   "@collaborationDetailFeedbackConfirmedTitle": {
     "description": "Shown after the viewer submits feedback while the partner still has to."
@@ -1883,6 +1944,42 @@
   "collaborationDetailFeedbackConfirmedBody": "Waiting for {partnerName} to confirm too. The Kolab completes once you both do.",
   "@collaborationDetailFeedbackConfirmedBody": {
     "description": "Body of the awaiting-partner confirmation state.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "collaborationDetailPartnerSaidNotYetTitle": "Waiting on {partnerName}",
+  "@collaborationDetailPartnerSaidNotYetTitle": {
+    "description": "Shown when the partner explicitly answered 'not yet' to the completion confirmation.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "collaborationDetailPartnerSaidNotYetBody": "{partnerName} said the Kolab hasn't happened yet. The Kolab completes once you both confirm 'yes'.",
+  "@collaborationDetailPartnerSaidNotYetBody": {
+    "description": "Body shown when the partner answered 'not yet'.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "collaborationDetailPartnerSaidNoTitle": "{partnerName} said it didn't happen",
+  "@collaborationDetailPartnerSaidNoTitle": {
+    "description": "Shown when the partner explicitly answered 'no' to the completion confirmation.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "collaborationDetailPartnerSaidNoBody": "{partnerName} said this Kolab didn't happen. Contact support if you need help resolving it.",
+  "@collaborationDetailPartnerSaidNoBody": {
+    "description": "Body shown when the partner answered 'no'.",
     "placeholders": {
       "partnerName": {
         "type": "String"

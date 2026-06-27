@@ -2146,11 +2146,65 @@ abstract class AppLocalizations {
   /// **'Not yet'**
   String get kolabCompletionConfirmDismiss;
 
+  /// Third completion confirmation option: the Kolab did not happen.
+  ///
+  /// In en, this message translates to:
+  /// **'No, it didn\'t happen'**
+  String get kolabCompletionConfirmNo;
+
+  /// Acknowledgement title after answering 'not yet'.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it, thanks 👍'**
+  String get kolabCompletionConfirmedNotYetTitle;
+
+  /// Acknowledgement body after answering 'not yet'.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll check back later — come back here once the Kolab happens to confirm it.'**
+  String get kolabCompletionConfirmedNotYetBody;
+
+  /// Acknowledgement title after answering 'no, it didn't happen'.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for letting us know'**
+  String get kolabCompletionConfirmedNoTitle;
+
+  /// Acknowledgement body after answering 'no, it didn't happen'.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve recorded that this Kolab didn\'t happen. Reach out to support if you need help resolving it.'**
+  String get kolabCompletionConfirmedNoBody;
+
+  /// Error when the completion confirmation submission fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not submit your confirmation. Please try again.'**
+  String get kolabCompletionConfirmError;
+
   /// Completion sheet feedback step title.
   ///
   /// In en, this message translates to:
   /// **'How was the Kolab? ⭐'**
   String get kolabCompletionFeedbackTitle;
+
+  /// Optional impact-data step title, shown after the Kolab is already confirmed complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a few details? ⭐'**
+  String get kolabCompletionFeedbackOptionalTitle;
+
+  /// Optional impact-data step subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it — your answer is recorded. Sharing a quick rating and a few details helps {partnerName} build trust on Kolabing — and earns you extra XP. Totally optional.'**
+  String kolabCompletionFeedbackOptionalSubtitle(String partnerName);
+
+  /// Skip the optional feedback step.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get kolabCompletionFeedbackSkip;
 
   /// Required feedback subtitle.
   ///
@@ -2266,10 +2320,10 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get kolabCompletionDoneClose;
 
-  /// Pre-completion note explaining the mutual feedback requirement.
+  /// Pre-completion note explaining that confirmation comes first and review is optional after.
   ///
   /// In en, this message translates to:
-  /// **'Both you and {partnerName} confirm to complete this Kolab. You will share quick feedback first.'**
+  /// **'First, confirm whether the Kolab happened. Reviews are optional after that.'**
   String kolabCompletionConfirmMutualNote(String partnerName);
 
   /// Yes/No feedback question: expectation match.
@@ -2704,6 +2758,36 @@ abstract class AppLocalizations {
   /// **'Yes, it happened ✨'**
   String get collaborationDetailItHappened;
 
+  /// Re-entry CTA button label when the viewer's own answer was 'no' or 'not yet'.
+  ///
+  /// In en, this message translates to:
+  /// **'Update status'**
+  String get collaborationDetailUpdateStatus;
+
+  /// Re-entry CTA button label when the viewer said 'yes' and the partner hasn't answered or said 'not yet'.
+  ///
+  /// In en, this message translates to:
+  /// **'Check again'**
+  String get collaborationDetailCheckAgain;
+
+  /// Re-entry CTA button label when the viewer said 'yes' and the partner said 'no'.
+  ///
+  /// In en, this message translates to:
+  /// **'Review status'**
+  String get collaborationDetailReviewStatus;
+
+  /// Post-completion CTA letting a participant who skipped the optional feedback step come back to it later.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave optional feedback'**
+  String get collaborationDetailLeaveFeedbackLater;
+
+  /// Shown post-completion once the viewer has submitted optional feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve shared your feedback ✓'**
+  String get collaborationDetailFeedbackAlreadyLeft;
+
   /// Shown after the viewer submits feedback while the partner still has to.
   ///
   /// In en, this message translates to:
@@ -2715,6 +2799,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Waiting for {partnerName} to confirm too. The Kolab completes once you both do.'**
   String collaborationDetailFeedbackConfirmedBody(String partnerName);
+
+  /// Shown when the partner explicitly answered 'not yet' to the completion confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting on {partnerName}'**
+  String collaborationDetailPartnerSaidNotYetTitle(String partnerName);
+
+  /// Body shown when the partner answered 'not yet'.
+  ///
+  /// In en, this message translates to:
+  /// **'{partnerName} said the Kolab hasn\'t happened yet. The Kolab completes once you both confirm \'yes\'.'**
+  String collaborationDetailPartnerSaidNotYetBody(String partnerName);
+
+  /// Shown when the partner explicitly answered 'no' to the completion confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'{partnerName} said it didn\'t happen'**
+  String collaborationDetailPartnerSaidNoTitle(String partnerName);
+
+  /// Body shown when the partner answered 'no'.
+  ///
+  /// In en, this message translates to:
+  /// **'{partnerName} said this Kolab didn\'t happen. Contact support if you need help resolving it.'**
+  String collaborationDetailPartnerSaidNoBody(String partnerName);
 
   /// Subtle line on the My Kolabs Active card after the viewer submits feedback.
   ///

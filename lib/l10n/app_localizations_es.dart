@@ -1143,7 +1143,40 @@ class AppLocalizationsEs extends AppLocalizations {
   String get kolabCompletionConfirmDismiss => 'Todavía no';
 
   @override
+  String get kolabCompletionConfirmNo => 'No, no se hizo';
+
+  @override
+  String get kolabCompletionConfirmedNotYetTitle => 'Entendido, gracias 👍';
+
+  @override
+  String get kolabCompletionConfirmedNotYetBody =>
+      'Lo revisaremos más tarde — vuelve aquí cuando el Kolab ocurra para confirmarlo.';
+
+  @override
+  String get kolabCompletionConfirmedNoTitle => 'Gracias por avisarnos';
+
+  @override
+  String get kolabCompletionConfirmedNoBody =>
+      'Hemos registrado que este Kolab no se hizo. Contacta con soporte si necesitas ayuda para resolverlo.';
+
+  @override
+  String get kolabCompletionConfirmError =>
+      'No se pudo enviar tu confirmación. Inténtalo de nuevo.';
+
+  @override
   String get kolabCompletionFeedbackTitle => '¿Qué tal fue el Kolab? ⭐';
+
+  @override
+  String get kolabCompletionFeedbackOptionalTitle =>
+      '¿Quieres añadir más detalles? ⭐';
+
+  @override
+  String kolabCompletionFeedbackOptionalSubtitle(String partnerName) {
+    return 'Entendido — tu respuesta ha quedado registrada. Compartir una valoración rápida y algunos detalles ayuda a $partnerName a generar confianza en Kolabing — y ganas XP extra. Totalmente opcional.';
+  }
+
+  @override
+  String get kolabCompletionFeedbackSkip => 'Omitir por ahora';
 
   @override
   String kolabCompletionFeedbackSubtitle(String partnerName) {
@@ -1214,7 +1247,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String kolabCompletionConfirmMutualNote(String partnerName) {
-    return 'Tanto tú como $partnerName debéis confirmar para completar este Kolab. Primero compartirás una valoración rápida.';
+    return 'Primero, confirma si el Kolab ocurrió. Las reseñas son opcionales después de eso.';
   }
 
   @override
@@ -1476,11 +1509,48 @@ class AppLocalizationsEs extends AppLocalizations {
   String get collaborationDetailItHappened => 'Sí, se hizo ✨';
 
   @override
+  String get collaborationDetailUpdateStatus => 'Actualizar estado';
+
+  @override
+  String get collaborationDetailCheckAgain => 'Comprobar de nuevo';
+
+  @override
+  String get collaborationDetailReviewStatus => 'Revisar estado';
+
+  @override
+  String get collaborationDetailLeaveFeedbackLater =>
+      'Dejar comentarios opcionales';
+
+  @override
+  String get collaborationDetailFeedbackAlreadyLeft =>
+      'Has compartido tus comentarios ✓';
+
+  @override
   String get collaborationDetailFeedbackConfirmedTitle => 'Has confirmado ✓';
 
   @override
   String collaborationDetailFeedbackConfirmedBody(String partnerName) {
     return 'Esperando a que $partnerName también lo confirme. El Kolab se completa cuando lo hacéis los dos.';
+  }
+
+  @override
+  String collaborationDetailPartnerSaidNotYetTitle(String partnerName) {
+    return 'Esperando a $partnerName';
+  }
+
+  @override
+  String collaborationDetailPartnerSaidNotYetBody(String partnerName) {
+    return '$partnerName dijo que el Kolab todavía no ha pasado. El Kolab se completa cuando ambos confirméis \'sí\'.';
+  }
+
+  @override
+  String collaborationDetailPartnerSaidNoTitle(String partnerName) {
+    return '$partnerName dijo que no se hizo';
+  }
+
+  @override
+  String collaborationDetailPartnerSaidNoBody(String partnerName) {
+    return '$partnerName dijo que este Kolab no se hizo. Contacta con soporte si necesitas ayuda para resolverlo.';
   }
 
   @override

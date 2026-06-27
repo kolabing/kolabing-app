@@ -219,36 +219,49 @@ class _CollaborationBody extends ConsumerWidget {
                 : collaboration.businessPartner.name,
           ),
 
-        // Complete Kolab CTA — only when active (inProgress).
-        // Two-sided feedback gate: once the viewer has submitted their own
-        // feedback the Kolab stays active until the partner confirms too. Show
-        // a clear "you confirmed, waiting for partner" state instead of the
-        // Complete button (which would re-open the sheet and look like nothing
-        // happened).
-        if (interactive && collaboration.status.canBeCompleted)
-          collaboration.ownFeedbackSubmitted
-              ? _AwaitingPartnerConfirmation(
-                  partnerName: isBusiness
-                      ? collaboration.communityPartner.name
-                      : collaboration.businessPartner.name,
-                )
-              : _CompleteKolabSection(
-                  collaborationId: collaborationId,
-                  partnerName: isBusiness
-                      ? collaboration.communityPartner.name
-                      : collaboration.businessPartner.name,
-                  isToday: collaboration.isToday,
-                ),
+        // Completion CTA — only while not yet completed.
+        // QA fix (2026-06-26 PR 1 / 2026-06-27 follow-up): the CTA used to
+        // disappear forever after ANY completion answer, leaving no way to
+        // change a 'not_yet'/'no' answer to 'yes' (or vice versa) once
+        // confirmed. It now always reopens the sheet; only the button COPY
+        // adapts to the current own/partner answers (the backend allows
+        // resubmission without re-awarding XP either way).
+        if (interactive && collaboration.status.canBeCompleted) ...[
+          if (collaboration.ownCompletionSubmitted)
+            _AwaitingPartnerConfirmation(
+              partnerName: isBusiness
+                  ? collaboration.communityPartner.name
+                  : collaboration.businessPartner.name,
+              partnerStatus: collaboration.partnerCompletionStatus,
+            ),
+          _CompleteKolabSection(
+            collaborationId: collaborationId,
+            partnerName: isBusiness
+                ? collaboration.communityPartner.name
+                : collaboration.businessPartner.name,
+            isToday: collaboration.isToday,
+            buttonLabel: _completionCtaLabel(
+              AppLocalizations.of(context),
+              ownStatus: collaboration.ownCompletionStatus,
+              partnerStatus: collaboration.partnerCompletionStatus,
+              isToday: collaboration.isToday,
+            ),
+          ),
+        ],
 
-        // Post-completion review CTA removed: the required completion feedback
-        // (KolabCompletionSheet → POST /feedback, which now carries
-        // would_collaborate_again) is mirrored by the backend into the public
-        // review automatically, so a separate "Leave a review" ask here would be
-        // a duplicate rating. `hasReviewed` parsing on the model is untouched.
-
-        // (Removed the post-completion "Post a review" reward nudge: the
-        // completion feedback is mirrored into the public review by the backend,
-        // so a separate review ask here was a dead, duplicate CTA.)
+        // Optional post-completion feedback CTA (QA fix 2026-06-27): the
+        // required completion feedback used to be mirrored automatically and
+        // shown only inside the completion sheet. Now that feedback is
+        // OPTIONAL and reachable separately, whoever skipped it inside the
+        // sheet needs a way back to it — this is that way back.
+        if (interactive && collaboration.status == CollaborationStatus.completed)
+          _PostCompletionFeedbackSection(
+            collaborationId: collaborationId,
+            partnerName: isBusiness
+                ? collaboration.communityPartner.name
+                : collaboration.businessPartner.name,
+            alreadySubmitted: collaboration.ownFeedbackSubmitted,
+          ),
 
         // Gamification: Challenges Setup
         _ChallengesSection(collaborationId: collaborationId),
@@ -1906,16 +1919,46 @@ class _TodayScheduledBanner extends StatelessWidget {
 // Complete Kolab section — first party CTA (status: inProgress only)
 // =============================================================================
 
+/// Resolve the completion CTA's button copy from the viewer's own and the
+/// partner's completion-confirmation answers (QA fix 2026-06-27 §2):
+/// - no answer yet → "Complete Kolab" (today/standard variant)
+/// - own answer is 'no'/'not_yet' → "Update status" (own answer is what's
+///   blocking, regardless of the partner's)
+/// - own answer is 'yes' and partner said 'no' → "Review status"
+/// - own answer is 'yes' and partner said 'not_yet' or hasn't answered →
+///   "Check again"
+String _completionCtaLabel(
+  AppLocalizations l10n, {
+  required String? ownStatus,
+  required String? partnerStatus,
+  required bool isToday,
+}) {
+  if (ownStatus == null) {
+    return isToday ? l10n.collaborationDetailMarkDone : l10n.collaborationDetailItHappened;
+  }
+  if (ownStatus != 'yes') {
+    return l10n.collaborationDetailUpdateStatus;
+  }
+  if (partnerStatus == 'no') {
+    return l10n.collaborationDetailReviewStatus;
+  }
+  return l10n.collaborationDetailCheckAgain;
+}
+
 class _CompleteKolabSection extends ConsumerWidget {
   const _CompleteKolabSection({
     required this.collaborationId,
     required this.partnerName,
     required this.isToday,
+    required this.buttonLabel,
   });
 
   final String collaborationId;
   final String partnerName;
   final bool isToday;
+
+  /// Resolved by [_completionCtaLabel] from the current own/partner answers.
+  final String buttonLabel;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1986,9 +2029,7 @@ class _CompleteKolabSection extends ConsumerWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                isToday
-                    ? l10n.collaborationDetailMarkDone
-                    : l10n.collaborationDetailItHappened,
+                buttonLabel,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
@@ -2004,6 +2045,94 @@ class _CompleteKolabSection extends ConsumerWidget {
 }
 
 // =============================================================================
+// Post-completion optional feedback — re-entry for whoever skipped it
+// =============================================================================
+
+/// Shown once the Kolab is completed. The completion sheet's optional
+/// feedback step (Step 1) is skippable — this is the way back for whoever
+/// skipped it (QA fix 2026-06-27 §3). Reuses [KolabCompletionSheet] with
+/// `startAtFeedback: true` so it opens straight to the feedback form instead
+/// of re-asking the already-answered "did it happen?" question.
+class _PostCompletionFeedbackSection extends ConsumerWidget {
+  const _PostCompletionFeedbackSection({
+    required this.collaborationId,
+    required this.partnerName,
+    required this.alreadySubmitted,
+  });
+
+  final String collaborationId;
+  final String partnerName;
+  final bool alreadySubmitted;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
+    if (alreadySubmitted) {
+      return Container(
+        margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          color: context.colors.activeBg,
+          borderRadius: KolabingRadius.borderRadiusLg,
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.check_circle_rounded, size: 20, color: context.colors.activeText),
+            const SizedBox(width: KolabingSpacing.sm),
+            Expanded(
+              child: Text(
+                l10n.collaborationDetailFeedbackAlreadyLeft,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.activeText,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        borderRadius: KolabingRadius.borderRadiusLg,
+        border: Border.all(color: context.colors.darkBorder),
+      ),
+      child: GestureDetector(
+        onTap: () async {
+          await KolabCompletionSheet.show(
+            context,
+            collaborationId: collaborationId,
+            partnerName: partnerName,
+            startAtFeedback: true,
+          );
+          ref.invalidate(collaborationDetailProvider(collaborationId));
+        },
+        child: Row(
+          children: [
+            Icon(LucideIcons.star, size: 18, color: context.colors.onSurfaceVariant),
+            const SizedBox(width: KolabingSpacing.sm),
+            Expanded(
+              child: Text(
+                l10n.collaborationDetailLeaveFeedbackLater,
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.onSurface,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// =============================================================================
 // Awaiting-partner confirmation — viewer already submitted feedback
 // =============================================================================
 
@@ -2013,13 +2142,35 @@ class _CompleteKolabSection extends ConsumerWidget {
 /// of leaving the Complete button up (which would re-open the sheet and look
 /// like nothing changed).
 class _AwaitingPartnerConfirmation extends StatelessWidget {
-  const _AwaitingPartnerConfirmation({required this.partnerName});
+  const _AwaitingPartnerConfirmation({
+    required this.partnerName,
+    this.partnerStatus,
+  });
 
   final String partnerName;
+
+  /// The partner's own completion-confirmation answer ('yes' | 'no' |
+  /// 'not_yet'), or null if they haven't responded at all yet.
+  final String? partnerStatus;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final (title, body) = switch (partnerStatus) {
+      'no' => (
+          l10n.collaborationDetailPartnerSaidNoTitle(partnerName),
+          l10n.collaborationDetailPartnerSaidNoBody(partnerName),
+        ),
+      'not_yet' => (
+          l10n.collaborationDetailPartnerSaidNotYetTitle(partnerName),
+          l10n.collaborationDetailPartnerSaidNotYetBody(partnerName),
+        ),
+      _ => (
+          l10n.collaborationDetailFeedbackConfirmedTitle,
+          l10n.collaborationDetailFeedbackConfirmedBody(partnerName),
+        ),
+    };
+
     return Container(
       margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -2042,7 +2193,7 @@ class _AwaitingPartnerConfirmation extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n.collaborationDetailFeedbackConfirmedTitle,
+                  title,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w700,
                     color: context.colors.activeText,
@@ -2050,7 +2201,7 @@ class _AwaitingPartnerConfirmation extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  l10n.collaborationDetailFeedbackConfirmedBody(partnerName),
+                  body,
                   style: KolabingTextStyles.captionSecondary.copyWith(
                     color: context.colors.activeText,
                     height: 1.4,
