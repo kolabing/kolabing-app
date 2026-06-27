@@ -166,7 +166,9 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            success ? AppLocalizations.of(context).myKolabsClosed : errorMessage,
+            success
+                ? AppLocalizations.of(context).myKolabsClosed
+                : errorMessage,
           ),
           behavior: SnackBarBehavior.floating,
           backgroundColor: success
@@ -289,21 +291,30 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
       children: [
         Text(
           AppLocalizations.of(context).myKolabsTitle,
-          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 28, fontWeight: FontWeight.w800, color: isDark
+          style: KolabingTextStyles.bodyLarge.copyWith(
+            fontSize: 28,
+            fontWeight: FontWeight.w800,
+            color: isDark
                 ? context.colors.textOnDark
-                : context.colors.onSurface, letterSpacing: 1.2),
+                : context.colors.onSurface,
+            letterSpacing: 1.2,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           AppLocalizations.of(context).myKolabsSubtitle,
-          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
       ],
     ),
   );
 
   Widget _buildStatusTabs(String? currentStatus, bool isDark) {
-    final selectedIndex = _statusTabs.indexWhere((t) => t.value == currentStatus);
+    final selectedIndex = _statusTabs.indexWhere(
+      (t) => t.value == currentStatus,
+    );
     if (selectedIndex >= 0 &&
         _statusTabController.index != selectedIndex &&
         !_statusTabController.indexIsChanging) {
@@ -322,15 +333,20 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.md,
-          vertical: KolabingSpacing.sm,
+        padding: const EdgeInsets.fromLTRB(
+          KolabingSpacing.md,
+          10,
+          KolabingSpacing.md,
+          16,
         ),
         child: Text(
           AppLocalizations.of(context).myKolabsCount(listState.total),
-          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: isDark
+          style: KolabingTextStyles.captionSecondary.copyWith(
+            fontWeight: FontWeight.w500,
+            color: isDark
                 ? context.colors.textOnDark.withValues(alpha: 0.5)
-                : context.colors.textTertiary),
+                : context.colors.textTertiary,
+          ),
         ),
       ),
       Expanded(
@@ -439,14 +455,20 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             AppLocalizations.of(context).myKolabsEmptyTitle,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: isDark
                   ? context.colors.textOnDark
-                  : context.colors.onSurface),
+                  : context.colors.onSurface,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             AppLocalizations.of(context).myKolabsEmptyMessage,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -478,14 +500,20 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             AppLocalizations.of(context).myKolabsSomethingWrong,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: isDark
                   ? context.colors.textOnDark
-                  : context.colors.onSurface),
+                  : context.colors.onSurface,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),

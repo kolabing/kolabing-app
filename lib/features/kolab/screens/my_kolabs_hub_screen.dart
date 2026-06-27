@@ -7,6 +7,7 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_segmented_control.dart';
 import '../../../widgets/navigation/navigation.dart';
 import '../../application/screens/applications_screen.dart';
 import '../../collaboration/providers/collaborations_list_provider.dart';
@@ -100,20 +101,25 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
                 ),
               ),
             ),
-            TabBar(
-              controller: _tabController,
-              labelStyle: KolabingTextStyles.labelLarge,
-              labelColor: context.colors.charcoal,
-              unselectedLabelColor: context.colors.navInactive,
-              indicatorColor: context.colors.charcoal,
-              indicatorWeight: 3,
-              tabs: [
-                Tab(text: l10n.myKolabsHubTabOffers),
-                Tab(text: l10n.myKolabsHubTabRequests),
-                Tab(text: l10n.myKolabsHubTabActive),
-                Tab(text: l10n.myKolabsHubTabFinished),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.md,
+              ),
+              child: AnimatedBuilder(
+                animation: _tabController,
+                builder: (context, _) => KolabingSegmentedControl<int>(
+                  segments: [
+                    (0, l10n.myKolabsHubTabOffers.toUpperCase()),
+                    (1, l10n.myKolabsHubTabRequests.toUpperCase()),
+                    (2, l10n.myKolabsHubTabActive.toUpperCase()),
+                    (3, l10n.myKolabsHubTabFinished.toUpperCase()),
+                  ],
+                  selectedValue: _tabController.index,
+                  onChanged: (i) => _tabController.animateTo(i),
+                ),
+              ),
             ),
+            const SizedBox(height: KolabingSpacing.sm),
             Expanded(
               child: TabBarView(
                 controller: _tabController,

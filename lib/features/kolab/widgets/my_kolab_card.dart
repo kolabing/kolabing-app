@@ -9,12 +9,12 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../widgets/glass_icon_button.dart';
 import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_chip.dart';
 import '../../../widgets/kolab_status_badge.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../../widgets/kolabing_button.dart';
+import '../../../widgets/kolabing_card_action_bar.dart';
 import '../enums/intent_type.dart';
 import '../models/kolab.dart';
 import '../providers/my_kolabs_provider.dart';
@@ -62,7 +62,9 @@ class MyKolabCard extends ConsumerWidget {
 
   String get _initials {
     // Strip leading non-letters so "[TEST] ..." yields "T", not "[".
-    final cleaned = kolab.title.replaceAll(RegExp(r'^[^A-Za-z0-9]+'), '').trim();
+    final cleaned = kolab.title
+        .replaceAll(RegExp(r'^[^A-Za-z0-9]+'), '')
+        .trim();
     return cleaned.isNotEmpty ? cleaned[0].toUpperCase() : 'K';
   }
 
@@ -89,13 +91,12 @@ class MyKolabCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final (primaryAction, secondaryActions) = _buildActions(context);
+    final actionRow = _buildActionRow(context);
 
     return KolabCardShell(
       imageUrl: _resolveImageUrl(ref),
       initials: _initials,
-      primaryAction: primaryAction,
-      secondaryActions: secondaryActions,
+      primaryAction: actionRow,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -140,77 +141,46 @@ class MyKolabCard extends ConsumerWidget {
     );
   }
 
-  (Widget?, List<Widget>) _buildActions(BuildContext context) {
-    _ActionSpec? primary;
-    final secondaryIcons = <Widget>[];
-
+  /// Published kolabs use the canonical VIEW + edit/share/close action bar
+  /// (per the Bolder spec). Draft/other statuses keep their existing
+  /// primary-action + icon-pill combinations (publish/delete), now rendered
+  /// with the same unified pill family instead of floating circles.
+  Widget? _buildActionRow(BuildContext context) {
     if (kolab.status == 'published') {
-      if (onView != null) {
-        primary = _ActionSpec(
-          label: 'VIEW',
-          icon: LucideIcons.eye,
-          onPressed: onView,
-          isPrimary: true,
-        );
+      if (onView == null &&
+          !(kolab.canEdit && onEdit != null) &&
+          onShare == null &&
+          !(kolab.canClose && onClose != null)) {
+        return null;
       }
-      if (kolab.canEdit && onEdit != null) {
-        secondaryIcons.add(
-          GlassIconButton(
-            icon: LucideIcons.edit,
-            onPressed: onEdit,
-            tooltip: 'Edit',
-            size: 48,
-          ),
-        );
-      }
-      if (onShare != null) {
-        secondaryIcons.add(
-          GlassIconButton(
-            icon: LucideIcons.share2,
-            onPressed: onShare,
-            tooltip: 'Share',
-            size: 48,
-          ),
-        );
-      }
-      if (kolab.canClose && onClose != null) {
-        secondaryIcons.add(
-          GlassIconButton(
-            icon: LucideIcons.xCircle,
-            onPressed: onClose,
-            tooltip: 'Close',
-            size: 48,
-          ),
-        );
-      }
-    } else if (kolab.canEdit) {
-      if (onEdit != null) {
-        primary = _ActionSpec(
-          label: 'EDIT',
-          icon: LucideIcons.edit,
-          onPressed: onEdit,
-          isPrimary: true,
-        );
-      }
+      return KolabingCardActionBar(
+        onView: onView,
+        onEdit: kolab.canEdit ? onEdit : null,
+        onShare: onShare,
+        onClose: kolab.canClose ? onClose : null,
+      );
+    }
+
+    _ActionSpec? primary;
+    final secondaryIcons = <(IconData, String, VoidCallback?)>[];
+
+    if (kolab.canEdit && onEdit != null) {
+      primary = _ActionSpec(
+        label: 'EDIT',
+        icon: LucideIcons.edit,
+        onPressed: onEdit,
+        isPrimary: true,
+      );
       if (kolab.canPublish && onPublish != null) {
-        secondaryIcons.add(
-          GlassIconButton(
-            icon: LucideIcons.upload,
-            onPressed: onPublish,
-            tooltip: 'Publish',
-            size: 48,
-          ),
-        );
+        secondaryIcons.add((LucideIcons.upload, 'Publish', onPublish));
       }
-    } else if (kolab.canPublish) {
-      if (onPublish != null) {
-        primary = _ActionSpec(
-          label: 'PUBLISH',
-          icon: LucideIcons.upload,
-          onPressed: onPublish,
-          isPrimary: true,
-        );
-      }
+    } else if (kolab.canPublish && onPublish != null) {
+      primary = _ActionSpec(
+        label: 'PUBLISH',
+        icon: LucideIcons.upload,
+        onPressed: onPublish,
+        isPrimary: true,
+      );
     }
 
     if (kolab.canDelete && onDelete != null) {
@@ -222,21 +192,32 @@ class MyKolabCard extends ConsumerWidget {
           isPrimary: false,
         );
       } else {
-        secondaryIcons.add(
-          GlassIconButton(
-            icon: LucideIcons.trash2,
-            onPressed: onDelete,
-            tooltip: 'Delete',
-            size: 48,
-          ),
-        );
+        secondaryIcons.add((LucideIcons.trash2, 'Delete', onDelete));
       }
     }
 
-    final primaryWidget = primary != null
-        ? _PrimaryActionButton(spec: primary)
-        : null;
-    return (primaryWidget, secondaryIcons);
+    if (primary == null && secondaryIcons.isEmpty) return null;
+
+    return SizedBox(
+      height: 52,
+      child: Row(
+        children: [
+          if (primary != null)
+            Expanded(flex: 21, child: _PrimaryActionButton(spec: primary)),
+          for (final (icon, label, onTap) in secondaryIcons) ...[
+            const SizedBox(width: 10),
+            Expanded(
+              flex: 13,
+              child: KolabingIconPillButton(
+                icon: icon,
+                onTap: onTap,
+                semanticLabel: label,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 }
 
@@ -269,7 +250,7 @@ class _PrimaryActionButton extends StatelessWidget {
         onTap: spec.onPressed,
         child: Container(
           width: double.infinity,
-          height: 48,
+          height: 52,
           decoration: BoxDecoration(
             color: c.glassDestructiveInk.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(KolabingRadius.pill),
@@ -304,6 +285,7 @@ class _PrimaryActionButton extends StatelessWidget {
       onPressed: spec.onPressed,
       variant: KolabingButtonVariant.primary,
       size: KolabingButtonSize.compact,
+      height: 52,
       icon: Icon(spec.icon, size: 16),
     );
   }

@@ -97,6 +97,10 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     required this.onAccent,
     required this.softAccent,
     required this.primaryGradient,
+    required this.mutedFilter,
+    required this.controlBorder,
+    required this.pillPressedFill,
+    required this.iconStroke,
   });
 
   // --- surfaces & text ---
@@ -209,6 +213,12 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
   // --- gradient ---
   final LinearGradient primaryGradient;
 
+  // --- segmented control / icon pill (Bolder redesign) ---
+  final Color mutedFilter; // unselected segmented-control label
+  final Color controlBorder; // segmented-control track / icon-pill border
+  final Color pillPressedFill; // icon-pill pressed state
+  final Color iconStroke; // neutral icon-pill stroke
+
   // ---------------------------------------------------------------------------
   // Light set (maps 1:1 to the legacy KolabingColors values)
   // ---------------------------------------------------------------------------
@@ -305,6 +315,10 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       end: Alignment.bottomRight,
       colors: [Color(0xFFFFE28C), Color(0xFFFFF4C2)],
     ),
+    mutedFilter: Color(0xFFA29886),
+    controlBorder: Color(0xFFEAE0CF),
+    pillPressedFill: Color(0xFFF7F1E5),
+    iconStroke: Color(0xFF5F5A52),
   );
 
   // ---------------------------------------------------------------------------
@@ -403,6 +417,10 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       end: Alignment.bottomRight,
       colors: [Color(0xFFFFE28C), Color(0xFFE7CE84)],
     ),
+    mutedFilter: Color(0xFF8A8378),
+    controlBorder: Color(0xFF2E2E34),
+    pillPressedFill: Color(0xFF1E1E22),
+    iconStroke: Color(0xFFA2A2A9),
   );
 
   @override
@@ -495,6 +513,10 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
     Color? onAccent,
     Color? softAccent,
     LinearGradient? primaryGradient,
+    Color? mutedFilter,
+    Color? controlBorder,
+    Color? pillPressedFill,
+    Color? iconStroke,
   }) {
     return KolabingColorTokens(
       background: background ?? this.background,
@@ -585,6 +607,10 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       onAccent: onAccent ?? this.onAccent,
       softAccent: softAccent ?? this.softAccent,
       primaryGradient: primaryGradient ?? this.primaryGradient,
+      mutedFilter: mutedFilter ?? this.mutedFilter,
+      controlBorder: controlBorder ?? this.controlBorder,
+      pillPressedFill: pillPressedFill ?? this.pillPressedFill,
+      iconStroke: iconStroke ?? this.iconStroke,
     );
   }
 
@@ -595,16 +621,36 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       background: Color.lerp(background, other.background, t)!,
       appBackground: Color.lerp(appBackground, other.appBackground, t)!,
       surface: Color.lerp(surface, other.surface, t)!,
-      surfaceContainer: Color.lerp(surfaceContainer, other.surfaceContainer, t)!,
-      surfaceContainerLow: Color.lerp(surfaceContainerLow, other.surfaceContainerLow, t)!,
-      surfaceContainerHigh: Color.lerp(surfaceContainerHigh, other.surfaceContainerHigh, t)!,
+      surfaceContainer: Color.lerp(
+        surfaceContainer,
+        other.surfaceContainer,
+        t,
+      )!,
+      surfaceContainerLow: Color.lerp(
+        surfaceContainerLow,
+        other.surfaceContainerLow,
+        t,
+      )!,
+      surfaceContainerHigh: Color.lerp(
+        surfaceContainerHigh,
+        other.surfaceContainerHigh,
+        t,
+      )!,
       surfaceVariant: Color.lerp(surfaceVariant, other.surfaceVariant, t)!,
       onSurface: Color.lerp(onSurface, other.onSurface, t)!,
-      onSurfaceVariant: Color.lerp(onSurfaceVariant, other.onSurfaceVariant, t)!,
+      onSurfaceVariant: Color.lerp(
+        onSurfaceVariant,
+        other.onSurfaceVariant,
+        t,
+      )!,
       outline: Color.lerp(outline, other.outline, t)!,
       outlineVariant: Color.lerp(outlineVariant, other.outlineVariant, t)!,
       inverseSurface: Color.lerp(inverseSurface, other.inverseSurface, t)!,
-      inverseOnSurface: Color.lerp(inverseOnSurface, other.inverseOnSurface, t)!,
+      inverseOnSurface: Color.lerp(
+        inverseOnSurface,
+        other.inverseOnSurface,
+        t,
+      )!,
       hairline: Color.lerp(hairline, other.hairline, t)!,
       divider: Color.lerp(divider, other.divider, t)!,
       primary: Color.lerp(primary, other.primary, t)!,
@@ -616,10 +662,22 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       orange: Color.lerp(orange, other.orange, t)!,
       orangeTint: Color.lerp(orangeTint, other.orangeTint, t)!,
       softYellow: Color.lerp(softYellow, other.softYellow, t)!,
-      softYellowBorder: Color.lerp(softYellowBorder, other.softYellowBorder, t)!,
+      softYellowBorder: Color.lerp(
+        softYellowBorder,
+        other.softYellowBorder,
+        t,
+      )!,
       pastelYellowBg: Color.lerp(pastelYellowBg, other.pastelYellowBg, t)!,
-      pastelYellowBorder: Color.lerp(pastelYellowBorder, other.pastelYellowBorder, t)!,
-      navBarBackground: Color.lerp(navBarBackground, other.navBarBackground, t)!,
+      pastelYellowBorder: Color.lerp(
+        pastelYellowBorder,
+        other.pastelYellowBorder,
+        t,
+      )!,
+      navBarBackground: Color.lerp(
+        navBarBackground,
+        other.navBarBackground,
+        t,
+      )!,
       charcoal: Color.lerp(charcoal, other.charcoal, t)!,
       titleInk: Color.lerp(titleInk, other.titleInk, t)!,
       ink: Color.lerp(ink, other.ink, t)!,
@@ -638,34 +696,94 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       warning: Color.lerp(warning, other.warning, t)!,
       info: Color.lerp(info, other.info, t)!,
       navInactive: Color.lerp(navInactive, other.navInactive, t)!,
-      navInactiveSubtle: Color.lerp(navInactiveSubtle, other.navInactiveSubtle, t)!,
+      navInactiveSubtle: Color.lerp(
+        navInactiveSubtle,
+        other.navInactiveSubtle,
+        t,
+      )!,
       xpGreen: Color.lerp(xpGreen, other.xpGreen, t)!,
-      xpGreenContainer: Color.lerp(xpGreenContainer, other.xpGreenContainer, t)!,
-      xpGreenOnContainer: Color.lerp(xpGreenOnContainer, other.xpGreenOnContainer, t)!,
-      categoryLavenderBg: Color.lerp(categoryLavenderBg, other.categoryLavenderBg, t)!,
-      categoryLavenderText: Color.lerp(categoryLavenderText, other.categoryLavenderText, t)!,
+      xpGreenContainer: Color.lerp(
+        xpGreenContainer,
+        other.xpGreenContainer,
+        t,
+      )!,
+      xpGreenOnContainer: Color.lerp(
+        xpGreenOnContainer,
+        other.xpGreenOnContainer,
+        t,
+      )!,
+      categoryLavenderBg: Color.lerp(
+        categoryLavenderBg,
+        other.categoryLavenderBg,
+        t,
+      )!,
+      categoryLavenderText: Color.lerp(
+        categoryLavenderText,
+        other.categoryLavenderText,
+        t,
+      )!,
       categorySageBg: Color.lerp(categorySageBg, other.categorySageBg, t)!,
-      categorySageText: Color.lerp(categorySageText, other.categorySageText, t)!,
+      categorySageText: Color.lerp(
+        categorySageText,
+        other.categorySageText,
+        t,
+      )!,
       categoryMintBg: Color.lerp(categoryMintBg, other.categoryMintBg, t)!,
-      categoryMintText: Color.lerp(categoryMintText, other.categoryMintText, t)!,
-      categoryOrangeBg: Color.lerp(categoryOrangeBg, other.categoryOrangeBg, t)!,
-      categoryOrangeText: Color.lerp(categoryOrangeText, other.categoryOrangeText, t)!,
+      categoryMintText: Color.lerp(
+        categoryMintText,
+        other.categoryMintText,
+        t,
+      )!,
+      categoryOrangeBg: Color.lerp(
+        categoryOrangeBg,
+        other.categoryOrangeBg,
+        t,
+      )!,
+      categoryOrangeText: Color.lerp(
+        categoryOrangeText,
+        other.categoryOrangeText,
+        t,
+      )!,
       categoryRedBg: Color.lerp(categoryRedBg, other.categoryRedBg, t)!,
       categoryRedText: Color.lerp(categoryRedText, other.categoryRedText, t)!,
       categoryBlueBg: Color.lerp(categoryBlueBg, other.categoryBlueBg, t)!,
-      categoryBlueText: Color.lerp(categoryBlueText, other.categoryBlueText, t)!,
-      categoryLocationBg: Color.lerp(categoryLocationBg, other.categoryLocationBg, t)!,
-      categoryLocationText: Color.lerp(categoryLocationText, other.categoryLocationText, t)!,
+      categoryBlueText: Color.lerp(
+        categoryBlueText,
+        other.categoryBlueText,
+        t,
+      )!,
+      categoryLocationBg: Color.lerp(
+        categoryLocationBg,
+        other.categoryLocationBg,
+        t,
+      )!,
+      categoryLocationText: Color.lerp(
+        categoryLocationText,
+        other.categoryLocationText,
+        t,
+      )!,
       overlayDark30: Color.lerp(overlayDark30, other.overlayDark30, t)!,
       overlayDark50: Color.lerp(overlayDark50, other.overlayDark50, t)!,
       overlayDark60: Color.lerp(overlayDark60, other.overlayDark60, t)!,
       glassWhite14: Color.lerp(glassWhite14, other.glassWhite14, t)!,
       glassInk: Color.lerp(glassInk, other.glassInk, t)!,
-      glassDestructiveInk: Color.lerp(glassDestructiveInk, other.glassDestructiveInk, t)!,
-      amberChipContainer: Color.lerp(amberChipContainer, other.amberChipContainer, t)!,
+      glassDestructiveInk: Color.lerp(
+        glassDestructiveInk,
+        other.glassDestructiveInk,
+        t,
+      )!,
+      amberChipContainer: Color.lerp(
+        amberChipContainer,
+        other.amberChipContainer,
+        t,
+      )!,
       amberChipText: Color.lerp(amberChipText, other.amberChipText, t)!,
       accentOrange: Color.lerp(accentOrange, other.accentOrange, t)!,
-      accentOrangeText: Color.lerp(accentOrangeText, other.accentOrangeText, t)!,
+      accentOrangeText: Color.lerp(
+        accentOrangeText,
+        other.accentOrangeText,
+        t,
+      )!,
       darkSurface: Color.lerp(darkSurface, other.darkSurface, t)!,
       darkBorder: Color.lerp(darkBorder, other.darkBorder, t)!,
       borderFocus: Color.lerp(borderFocus, other.borderFocus, t)!,
@@ -674,12 +792,24 @@ class KolabingColorTokens extends ThemeExtension<KolabingColorTokens> {
       textOnDark: Color.lerp(textOnDark, other.textOnDark, t)!,
       secondary: Color.lerp(secondary, other.secondary, t)!,
       onSecondary: Color.lerp(onSecondary, other.onSecondary, t)!,
-      secondaryContainer: Color.lerp(secondaryContainer, other.secondaryContainer, t)!,
+      secondaryContainer: Color.lerp(
+        secondaryContainer,
+        other.secondaryContainer,
+        t,
+      )!,
       tertiary: Color.lerp(tertiary, other.tertiary, t)!,
-      tertiaryContainer: Color.lerp(tertiaryContainer, other.tertiaryContainer, t)!,
+      tertiaryContainer: Color.lerp(
+        tertiaryContainer,
+        other.tertiaryContainer,
+        t,
+      )!,
       onAccent: Color.lerp(onAccent, other.onAccent, t)!,
       softAccent: Color.lerp(softAccent, other.softAccent, t)!,
       primaryGradient: t < 0.5 ? primaryGradient : other.primaryGradient,
+      mutedFilter: Color.lerp(mutedFilter, other.mutedFilter, t)!,
+      controlBorder: Color.lerp(controlBorder, other.controlBorder, t)!,
+      pillPressedFill: Color.lerp(pillPressedFill, other.pillPressedFill, t)!,
+      iconStroke: Color.lerp(iconStroke, other.iconStroke, t)!,
     );
   }
 }

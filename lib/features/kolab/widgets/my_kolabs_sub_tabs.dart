@@ -1,14 +1,14 @@
 // lib/features/kolab/widgets/my_kolabs_sub_tabs.dart
 import 'package:flutter/material.dart';
 
-import '../../../config/theme/colors.dart';
-import '../../../config/theme/typography.dart';
+import '../../../widgets/kolabing_segmented_control.dart';
 
-/// Shared underline sub-tab row for all My Kolabs sections.
+/// Shared secondary segmented-control row for all My Kolabs sections.
 ///
-/// Use for Published/Draft (Offers) and Sent/Received (Requests).
-/// Replaces the pill-style horizontal ListView in MyKollabsScreen and
-/// MyOpportunitiesScreen.
+/// Use for Published/Draft (Offers) and Sent/Received (Requests). Wraps
+/// [KolabingSegmentedControl] (secondary style) while keeping the existing
+/// `TabController` + `labels` API so callers don't need to change their
+/// wiring.
 class MyKolabsSubTabs extends StatelessWidget {
   const MyKolabsSubTabs({
     required this.controller,
@@ -20,30 +20,16 @@ class MyKolabsSubTabs extends StatelessWidget {
   final List<String> labels;
 
   @override
-  Widget build(BuildContext context) {
-    final c = context.colors;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TabBar(
-          controller: controller,
-          labelStyle: KolabingTextStyles.button.copyWith(
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.5,
-          ),
-          unselectedLabelStyle: KolabingTextStyles.button.copyWith(
-            fontWeight: FontWeight.w400,
-            letterSpacing: 0.5,
-          ),
-          labelColor: c.onSurface,
-          unselectedLabelColor: c.textTertiary,
-          indicatorColor: c.primary,
-          indicatorWeight: 3,
-          dividerColor: Colors.transparent,
-          tabs: labels.map((l) => Tab(text: l)).toList(),
-        ),
-        Divider(height: 1, thickness: 1, color: c.hairline),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: controller,
+    builder: (context, _) => Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 16),
+      child: KolabingSegmentedControl<int>(
+        style: KolabingSegmentedStyle.secondary,
+        segments: [for (var i = 0; i < labels.length; i++) (i, labels[i])],
+        selectedValue: controller.index,
+        onChanged: controller.animateTo,
+      ),
+    ),
+  );
 }

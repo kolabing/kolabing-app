@@ -11,6 +11,7 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_status_badge.dart';
+import '../../kolab/widgets/my_kolabs_sub_tabs.dart';
 import '../models/application.dart';
 import '../providers/application_provider.dart';
 
@@ -48,30 +49,11 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final tabHeader = Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TabBar(
-          controller: _tabController,
-          indicatorColor: context.colors.primary,
-          indicatorWeight: 3,
-          labelColor: isDark
-              ? context.colors.textOnDark
-              : context.colors.onSurface,
-          unselectedLabelColor: isDark
-              ? context.colors.textOnDark.withValues(alpha: 0.5)
-              : context.colors.textTertiary,
-          labelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w700),
-          unselectedLabelStyle: KolabingTextStyles.button.copyWith(fontWeight: FontWeight.w400),
-          tabs: [
-            Tab(text: AppLocalizations.of(context).applicationsTabSent),
-            Tab(text: AppLocalizations.of(context).applicationsTabReceived),
-          ],
-        ),
-        Divider(
-          height: 1,
-          color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
-        ),
+    final tabHeader = MyKolabsSubTabs(
+      controller: _tabController,
+      labels: [
+        AppLocalizations.of(context).applicationsTabSent.toUpperCase(),
+        AppLocalizations.of(context).applicationsTabReceived.toUpperCase(),
       ],
     );
 
@@ -88,25 +70,34 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
     // Embedded as the "Requests" tab of MyKolabsHubScreen: drop the Scaffold and
     // the 'APPLICATIONS' AppBar, but keep the SENT/RECEIVED sub-tabs as-is.
     if (widget.embedded) {
-      return Column(children: [tabHeader, Expanded(child: tabView)]);
+      return Column(
+        children: [
+          tabHeader,
+          Expanded(child: tabView),
+        ],
+      );
     }
 
     return Scaffold(
-      backgroundColor:
-          isDark ? context.colors.surface : context.colors.background,
+      backgroundColor: isDark
+          ? context.colors.surface
+          : context.colors.background,
       appBar: AppBar(
-        backgroundColor:
-            isDark ? context.colors.darkSurface : context.colors.surface,
+        backgroundColor: isDark
+            ? context.colors.darkSurface
+            : context.colors.surface,
         elevation: 0,
         centerTitle: true,
         title: Text(
           AppLocalizations.of(context).applicationsTitle,
           style: KolabingTextStyles.pageTitleSmall.copyWith(
-            color: isDark ? context.colors.textOnDark : context.colors.onSurface,
+            color: isDark
+                ? context.colors.textOnDark
+                : context.colors.onSurface,
           ),
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48),
+          preferredSize: const Size.fromHeight(60),
           child: tabHeader,
         ),
       ),
@@ -173,41 +164,45 @@ class _SentApplicationsTab extends ConsumerWidget {
   }
 
   Widget _buildSentEmptyState(BuildContext context, bool isDark) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: context.colors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  LucideIcons.send,
-                  size: 36,
-                  color: context.colors.primary,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.lg),
-              Text(
-                AppLocalizations.of(context).applicationsSentEmptyTitle,
-                style: KolabingTextStyles.titleMedium.copyWith(color: isDark
-                      ? context.colors.textOnDark
-                      : context.colors.onSurface),
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(
-                AppLocalizations.of(context).applicationsSentEmptyBody,
-                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
-                textAlign: TextAlign.center,
-              ),
-            ],
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: context.colors.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              LucideIcons.send,
+              size: 36,
+              color: context.colors.primary,
+            ),
           ),
-        ),
-      );
+          const SizedBox(height: KolabingSpacing.lg),
+          Text(
+            AppLocalizations.of(context).applicationsSentEmptyTitle,
+            style: KolabingTextStyles.titleMedium.copyWith(
+              color: isDark
+                  ? context.colors.textOnDark
+                  : context.colors.onSurface,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            AppLocalizations.of(context).applicationsSentEmptyBody,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -228,7 +223,11 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, ApplicationsState state, bool isDark) {
+  Widget _buildBody(
+    BuildContext context,
+    ApplicationsState state,
+    bool isDark,
+  ) {
     if (state.isLoading) {
       return _buildLoadingState(context, isDark);
     }
@@ -271,52 +270,59 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
   }
 
   Widget _buildReceivedEmptyState(BuildContext context, bool isDark) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: context.colors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  LucideIcons.inbox,
-                  size: 36,
-                  color: context.colors.primary,
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.lg),
-              Text(
-                AppLocalizations.of(context).applicationsReceivedEmptyTitle,
-                style: KolabingTextStyles.titleMedium.copyWith(color: isDark
-                      ? context.colors.textOnDark
-                      : context.colors.onSurface),
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              Text(
-                AppLocalizations.of(context).applicationsReceivedEmptyBody,
-                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
-                textAlign: TextAlign.center,
-              ),
-            ],
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: context.colors.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              LucideIcons.inbox,
+              size: 36,
+              color: context.colors.primary,
+            ),
           ),
-        ),
-      );
+          const SizedBox(height: KolabingSpacing.lg),
+          Text(
+            AppLocalizations.of(context).applicationsReceivedEmptyTitle,
+            style: KolabingTextStyles.titleMedium.copyWith(
+              color: isDark
+                  ? context.colors.textOnDark
+                  : context.colors.onSurface,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            AppLocalizations.of(context).applicationsReceivedEmptyBody,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 // =============================================================================
 // Shared helpers
 // =============================================================================
 
-Widget _buildLoadingState(BuildContext context, bool isDark) => Shimmer.fromColors(
-      baseColor:
-          isDark ? context.colors.darkSurface : context.colors.surfaceVariant,
-      highlightColor:
-          isDark ? context.colors.darkBorder : context.colors.surface,
+Widget _buildLoadingState(BuildContext context, bool isDark) =>
+    Shimmer.fromColors(
+      baseColor: isDark
+          ? context.colors.darkSurface
+          : context.colors.surfaceVariant,
+      highlightColor: isDark
+          ? context.colors.darkBorder
+          : context.colors.surface,
       child: ListView.separated(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         itemCount: 5,
@@ -331,7 +337,8 @@ Widget _buildLoadingState(BuildContext context, bool isDark) => Shimmer.fromColo
       ),
     );
 
-Widget _buildErrorState(BuildContext context, String error, bool isDark) => Center(
+Widget _buildErrorState(BuildContext context, String error, bool isDark) =>
+    Center(
       child: Padding(
         padding: const EdgeInsets.all(KolabingSpacing.xl),
         child: Column(
@@ -345,14 +352,18 @@ Widget _buildErrorState(BuildContext context, String error, bool isDark) => Cent
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).applicationsErrorTitle,
-              style: KolabingTextStyles.titleMedium.copyWith(color: isDark
+              style: KolabingTextStyles.titleMedium.copyWith(
+                color: isDark
                     ? context.colors.textOnDark
-                    : context.colors.onSurface),
+                    : context.colors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -410,10 +421,12 @@ class _ApplicationCard extends StatelessWidget {
           const SizedBox(height: 3),
           Text(
             isReceived
-                ? AppLocalizations.of(context)
-                    .applicationCardFrom(application.applicantName)
-                : AppLocalizations.of(context)
-                    .applicationCardTo(application.recipientName),
+                ? AppLocalizations.of(
+                    context,
+                  ).applicationCardFrom(application.applicantName)
+                : AppLocalizations.of(
+                    context,
+                  ).applicationCardTo(application.recipientName),
             style: KolabingTextStyles.captionSecondary.copyWith(
               color: context.colors.onSurfaceVariant,
             ),
@@ -430,7 +443,11 @@ class _ApplicationCard extends StatelessWidget {
           const SizedBox(height: KolabingSpacing.xs),
           Row(
             children: [
-              Icon(LucideIcons.clock, size: 12, color: context.colors.textTertiary),
+              Icon(
+                LucideIcons.clock,
+                size: 12,
+                color: context.colors.textTertiary,
+              ),
               const SizedBox(width: 4),
               Text(
                 application.createdAtDisplay,
@@ -442,7 +459,10 @@ class _ApplicationCard extends StatelessWidget {
               const Spacer(),
               if (application.unreadCount > 0)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: context.colors.error,
                     borderRadius: BorderRadius.circular(10),
@@ -456,7 +476,11 @@ class _ApplicationCard extends StatelessWidget {
                   ),
                 )
               else
-                Icon(LucideIcons.chevronRight, size: 18, color: context.colors.textTertiary),
+                Icon(
+                  LucideIcons.chevronRight,
+                  size: 18,
+                  color: context.colors.textTertiary,
+                ),
             ],
           ),
         ],
