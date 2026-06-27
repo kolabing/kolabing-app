@@ -51,12 +51,13 @@ class MissionsService {
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'];
-        final missionsJson = data is Map<String, dynamic>
-            ? data['missions']
-            : null;
-        if (missionsJson is! List) {
-          return const <Mission>[];
+        if (data is! Map<String, dynamic> || data['missions'] is! List) {
+          debugPrint(
+            '🎯 Get My Missions: unexpected response shape, expected data.missions list: ${response.body}',
+          );
+          throw const MissionException('Unexpected response from server');
         }
+        final missionsJson = data['missions'] as List;
         return missionsJson
             .whereType<Map<String, dynamic>>()
             .map(Mission.fromJson)
