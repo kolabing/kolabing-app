@@ -301,7 +301,7 @@ Until those are resolved, treat this section as the source of truth for what att
 Backend `MissionController::index()` (`GET /api/v1/me/missions`) returns only missions
 matching every one of: `is_system=true`, `event_id IS NULL`, `app_visible=true`,
 `trigger_action IS NOT NULL`, `trigger_action` in `MissionTrigger::isLive()`'s true set,
-`audience` matching the viewer, and within `[starts_at, ends_at]`. Of the ~45 missions
+`audience` matching the viewer, and within `[starts_at, ends_at]`. Of the 49 missions
 `SystemChallengeSeeder` seeds, exactly **18 have `app_visible=true`** (5 attendee,
 7 business, 6 community), all on live triggers; the rest are seeded but inert pending
 trigger wiring or a future product decision.
