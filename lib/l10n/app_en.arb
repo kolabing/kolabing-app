@@ -1296,6 +1296,34 @@
   "@exploreFeedAll": {
     "description": "Feed toggle: all"
   },
+  "exploreFeedSaved": "Saved",
+  "@exploreFeedSaved": {
+    "description": "Feed toggle: the viewer's saved (bookmarked) kolabs"
+  },
+  "savedKolabsEmptyTitle": "No saved kolabs yet",
+  "@savedKolabsEmptyTitle": {
+    "description": "Saved tab empty-state title"
+  },
+  "savedKolabsEmptyBody": "Tap the bookmark on a kolab to save it for later.",
+  "@savedKolabsEmptyBody": {
+    "description": "Saved tab empty-state body"
+  },
+  "savedKolabsErrorTitle": "Couldn't load saved kolabs",
+  "@savedKolabsErrorTitle": {
+    "description": "Saved tab error-state title"
+  },
+  "savedKolabsErrorBody": "Something went wrong. Please try again.",
+  "@savedKolabsErrorBody": {
+    "description": "Saved tab error-state body"
+  },
+  "savedKolabsSaveError": "Couldn't save this kolab. Please try again.",
+  "@savedKolabsSaveError": {
+    "description": "Snackbar when saving a kolab fails"
+  },
+  "savedKolabsUnsaveError": "Couldn't remove this kolab. Please try again.",
+  "@savedKolabsUnsaveError": {
+    "description": "Snackbar when unsaving a kolab fails"
+  },
   "myKolabsTabPublished": "Published",
   "@myKolabsTabPublished": {
     "description": "Status tab: published"

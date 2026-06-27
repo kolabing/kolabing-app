@@ -457,6 +457,7 @@ class Opportunity {
     this.applicationsCount,
     this.isOwn,
     this.hasApplied,
+    this.isSaved = false,
     this.myApplication,
     // Phase 5 (2026-05-21): H2 offer headline + H3 base/negotiable offer model.
     this.offerHeadline,
@@ -517,7 +518,9 @@ class Opportunity {
       ),
       address: json['address']?.toString(),
       preferredCity: json['preferred_city']?.toString() ?? '',
-      offerPhoto: normalizeRemoteMediaUrlOrNull(json['offer_photo']?.toString()),
+      offerPhoto: normalizeRemoteMediaUrlOrNull(
+        json['offer_photo']?.toString(),
+      ),
       status: OpportunityStatus.fromString(
         json['status']?.toString() ?? 'draft',
       ),
@@ -532,6 +535,7 @@ class Opportunity {
       applicationsCount: _parseInt(json['applications_count']),
       isOwn: _parseBool(json['is_own']),
       hasApplied: _parseBool(json['has_applied']),
+      isSaved: _parseBool(json['is_saved']) ?? false,
       myApplication: json['my_application'] is Map<String, dynamic>
           ? MyApplication.fromJson(
               json['my_application'] as Map<String, dynamic>,
@@ -589,6 +593,11 @@ class Opportunity {
   final int? applicationsCount;
   final bool? isOwn;
   final bool? hasApplied;
+
+  /// Whether the current viewer has bookmarked this kolab (`is_saved`).
+  /// Backed by the `/kolabs/{id}/save` endpoints; present on `/kolabs` (incl.
+  /// `?saved=1`) and `/kolabs/{id}` responses.
+  final bool isSaved;
   final MyApplication? myApplication;
 
   // Phase 5 discovery & matching (2026-05-21).
@@ -647,6 +656,7 @@ class Opportunity {
     int? applicationsCount,
     bool? isOwn,
     bool? hasApplied,
+    bool? isSaved,
     MyApplication? myApplication,
     bool clearAddress = false,
     bool clearOfferPhoto = false,
@@ -678,6 +688,7 @@ class Opportunity {
     applicationsCount: applicationsCount ?? this.applicationsCount,
     isOwn: isOwn ?? this.isOwn,
     hasApplied: hasApplied ?? this.hasApplied,
+    isSaved: isSaved ?? this.isSaved,
     myApplication: myApplication ?? this.myApplication,
   );
 

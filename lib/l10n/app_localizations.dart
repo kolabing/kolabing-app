@@ -1954,6 +1954,48 @@ abstract class AppLocalizations {
   /// **'All'**
   String get exploreFeedAll;
 
+  /// Feed toggle: the viewer's saved (bookmarked) kolabs
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get exploreFeedSaved;
+
+  /// Saved tab empty-state title
+  ///
+  /// In en, this message translates to:
+  /// **'No saved kolabs yet'**
+  String get savedKolabsEmptyTitle;
+
+  /// Saved tab empty-state body
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the bookmark on a kolab to save it for later.'**
+  String get savedKolabsEmptyBody;
+
+  /// Saved tab error-state title
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load saved kolabs'**
+  String get savedKolabsErrorTitle;
+
+  /// Saved tab error-state body
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get savedKolabsErrorBody;
+
+  /// Snackbar when saving a kolab fails
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save this kolab. Please try again.'**
+  String get savedKolabsSaveError;
+
+  /// Snackbar when unsaving a kolab fails
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t remove this kolab. Please try again.'**
+  String get savedKolabsUnsaveError;
+
   /// Status tab: published
   ///
   /// In en, this message translates to:

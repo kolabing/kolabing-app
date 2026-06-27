@@ -1026,6 +1026,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exploreFeedAll => 'All';
 
   @override
+  String get exploreFeedSaved => 'Saved';
+
+  @override
+  String get savedKolabsEmptyTitle => 'No saved kolabs yet';
+
+  @override
+  String get savedKolabsEmptyBody =>
+      'Tap the bookmark on a kolab to save it for later.';
+
+  @override
+  String get savedKolabsErrorTitle => 'Couldn\'t load saved kolabs';
+
+  @override
+  String get savedKolabsErrorBody => 'Something went wrong. Please try again.';
+
+  @override
+  String get savedKolabsSaveError =>
+      'Couldn\'t save this kolab. Please try again.';
+
+  @override
+  String get savedKolabsUnsaveError =>
+      'Couldn\'t remove this kolab. Please try again.';
+
+  @override
   String get myKolabsTabPublished => 'Published';
 
   @override
