@@ -30,4 +30,22 @@ void main() {
 
     expect(() => service.getMyMissions(), throwsA(isA<MissionException>()));
   });
+
+  test('returns an empty list when data.missions is genuinely empty on a 200', () async {
+    final client = MockClient((request) async {
+      return http.Response('{"success": true, "data": {"missions": []}}', 200);
+    });
+
+    final service = MissionsService(
+      authService: AuthService(
+        secureStorage: const FlutterSecureStorage(),
+        httpClient: client,
+      ),
+      httpClient: client,
+    );
+
+    final missions = await service.getMyMissions();
+
+    expect(missions, isEmpty);
+  });
 }
