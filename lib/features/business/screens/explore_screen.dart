@@ -228,7 +228,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             ],
             Expanded(
               child: _savedSelected
-                  ? _SavedKolabsTab(detailRoutePrefix: widget.detailRoutePrefix)
+                  ? _buildSavedTab()
                   : listState.isLoading
                   ? _buildLoadingState()
                   : listState.error != null
@@ -387,13 +387,131 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   Future<void> _toggleSaved(String id) async {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
+    final wasSaved = ref.read(savedKolabIdsProvider).contains(id);
     try {
       await toggleKolabSaved(ref, id);
     } catch (_) {
       messenger.showSnackBar(
-        SnackBar(content: Text(l10n.savedKolabsSaveError)),
+        SnackBar(
+          content: Text(
+            wasSaved ? l10n.savedKolabsUnsaveError : l10n.savedKolabsSaveError,
+          ),
+        ),
       );
     }
+  }
+
+  bool get _hasBusinessSubscription {
+    final profileState = ref.read(profileProvider);
+    final authUser = ref.read(authProvider).user;
+    return _isCommunityViewer ||
+        profileState.isSubscribed ||
+        (authUser?.hasActiveSubscription ?? false) ||
+        (authUser?.subscription?.isActive ?? false);
+  }
+
+  /// Open the detail sheet for a saved kolab, with the same apply/paywall wiring
+  /// as the discovery deck (a free business gets the paywall, never a hard block).
+  void _openSavedOpportunity(Opportunity opportunity) {
+    final hasSub = _hasBusinessSubscription;
+    final isOwn = opportunity.isOwn ?? false;
+    ExploreDetailSheet.show(
+      context,
+      opportunity: opportunity,
+      onApply: hasSub && !isOwn
+          ? () {
+              Navigator.of(context).pop();
+              _openApplyFlow(opportunity);
+            }
+          : null,
+      onSubscribe: !_isCommunityViewer && !hasSub
+          ? () async {
+              Navigator.of(context).pop();
+              final allowed = await SubscriptionPaywall.checkAndShow(
+                context,
+                ref,
+              );
+              if (allowed) {
+                await ref.read(profileProvider.notifier).refreshSubscription();
+              }
+            }
+          : null,
+      canApply: (_isCommunityViewer || hasSub) && !isOwn,
+    );
+  }
+
+  /// Apply directly from a saved card's Apply button. Free business → paywall.
+  Future<void> _applyFromSaved(Opportunity opportunity) async {
+    if (opportunity.isOwn ?? false) return;
+    if (!_isCommunityViewer && !_hasBusinessSubscription) {
+      final allowed = await SubscriptionPaywall.checkAndShow(context, ref);
+      if (!allowed || !mounted) return;
+      await ref.read(profileProvider.notifier).refreshSubscription();
+      if (!mounted) return;
+    }
+    await _openApplyFlow(opportunity);
+  }
+
+  Widget _buildSavedTab() {
+    final l10n = AppLocalizations.of(context);
+    final asyncSaved = ref.watch(savedKolabsProvider);
+
+    return asyncSaved.when(
+      loading: () => Center(
+        child: CircularProgressIndicator(
+          color: context.colors.primary,
+          strokeWidth: 2,
+        ),
+      ),
+      error: (_, _) => _SavedKolabsMessage(
+        icon: LucideIcons.alertCircle,
+        title: l10n.savedKolabsErrorTitle,
+        body: l10n.savedKolabsErrorBody,
+        actionLabel: l10n.commonRetry,
+        onAction: () => ref.invalidate(savedKolabsProvider),
+      ),
+      data: (saved) {
+        if (saved.isEmpty) {
+          return _SavedKolabsMessage(
+            icon: LucideIcons.bookmark,
+            title: l10n.savedKolabsEmptyTitle,
+            body: l10n.savedKolabsEmptyBody,
+          );
+        }
+        return RefreshIndicator(
+          color: context.colors.primary,
+          onRefresh: () async {
+            ref.invalidate(savedKolabsProvider);
+            await ref.read(savedKolabsProvider.future);
+          },
+          child: ListView.separated(
+            padding: const EdgeInsets.fromLTRB(
+              KolabingSpacing.md,
+              KolabingSpacing.xs,
+              KolabingSpacing.md,
+              KolabingSpacing.xxl,
+            ),
+            itemCount: saved.length,
+            separatorBuilder: (_, _) =>
+                const SizedBox(height: KolabingSpacing.sm),
+            itemBuilder: (context, index) {
+              final opportunity = saved[index];
+              final id = opportunity.id;
+              final isOwn = opportunity.isOwn ?? false;
+              return OpportunityCard(
+                opportunity: opportunity,
+                isSaved: true,
+                onToggleSave: id != null ? () => _toggleSaved(id) : null,
+                onView: () => _openSavedOpportunity(opportunity),
+                onApply: (id != null && !isOwn)
+                    ? () => _applyFromSaved(opportunity)
+                    : null,
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildCardPageView(
@@ -726,100 +844,6 @@ class _FeedToggle extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-/// The Explore "Saved" tab — the viewer's bookmarked kolabs
-/// (`GET /kolabs?saved=1`). Reuses [OpportunityCard]; each card has an unsave
-/// bookmark, and tapping opens the same detail sheet as the discovery feed.
-class _SavedKolabsTab extends ConsumerWidget {
-  const _SavedKolabsTab({required this.detailRoutePrefix});
-
-  final String detailRoutePrefix;
-
-  Future<void> _unsave(BuildContext context, WidgetRef ref, String id) async {
-    final l10n = AppLocalizations.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      await toggleKolabSaved(ref, id);
-    } catch (_) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.savedKolabsUnsaveError)),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final asyncSaved = ref.watch(savedKolabsProvider);
-
-    return asyncSaved.when(
-      loading: () => Center(
-        child: CircularProgressIndicator(
-          color: context.colors.primary,
-          strokeWidth: 2,
-        ),
-      ),
-      error: (_, _) => _SavedKolabsMessage(
-        icon: LucideIcons.alertCircle,
-        title: l10n.savedKolabsErrorTitle,
-        body: l10n.savedKolabsErrorBody,
-        actionLabel: l10n.commonRetry,
-        onAction: () => ref.invalidate(savedKolabsProvider),
-      ),
-      data: (saved) {
-        if (saved.isEmpty) {
-          return _SavedKolabsMessage(
-            icon: LucideIcons.bookmark,
-            title: l10n.savedKolabsEmptyTitle,
-            body: l10n.savedKolabsEmptyBody,
-          );
-        }
-        return RefreshIndicator(
-          color: context.colors.primary,
-          onRefresh: () async {
-            ref.invalidate(savedKolabsProvider);
-            await ref.read(savedKolabsProvider.future);
-          },
-          child: ListView.separated(
-            padding: const EdgeInsets.fromLTRB(
-              KolabingSpacing.md,
-              KolabingSpacing.xs,
-              KolabingSpacing.md,
-              KolabingSpacing.xxl,
-            ),
-            itemCount: saved.length,
-            separatorBuilder: (_, _) =>
-                const SizedBox(height: KolabingSpacing.sm),
-            itemBuilder: (context, index) {
-              final opportunity = saved[index];
-              final id = opportunity.id;
-              return Stack(
-                children: [
-                  OpportunityCard(
-                    opportunity: opportunity,
-                    onView: () => ExploreDetailSheet.show(
-                      context,
-                      opportunity: opportunity,
-                    ),
-                  ),
-                  if (id != null)
-                    Positioned(
-                      top: KolabingSpacing.sm,
-                      right: KolabingSpacing.sm,
-                      child: _SaveBookmarkButton(
-                        isSaved: true,
-                        onTap: () => _unsave(context, ref, id),
-                      ),
-                    ),
-                ],
-              );
-            },
-          ),
-        );
-      },
     );
   }
 }
