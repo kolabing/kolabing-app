@@ -1977,5 +1977,27 @@
   "businessProductPhotosEmptyTitle": "Añadir fotos",
   "businessProductPhotosEmptyDescription": "Muestra lo que ofreces. Sube tus propias fotos, elimina las que no quieras y ordénalas aquí.",
 
-  "communityStep1SizeHelper": "¿Aproximadamente cuántos miembros tiene tu comunidad?"
+  "communityStep1SizeHelper": "¿Aproximadamente cuántos miembros tiene tu comunidad?",
+
+  "missionsTitle": "Misiones",
+  "missionsProgress": "{progress}/{target}",
+  "@missionsProgress": {
+    "placeholders": {
+      "progress": { "type": "int" },
+      "target": { "type": "int" }
+    }
+  },
+  "missionsPointsLabel": "pts",
+  "missionsEmptyTitle": "Aún no hay misiones",
+  "missionsEmptyMessage": "Sigue usando Kolabing y aquí aparecerán nuevas misiones.",
+  "missionsLoadError": "No se pudieron cargar tus misiones",
+  "missionsCategoryOnboarding": "Primeros pasos",
+  "missionsCategoryAttendance": "Asistencia",
+  "missionsCategoryEngagement": "Participación",
+  "missionsCategoryContent": "Contenido",
+  "missionsCategoryReferral": "Recomendaciones",
+  "missionsCategoryGrowth": "Crecimiento",
+  "missionsCategorySocial": "Social",
+  "missionsCategoryMilestone": "Hitos",
+  "missionsCategoryOther": "Otros"
 }

@@ -11761,6 +11761,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Roughly how many members are in your community?'**
   String get communityStep1SizeHelper;
+
+  /// Missions screen app-bar title and profile entry label
+  ///
+  /// In en, this message translates to:
+  /// **'Missions'**
+  String get missionsTitle;
+
+  /// Mission progress as current over target, e.g. 2/5
+  ///
+  /// In en, this message translates to:
+  /// **'{progress}/{target}'**
+  String missionsProgress(int progress, int target);
+
+  /// Short label for points awarded by a mission, shown after the amount (e.g. +50 pts)
+  ///
+  /// In en, this message translates to:
+  /// **'pts'**
+  String get missionsPointsLabel;
+
+  /// Missions screen empty-state title
+  ///
+  /// In en, this message translates to:
+  /// **'No missions yet'**
+  String get missionsEmptyTitle;
+
+  /// Missions screen empty-state message
+  ///
+  /// In en, this message translates to:
+  /// **'Keep using Kolabing and new missions will show up here.'**
+  String get missionsEmptyMessage;
+
+  /// Missions screen error-state message
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your missions'**
+  String get missionsLoadError;
+
+  /// Mission category header: onboarding
+  ///
+  /// In en, this message translates to:
+  /// **'Getting started'**
+  String get missionsCategoryOnboarding;
+
+  /// Mission category header: attendance
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
+  String get missionsCategoryAttendance;
+
+  /// Mission category header: engagement
+  ///
+  /// In en, this message translates to:
+  /// **'Engagement'**
+  String get missionsCategoryEngagement;
+
+  /// Mission category header: content
+  ///
+  /// In en, this message translates to:
+  /// **'Content'**
+  String get missionsCategoryContent;
+
+  /// Mission category header: referral
+  ///
+  /// In en, this message translates to:
+  /// **'Referrals'**
+  String get missionsCategoryReferral;
+
+  /// Mission category header: growth
+  ///
+  /// In en, this message translates to:
+  /// **'Growth'**
+  String get missionsCategoryGrowth;
+
+  /// Mission category header: social
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get missionsCategorySocial;
+
+  /// Mission category header: milestone
+  ///
+  /// In en, this message translates to:
+  /// **'Milestones'**
+  String get missionsCategoryMilestone;
+
+  /// Mission category header: unknown/other category fallback
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get missionsCategoryOther;
 }
 
 class _AppLocalizationsDelegate

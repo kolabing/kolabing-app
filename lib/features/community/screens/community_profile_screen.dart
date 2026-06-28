@@ -1015,6 +1015,15 @@ class _CommunityProfileScreenState
 
             const SizedBox(height: KolabingSpacing.sm),
 
+            // Missions (gamification)
+            _ContactInfoTile(
+              icon: LucideIcons.target,
+              label: AppLocalizations.of(context).missionsTitle,
+              onTap: () => context.push(KolabingRoutes.missions),
+            ),
+
+            const SizedBox(height: KolabingSpacing.sm),
+
             // Language
             _ContactInfoTile(
               icon: LucideIcons.globe,

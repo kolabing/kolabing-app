@@ -1,6 +1,6 @@
 # Kolabing — Roles → Backend → Database Map (Ground-Truth)
 
-**Last updated:** 2026-06-26 (completion-flow simplification PR 1: `/complete` gate moved from `collaboration_feedback` to a new lightweight `collaboration_completions` table — §0 item 10, §3, §9, §10)
+**Last updated:** 2026-06-28 (added §11.1 gamification mission system v1 — `challenges.app_visible` + the three event/general mission filter sites, mirrored from `kolabing-v2` #49; completion-flow simplification PR 1: `/complete` gate moved from `collaboration_feedback` to a new lightweight `collaboration_completions` table — §0 item 10, §3, §9, §10; previous: kolab single-source-of-truth migration in flight; goal-based onboarding backend fields; planned community verification — see §17)
 **Status:** Authoritative companion to [`ROLES-AND-PERMISSIONS.md`](./ROLES-AND-PERMISSIONS.md). Read that first (the *what*), then this (the *where*).
 **Sync note:** Duplicated in both repos (`kolabing-app`, `kolabing-v2`). Keep identical, and **bump the Last updated date in both** when role behaviour or backend wiring changes.
 
@@ -165,6 +165,11 @@ Gamification / wallets (§11):
  ├─ wallets, withdrawal_requests, point_ledger
  ├─ badges, badge_awards, earned_badges
  ├─ event_checkins, event_photos, event_rewards
+ ├─ challenges (trigger_action? string(60), target_value uint default 1,
+ │              repeat_interval string(20) default 'once', starts_at?, ends_at?,
+ │              slug string(120) UNIQUE?, app_visible bool default false)   ← mission columns (kolabing-v2 #49)
+ ├─ challenge_progress (challenge_id FK, profile_id FK, progress_count, target_value,
+ │                       completed_at?, period_key?; UNIQUE(challenge_id, profile_id, period_key))
  └─ collaboration_challenges, challenge_completions, referral_codes, referral_redemptions
 
 Lookups / admin:
@@ -188,6 +193,7 @@ Fixed since the last revision:
 - [x] Collaboration cancellation now persists `cancellation_reason`, `cancelled_at`, and `cancelled_by_profile_id` (§10).
 - [x] **Feedback gate on `/complete` shipped** with admin force-complete, auto-timeout scheduler, and a `/review`→`/feedback` mirror for legacy clients (§3, §9, §10). XP moved from `/complete` to `/feedback` per Q7. PR #9, 2026-06-01.
 - [x] **NF-6 community members + tiers, Phase 1 shipped** (2026-06-03): `communities` / `community_tiers` / `community_members` tables, `events.community_id`, `CommunityPolicy`, the cap gate (NOT the paywall), the auto-assignment command + on-check-in hook, and the chapter-scoped leaderboard. See §12.
+- [x] **Gamification mission system v1 shipped** (2026-06-28, `kolabing-v2` #49): `challenges.app_visible` curation column, atomic `challenge_progress` upsert, wallet-service delegation + `isLive()` guard on `/me/missions`, the DTO refactor, and the curated 18-mission v1 set (5 attendee / 7 business / 6 community). Event/general mission separation enforced in three backend places. See §11.1.
 
 Still open:
 
@@ -290,6 +296,23 @@ The attendee track ships substantial code despite `ROLES-AND-PERMISSIONS.md §0`
 - Should the canonical permissions doc grow a full §4 covering attendees, replacing the "deferred" stub?
 
 Until those are resolved, treat this section as the source of truth for what attendees can do, and treat `ROLES-AND-PERMISSIONS.md §0` (attendee = deferred) as **stale**.
+
+### 11.1 General missions vs. event challenges (added 2026-06-27, `kolabing-v2` #49)
+
+Backend `MissionController::index()` (`GET /api/v1/me/missions`) returns only missions
+matching every one of: `is_system=true`, `event_id IS NULL`, `app_visible=true`,
+`trigger_action IS NOT NULL`, `trigger_action` in `MissionTrigger::isLive()`'s true set,
+`audience` matching the viewer, and within `[starts_at, ends_at]`. Of the 49 missions
+`SystemChallengeSeeder` seeds, exactly **18 have `app_visible=true`** (5 attendee,
+7 business, 6 community), all on live triggers; the rest are seeded but inert pending
+trigger wiring or a future product decision.
+
+Event challenges (`trigger_action IS NULL`, peer-verified, attached to a kolab event)
+are excluded from `/me/missions`, and general missions are symmetrically excluded from
+every event-scoped surface. That split is enforced in **three** backend places:
+`SystemChallengeController` (`GET /api/v1/challenges/system`), `Admin\ChallengeDefaultsController`
+(admin defaults matrix), and `ChallengeService::listForEvent()` (`GET /api/v1/events/{event}/challenges`).
+See `ROLES-AND-PERMISSIONS.md §7.4` for the client-facing description.
 
 ---
 
