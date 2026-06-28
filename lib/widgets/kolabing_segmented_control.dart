@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../config/constants/layout.dart';
 import '../config/constants/radius.dart';
 import '../config/theme/color_tokens.dart';
+import '../config/theme/typography.dart';
 
 /// Visual weight of a [KolabingSegmentedControl].
 enum KolabingSegmentedStyle {
@@ -11,8 +11,10 @@ enum KolabingSegmentedStyle {
   /// segment. Use for the primary filter row (e.g. status tabs).
   primary,
 
-  /// Narrower, trackless, yellow fill on the selected segment. Use for a
-  /// secondary filter row nested under a primary one.
+  /// Compact, content-width track nested under a primary row, with a yellow
+  /// fill on the selected segment. Reads as one unified two-option toggle —
+  /// not a loose pill next to muted text. Use for a secondary filter row
+  /// (e.g. Published/Draft, Sent/Received).
   secondary,
 }
 
@@ -42,19 +44,20 @@ class KolabingSegmentedControl<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
-    final height = _isPrimary ? 38.0 : 34.0;
+    // Both styles share the same track language (white pill + hairline) so the
+    // secondary row reads as a real toggle. Secondary is taller-enough to keep
+    // a comfortable tap target and drops the shadow to stay subordinate.
+    final height = _isPrimary ? 38.0 : 40.0;
 
     final track = Container(
       height: height,
-      padding: _isPrimary ? const EdgeInsets.all(4) : EdgeInsets.zero,
-      decoration: _isPrimary
-          ? BoxDecoration(
-              color: c.surface,
-              borderRadius: KolabingRadius.borderRadiusPill,
-              border: Border.all(color: c.controlBorder, width: 1),
-              boxShadow: const [KolabingShadows.card],
-            )
-          : null,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: c.surface,
+        borderRadius: KolabingRadius.borderRadiusPill,
+        border: Border.all(color: c.controlBorder, width: 1),
+        boxShadow: _isPrimary ? const [KolabingShadows.card] : null,
+      ),
       child: Row(
         mainAxisSize: _isPrimary ? MainAxisSize.max : MainAxisSize.min,
         children: [
@@ -66,13 +69,9 @@ class KolabingSegmentedControl<T> extends StatelessWidget {
       ),
     );
 
-    return _isPrimary
-        ? SizedBox(width: double.infinity, child: track)
-        : FractionallySizedBox(
-            widthFactor: 0.6,
-            alignment: Alignment.centerLeft,
-            child: track,
-          );
+    // Primary fills the row; secondary sizes to its content and lets the caller
+    // decide alignment (centered in My Kolabs).
+    return _isPrimary ? SizedBox(width: double.infinity, child: track) : track;
   }
 
   Widget _segment(BuildContext context, T value, String label, double height) {
@@ -86,31 +85,30 @@ class KolabingSegmentedControl<T> extends StatelessWidget {
         ? (_isPrimary ? Colors.white : c.ink)
         : c.mutedFilter;
 
-    return Padding(
-      padding: _isPrimary ? EdgeInsets.zero : const EdgeInsets.only(right: 6),
-      child: GestureDetector(
-        onTap: () => onChanged(value),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          height: height,
-          padding: EdgeInsets.symmetric(horizontal: _isPrimary ? 4 : 14),
-          decoration: BoxDecoration(
-            color: fill,
-            borderRadius: KolabingRadius.borderRadiusPill,
-          ),
-          alignment: Alignment.center,
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              label,
-              maxLines: 1,
-              softWrap: false,
-              style: GoogleFonts.inter(
-                fontSize: _isPrimary ? 12.5 : 12,
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-                letterSpacing: _isPrimary ? 0.3 : 0.4,
-                color: labelColor,
-              ),
+    return GestureDetector(
+      onTap: () => onChanged(value),
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        curve: Curves.easeOut,
+        constraints: const BoxConstraints(minWidth: 72),
+        padding: EdgeInsets.symmetric(horizontal: _isPrimary ? 4 : 18),
+        decoration: BoxDecoration(
+          color: fill,
+          borderRadius: KolabingRadius.borderRadiusPill,
+        ),
+        alignment: Alignment.center,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            label,
+            maxLines: 1,
+            softWrap: false,
+            style: KolabingTextStyles.button.copyWith(
+              fontSize: _isPrimary ? 12.5 : 12.5,
+              fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+              letterSpacing: 0.4,
+              color: labelColor,
             ),
           ),
         ),

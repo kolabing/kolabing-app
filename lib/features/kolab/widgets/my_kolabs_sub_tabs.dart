@@ -14,22 +14,44 @@ class MyKolabsSubTabs extends StatelessWidget {
     required this.controller,
     required this.labels,
     super.key,
+    this.trailing,
   });
 
   final TabController controller;
   final List<String> labels;
 
+  /// Optional widget pinned to the right of the filter on the SAME row (e.g. a
+  /// "N kolabs" count). Keeping the filter + count on one line avoids adding an
+  /// extra row that pushes the list down.
+  final Widget? trailing;
+
   @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: controller,
-    builder: (context, _) => Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 16),
-      child: KolabingSegmentedControl<int>(
-        style: KolabingSegmentedStyle.secondary,
-        segments: [for (var i = 0; i < labels.length; i++) (i, labels[i])],
-        selectedValue: controller.index,
-        onChanged: controller.animateTo,
+  Widget build(BuildContext context) {
+    final control = KolabingSegmentedControl<int>(
+      style: KolabingSegmentedStyle.secondary,
+      segments: [for (var i = 0; i < labels.length; i++) (i, labels[i])],
+      selectedValue: controller.index,
+      onChanged: controller.animateTo,
+    );
+
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) => Padding(
+        padding: const EdgeInsets.fromLTRB(0, 6, 0, 10),
+        // Control is centered; the optional count is pinned to the right edge
+        // on the SAME row (a centered toggle, no extra row that shifts the page).
+        child: SizedBox(
+          width: double.infinity,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              control,
+              if (trailing != null)
+                Align(alignment: Alignment.centerRight, child: trailing!),
+            ],
+          ),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
