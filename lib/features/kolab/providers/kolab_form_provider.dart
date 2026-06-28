@@ -11,7 +11,8 @@ import '../../auth/models/user_model.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
-import '../enums/deliverable_type.dart';
+import '../../profile/providers/gallery_provider.dart';
+import '../constants/default_covers.dart';
 import '../enums/intent_type.dart';
 import '../enums/need_type.dart';
 import '../enums/product_type.dart';
@@ -202,6 +203,23 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     }
   }
 
+  /// Whether a default photo (profile gallery or, for venue Kolabs, the
+  /// venue's own photos) exists that the Media step can fall back on instead
+  /// of hard-blocking when `kolab.media` is still empty.
+  bool _hasUsableDefaultPhoto(Kolab kolab) {
+    if (kolab.media.isNotEmpty) return true;
+    try {
+      if (ref.read(galleryProvider).photos.isNotEmpty) return true;
+    } on Exception {
+      // Gallery not loaded yet — fall through to the venue-photo check.
+    }
+    if (kolab.intentType == IntentType.venuePromotion) {
+      final venuePhotos = _readBusinessProfile()?.primaryVenue?.photos;
+      if (venuePhotos != null && venuePhotos.isNotEmpty) return true;
+    }
+    return false;
+  }
+
   VenueType? _resolveVenueType(String? rawType) {
     if (rawType == null || rawType.isEmpty) return null;
     try {
@@ -288,6 +306,15 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
+  /// New goal step: what the Kolab is meant to achieve, shown as a badge on
+  /// Review.
+  void updateGoal(String? goal) {
+    state = state.copyWith(
+      kolab: state.kolab.copyWith(goal: goal, clearGoal: goal == null),
+      clearError: true,
+    );
+  }
+
   /// H3: negotiation triggers (gated until a community applies).
   void updateNegotiationTriggers(List<NegotiationTrigger> triggers) {
     state = state.copyWith(
@@ -322,6 +349,26 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
+  /// Selects a Kolabing-designed default cover for [intent] instead of
+  /// requiring a business upload. Replaces any existing default-cover entry
+  /// rather than stacking duplicates if called twice.
+  void useDefaultCover(IntentType intent) {
+    final path = pickDefaultCoverPathFor(intent);
+    final cover = KolabMedia(
+      url: normalizeRemoteMediaUrl(path),
+      type: 'image',
+      sortOrder: 0,
+      isDefaultCover: true,
+    );
+    final withoutExistingDefault = state.kolab.media
+        .where((m) => !m.isDefaultCover)
+        .toList();
+    state = state.copyWith(
+      kolab: state.kolab.copyWith(media: [cover, ...withoutExistingDefault]),
+      clearError: true,
+    );
+  }
+
   void removeMedia(int index) {
     final updated = List<KolabMedia>.from(state.kolab.media)..removeAt(index);
     state = state.copyWith(
@@ -349,10 +396,17 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     // Pre-fill a one-time kolab with sensible default dates (tomorrow → one
     // month later) so the range isn't empty; still fully editable.
     if (mode == AvailabilityMode.oneTime && start == null) {
-      final tomorrow =
-          DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
+      final tomorrow = DateUtils.dateOnly(
+        DateTime.now(),
+      ).add(const Duration(days: 1));
       start = tomorrow;
       end ??= DateTime(tomorrow.year, tomorrow.month + 1, tomorrow.day);
+    }
+
+    // Immediate is always-available-from-today; no date picker is shown for
+    // it, so default the start date to today so submission validates.
+    if (mode == AvailabilityMode.immediate) {
+      start = DateUtils.dateOnly(DateTime.now());
     }
 
     state = state.copyWith(
@@ -469,12 +523,12 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
-  void toggleOfferInReturn(DeliverableType deliverable) {
-    final offers = List<DeliverableType>.from(state.kolab.offersInReturn);
-    if (offers.contains(deliverable)) {
-      offers.remove(deliverable);
+  void toggleOfferInReturn(String slug) {
+    final offers = List<String>.from(state.kolab.offersInReturn);
+    if (offers.contains(slug)) {
+      offers.remove(slug);
     } else {
-      offers.add(deliverable);
+      offers.add(slug);
     }
     state = state.copyWith(
       kolab: state.kolab.copyWith(offersInReturn: offers),
@@ -482,7 +536,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
-  void updateOffersInReturn(List<DeliverableType> offers) {
+  void updateOffersInReturn(List<String> offers) {
     state = state.copyWith(
       kolab: state.kolab.copyWith(offersInReturn: offers),
       clearError: true,
@@ -611,12 +665,12 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
-  void toggleExpect(DeliverableType deliverable) {
-    final list = List<DeliverableType>.from(state.kolab.expects);
-    if (list.contains(deliverable)) {
-      list.remove(deliverable);
+  void toggleExpect(String slug) {
+    final list = List<String>.from(state.kolab.expects);
+    if (list.contains(slug)) {
+      list.remove(slug);
     } else {
-      list.add(deliverable);
+      list.add(slug);
     }
     state = state.copyWith(
       kolab: state.kolab.copyWith(expects: list),
@@ -624,7 +678,20 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
     );
   }
 
-  void updateExpects(List<DeliverableType> expects) {
+  void toggleHighlight(String slug) {
+    final list = List<String>.from(state.kolab.highlights);
+    if (list.contains(slug)) {
+      list.remove(slug);
+    } else {
+      list.add(slug);
+    }
+    state = state.copyWith(
+      kolab: state.kolab.copyWith(highlights: list),
+      clearError: true,
+    );
+  }
+
+  void updateExpects(List<String> expects) {
     state = state.copyWith(
       kolab: state.kolab.copyWith(expects: expects),
       clearError: true,
@@ -744,6 +811,10 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
               if (kolab.selectedTime == null) {
                 errors['selected_time'] = 'Select a time for your availability';
               }
+            case AvailabilityMode.immediate:
+              // Business-Kolab-only mode; unreachable on the
+              // community-seeking flow's availability picker.
+              break;
           }
         }
         if (kolab.preferredCity.isEmpty) {
@@ -777,34 +848,49 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['offer_headline'] =
               'Add a one-line offer headline (e.g. "20% off Tuesdays")';
         }
-      case 1: // Media
-        if (kolab.media.isEmpty) {
+      case 1: // Goal (optional — encouraged, not blocking)
+        break;
+      case 2: // Media
+        // Soft requirement: don't block when a default photo exists
+        // (profile gallery or venue photos) — Next stays enabled and the
+        // Media screen shows a tip instead of a hard error in that case.
+        if (kolab.media.isEmpty && !_hasUsableDefaultPhoto(kolab)) {
           errors['media'] = 'Add at least 1 photo';
         }
-      case 2: // What you offer
+      case 3: // What you offer
         if (kolab.offering.isEmpty) {
           errors['offering'] = 'Select at least 1 offering';
         }
-      case 3: // Seeking communities
+        if (kolab.baseOffer == null || kolab.baseOffer!.trim().isEmpty) {
+          errors['base_offer'] =
+              'Describe your offer so communities know what to expect';
+        }
+      case 4: // Seeking communities
         // No required validation
         break;
-      case 4: // Expectations
+      case 5: // Expectations
         // No required validation
         break;
-      case 5: // Availability
+      case 6: // Availability
         if (kolab.availabilityMode == null) {
           errors['availability_mode'] = 'Select an availability mode';
         } else if (kolab.availabilityStart == null) {
           errors['availability_start'] =
               'Pick a start date for your availability window';
         } else {
-          final today = DateUtils.dateOnly(DateTime.now());
+          final isImmediate =
+              kolab.availabilityMode == AvailabilityMode.immediate;
+          final floor = isImmediate
+              ? DateUtils.dateOnly(DateTime.now())
+              : DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
           final start = DateUtils.dateOnly(kolab.availabilityStart!);
-          if (start.isBefore(today)) {
-            errors['availability_start'] = 'Start date cannot be in the past';
+          if (start.isBefore(floor)) {
+            errors['availability_start'] = isImmediate
+                ? 'Start date cannot be in the past'
+                : 'Start date must be tomorrow or later';
           }
         }
-      case 6: // Review
+      case 7: // Review
         // Review step has no additional validation
         break;
     }
@@ -838,34 +924,49 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
           errors['offer_headline'] =
               'Add a one-line offer headline (e.g. "Free with any 5+ order")';
         }
-      case 1: // Media
-        if (kolab.media.isEmpty) {
+      case 1: // Goal (optional — encouraged, not blocking)
+        break;
+      case 2: // Media
+        // Soft requirement: don't block when a default photo exists
+        // (profile gallery or venue photos) — Next stays enabled and the
+        // Media screen shows a tip instead of a hard error in that case.
+        if (kolab.media.isEmpty && !_hasUsableDefaultPhoto(kolab)) {
           errors['media'] = 'Add at least 1 photo';
         }
-      case 2: // What you offer
+      case 3: // What you offer
         if (kolab.offering.isEmpty) {
           errors['offering'] = 'Select at least 1 offering';
         }
-      case 3: // Seeking communities
+        if (kolab.baseOffer == null || kolab.baseOffer!.trim().isEmpty) {
+          errors['base_offer'] =
+              'Describe your offer so communities know what to expect';
+        }
+      case 4: // Seeking communities
         // No required validation
         break;
-      case 4: // Expectations
+      case 5: // Expectations
         // No required validation
         break;
-      case 5: // Availability
+      case 6: // Availability
         if (kolab.availabilityMode == null) {
           errors['availability_mode'] = 'Select an availability mode';
         } else if (kolab.availabilityStart == null) {
           errors['availability_start'] =
               'Pick a start date for your availability window';
         } else {
-          final today = DateUtils.dateOnly(DateTime.now());
+          final isImmediate =
+              kolab.availabilityMode == AvailabilityMode.immediate;
+          final floor = isImmediate
+              ? DateUtils.dateOnly(DateTime.now())
+              : DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
           final start = DateUtils.dateOnly(kolab.availabilityStart!);
-          if (start.isBefore(today)) {
-            errors['availability_start'] = 'Start date cannot be in the past';
+          if (start.isBefore(floor)) {
+            errors['availability_start'] = isImmediate
+                ? 'Start date cannot be in the past'
+                : 'Start date must be tomorrow or later';
           }
         }
-      case 6: // Review
+      case 7: // Review
         // Review step has no additional validation
         break;
     }
@@ -1075,9 +1176,7 @@ class KolabFormNotifier extends Notifier<KolabFormState> {
       availabilityMode: normalizedAvailability,
       media: kolab.media
           .map(
-            (media) => media.copyWith(
-              url: normalizeRemoteMediaUrl(media.url),
-            ),
+            (media) => media.copyWith(url: normalizeRemoteMediaUrl(media.url)),
           )
           .where((media) => media.url.isNotEmpty)
           .toList(growable: false),

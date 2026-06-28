@@ -200,7 +200,10 @@ class _ExploreFilterSheetState extends ConsumerState<ExploreFilterSheet> {
                     _SectionLabel(label: l10n.exploreFilterAvailability),
                     const SizedBox(height: KolabingSpacing.xs),
                     _SingleSelectChipGroup(
+                      // `immediate` is business-Kolab-only (per the business
+                      // flow redesign) and stays out of this shared filter.
                       options: AvailabilityMode.values
+                          .where((item) => item != AvailabilityMode.immediate)
                           .map(
                             (AvailabilityMode item) => DiscoveryFilterOption(
                               key: item.toApiValue(),

@@ -32,10 +32,22 @@ String resolveNotificationRoute({
     case 'application_received':
     case 'application_accepted':
     case 'application_declined':
-      return KolabingRoutes.applicationDetails.replaceFirst(':id', normalizedId);
+    case 'application_withdrawn':
+      return KolabingRoutes.applicationDetails.replaceFirst(
+        ':id',
+        normalizedId,
+      );
     case 'collab_day_reminder':
     case 'collab_followup_reminder':
-      return KolabingRoutes.collaborationDetails.replaceFirst(':id', normalizedId);
+    case 'collaboration_created':
+    case 'collaboration_activated':
+    case 'collaboration_feedback_received':
+    case 'collaboration_completed':
+    case 'collaboration_cancelled':
+      return KolabingRoutes.collaborationDetails.replaceFirst(
+        ':id',
+        normalizedId,
+      );
     default:
       return KolabingRoutes.notifications;
   }

@@ -8,12 +8,15 @@ import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../widgets/category_icon.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../../opportunity/providers/opportunity_provider.dart';
 import '../../enums/product_type.dart';
 import '../../models/kolab.dart';
 import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
 import '../../providers/offer_option_provider.dart';
+import '../../widgets/kolab_examples_box.dart';
+import '../../widgets/multi_select_chips.dart';
 
 /// Step 0 for the product promotion flow: "YOUR PRODUCT OR SERVICE"
 ///
@@ -34,6 +37,7 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
   final _descriptionController = TextEditingController();
   // H2: offer headline pinned to the discovery card.
   final _headlineController = TextEditingController();
+  final List<OfferOption> _selectedProductInteractions = [];
 
   bool _didInit = false;
 
@@ -44,6 +48,19 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
     _descriptionController.dispose();
     _headlineController.dispose();
     super.dispose();
+  }
+
+  void _appendInteractionsToDescription(
+    KolabFormNotifier notifier,
+    Kolab kolab,
+  ) {
+    final base = kolab.description.split('\n\nInteraction:').first.trim();
+    if (_selectedProductInteractions.isEmpty) {
+      notifier.updateDescription(base);
+      return;
+    }
+    final labels = _selectedProductInteractions.map((o) => o.name).join(', ');
+    notifier.updateDescription('$base\n\nInteraction: $labels');
   }
 
   void _syncControllersFromState(Kolab kolab) {
@@ -91,15 +108,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         // -- Listing Title
         _FieldLabel(label: l10n.productDetailsListingTitleLabel),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _titleController,
           maxLength: 255,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.productDetailsListingTitleHint,
-            error: errors['title'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.productDetailsListingTitleHint,
+          errorText: errors['title'],
           onChanged: notifier.updateTitle,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -108,15 +121,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         // -- Product Name
         _FieldLabel(label: l10n.productDetailsProductNameLabel),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _nameController,
           maxLength: 255,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.productDetailsProductNameHint,
-            error: errors['product_name'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.productDetailsProductNameHint,
+          errorText: errors['product_name'],
           onChanged: notifier.updateProductName,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
@@ -197,19 +206,63 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         // -- Description
         _FieldLabel(label: l10n.productDetailsDescriptionLabel),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _descriptionController,
           maxLength: 2000,
           maxLines: 5,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.productDetailsDescriptionHint,
-            error: errors['description'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.productDetailsDescriptionHint,
+          errorText: errors['description'],
           onChanged: notifier.updateDescription,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
+        const SizedBox(height: KolabingSpacing.xs),
+        const KolabExamplesBox(examples: [
+          'Protein bars for runners to try after training.',
+          'Skincare samples for a wellness or self-care community.',
+          'A local clothing brand looking for try-ons, feedback, and content.',
+        ]),
+        const SizedBox(height: KolabingSpacing.md),
+
+        // -- Product interaction chips
+        const _FieldLabel(
+          label: 'How do you want communities to interact with your product?',
+        ),
+        const SizedBox(height: KolabingSpacing.xxs),
+        Text(
+          'Choose how communities could experience your product.',
+          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
+        Builder(builder: (context) {
+          final productInteractionsAsync = ref.watch(productInteractionsProvider);
+          final options = productInteractionsAsync.when(
+            data: (options) => options,
+            loading: () => const <OfferOption>[],
+            error: (_, _) => const <OfferOption>[],
+          );
+          return MultiSelectChips<OfferOption>(
+            items: options,
+            selected: _selectedProductInteractions,
+            labelBuilder: (o) => o.name,
+            onToggle: (option) {
+              setState(() {
+                if (_selectedProductInteractions.contains(option)) {
+                  _selectedProductInteractions.remove(option);
+                } else {
+                  _selectedProductInteractions.add(option);
+                }
+              });
+              _appendInteractionsToDescription(notifier, kolab);
+            },
+          );
+        }),
+        const SizedBox(height: KolabingSpacing.xs),
+        const KolabExamplesBox(label: 'EXAMPLES', examples: [
+          'Samples after a run',
+          'Giveaway for members',
+          'Content day with the product',
+          'Feedback from real users',
+        ]),
         const SizedBox(height: KolabingSpacing.md),
         // H2: short, one-line offer headline shown on the discovery card.
         _FieldLabel(label: l10n.productDetailsOfferHeadlineLabel),
@@ -219,15 +272,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        KolabingInput(
           controller: _headlineController,
           maxLength: 50,
-          decoration: _inputDecoration(
-            context,
-            hint: l10n.productDetailsOfferHeadlineHint,
-            error: errors['offer_headline'],
-          ),
-          style: _inputTextStyle(context),
+          hint: l10n.productDetailsOfferHeadlineHint,
+          errorText: errors['offer_headline'],
           onChanged: notifier.updateOfferHeadline,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),

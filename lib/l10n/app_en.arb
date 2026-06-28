@@ -1296,6 +1296,34 @@
   "@exploreFeedAll": {
     "description": "Feed toggle: all"
   },
+  "exploreFeedSaved": "Saved",
+  "@exploreFeedSaved": {
+    "description": "Feed toggle: the viewer's saved (bookmarked) kolabs"
+  },
+  "savedKolabsEmptyTitle": "No saved kolabs yet",
+  "@savedKolabsEmptyTitle": {
+    "description": "Saved tab empty-state title"
+  },
+  "savedKolabsEmptyBody": "Tap the bookmark on a kolab to save it for later.",
+  "@savedKolabsEmptyBody": {
+    "description": "Saved tab empty-state body"
+  },
+  "savedKolabsErrorTitle": "Couldn't load saved kolabs",
+  "@savedKolabsErrorTitle": {
+    "description": "Saved tab error-state title"
+  },
+  "savedKolabsErrorBody": "Something went wrong. Please try again.",
+  "@savedKolabsErrorBody": {
+    "description": "Saved tab error-state body"
+  },
+  "savedKolabsSaveError": "Couldn't save this kolab. Please try again.",
+  "@savedKolabsSaveError": {
+    "description": "Snackbar when saving a kolab fails"
+  },
+  "savedKolabsUnsaveError": "Couldn't remove this kolab. Please try again.",
+  "@savedKolabsUnsaveError": {
+    "description": "Snackbar when unsaving a kolab fails"
+  },
   "myKolabsTabPublished": "Published",
   "@myKolabsTabPublished": {
     "description": "Status tab: published"
@@ -1439,9 +1467,50 @@
   "@kolabCompletionConfirmDismiss": {
     "description": "Dismiss completion confirmation."
   },
+  "kolabCompletionConfirmNo": "No, it didn't happen",
+  "@kolabCompletionConfirmNo": {
+    "description": "Third completion confirmation option: the Kolab did not happen."
+  },
+  "kolabCompletionConfirmedNotYetTitle": "Got it, thanks 👍",
+  "@kolabCompletionConfirmedNotYetTitle": {
+    "description": "Acknowledgement title after answering 'not yet'."
+  },
+  "kolabCompletionConfirmedNotYetBody": "We'll check back later — come back here once the Kolab happens to confirm it.",
+  "@kolabCompletionConfirmedNotYetBody": {
+    "description": "Acknowledgement body after answering 'not yet'."
+  },
+  "kolabCompletionConfirmedNoTitle": "Thanks for letting us know",
+  "@kolabCompletionConfirmedNoTitle": {
+    "description": "Acknowledgement title after answering 'no, it didn't happen'."
+  },
+  "kolabCompletionConfirmedNoBody": "We've recorded that this Kolab didn't happen. Reach out to support if you need help resolving it.",
+  "@kolabCompletionConfirmedNoBody": {
+    "description": "Acknowledgement body after answering 'no, it didn't happen'."
+  },
+  "kolabCompletionConfirmError": "Could not submit your confirmation. Please try again.",
+  "@kolabCompletionConfirmError": {
+    "description": "Error when the completion confirmation submission fails."
+  },
   "kolabCompletionFeedbackTitle": "How was the Kolab? ⭐",
   "@kolabCompletionFeedbackTitle": {
     "description": "Completion sheet feedback step title."
+  },
+  "kolabCompletionFeedbackOptionalTitle": "Add a few details? ⭐",
+  "@kolabCompletionFeedbackOptionalTitle": {
+    "description": "Optional impact-data step title, shown after the Kolab is already confirmed complete."
+  },
+  "kolabCompletionFeedbackOptionalSubtitle": "Got it — your answer is recorded. Sharing a quick rating and a few details helps {partnerName} build trust on Kolabing — and earns you extra XP. Totally optional.",
+  "@kolabCompletionFeedbackOptionalSubtitle": {
+    "description": "Optional impact-data step subtitle.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "kolabCompletionFeedbackSkip": "Skip for now",
+  "@kolabCompletionFeedbackSkip": {
+    "description": "Skip the optional feedback step."
   },
   "kolabCompletionFeedbackSubtitle": "Feedback is required to finish. Your review helps {partnerName} build trust on Kolabing.",
   "@kolabCompletionFeedbackSubtitle": {
@@ -1533,6 +1602,68 @@
   "kolabCompletionDoneClose": "Close",
   "@kolabCompletionDoneClose": {
     "description": "Close the completion sheet."
+  },
+  "kolabCompletionConfirmMutualNote": "First, confirm whether the Kolab happened. Reviews are optional after that.",
+  "@kolabCompletionConfirmMutualNote": {
+    "description": "Pre-completion note explaining that confirmation comes first and review is optional after.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "kolabCompletionFeedbackExpectationMatch": "Did it match your expectations?",
+  "@kolabCompletionFeedbackExpectationMatch": {
+    "description": "Yes/No feedback question: expectation match."
+  },
+  "kolabCompletionFeedbackWouldRecommend": "Would you recommend this partner?",
+  "@kolabCompletionFeedbackWouldRecommend": {
+    "description": "Yes/No feedback question: would recommend."
+  },
+  "kolabCompletionFeedbackWouldCollaborateAgain": "Would you kolab again?",
+  "@kolabCompletionFeedbackWouldCollaborateAgain": {
+    "description": "Yes/No feedback question: would the user collaborate (kolab) with this partner again."
+  },
+  "kolabCompletionFeedbackMetricsOptional": "Results (optional)",
+  "@kolabCompletionFeedbackMetricsOptional": {
+    "description": "Section header for optional metrics in the feedback form."
+  },
+  "kolabCompletionFeedbackPostsReels": "Posts / reels published",
+  "@kolabCompletionFeedbackPostsReels": {
+    "description": "Optional metric: number of posts or reels published."
+  },
+  "kolabCompletionFeedbackStoriesPosted": "Stories posted",
+  "@kolabCompletionFeedbackStoriesPosted": {
+    "description": "Optional business metric: number of stories posted."
+  },
+  "kolabCompletionFeedbackRevenue": "Revenue generated",
+  "@kolabCompletionFeedbackRevenue": {
+    "description": "Optional business metric: revenue generated."
+  },
+  "kolabCompletionFeedbackBenefits": "Benefits received",
+  "@kolabCompletionFeedbackBenefits": {
+    "description": "Optional community metric: free-text benefits received."
+  },
+  "kolabCompletionAwaitingPartnerTitle": "Thanks! Your feedback is in ✅",
+  "@kolabCompletionAwaitingPartnerTitle": {
+    "description": "Soft-success title when the caller is done but the partner has not confirmed yet."
+  },
+  "kolabCompletionAwaitingPartnerBody": "This Kolab completes once {partnerName} confirms too. We will let you know.",
+  "@kolabCompletionAwaitingPartnerBody": {
+    "description": "Soft-success body shown when waiting on the partner's feedback.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "kolabCompletionAwaitingPartnerClose": "Got it",
+  "@kolabCompletionAwaitingPartnerClose": {
+    "description": "Dismiss the awaiting-partner soft-success step."
+  },
+  "kolabCompletionAlreadyCompleted": "This Kolab is already completed.",
+  "@kolabCompletionAlreadyCompleted": {
+    "description": "Shown when the partner already completed the Kolab."
   },
   "collaborationDetailNotFound": "Kolab not found",
   "@collaborationDetailNotFound": {
@@ -1726,17 +1857,26 @@
   "@collaborationDetailQrPlaceholder": {
     "description": "QR placeholder label."
   },
-  "collaborationDetailQrGeneratedOnDay": "Generated on event day",
-  "@collaborationDetailQrGeneratedOnDay": {
-    "description": "QR placeholder subtitle."
+  "collaborationDetailQrGeneratedOnDemand": "Generated on demand",
+  "@collaborationDetailQrGeneratedOnDemand": {
+    "description": "QR placeholder subtitle: the QR is generated when you tap the button."
   },
-  "collaborationDetailQrDescription": "Attendees scan this QR code at your event to check in and start completing challenges.",
+  "collaborationDetailQrDescription": "Tap below to generate your check-in QR. Attendees scan it at your event to check in and start completing challenges.",
   "@collaborationDetailQrDescription": {
     "description": "QR section description."
   },
-  "collaborationDetailQrUnavailable": "QR code will be available when the event is created",
-  "@collaborationDetailQrUnavailable": {
-    "description": "Snackbar when QR is not yet available."
+  "collaborationDetailQrGenerating": "GENERATING…",
+  "@collaborationDetailQrGenerating": {
+    "description": "QR button label while the QR is being generated."
+  },
+  "collaborationDetailQrGenerateError": "Couldn't generate the QR code: {error}",
+  "@collaborationDetailQrGenerateError": {
+    "description": "Snackbar when generating the check-in QR fails.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   },
   "collaborationDetailViewQr": "View QR code",
   "@collaborationDetailViewQr": {
@@ -1804,6 +1944,79 @@
   "collaborationDetailItHappened": "Yes, it happened ✨",
   "@collaborationDetailItHappened": {
     "description": "Complete CTA button."
+  },
+  "collaborationDetailUpdateStatus": "Update status",
+  "@collaborationDetailUpdateStatus": {
+    "description": "Re-entry CTA button label when the viewer's own answer was 'no' or 'not yet'."
+  },
+  "collaborationDetailCheckAgain": "Check again",
+  "@collaborationDetailCheckAgain": {
+    "description": "Re-entry CTA button label when the viewer said 'yes' and the partner hasn't answered or said 'not yet'."
+  },
+  "collaborationDetailReviewStatus": "Review status",
+  "@collaborationDetailReviewStatus": {
+    "description": "Re-entry CTA button label when the viewer said 'yes' and the partner said 'no'."
+  },
+  "collaborationDetailLeaveFeedbackLater": "Leave optional feedback",
+  "@collaborationDetailLeaveFeedbackLater": {
+    "description": "Post-completion CTA letting a participant who skipped the optional feedback step come back to it later."
+  },
+  "collaborationDetailFeedbackAlreadyLeft": "You've shared your feedback ✓",
+  "@collaborationDetailFeedbackAlreadyLeft": {
+    "description": "Shown post-completion once the viewer has submitted optional feedback."
+  },
+  "collaborationDetailFeedbackConfirmedTitle": "You've confirmed ✓",
+  "@collaborationDetailFeedbackConfirmedTitle": {
+    "description": "Shown after the viewer submits feedback while the partner still has to."
+  },
+  "collaborationDetailFeedbackConfirmedBody": "Waiting for {partnerName} to confirm too. The Kolab completes once you both do.",
+  "@collaborationDetailFeedbackConfirmedBody": {
+    "description": "Body of the awaiting-partner confirmation state.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "collaborationDetailPartnerSaidNotYetTitle": "Waiting on {partnerName}",
+  "@collaborationDetailPartnerSaidNotYetTitle": {
+    "description": "Shown when the partner explicitly answered 'not yet' to the completion confirmation.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "collaborationDetailPartnerSaidNotYetBody": "{partnerName} said the Kolab hasn't happened yet. The Kolab completes once you both confirm 'yes'.",
+  "@collaborationDetailPartnerSaidNotYetBody": {
+    "description": "Body shown when the partner answered 'not yet'.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "collaborationDetailPartnerSaidNoTitle": "{partnerName} said it didn't happen",
+  "@collaborationDetailPartnerSaidNoTitle": {
+    "description": "Shown when the partner explicitly answered 'no' to the completion confirmation.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "collaborationDetailPartnerSaidNoBody": "{partnerName} said this Kolab didn't happen. Contact support if you need help resolving it.",
+  "@collaborationDetailPartnerSaidNoBody": {
+    "description": "Body shown when the partner answered 'no'.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "collaborationCardWaitingForPartner": "You confirmed — waiting for partner",
+  "@collaborationCardWaitingForPartner": {
+    "description": "Subtle line on the My Kolabs Active card after the viewer submits feedback."
   },
   "collaborationDetailReviewSubmitted": "Review submitted ✓",
   "@collaborationDetailReviewSubmitted": {

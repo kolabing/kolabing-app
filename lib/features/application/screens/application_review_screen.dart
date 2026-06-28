@@ -513,12 +513,17 @@ class _ApplicationReviewScreenState
                             strokeWidth: 2, color: context.colors.error),
                       )
                     : const Icon(LucideIcons.x, size: 18),
-                label: Text(
-                  AppLocalizations.of(context).applicationReviewDecline,
-                  style: KolabingTextStyles.button.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
+                label: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    AppLocalizations.of(context).applicationReviewDecline,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: KolabingTextStyles.button.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
               ),

@@ -1,6 +1,6 @@
 # Kolabing — Roles, Permissions & Features (Canonical Reference)
 
-**Last updated:** 2026-06-27 (added §7.4 gamification mission system v1 — curated `app_visible` mission set + event/general mission separation, mirrored from `kolabing-v2` #49; previous: onboarding-update, goal-based business onboarding + product path; kolab single-source-of-truth migration in flight; planned community verification — see §14–§16)
+**Last updated:** 2026-06-28 (added §7.4 gamification mission system v1 — curated `app_visible` mission set + event/general mission separation, mirrored from `kolabing-v2` #49; completion-flow simplification PR 1: `/complete` now gates on a lightweight yes/no/not_yet completion confirmation, not rich feedback — §2.9, §4; previous: onboarding-update, goal-based business onboarding + product path; kolab single-source-of-truth migration in flight; planned community verification — see §14–§16)
 **Status:** Authoritative. This document overrides assumptions.
 **Sync note:** This file is duplicated in both repos (`kolabing-app` and `kolabing-v2`). Keep the two copies identical. When role behaviour changes, update both **and bump the Last updated date** in both.
 
@@ -16,25 +16,9 @@ Kolabing has three user types. Only two are in launch scope.
 
 | Role | In launch scope | Pays? | One-line definition |
 |---|---|---|---|
-| Business | Yes | Yes, €29/month or €96 per 4-month plan | A venue or a product/service sponsor that wants community foot traffic and exposure. |
+| Business | Yes | Yes, €39.99/month or a 3-month plan | A venue or a product/service sponsor that wants community foot traffic and exposure. |
 | Community | Yes | No, free always | A real-life community (running club, yoga group, book club, and so on) that hosts events and needs venues or sponsors. |
 | Attendee | **[VERIFY]** code-live but spec-unconfirmed | Free for now | An individual who attends events. Gamification track (check-ins, challenges, badges, leaderboards, reward wallet) is **shipped in the backend**; see §7 and the backend map's §11. Whether attendees are formally part of launch and what the pricing/withdrawal model is needs to be confirmed with Daniel before any client-facing changes. |
-
-### 0.1 Admin (internal — Kolabing team)
-
-**The admin dashboard is a WEB surface in `kolabing-v2`, NOT in the mobile app.** When a
-task involves an admin/management view (gamification economy, per-community
-leaderboards, global XP leaderboard, partner-rewards CRUD, points/goals/challenges
-oversight, kolab lifecycle), it is built there:
-
-- Routes: `routes/web.php` → `Route::middleware(['auth:admin','maintainer'])->prefix('admin')` (admin login at `/admin/login`).
-- Controllers: `app/Http/Controllers/Admin/`. Views: `resources/views/admin/` (Blade).
-- Services: `app/Services/Admin/` (already includes `RewardEconomicsService`, `KolabLifecycleService`).
-- Auth guard: `admin` (separate from the API Sanctum users); permission: `maintainer`.
-
-**Rule:** never build admin/management dashboards in the Flutter app. Per-community
-gamification config is leader-facing (in-app, community Rewards tab); the cross-platform
-oversight (all communities, global XP, partner-reward catalog) is admin-web in `kolabing-v2`.
 
 ---
 
@@ -52,23 +36,16 @@ oversight (all communities, global XP, partner-reward catalog) is admin-web in `
 ## 2. Business role
 
 ### 2.1 Identity and pricing
-Businesses are venues (café, restaurant, bar, bakery, coworking, coliving, gym, salon, retail, hotel) or product/service sponsors. They are the paying side. Price: €29/month, or €96 per 4-month plan. Registration and exploration are free; the subscription unlocks the two gated actions only.
+Businesses are venues (café, restaurant, bar, bakery, coworking, coliving, gym, salon, retail, hotel) or product/service sponsors. They are the paying side. Price: €39.99/month, or a 3-month plan. Registration and exploration are free; the subscription unlocks the two gated actions only.
 
 > **Backend note:** `coliving` is part of the spec list but is **not currently in `BusinessOnboardingRequest::BUSINESS_TYPES`**. Adding it is tracked in the backend map's mistakes-to-fix checklist. Until added, a `coliving` business onboarding payload will fail server-side validation.
 
 ### 2.2 Onboarding
 - Path: "I'm a Business."
-- **Goal-based fork (onboarding-update, app branch `feat/onboarding-update`):** the business first picks a goal:
-  - **"Fill my venue"** → venue path (`has_venue = true`). Requires a primary venue. Uses the Google Maps lookup (below).
-  - **"Promote a product/service"** → product path (`has_venue = false`). No venue; instead the business sets an `offering` (text) + offer photos and picks **target cities** (multi-select, **≤ 3 free / unlimited premium**). City is required on this path.
-  - App screens: `lib/features/onboarding/screens/business/business_goal_screen.dart`, `business_product_identity_screen.dart`.
+- Choose to promote a Venue or a Product/Service.
 - Venue businesses use the Google Maps lookup: the first onboarding screen finds the venue on Google Maps and the API pre-populates name, photos, and details. The user must see a preview and be able to delete individual imported photos.
-- Business types now carry an `applies_to` facet (`venue | product | both`) so the type picker can separate venue categories from non-venue ones (plus an `icon`). Admin-editable; the admin UI for editing types is backlog. (Backend fields below in DB-MAP §17 are on branch `feat/onboarding-backend-local`, **not yet deployed**.)
 - A business profile can also be pre-created by the Kolabing team (the pre-launch catalogue) and activated by the owner via an emailed link (review, edit, set password).
-- Instagram input is normalized client-side to the backend rule `^@?[a-zA-Z0-9._]+$` (pasted URLs / leading `@` stripped to a bare handle) — `onboarding_provider.dart:471`.
 - Onboarding must stay under roughly 5 minutes.
-
-> **Status:** the goal-fork UI ships on `feat/onboarding-update`. The backing columns (`business_profiles.has_venue`, `target_city_ids[]`, `offering`, `offer_photos[]`, the `applies_to`/`icon` business-type facets) are on backend branch `feat/onboarding-backend-local` and are **not in production yet**. Until deployed, `has_venue` defaults true and the product path's extra fields are not persisted server-side.
 
 ### 2.3 Explore — what a business sees
 The business Explore feed shows COMMUNITY Kolabs (the posts communities created, that is, what communities are looking for). For each Kolab the business sees:
@@ -130,8 +107,8 @@ The **community counterparty is NEVER affected**: communities keep full access t
 
 The admin panel (`/admin/*`, `auth:admin + maintainer` guard) exposes these collaboration-level actions:
 - **Force-cancel** (`POST /admin/kolabs/{kolab}/collaboration/cancel`): persists `cancellation_reason` and stamps `cancelled_at`. `cancelled_by_profile_id = null` indicates maintainer action.
-- **Force-complete** (`POST /admin/kolabs/{kolab}/collaboration/complete`): bypasses the feedback gate. Persists `completion_reason` and stamps `completed_at`. `completed_by_profile_id = null` indicates maintainer action. No XP is awarded.
-- **Auto-complete (system)**: a scheduled job (`app:auto-complete-stale-collaborations`, default `dailyAt('03:00')`) completes collaborations whose `scheduled_date` is more than `config('collaborations.auto_complete_threshold_days', 7)` days in the past **and** that have at least one feedback row. Stamps `auto_completed_at`.
+- **Force-complete** (`POST /admin/kolabs/{kolab}/collaboration/complete`): bypasses the completion-confirmation gate (see §4). Persists `completion_reason` and stamps `completed_at`. `completed_by_profile_id = null` indicates maintainer action. No XP is awarded.
+- **Auto-complete (system)**: a scheduled job (`app:auto-complete-stale-collaborations`, default `dailyAt('03:00')`) completes scheduled/active collaborations whose first `collaboration_completions` row is more than `config('collaborations.auto_complete_grace_days_after_first_completion_confirmation', 3)` days old, **unless** any party explicitly answered `no` (that signal is left for manual/admin resolution, never silently completed). Stamps `auto_completed_at`.
 
 ### 2.10 Maintainer-granted subscription access — added 2026-06-01
 A Kolabing maintainer can grant a business **12 months of subscription access** from the admin panel (`/admin/users/{profile}/subscription/grant`). This produces a `business_subscriptions` row with `status = active` and **`source = maintainer`**. The grant bypasses Stripe/Apple IAP but is identical to a paid subscription as far as the paywall and re-gating logic are concerned — the business gets full subscribed-business capabilities until the period ends or a maintainer revokes it.
@@ -152,10 +129,8 @@ Communities are real-life groups: running clubs, yoga groups, book clubs, cyclin
 
 ### 3.2 Onboarding
 - Path: "I'm a Community."
-- Community type, size, photos, description. (Community size persists to `community_profiles.community_size` — backend field on branch `feat/onboarding-backend-local`, **not yet deployed**; see DB-MAP §17.)
-- **Already in production:** completing community onboarding **auto-creates a management community** for the account (`OnboardingService`, the NF-6 community surface in §8). This is live on master.
-- Instagram input is normalized to `^@?[a-zA-Z0-9._]+$` (same rule as business, `onboarding_provider.dart:471`).
-- Free and fast. (Onboarding is never paywalled — golden rule 2.)
+- Community type, size, photos, description.
+- Free and fast.
 
 ### 3.3 Explore — what a community sees
 The community Explore feed shows BUSINESSES and business offers. For each, the community sees:
@@ -191,14 +166,17 @@ Nothing. There is no paywall and no gated action on the community side. If code 
 
 ## 4. Shared features (both roles, around a match)
 
+> **Canonical create/apply API (as of 2026-06-19, #30).** The canonical create/apply surface is `/api/v1/kolabs/*`, including the new apply endpoints `GET` + `POST /api/v1/kolabs/{kolab}/applications`. The legacy `/api/v1/opportunities/*` routes remain as a **temporary compatibility shim** (a request-contract translation over `KolabService`) that the live mobile app still depends on; their removal is gated on the mobile migration (`kolabing-app` #20). **Caveat:** the freemium/paywall collaboration limit is currently enforced only on the legacy create path (`OpportunityService`), NOT on `/kolabs` create — do not assume `/kolabs` create enforces it yet. Porting it to `/kolabs` and retiring the shim is tracked in #31.
+
 - **Applications.** Either role applies to the other's post. The applying side picks dates only from the dates the posting side marked available.
 - **Chat.** Unlocked once an application is accepted. The other party's name is shown in chat.
 - **Collaboration.** Created when an application is accepted. Either side can edit the date or time. Either side can mark it finished; it also closes when the date passes. Both sides confirm.
 - **Two-way reviews (public).** After a collaboration, the business reviews the community and the community reviews the business via `POST /collaborations/{id}/review`. Ratings are visible on profiles via `PublicProfileReviewResource` and affect positioning.
-- **Rich feedback (private + gates completion).** A non-dismissible feedback step on completion via `POST /collaborations/{id}/feedback`. Required fields: rating (1–5), expectation match, would recommend. Optional shared: posts/reels. Business-only: stories posted, revenue. Community-only: benefits. **A collaboration only transitions to `completed` once both parties have a feedback row** (server-enforced via `config('collaborations.complete_requires_feedback')`, default true). XP fires per party on feedback submission, not on `/complete`. Editing your row via `PUT /feedback` is allowed until the partner submits — after that, both lock.
+- **Completion confirmation (required, lightweight, gates completion) — added 2026-06-26, PR 1.** Each participant answers a single yes/no/not_yet question via `POST /collaborations/{id}/completion` (`status`, optional `note` up to 500 chars). One row per `(collaboration_id, profile_id)` in `collaboration_completions`; resubmitting updates your own row (e.g. `not_yet` → `yes`) without re-awarding XP. **A collaboration only transitions to `completed` once both parties have confirmed AND both said `yes`** (server-enforced via `config('collaborations.complete_requires_completion_confirmation')`, default true). If either side hasn't responded at all, `/complete` returns `awaiting_own_completion_confirmation` / `awaiting_partner_completion_confirmation`; if both responded but at least one said `no`/`not_yet`, it returns `completion_not_confirmed` (with `own_status`/`partner_status` in the error body). XP (`CollaborationCompletionConfirmed`, 10 by default, admin-editable) fires once per party on first submission only.
+- **Rich feedback (private, optional impact data) — feedback gate removed 2026-06-26, PR 1.** A feedback step via `POST /collaborations/{id}/feedback`. Required fields: rating (1–5), expectation match, would recommend, would collaborate again. Optional shared: posts/reels. Business-only: stories posted, revenue. Community-only: benefits. **No longer gates `/complete`** — that is now the completion-confirmation step above. XP (`CollaborationComplete`) still fires per party on feedback submission. Editing your row via `PUT /feedback` is allowed until the partner submits — after that, both lock.
   - Visibility (Q10 in the 2026-06-01 plan): rating + expectation_match + would_recommend are cross-visible to participants once both feedbacks land; revenue / stories_posted / posts_reels / benefits stay private to the submitter (and to maintainers).
   - Re-gate exemption: a lapsed business can still submit `/feedback` on a past collab — feedback is post-mortem and unblocked even when `/collaborations` index is re-gated.
-  - **Backend mirror (rollout aid):** while the legacy app still POSTs to `/review`, the server transparently writes a stub `/feedback` row (mirror) so the gate succeeds. Mirrored rows carry `mirrored_from_review = true` and are excluded from the rich admin-stats aggregates.
+  - **Backend mirror (rollout aid, still active post-PR-1):** while the legacy app still POSTs to `/review`, the server transparently writes a stub `/feedback` row (mirror) so feedback-dependent aggregates stay consistent. Mirrored rows carry `mirrored_from_review = true` and are excluded from the rich admin-stats aggregates. **This mirror no longer affects `/complete`** — it only ever wrote to `collaboration_feedback`, which the completion gate no longer reads.
 
 ---
 
@@ -234,6 +212,7 @@ These are specific errors that have happened in past fixes. Do not repeat them.
 - **Do not change what a free business sees in Explore beyond the blur.** They see all Kolab details; only the community identity is blurred.
 - **Do not paywall registration, onboarding, or browsing.** Only creating and applying are paywalled, and only for the Business role.
 - **When a fix touches Explore, profiles, the paywall, or onboarding, re-read sections 1, 2, and 3 of this document before writing code.**
+- [ ] Port the freemium collab limit + portfolio-photo parity to `/kolabs`, then remove the `/opportunities` shim (#31). The limit lives only on the legacy `/opportunities` create path today; `/kolabs` create does not enforce it yet.
 
 ---
 
@@ -331,77 +310,7 @@ Backend wiring (tables, endpoints, policy, command) is in `ROLES-BACKEND-DB-MAP.
 
 ---
 
-## 9. Community chat administration (Wave 1, added 2026-06-05)
-
-Chat threads have types `community_main`, `community_custom`, `event`, `collaboration`.
-Building on §8, leaders manage their community's chats; **never paywalled**.
-
-- **Delete (soft):** owner / `can_manage` may soft-delete ONLY `community_custom` + `event`
-  chats. `community_main` and `collaboration` threads are structural — not deletable
-  (422 `cannot_delete_thread_type`). Deleted chats are **recoverable** by admin.
-- **Rename:** owner / `can_manage` may rename a custom chat.
-- **Join:** a custom chat flagged `is_open` lets an active, non-banned community member
-  self-join. Access is otherwise tier-derived (tier `permissions.chat_channels`). There
-  is **no per-chat "leave"** — leaving a chat = leaving the community (which drops you
-  from all its chats).
-- **Remove = BAN:** "remove a member from a chat" is a **ban** (admin only) — revokes
-  access and blocks re-join. Re-join is allowed unless banned.
-
-## 10. Public events & attendee discovery (Wave 1, added 2026-06-05)
-
-`events.visibility` = `public | members_only` (default `members_only`).
-- **public** → shown in the attendee discovery feed (`GET /events/discovery`); ANY
-  attendee may RSVP directly, no community membership required.
-- **members_only** → RSVP requires active community membership first; a non-member gets
-  `403 community_membership_required` (the app prompts "Join community to RSVP"). Tier
-  gates still apply for members. Never consults the business paywall.
-
-## 11. Friends system (Wave 1, added 2026-06-05)
-
-A profile-to-profile social graph (`friendships`: `pending|accepted|blocked`, unique pair),
-attendee-centric in practice. Request / accept / decline / remove / block / unblock /
-list / requests / **suggested** (profiles sharing ≥ 3 attended events). Authorization is
-participant-identity only (addressee accepts/declines; either side removes). **Never gated
-on the paywall, a community cap, or `user_type`.**
-
-## 12. Attendee public profile + events attended (Wave 1, added 2026-06-05)
-
-Read-only aggregate `GET /profiles/{profile}/attendee`: identity, gamification
-(points/level/badges), communities (+ tier, `can_manage`), `events_attended` (count +
-recent history), `friends_count`. Plus `GET /me/events-attended` (paginated history from
-`event_checkins`). No gamification write paths touched; never paywalled.
-
-## 14. Kolab as the single source of truth (migration, IN FLIGHT — added 2026-06-16)
-
-This is an **implementation/data-model change, not a permission change.** Golden rule 6 still holds: "opportunity" (community-created) and "collaboration" (business-created) stay distinct. What changes is *which table is authoritative*.
-
-**Background.** Two parallel post entities existed: `kolabs` (the intent-based create/Explore/discovery table) and `collab_opportunities` (the FK target for `applications`, `collaborations`, and dashboard reads). A new kolab only materialized into a `collab_opportunity` lazily, on the **first apply**, via `LegacyOpportunityBridgeService` (which persists a `collab_opportunity` with `id = kolab.id`). **Bug this caused:** a freshly created kolab did not appear in the community Offers list / dashboard and could not be edited there, because those surfaces read the (not-yet-created) `collab_opportunity`.
-
-**The fix** makes `kolabs` the single source of truth and points reads/writes at it. The full backend wiring is in DB-MAP §2 and §17.
-
-**Status by phase (none deployed to production yet except where noted):**
-- **Phase 1** — backend branch `feat/kolab-sot-phase1` (local/undeployed): added nullable `kolab_id` FK to `applications` + `collaborations`, dual-write, and Eloquent relations.
-- **Phase 2** — backend branch `feat/kolab-sot-phase2` (local/undeployed): backfilled `kolab_id` for true-legacy rows, `/me/opportunities` now returns the viewer's kolabs, dashboard counts off `kolabs` + `kolab_id`.
-- **Phase 3** — app branch `feat/onboarding-update` (this branch): the **community** Offers list + edit now use `GET /kolabs/me` and `PUT /kolabs/{id}` (the business role already did). `create_opportunity_screen` is **deferred** (still uses the legacy Opportunity model). Dashboard model `UpcomingPartnerInfo.id` made nullable so `/me/dashboard` never fails to parse (`lib/features/dashboard/models/dashboard_model.dart:158`).
-- **Phase 4** — drop legacy `collab_opportunities` table + endpoints: **NOT done**, held until tested + deployed.
-
-**Production reality (2026-06-16):** production runs **none** of the kolab-SoT migration. The app-side Phase 3 change ships on this branch but the backend Phases 1–2 it relies on for full parity are still local.
-
-## 15. Onboarding-update — what changes per role (IN FLIGHT — added 2026-06-16)
-
-Cross-reference for the goal-based onboarding rolled into §2.2 / §3.2. No permission rule changes; these are profile-shape and capability-surface additions on branch `feat/onboarding-update` (app) + `feat/onboarding-backend-local` (backend, undeployed):
-- **Business:** goal fork — "Fill my venue" (venue path, `has_venue=true`) vs "Promote a product/service" (product path, `has_venue=false`, multi-select target cities ≤3 free / unlimited premium, `offering` + offer photos). Business types gain `applies_to` (venue|product|both) + `icon`.
-- **Community:** `community_size` captured; management community auto-created (already live).
-
-The ≤3 vs unlimited target-city split is a **product-tier nicety on the create surface**, not a new gate class — it does not change the two-action Business paywall (golden rules 1–2). See plan `docs/plans/2026-06-16-onboarding-update-plan.md`.
-
-## 16. Community verification — PLANNED (not built — added 2026-06-16)
-
-Forward-looking only; **no code ships this yet.** Communities will submit proof links during onboarding — Instagram + Strava + WhatsApp group + website/TikTok ("sources of truth"). An **admin** (admin-web in `kolabing-v2`, not the app — see §0.1) opens a Verify modal from the community's profile in the admin dashboard, reviews the submitted links, and marks the community **Verified**. Businesses then see a **Verified badge** on the community.
-
-Backend (planned) will add `community_profiles.verification_status` (`unverified | pending | verified | rejected`) + `verified_at` + the proof-link fields. This is **PLANNED only**; mark any reference to it as such. Spec: `docs/plans/2026-06-16-onboarding-update-plan.md`. Backend map placeholder in DB-MAP §17.
-
-## 13. Maintaining this document
+## 9. Maintaining this document
 
 This file and `docs/ROLES-BACKEND-DB-MAP.md` are read by every Claude session that touches role-affecting code (see the project `CLAUDE.md`). They are also duplicated in the `kolabing-app` repo.
 

@@ -198,6 +198,14 @@ class Collaboration {
     this.myRole,
     this.viewerMustResubscribe = false,
     this.hasReviewed = false,
+    this.viewerMustSubmitFeedback = true,
+    this.ownFeedbackSubmitted = false,
+    this.partnerFeedbackSubmitted = false,
+    this.pendingFeedbackFrom = const [],
+    this.viewerMustConfirmCompletion = true,
+    this.ownCompletionStatus,
+    this.partnerCompletionStatus,
+    this.pendingCompletionFrom = const [],
   });
 
   factory Collaboration.fromJson(Map<String, dynamic> json) {
@@ -260,6 +268,38 @@ class Collaboration {
             json['must_resubscribe'] ??
             json['viewer_resubscribe_required'],
       ),
+      // Two-sided feedback gate. The Kolab only flips to `completed` once BOTH
+      // parties submit feedback; these fields let the UI show a "you confirmed,
+      // waiting for partner" state instead of looking like nothing happened.
+      // All keys are tolerated as missing (self-gated, safe defaults): when the
+      // backend omits them the viewer is treated as still owing feedback so the
+      // Complete CTA stays available rather than vanishing.
+      viewerMustSubmitFeedback: json.containsKey('viewer_must_submit_feedback')
+          ? _parseBool(json['viewer_must_submit_feedback'])
+          : true,
+      ownFeedbackSubmitted: json['own_feedback'] != null,
+      partnerFeedbackSubmitted: json['partner_feedback'] != null,
+      pendingFeedbackFrom: (json['pending_feedback_from'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          const [],
+      // Lightweight completion confirmation (PR 1, 2026-06-26). This — not
+      // feedback above — gates `/complete`. Same "tolerate missing key, stay
+      // safe" defaults as the feedback fields: absent key -> viewer still
+      // owes a confirmation, so the Confirm CTA never disappears.
+      viewerMustConfirmCompletion:
+          json.containsKey('viewer_must_confirm_completion')
+              ? _parseBool(json['viewer_must_confirm_completion'])
+              : true,
+      ownCompletionStatus:
+          (json['own_completion'] as Map<String, dynamic>?)?['status']
+              as String?,
+      partnerCompletionStatus: json['partner_completion_status'] as String?,
+      pendingCompletionFrom:
+          (json['pending_completion_from'] as List<dynamic>?)
+                  ?.map((e) => e.toString())
+                  .toList() ??
+              const [],
     );
   }
 
@@ -308,6 +348,46 @@ class Collaboration {
 
   /// True when the current viewer has already submitted a review for this collab.
   final bool hasReviewed;
+
+  /// True when the backend still expects post-Kolab feedback from the viewer to
+  /// satisfy the completion gate. Defaults to true when the key is absent so the
+  /// Complete CTA is never hidden by a missing field.
+  final bool viewerMustSubmitFeedback;
+
+  /// True when the viewer has already submitted their own feedback
+  /// (`own_feedback != null`). Drives the "you confirmed, waiting for partner"
+  /// state once one side has acted but the Kolab is not yet `completed`.
+  final bool ownFeedbackSubmitted;
+
+  /// True when the partner has already submitted their feedback
+  /// (`partner_feedback != null`).
+  final bool partnerFeedbackSubmitted;
+
+  /// `user_type` strings (e.g. `business`, `community`) still owed feedback.
+  /// As of PR 1 (2026-06-26) this no longer gates `/complete` — kept for the
+  /// optional, skippable impact-data step. See [pendingCompletionFrom] for
+  /// the field that actually gates completion.
+  final List<String> pendingFeedbackFrom;
+
+  /// True when the backend still expects a completion confirmation
+  /// (yes/no/not_yet) from the viewer. This — not [viewerMustSubmitFeedback]
+  /// — gates `/complete` as of PR 1 (2026-06-26). Defaults to true when the
+  /// key is absent so the Confirm CTA is never hidden by a missing field.
+  final bool viewerMustConfirmCompletion;
+
+  /// The viewer's own confirmation status (`yes` | `no` | `not_yet`), or null
+  /// if they haven't confirmed yet.
+  final String? ownCompletionStatus;
+
+  /// The partner's confirmation status, or null until they've confirmed.
+  final String? partnerCompletionStatus;
+
+  /// `user_type` strings still owed a completion confirmation (regardless of
+  /// answer). Empty once both sides have responded at all.
+  final List<String> pendingCompletionFrom;
+
+  /// True once the viewer has submitted ANY completion confirmation.
+  bool get ownCompletionSubmitted => ownCompletionStatus != null;
 
   /// True only when the VIEWER is a business whose subscription lapsed while
   /// this collaboration is still ongoing (docs/ROLES-AND-PERMISSIONS.md §2.8).

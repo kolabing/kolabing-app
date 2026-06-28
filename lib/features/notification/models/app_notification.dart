@@ -14,6 +14,9 @@ enum NotificationType {
   /// Your application was declined
   applicationDeclined,
 
+  /// Your application was withdrawn
+  applicationWithdrawn,
+
   /// A rewards badge was awarded to the user
   badgeAwarded,
 
@@ -29,6 +32,21 @@ enum NotificationType {
   /// Follow-up reminder for uncompleted collab ("Did it happen?")
   collabFollowUpReminder,
 
+  /// A collaboration was created from an accepted application
+  collaborationCreated,
+
+  /// A collaboration moved into its active state
+  collaborationActivated,
+
+  /// Feedback was received for a collaboration
+  collaborationFeedbackReceived,
+
+  /// A collaboration was completed
+  collaborationCompleted,
+
+  /// A collaboration was cancelled
+  collaborationCancelled,
+
   /// A backend type the current app does not handle explicitly yet
   unknown;
 
@@ -42,6 +60,8 @@ enum NotificationType {
         return NotificationType.applicationAccepted;
       case 'application_declined':
         return NotificationType.applicationDeclined;
+      case 'application_withdrawn':
+        return NotificationType.applicationWithdrawn;
       case 'badge_awarded':
         return NotificationType.badgeAwarded;
       case 'challenge_verified':
@@ -52,6 +72,16 @@ enum NotificationType {
         return NotificationType.collabDayReminder;
       case 'collab_followup_reminder':
         return NotificationType.collabFollowUpReminder;
+      case 'collaboration_created':
+        return NotificationType.collaborationCreated;
+      case 'collaboration_activated':
+        return NotificationType.collaborationActivated;
+      case 'collaboration_feedback_received':
+        return NotificationType.collaborationFeedbackReceived;
+      case 'collaboration_completed':
+        return NotificationType.collaborationCompleted;
+      case 'collaboration_cancelled':
+        return NotificationType.collaborationCancelled;
       default:
         return NotificationType.unknown;
     }
@@ -67,6 +97,8 @@ enum NotificationType {
         return 'application_accepted';
       case NotificationType.applicationDeclined:
         return 'application_declined';
+      case NotificationType.applicationWithdrawn:
+        return 'application_withdrawn';
       case NotificationType.badgeAwarded:
         return 'badge_awarded';
       case NotificationType.challengeVerified:
@@ -77,6 +109,16 @@ enum NotificationType {
         return 'collab_day_reminder';
       case NotificationType.collabFollowUpReminder:
         return 'collab_followup_reminder';
+      case NotificationType.collaborationCreated:
+        return 'collaboration_created';
+      case NotificationType.collaborationActivated:
+        return 'collaboration_activated';
+      case NotificationType.collaborationFeedbackReceived:
+        return 'collaboration_feedback_received';
+      case NotificationType.collaborationCompleted:
+        return 'collaboration_completed';
+      case NotificationType.collaborationCancelled:
+        return 'collaboration_cancelled';
       case NotificationType.unknown:
         return 'unknown';
     }
@@ -162,8 +204,7 @@ class AppNotification {
     final rawType = json['type'] as String? ?? '';
     final id =
         json['id']?.toString() ?? json['notification_id']?.toString() ?? '';
-    final notificationId =
-        json['notification_id']?.toString() ?? id;
+    final notificationId = json['notification_id']?.toString() ?? id;
 
     return AppNotification(
       id: id,
@@ -206,22 +247,21 @@ class AppNotification {
     String? actorAvatarUrl,
     String? targetId,
     String? targetType,
-  }) =>
-      AppNotification(
-        id: id ?? this.id,
-        notificationId: notificationId ?? this.notificationId,
-        type: type ?? this.type,
-        rawType: rawType ?? this.rawType,
-        title: title ?? this.title,
-        body: body ?? this.body,
-        createdAt: createdAt ?? this.createdAt,
-        isRead: isRead ?? this.isRead,
-        readAt: readAt ?? this.readAt,
-        deeplink: deeplink ?? this.deeplink,
-        priority: priority ?? this.priority,
-        actorName: actorName ?? this.actorName,
-        actorAvatarUrl: actorAvatarUrl ?? this.actorAvatarUrl,
-        targetId: targetId ?? this.targetId,
-        targetType: targetType ?? this.targetType,
-      );
+  }) => AppNotification(
+    id: id ?? this.id,
+    notificationId: notificationId ?? this.notificationId,
+    type: type ?? this.type,
+    rawType: rawType ?? this.rawType,
+    title: title ?? this.title,
+    body: body ?? this.body,
+    createdAt: createdAt ?? this.createdAt,
+    isRead: isRead ?? this.isRead,
+    readAt: readAt ?? this.readAt,
+    deeplink: deeplink ?? this.deeplink,
+    priority: priority ?? this.priority,
+    actorName: actorName ?? this.actorName,
+    actorAvatarUrl: actorAvatarUrl ?? this.actorAvatarUrl,
+    targetId: targetId ?? this.targetId,
+    targetType: targetType ?? this.targetType,
+  );
 }

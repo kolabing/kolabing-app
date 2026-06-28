@@ -9,11 +9,14 @@ import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../widgets/category_icon.dart';
 import '../../../../widgets/kolabing_button.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../enums/intent_type.dart';
 import '../../models/kolab.dart';
 import '../../models/offer_option.dart';
 import '../../providers/kolab_form_provider.dart';
 import '../../providers/offer_option_provider.dart';
+import '../../widgets/kolab_examples_box.dart';
+import '../../widgets/multi_select_chips.dart';
 
 /// Step 2 (venue / product flows): "WHAT YOU'RE OFFERING"
 ///
@@ -65,7 +68,16 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         vertical: KolabingSpacing.lg,
       ),
       children: [
-        // -- Section header
+        // -- Intro: this is the core of the Kolab
+        Text(
+          'This is the main reason a community will say yes.',
+          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 16, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+
+        // -- 1. What are you offering? (toggle cards, admin-managed taxonomy
+        // via offeringsProvider; falls back to the bundled list when the
+        // endpoint isn't deployed)
         Text(
           l10n.offeringTitle,
           style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
@@ -88,8 +100,6 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             ),
           ),
 
-        // -- Toggle cards (admin-managed taxonomy via offeringsProvider; falls
-        //    back to the bundled list when the endpoint isn't deployed)
         ...offeringOptionsAsync
             .when(
               data: (options) => options,
@@ -131,7 +141,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
 
         const SizedBox(height: KolabingSpacing.lg),
 
-        // H3: Base offer (public to all viewers).
+        // -- Main offer, in the business's own words
         _SectionLabel(label: l10n.offeringBaseOfferLabel),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
@@ -139,24 +149,73 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        TextField(
+        if (errors.containsKey('base_offer'))
+          Padding(
+            padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+            child: Text(
+              errors['base_offer']!,
+              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
+            ),
+          ),
+        KolabingInput(
           controller: _baseOfferController,
           maxLength: 400,
           maxLines: 3,
+          hint: l10n.offeringBaseOfferHint,
           onChanged: notifier.updateBaseOffer,
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurface),
-          decoration: InputDecoration(
-            hintText: l10n.offeringBaseOfferHint,
-            filled: true,
-            fillColor: context.colors.surface,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: context.colors.darkBorder),
-            ),
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
+        const KolabExamplesBox(examples: [
+          'Free coffee tasting for 20 runners in exchange for tagged stories.',
+          '50 product samples for a fitness community in exchange for feedback.',
+          '20% off brunch for community members every Sunday.',
+        ]),
+        const SizedBox(height: KolabingSpacing.md),
+        Container(
+          padding: const EdgeInsets.all(KolabingSpacing.sm),
+          decoration: BoxDecoration(
+            color: context.colors.softYellow,
+            borderRadius: KolabingRadius.borderRadiusSm,
+          ),
+          child: Text(
+            'Good Kolabs usually include a clear perk: free samples, a discount, '
+            'a space, an experience, content, or something members will enjoy.',
+            style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurface, height: 1.4),
           ),
         ),
+        const SizedBox(height: KolabingSpacing.lg),
 
+        // -- 2. What would you like from the community?
+        const _SectionLabel(label: 'WHAT WOULD YOU LIKE FROM THE COMMUNITY?'),
+        const SizedBox(height: KolabingSpacing.xxs),
+        Text(
+          'You can choose more than one. This is not a strict contract yet — '
+          'it helps communities understand your expectations.',
+          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+        Builder(builder: (context) {
+          final deliverableOptions = ref.watch(deliverablesProvider).when(
+                data: (options) => options,
+                loading: () => const <OfferOption>[],
+                error: (_, _) => const <OfferOption>[],
+              );
+          return MultiSelectChips<OfferOption>(
+            items: deliverableOptions,
+            selected: deliverableOptions
+                .where((o) => kolab.expects.contains(o.slug))
+                .toList(),
+            labelBuilder: (o) => o.name,
+            onToggle: (option) => notifier.toggleExpect(option.slug),
+          );
+        }),
+        const SizedBox(height: KolabingSpacing.xs),
+        const KolabExamplesBox(examples: [
+          'Tagged stories + honest feedback from members.',
+          'Minimum 15 attendees and community photos.',
+          'Open to ideas — we mainly want to connect with the right community.',
+        ]),
         const SizedBox(height: KolabingSpacing.lg),
 
         // H3: Negotiation triggers — surfaces only after a community applies.
@@ -172,12 +231,16 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
 
         Padding(
           padding: const EdgeInsets.only(top: KolabingSpacing.xs),
-          child: OutlinedButton.icon(
-            onPressed: () => _addTrigger(kolab, notifier),
-            icon: const Icon(LucideIcons.plus, size: 16),
-            label: Text(
-              l10n.offeringAddExtraTerm,
-              style: KolabingTextStyles.button.copyWith(fontSize: 13, letterSpacing: 0.5),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: IntrinsicWidth(
+              child: KolabingButton(
+                label: l10n.offeringAddExtraTerm,
+                onPressed: () => _addTrigger(kolab, notifier),
+                variant: KolabingButtonVariant.secondary,
+                size: KolabingButtonSize.small,
+                icon: const Icon(LucideIcons.plus, size: 16),
+              ),
             ),
           ),
         ),
@@ -392,24 +455,20 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
             style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
           ),
           const SizedBox(height: KolabingSpacing.md),
-          TextField(
+          KolabingInput(
             controller: _conditionController,
             maxLength: 100,
-            decoration: InputDecoration(
-              labelText: l10n.offeringTriggerWhenLabel,
-              hintText: l10n.offeringTriggerWhenHint,
-            ),
+            label: l10n.offeringTriggerWhenLabel,
+            hint: l10n.offeringTriggerWhenHint,
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
           ),
           const SizedBox(height: KolabingSpacing.sm),
-          TextField(
+          KolabingInput(
             controller: _offerController,
             maxLength: 200,
             maxLines: 2,
-            decoration: InputDecoration(
-              labelText: l10n.offeringTriggerThenLabel,
-              hintText: l10n.offeringTriggerThenHint,
-            ),
+            label: l10n.offeringTriggerThenLabel,
+            hint: l10n.offeringTriggerThenHint,
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
           ),
           const SizedBox(height: KolabingSpacing.lg),

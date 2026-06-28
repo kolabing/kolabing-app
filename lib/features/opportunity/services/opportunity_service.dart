@@ -40,15 +40,20 @@ class OpportunityService {
   // ---------------------------------------------------------------------------
 
   /// GET /api/v1/kolabs
+  ///
+  /// When [savedOnly] is true, appends `saved=1` so the backend returns only the
+  /// kolabs the viewer has bookmarked (`KolabService::browse` saved filter).
   Future<PaginatedResponse<Opportunity>> getOpportunities({
     OpportunityFilters filters = const OpportunityFilters(),
     int page = 1,
     int perPage = 15,
+    bool savedOnly = false,
   }) async {
     return _getOpportunities(
       filters: filters,
       page: page,
       perPage: perPage,
+      savedOnly: savedOnly,
       allowRetry: true,
     );
   }
@@ -57,11 +62,13 @@ class OpportunityService {
     required OpportunityFilters filters,
     required int page,
     required int perPage,
+    required bool savedOnly,
     required bool allowRetry,
   }) async {
     final queryParams = <String, String>{
       'page': page.toString(),
       'per_page': perPage.toString(),
+      if (savedOnly) 'saved': '1',
       ...filters.toQueryParameters(),
     };
 
@@ -108,6 +115,7 @@ class OpportunityService {
             filters: filters,
             page: page,
             perPage: perPage,
+            savedOnly: savedOnly,
             allowRetry: false,
           );
         }
@@ -248,6 +256,58 @@ class OpportunityService {
     } on Exception catch (e) {
       debugPrint('Get opportunity error: $e');
       throw NetworkException('Failed to load opportunity: $e');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Save / unsave (bookmark) a kolab
+  // ---------------------------------------------------------------------------
+
+  /// Save ([saved] true → `POST /api/v1/kolabs/{id}/save`) or unsave
+  /// ([saved] false → `DELETE /api/v1/kolabs/{id}/save`) a kolab for the viewer.
+  /// Both backend endpoints are idempotent. Throws on failure so callers can
+  /// revert an optimistic UI update.
+  Future<void> setSaved(String id, bool saved) async {
+    return _setSaved(id, saved, allowRetry: true);
+  }
+
+  Future<void> _setSaved(
+    String id,
+    bool saved, {
+    required bool allowRetry,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/kolabs/$id/save');
+    debugPrint('OpportunityService: ${saved ? 'POST' : 'DELETE'} $uri');
+
+    try {
+      final headers = await _getHeaders();
+      final response = saved
+          ? await _httpClient.post(uri, headers: headers)
+          : await _httpClient.delete(uri, headers: headers);
+
+      // Save → 200/201; unsave → 204. All treated as success (idempotent).
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 204) {
+        return;
+      } else if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return _setSaved(id, saved, allowRetry: false);
+        }
+        throw const AuthException('Session expired. Please sign in again.');
+      } else {
+        throw _parseApiError(response);
+      }
+    } on ApiException {
+      rethrow;
+    } on AuthException {
+      rethrow;
+    } on NetworkException {
+      rethrow;
+    } catch (e) {
+      debugPrint('Set saved error: $e');
+      throw NetworkException('Failed to update saved state: $e');
     }
   }
 

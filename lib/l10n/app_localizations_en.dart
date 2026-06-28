@@ -1026,6 +1026,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exploreFeedAll => 'All';
 
   @override
+  String get exploreFeedSaved => 'Saved';
+
+  @override
+  String get savedKolabsEmptyTitle => 'No saved kolabs yet';
+
+  @override
+  String get savedKolabsEmptyBody =>
+      'Tap the bookmark on a kolab to save it for later.';
+
+  @override
+  String get savedKolabsErrorTitle => 'Couldn\'t load saved kolabs';
+
+  @override
+  String get savedKolabsErrorBody => 'Something went wrong. Please try again.';
+
+  @override
+  String get savedKolabsSaveError =>
+      'Couldn\'t save this kolab. Please try again.';
+
+  @override
+  String get savedKolabsUnsaveError =>
+      'Couldn\'t remove this kolab. Please try again.';
+
+  @override
   String get myKolabsTabPublished => 'Published';
 
   @override
@@ -1137,7 +1161,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get kolabCompletionConfirmDismiss => 'Not yet';
 
   @override
+  String get kolabCompletionConfirmNo => 'No, it didn\'t happen';
+
+  @override
+  String get kolabCompletionConfirmedNotYetTitle => 'Got it, thanks 👍';
+
+  @override
+  String get kolabCompletionConfirmedNotYetBody =>
+      'We\'ll check back later — come back here once the Kolab happens to confirm it.';
+
+  @override
+  String get kolabCompletionConfirmedNoTitle => 'Thanks for letting us know';
+
+  @override
+  String get kolabCompletionConfirmedNoBody =>
+      'We\'ve recorded that this Kolab didn\'t happen. Reach out to support if you need help resolving it.';
+
+  @override
+  String get kolabCompletionConfirmError =>
+      'Could not submit your confirmation. Please try again.';
+
+  @override
   String get kolabCompletionFeedbackTitle => 'How was the Kolab? ⭐';
+
+  @override
+  String get kolabCompletionFeedbackOptionalTitle => 'Add a few details? ⭐';
+
+  @override
+  String kolabCompletionFeedbackOptionalSubtitle(String partnerName) {
+    return 'Got it — your answer is recorded. Sharing a quick rating and a few details helps $partnerName build trust on Kolabing — and earns you extra XP. Totally optional.';
+  }
+
+  @override
+  String get kolabCompletionFeedbackSkip => 'Skip for now';
 
   @override
   String kolabCompletionFeedbackSubtitle(String partnerName) {
@@ -1205,6 +1261,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get kolabCompletionDoneClose => 'Close';
+
+  @override
+  String kolabCompletionConfirmMutualNote(String partnerName) {
+    return 'First, confirm whether the Kolab happened. Reviews are optional after that.';
+  }
+
+  @override
+  String get kolabCompletionFeedbackExpectationMatch =>
+      'Did it match your expectations?';
+
+  @override
+  String get kolabCompletionFeedbackWouldRecommend =>
+      'Would you recommend this partner?';
+
+  @override
+  String get kolabCompletionFeedbackWouldCollaborateAgain =>
+      'Would you kolab again?';
+
+  @override
+  String get kolabCompletionFeedbackMetricsOptional => 'Results (optional)';
+
+  @override
+  String get kolabCompletionFeedbackPostsReels => 'Posts / reels published';
+
+  @override
+  String get kolabCompletionFeedbackStoriesPosted => 'Stories posted';
+
+  @override
+  String get kolabCompletionFeedbackRevenue => 'Revenue generated';
+
+  @override
+  String get kolabCompletionFeedbackBenefits => 'Benefits received';
+
+  @override
+  String get kolabCompletionAwaitingPartnerTitle =>
+      'Thanks! Your feedback is in ✅';
+
+  @override
+  String kolabCompletionAwaitingPartnerBody(String partnerName) {
+    return 'This Kolab completes once $partnerName confirms too. We will let you know.';
+  }
+
+  @override
+  String get kolabCompletionAwaitingPartnerClose => 'Got it';
+
+  @override
+  String get kolabCompletionAlreadyCompleted =>
+      'This Kolab is already completed.';
 
   @override
   String get collaborationDetailNotFound => 'Kolab not found';
@@ -1354,15 +1458,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get collaborationDetailQrPlaceholder => 'QR Code';
 
   @override
-  String get collaborationDetailQrGeneratedOnDay => 'Generated on event day';
+  String get collaborationDetailQrGeneratedOnDemand => 'Generated on demand';
 
   @override
   String get collaborationDetailQrDescription =>
-      'Attendees scan this QR code at your event to check in and start completing challenges.';
+      'Tap below to generate your check-in QR. Attendees scan it at your event to check in and start completing challenges.';
 
   @override
-  String get collaborationDetailQrUnavailable =>
-      'QR code will be available when the event is created';
+  String get collaborationDetailQrGenerating => 'GENERATING…';
+
+  @override
+  String collaborationDetailQrGenerateError(String error) {
+    return 'Couldn\'t generate the QR code: $error';
+  }
 
   @override
   String get collaborationDetailViewQr => 'View QR code';
@@ -1410,6 +1518,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get collaborationDetailItHappened => 'Yes, it happened ✨';
+
+  @override
+  String get collaborationDetailUpdateStatus => 'Update status';
+
+  @override
+  String get collaborationDetailCheckAgain => 'Check again';
+
+  @override
+  String get collaborationDetailReviewStatus => 'Review status';
+
+  @override
+  String get collaborationDetailLeaveFeedbackLater => 'Leave optional feedback';
+
+  @override
+  String get collaborationDetailFeedbackAlreadyLeft =>
+      'You\'ve shared your feedback ✓';
+
+  @override
+  String get collaborationDetailFeedbackConfirmedTitle => 'You\'ve confirmed ✓';
+
+  @override
+  String collaborationDetailFeedbackConfirmedBody(String partnerName) {
+    return 'Waiting for $partnerName to confirm too. The Kolab completes once you both do.';
+  }
+
+  @override
+  String collaborationDetailPartnerSaidNotYetTitle(String partnerName) {
+    return 'Waiting on $partnerName';
+  }
+
+  @override
+  String collaborationDetailPartnerSaidNotYetBody(String partnerName) {
+    return '$partnerName said the Kolab hasn\'t happened yet. The Kolab completes once you both confirm \'yes\'.';
+  }
+
+  @override
+  String collaborationDetailPartnerSaidNoTitle(String partnerName) {
+    return '$partnerName said it didn\'t happen';
+  }
+
+  @override
+  String collaborationDetailPartnerSaidNoBody(String partnerName) {
+    return '$partnerName said this Kolab didn\'t happen. Contact support if you need help resolving it.';
+  }
+
+  @override
+  String get collaborationCardWaitingForPartner =>
+      'You confirmed — waiting for partner';
 
   @override
   String get collaborationDetailReviewSubmitted => 'Review submitted ✓';

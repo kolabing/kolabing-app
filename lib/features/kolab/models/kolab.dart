@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kolabing_app/features/kolab/enums/deliverable_type.dart';
 import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
 import 'package:kolabing_app/features/kolab/enums/need_type.dart';
 import 'package:kolabing_app/features/kolab/enums/product_type.dart';
@@ -8,6 +7,7 @@ import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
 
 import '../../../utils/profile_type_formatter.dart';
 import '../../../utils/remote_media_url.dart';
+import '../constants/default_covers.dart';
 
 // =============================================================================
 // Venue Preference
@@ -73,17 +73,31 @@ enum VenuePreference {
 /// A media attachment for a Kolab (photo or video).
 @immutable
 class KolabMedia {
-  const KolabMedia({required this.url, required this.type, this.sortOrder = 0});
+  const KolabMedia({
+    required this.url,
+    required this.type,
+    this.sortOrder = 0,
+    this.isDefaultCover = false,
+  });
 
-  factory KolabMedia.fromJson(Map<String, dynamic> json) => KolabMedia(
-    url: normalizeRemoteMediaUrl(json['url']?.toString() ?? ''),
-    type: json['type']?.toString() ?? 'image',
-    sortOrder: _parseInt(json['sort_order']) ?? 0,
-  );
+  factory KolabMedia.fromJson(Map<String, dynamic> json) {
+    final url = normalizeRemoteMediaUrl(json['url']?.toString() ?? '');
+    return KolabMedia(
+      url: url,
+      type: json['type']?.toString() ?? 'image',
+      sortOrder: _parseInt(json['sort_order']) ?? 0,
+      isDefaultCover: isDefaultCoverUrl(url),
+    );
+  }
 
   final String url;
   final String type;
   final int sortOrder;
+
+  /// Client-only UI flag: true when [url] is one of the Kolabing default
+  /// cover images rather than a business-uploaded photo. Never serialized —
+  /// the backend only ever sees a plain URL.
+  final bool isDefaultCover;
 
   Map<String, dynamic> toJson() => {
     'url': url,
@@ -91,12 +105,17 @@ class KolabMedia {
     'sort_order': sortOrder,
   };
 
-  KolabMedia copyWith({String? url, String? type, int? sortOrder}) =>
-      KolabMedia(
-        url: url ?? this.url,
-        type: type ?? this.type,
-        sortOrder: sortOrder ?? this.sortOrder,
-      );
+  KolabMedia copyWith({
+    String? url,
+    String? type,
+    int? sortOrder,
+    bool? isDefaultCover,
+  }) => KolabMedia(
+    url: url ?? this.url,
+    type: type ?? this.type,
+    sortOrder: sortOrder ?? this.sortOrder,
+    isDefaultCover: isDefaultCover ?? this.isDefaultCover,
+  );
 
   static int? _parseInt(Object? value) {
     if (value == null) return null;
@@ -295,6 +314,8 @@ class Kolab {
     // Phase 5 discovery & matching (2026-05-21 backend contract update)
     this.offerHeadline,
     this.baseOffer,
+    this.goal,
+    this.highlights = const [],
     this.negotiationTriggers = const [],
     this.matchScore,
     this.matchBreakdown = const [],
@@ -354,9 +375,7 @@ class Kolab {
     communitySize: _parseInt(json['community_size']),
     typicalAttendance: _parseInt(json['typical_attendance']),
     offersInReturn: json['offers_in_return'] is List
-        ? (json['offers_in_return'] as List)
-              .map((e) => DeliverableType.fromString(e.toString()))
-              .toList()
+        ? (json['offers_in_return'] as List).map((e) => e.toString()).toList()
         : const [],
     venuePreference: json['venue_preference'] != null
         ? VenuePreference.fromString(json['venue_preference'].toString())
@@ -381,9 +400,7 @@ class Kolab {
         : const [],
     minCommunitySize: _parseInt(json['min_community_size']),
     expects: json['expects'] is List
-        ? (json['expects'] as List)
-              .map((e) => DeliverableType.fromString(e.toString()))
-              .toList()
+        ? (json['expects'] as List).map((e) => e.toString()).toList()
         : const [],
     pastEvents: json['past_events'] is List
         ? (json['past_events'] as List)
@@ -394,6 +411,10 @@ class Kolab {
     createdAt: _parseDateTimeNullable(json['created_at']),
     offerHeadline: json['offer_headline']?.toString(),
     baseOffer: json['base_offer']?.toString(),
+    goal: json['goal']?.toString(),
+    highlights: json['highlights'] is List
+        ? (json['highlights'] as List).map((e) => e.toString()).toList()
+        : const [],
     negotiationTriggers: json['negotiation_triggers'] is List
         ? (json['negotiation_triggers'] as List)
               .map(
@@ -440,7 +461,7 @@ class Kolab {
   final List<String> communityTypes;
   final int? communitySize;
   final int? typicalAttendance;
-  final List<DeliverableType> offersInReturn;
+  final List<String> offersInReturn;
   final VenuePreference? venuePreference;
 
   // Venue promotion fields
@@ -457,7 +478,7 @@ class Kolab {
   final List<String> offering;
   final List<String> seekingCommunities;
   final int? minCommunitySize;
-  final List<DeliverableType> expects;
+  final List<String> expects;
 
   // Portfolio
   final List<PastEvent> pastEvents;
@@ -470,6 +491,8 @@ class Kolab {
   // offerHeadline + baseOffer + negotiationTriggers are write-on-publish).
   final String? offerHeadline;
   final String? baseOffer;
+  final String? goal;
+  final List<String> highlights;
   final List<NegotiationTrigger> negotiationTriggers;
   final int? matchScore;
   final List<MatchSignal> matchBreakdown;
@@ -506,7 +529,7 @@ class Kolab {
     if (communitySize != null) 'community_size': communitySize,
     if (typicalAttendance != null) 'typical_attendance': typicalAttendance,
     if (offersInReturn.isNotEmpty)
-      'offers_in_return': offersInReturn.map((o) => o.toApiValue()).toList(),
+      'offers_in_return': offersInReturn,
     if (venuePreference != null)
       'venue_preference': venuePreference!.toApiValue(),
     if (venueName != null && venueName!.isNotEmpty) 'venue_name': venueName,
@@ -522,7 +545,7 @@ class Kolab {
       'seeking_communities': seekingCommunities,
     if (minCommunitySize != null) 'min_community_size': minCommunitySize,
     if (expects.isNotEmpty)
-      'expects': expects.map((e) => e.toApiValue()).toList(),
+      'expects': expects,
     if (pastEvents.isNotEmpty)
       'past_events': pastEvents.map((e) => e.toJson()).toList(),
     if (publishedAt != null) 'published_at': publishedAt!.toIso8601String(),
@@ -532,6 +555,8 @@ class Kolab {
     if (offerHeadline != null && offerHeadline!.isNotEmpty)
       'offer_headline': offerHeadline,
     if (baseOffer != null && baseOffer!.isNotEmpty) 'base_offer': baseOffer,
+    if (goal != null && goal!.isNotEmpty) 'goal': goal,
+    if (highlights.isNotEmpty) 'highlights': highlights,
     if (negotiationTriggers.isNotEmpty)
       'negotiation_triggers': negotiationTriggers
           .map((t) => t.toJson())
@@ -561,7 +586,7 @@ class Kolab {
     List<String>? communityTypes,
     int? communitySize,
     int? typicalAttendance,
-    List<DeliverableType>? offersInReturn,
+    List<String>? offersInReturn,
     VenuePreference? venuePreference,
     String? venueName,
     VenueType? venueType,
@@ -572,17 +597,20 @@ class Kolab {
     List<String>? offering,
     List<String>? seekingCommunities,
     int? minCommunitySize,
-    List<DeliverableType>? expects,
+    List<String>? expects,
     List<PastEvent>? pastEvents,
     DateTime? publishedAt,
     DateTime? createdAt,
     String? offerHeadline,
     String? baseOffer,
+    String? goal,
+    List<String>? highlights,
     List<NegotiationTrigger>? negotiationTriggers,
     int? matchScore,
     List<MatchSignal>? matchBreakdown,
     bool clearOfferHeadline = false,
     bool clearBaseOffer = false,
+    bool clearGoal = false,
     bool clearId = false,
     bool clearArea = false,
     bool clearAvailabilityMode = false,
@@ -650,6 +678,8 @@ class Kolab {
         ? null
         : (offerHeadline ?? this.offerHeadline),
     baseOffer: clearBaseOffer ? null : (baseOffer ?? this.baseOffer),
+    goal: clearGoal ? null : (goal ?? this.goal),
+    highlights: highlights ?? this.highlights,
     negotiationTriggers: negotiationTriggers ?? this.negotiationTriggers,
     matchScore: matchScore ?? this.matchScore,
     matchBreakdown: matchBreakdown ?? this.matchBreakdown,

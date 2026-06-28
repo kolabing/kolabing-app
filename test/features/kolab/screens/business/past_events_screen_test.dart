@@ -34,6 +34,14 @@ void main() {
 
     await tester.pumpAndSettle();
 
+    // The new highlight chips + free-text section push the import button
+    // below the initial viewport — scroll it into view first.
+    await tester.scrollUntilVisible(
+      find.text('Select from profile'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+
     expect(find.text('Select from profile'), findsOneWidget);
 
     await tester.tap(find.text('Select from profile'));

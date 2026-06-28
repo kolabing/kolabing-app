@@ -7,6 +7,7 @@ import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
+import '../../../../widgets/kolabing_input.dart';
 import '../../../../widgets/time_picker.dart';
 import '../../../opportunity/models/opportunity.dart';
 import '../../models/kolab.dart';
@@ -39,8 +40,12 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
   ];
 
   Future<void> _pickDateRange(KolabFormNotifier notifier, Kolab kolab) async {
-    final today = DateUtils.dateOnly(DateTime.now());
-    final firstAllowedDate = today;
+    // Only reachable from the oneTime/recurring sections below — immediate
+    // mode shows no date picker and defaults to today via
+    // KolabFormNotifier.updateAvailabilityMode. Non-immediate modes require
+    // tomorrow or later.
+    final firstAllowedDate =
+        DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
     final initialStart =
         kolab.availabilityStart != null &&
             !DateUtils.dateOnly(
@@ -146,6 +151,19 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
           _buildDateRangeSection(kolab, notifier, errors),
         ],
 
+        if (kolab.availabilityMode == AvailabilityMode.immediate)
+          Container(
+            padding: const EdgeInsets.all(KolabingSpacing.sm),
+            decoration: BoxDecoration(
+              color: context.colors.softYellow,
+              borderRadius: KolabingRadius.borderRadiusSm,
+            ),
+            child: Text(
+              'This Kolab is ready to start today — no dates needed.',
+              style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurface, height: 1.4),
+            ),
+          ),
+
         const SizedBox(height: KolabingSpacing.lg),
       ],
     );
@@ -175,36 +193,15 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
           style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        GestureDetector(
+        KolabingInput(
+          controller: TextEditingController(text: hasRange ? rangeText : ''),
+          readOnly: true,
+          hint: hasRange ? null : rangeText,
           onTap: () => _pickDateRange(notifier, kolab),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: 14,
-            ),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: KolabingRadius.borderRadiusSm,
-              border: Border.all(color: context.colors.darkBorder),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    rangeText,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: hasRange
-                          ? context.colors.onSurface
-                          : context.colors.textTertiary),
-                  ),
-                ),
-                Icon(
-                  LucideIcons.calendar,
-                  size: 18,
-                  color: context.colors.onSurfaceVariant,
-                ),
-              ],
-            ),
+          suffix: Icon(
+            LucideIcons.calendar,
+            size: 18,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
         if (errors['availability_start'] != null)
@@ -233,36 +230,15 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
           style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        GestureDetector(
+        KolabingInput(
+          controller: TextEditingController(text: hasTime ? timeText : ''),
+          readOnly: true,
+          hint: hasTime ? null : timeText,
           onTap: () => _pickTime(notifier, kolab),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: 14,
-            ),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: KolabingRadius.borderRadiusSm,
-              border: Border.all(color: context.colors.darkBorder),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    timeText,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: hasTime
-                          ? context.colors.onSurface
-                          : context.colors.textTertiary),
-                  ),
-                ),
-                Icon(
-                  LucideIcons.clock,
-                  size: 18,
-                  color: context.colors.onSurfaceVariant,
-                ),
-              ],
-            ),
+          suffix: Icon(
+            LucideIcons.clock,
+            size: 18,
+            color: context.colors.onSurfaceVariant,
           ),
         ),
       ],
@@ -320,6 +296,8 @@ class _AvailabilityScreenState extends ConsumerState<AvailabilityScreen> {
         return LucideIcons.calendarCheck;
       case AvailabilityMode.recurring:
         return LucideIcons.repeat;
+      case AvailabilityMode.immediate:
+        return LucideIcons.zap;
     }
   }
 }

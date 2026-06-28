@@ -21,13 +21,10 @@ import '../../widgets/existing_photo_picker_sheet.dart';
 
 /// Step 1 (both venue and product flows): Media upload.
 ///
-/// Title varies based on intent type:
-///   - venuePromotion  -> "SHOW OFF YOUR VENUE"
-///   - productPromotion -> "SHOW YOUR PRODUCT"
-///
-/// Displays a grid of photo placeholders (min 1, max 5) and an optional
-/// video section. This is a plain widget -- the parent provides Scaffold,
-/// AppBar, step indicator, and action bar.
+/// A business can either upload a real photo or pick a Kolabing-designed
+/// default cover — both satisfy the "at least 1 photo" requirement. This
+/// replaces the old forced-upload feel: the screen never shows a hard error
+/// on first load, only after an explicit Next attempt with nothing chosen.
 class MediaScreen extends ConsumerStatefulWidget {
   const MediaScreen({super.key});
 
@@ -56,17 +53,12 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       maxWidth: 1920,
       maxHeight: 1920,
       imageQuality: 85,
-      // Skip loading full photo metadata — on iOS it forces a heavy copy that
-      // can trigger a memory jettison (app killed → cold start → bounced to
-      // login). We only need the image bytes.
       requestFullMetadata: false,
     );
     if (image == null) return;
 
     setState(() => _isUploading = true);
     try {
-      // C10: Google Photos / iCloud picks can return content URIs that
-      // dart:io can't read. Normalize to a real temp file before upload.
       final localPath = await normalizePickedImage(image);
       final uploadService = ref.read(uploadServiceProvider);
       final url = await uploadService.upload(
@@ -75,12 +67,17 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       );
       final notifier = ref.read(kolabFormProvider.notifier);
       final kolab = ref.read(kolabFormProvider).kolab;
-      // Use max-existing-sort + 1 to guarantee uniqueness even after a slot
-      // was removed (count-based formula could collide with a surviving entry).
-      // Backend expects `image` / `video` — `photo` was rejected on publish
-      // (B7). Use `image` consistently across upload + filter.
-      final existingPhotos =
-          kolab.media.where((m) => m.type == 'image');
+
+      // Replace a sole default-cover placeholder with the real photo rather
+      // than appending — keeps the "replace it later" promise literal.
+      final isOnlyDefaultCover =
+          kolab.media.length == 1 && kolab.media.single.isDefaultCover;
+      if (isOnlyDefaultCover) {
+        notifier.removeMedia(0);
+      }
+
+      final existingPhotos = (isOnlyDefaultCover ? const <KolabMedia>[] : kolab.media)
+          .where((m) => m.type == 'image');
       final nextSort = existingPhotos.isEmpty
           ? 0
           : existingPhotos
@@ -99,6 +96,10 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     } finally {
       if (mounted) setState(() => _isUploading = false);
     }
+  }
+
+  void _useDefaultCover(IntentType intent) {
+    ref.read(kolabFormProvider.notifier).useDefaultCover(intent);
   }
 
   Future<void> _selectExistingPhotos() async {
@@ -179,20 +180,18 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     final errors = formState.fieldErrors;
     final notifier = ref.read(kolabFormProvider.notifier);
 
-    final l10n = AppLocalizations.of(context);
     final isVenue = formState.intentType == IntentType.venuePromotion;
-    final title = isVenue ? l10n.mediaTitleVenue : l10n.mediaTitleProduct;
+    final intent = formState.intentType ?? IntentType.productPromotion;
 
-    // C7: surface a "Use venue photos" CTA only on venue promotion when the
-    // business profile actually has photos to reuse.
     final venuePhotoUrls = ref.watch(
       profileProvider.select((s) => s.profile?.businessProfile?.primaryVenue?.photos),
     );
     final galleryState = ref.watch(galleryProvider);
-    final showReuseCta = kolab.media.length < 5 &&
-        (galleryState.isLoading ||
-            galleryState.photos.isNotEmpty ||
-            (isVenue && (venuePhotoUrls?.isNotEmpty ?? false)));
+    final hasUsableDefault = galleryState.photos.isNotEmpty ||
+        (isVenue && (venuePhotoUrls?.isNotEmpty ?? false));
+    final showReuseCta =
+        kolab.media.length < 5 && (galleryState.isLoading || hasUsableDefault);
+    final hasNoChoiceYet = kolab.media.isEmpty;
 
     return ListView(
       padding: const EdgeInsets.symmetric(
@@ -201,12 +200,12 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       ),
       children: [
         Text(
-          title,
-          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+          'ADD PHOTOS',
+          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w800, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
-          l10n.mediaSubtitle,
+          'Kolabs need a cover image. You can upload your own or use a Kolabing default.',
           style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -214,48 +213,214 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
         if (errors.containsKey('media'))
           Padding(
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
-            child: Text(errors['media']!, style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error)),
+            child: Text(
+              errors['media']!,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: context.colors.orange,
+              ),
+            ),
           ),
 
-        // Reuse previously uploaded profile gallery photos, plus venue fallback.
-        if (showReuseCta) ...[
-          OutlinedButton.icon(
-            onPressed: _isUploading ? null : _selectExistingPhotos,
-            icon: const Icon(LucideIcons.imagePlus, size: 18),
-            label: Text(
-              l10n.mediaSelectFromLibrary,
-              style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
-            ),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: context.colors.primary,
-              side: BorderSide(
-                color: context.colors.primary.withValues(alpha: 0.5),
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: KolabingSpacing.md,
-                vertical: 10,
-              ),
-            ),
+        if (hasNoChoiceYet) ...[
+          _ChoiceCard(
+            icon: LucideIcons.upload,
+            title: 'Upload my photo',
+            helper: 'Best if you have a real product, venue, food, or event image.',
+            onTap: _isUploading ? null : _pickAndUploadPhoto,
           ),
           const SizedBox(height: KolabingSpacing.sm),
-        ],
-
-        // Upload progress
-        if (_isUploading)
-          Padding(
-            padding: EdgeInsets.only(bottom: KolabingSpacing.sm),
-            child: LinearProgressIndicator(color: context.colors.primary),
+          _ChoiceCard(
+            icon: LucideIcons.imagePlus,
+            title: 'Use default cover',
+            helper: "We'll use a designed Kolabing cover for this type of Kolab.",
+            previewAssetPath:
+                'assets/images/defaults/${intent == IntentType.venuePromotion ? 'venue_1' : 'product_cover_1'}.png',
+            onTap: _isUploading ? null : () => _useDefaultCover(intent),
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            'You can replace it later with your own photo.',
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
+          if (showReuseCta) ...[
+            const SizedBox(height: KolabingSpacing.sm),
+            Center(
+              child: TextButton(
+                onPressed: _isUploading ? null : _selectExistingPhotos,
+                child: Text(
+                  isVenue ? 'Or use business photo / choose existing' : 'Or choose an existing photo',
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.primary,
+                  ),
+                ),
+              ),
+            ),
+          ],
+          const SizedBox(height: KolabingSpacing.md),
+        ] else ...[
+          // Standing tip — encouragement, not a precondition, only shown
+          // once a choice has already been made.
+          Container(
+            margin: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+            padding: const EdgeInsets.all(KolabingSpacing.sm),
+            decoration: BoxDecoration(
+              color: context.colors.yellowTint,
+              borderRadius: KolabingRadius.borderRadiusOptionCard,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(LucideIcons.info, size: 16, color: context.colors.amber),
+                const SizedBox(width: KolabingSpacing.xs),
+                Expanded(
+                  child: Text(
+                    'Kolabs with strong visuals usually get more interest.',
+                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurface, height: 1.4),
+                  ),
+                ),
+              ],
+            ),
           ),
 
-        _PhotoGrid(
-          media: kolab.media,
-          onAdd: _isUploading ? () {} : _pickAndUploadPhoto,
-          onRemove: notifier.removeMedia,
-        ),
+          if (showReuseCta) ...[
+            OutlinedButton.icon(
+              onPressed: _isUploading ? null : _selectExistingPhotos,
+              icon: const Icon(LucideIcons.imagePlus, size: 18),
+              label: Text(
+                isVenue ? 'Use business photo or choose existing' : 'Choose existing photo',
+                style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: context.colors.primary,
+                side: BorderSide(
+                  color: context.colors.primary.withValues(alpha: 0.5),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.md,
+                  vertical: 10,
+                ),
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+          ],
+
+          if (_isUploading)
+            Padding(
+              padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+              child: LinearProgressIndicator(color: context.colors.primary),
+            ),
+
+          _PhotoGrid(
+            media: kolab.media,
+            onAdd: _isUploading ? () {} : _pickAndUploadPhoto,
+            onRemove: notifier.removeMedia,
+          ),
+          const SizedBox(height: KolabingSpacing.sm),
+          Text(
+            '${kolab.media.where((m) => m.type == 'image').length} of 5 added',
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: context.colors.muted,
+            ),
+          ),
+        ],
         const SizedBox(height: KolabingSpacing.lg),
       ],
     );
   }
+}
+
+// =============================================================================
+// Choice Card
+// =============================================================================
+
+class _ChoiceCard extends StatelessWidget {
+  const _ChoiceCard({
+    required this.icon,
+    required this.title,
+    required this.helper,
+    required this.onTap,
+    this.previewAssetPath,
+  });
+
+  final IconData icon;
+  final String title;
+  final String helper;
+  final VoidCallback? onTap;
+  final String? previewAssetPath;
+
+  @override
+  Widget build(BuildContext context) => Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: KolabingRadius.borderRadiusOptionCard,
+          child: Container(
+            padding: const EdgeInsets.all(KolabingSpacing.md),
+            decoration: BoxDecoration(
+              color: context.colors.softYellow,
+              borderRadius: KolabingRadius.borderRadiusOptionCard,
+              border: Border.all(color: context.colors.softYellowBorder),
+            ),
+            child: Row(
+              children: [
+                previewAssetPath != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          previewAssetPath!,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: context.colors.primary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(icon, size: 20, color: context.colors.ink),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: context.colors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(icon, size: 20, color: context.colors.ink),
+                      ),
+                const SizedBox(width: KolabingSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        helper,
+                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
 }
 
 // =============================================================================
@@ -282,47 +447,54 @@ class _PhotoGrid extends StatelessWidget {
       spacing: KolabingSpacing.sm,
       runSpacing: KolabingSpacing.sm,
       children: [
-        // Existing photos
         for (int i = 0; i < photos.length; i++)
           _PhotoSlot(
             index: i,
             url: photos[i].url,
+            isDefaultCover: photos[i].isDefaultCover,
             onRemove: () {
-              // Find the actual index in the full media list
               final actualIndex = media.indexOf(photos[i]);
               if (actualIndex >= 0) onRemove(actualIndex);
             },
           ),
 
-        // Add button
         if (canAdd)
           GestureDetector(
             onTap: onAdd,
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: context.colors.surfaceVariant,
-                borderRadius: KolabingRadius.borderRadiusMd,
-                border: Border.all(
-                  color: context.colors.darkBorder,
-                  style: BorderStyle.solid,
+            child: SizedBox(
+              width: 120,
+              height: 120,
+              child: CustomPaint(
+                painter: _DashedBorderPainter(
+                  color: context.colors.navInactiveSubtle,
+                  borderRadius: KolabingRadius.thumbnail,
                 ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    LucideIcons.plus,
-                    size: 24,
-                    color: context.colors.onSurfaceVariant,
-                  ),
-                  const SizedBox(height: KolabingSpacing.xxs),
-                  Text(
-                    AppLocalizations.of(context).mediaAddPhoto,
-                    style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.onSurfaceVariant),
-                  ),
-                ],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: context.colors.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        LucideIcons.plus,
+                        size: 18,
+                        color: context.colors.ink,
+                      ),
+                    ),
+                    const SizedBox(height: KolabingSpacing.xs),
+                    Text(
+                      AppLocalizations.of(context).mediaAddPhoto,
+                      style: KolabingTextStyles.labelSmall.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: context.colors.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -335,11 +507,13 @@ class _PhotoSlot extends StatelessWidget {
   const _PhotoSlot({
     required this.index,
     required this.url,
+    required this.isDefaultCover,
     required this.onRemove,
   });
 
   final int index;
   final String url;
+  final bool isDefaultCover;
   final VoidCallback onRemove;
 
   bool get _isLocalFile => !url.startsWith('http');
@@ -348,34 +522,50 @@ class _PhotoSlot extends StatelessWidget {
   Widget build(BuildContext context) => Stack(
       children: [
         Container(
-          width: 100,
-          height: 100,
+          width: 120,
+          height: 120,
           decoration: BoxDecoration(
             color: context.colors.softYellow,
-            borderRadius: KolabingRadius.borderRadiusMd,
+            borderRadius: KolabingRadius.borderRadiusThumbnail,
             border: Border.all(color: context.colors.softYellowBorder),
           ),
           child: ClipRRect(
-            borderRadius: KolabingRadius.borderRadiusMd,
+            borderRadius: KolabingRadius.borderRadiusThumbnail,
             child: _isLocalFile
                 ? Image.file(
                     File(url),
-                    width: 100,
-                    height: 100,
+                    width: 120,
+                    height: 120,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) =>
                         _buildPlaceholder(context),
                   )
                 : Image.network(
                     url,
-                    width: 100,
-                    height: 100,
+                    width: 120,
+                    height: 120,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) =>
                         _buildPlaceholder(context),
                   ),
           ),
         ),
+        if (isDefaultCover)
+          Positioned(
+            bottom: 4,
+            left: 4,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                'Default',
+                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+              ),
+            ),
+          ),
         Positioned(
           top: 4,
           right: 4,
@@ -412,4 +602,49 @@ class _PhotoSlot extends StatelessWidget {
           ],
         ),
       );
+}
+
+/// Paints a dashed rounded-rectangle border for the "Add Photo" tile.
+class _DashedBorderPainter extends CustomPainter {
+  _DashedBorderPainter({required this.color, required this.borderRadius});
+
+  final Color color;
+  final double borderRadius;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
+    final rrect = RRect.fromRectAndRadius(rect, Radius.circular(borderRadius));
+
+    final dashPath = _createDashedPath(Path()..addRRect(rrect));
+    canvas.drawPath(dashPath, paint);
+  }
+
+  Path _createDashedPath(Path source) {
+    const dashWidth = 6.0;
+    const dashSpace = 4.0;
+    final dest = Path();
+
+    for (final metric in source.computeMetrics()) {
+      var distance = 0.0;
+      while (distance < metric.length) {
+        final end = distance + dashWidth;
+        dest.addPath(
+          metric.extractPath(distance, end.clamp(0, metric.length)),
+          Offset.zero,
+        );
+        distance = end + dashSpace;
+      }
+    }
+    return dest;
+  }
+
+  @override
+  bool shouldRepaint(covariant _DashedBorderPainter oldDelegate) =>
+      color != oldDelegate.color || borderRadius != oldDelegate.borderRadius;
 }
