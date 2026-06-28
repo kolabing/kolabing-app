@@ -290,6 +290,73 @@ Future<void> submitCollaborationFeedback(
   );
 }
 
+/// Submit the OPTIONAL public 5-star Kolab review —
+/// `POST /api/v1/collaborations/{id}/review`.
+///
+/// PR 2 (2026-06-28) of the completion-flow simplification: this is the
+/// decoupled, optional "how good was it?" review, separate from the
+/// completion confirmation ("did it happen?"). All five ratings (1-5) are
+/// required by the backend when using this new format; `publicComment` is
+/// optional (max 2000 chars). Idempotent on the backend — resubmitting
+/// returns the existing review without awarding XP again, so callers don't
+/// need to guard against double-submission themselves.
+Future<void> submitCollaborationReview(
+  String id, {
+  required int communicationRating,
+  required int reliabilityRating,
+  required int fitRating,
+  required int valueRating,
+  required int repeatRating,
+  String? publicComment,
+}) async {
+  final authService = AuthService();
+  final token = await authService.getToken();
+  if (token == null || token.isEmpty) {
+    throw const AuthException('Session expired. Please sign in again.');
+  }
+
+  final url = '${ApiConfig.baseUrl}/collaborations/$id/review';
+  final payload = <String, dynamic>{
+    'communication_rating': communicationRating,
+    'reliability_rating': reliabilityRating,
+    'fit_rating': fitRating,
+    'value_rating': valueRating,
+    'repeat_rating': repeatRating,
+    if (publicComment != null && publicComment.trim().isNotEmpty)
+      'public_comment': publicComment.trim(),
+  };
+  debugPrint('[D3] POST $url payload=$payload');
+
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    },
+    body: jsonEncode(payload),
+  );
+
+  debugPrint('[D3] review response status=${response.statusCode}');
+
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    unawaited(
+      AnalyticsService.instance.capture(
+        AnalyticsEvents.feedbackSubmitted,
+        properties: {'collaboration_id': id, 'kind': 'star_review'},
+      ),
+    );
+    return;
+  }
+
+  final body = response.body.isEmpty
+      ? <String, dynamic>{'message': 'Failed to submit review'}
+      : jsonDecode(response.body) as Map<String, dynamic>;
+  throw ApiException(
+    error: ApiError.fromJson(body, statusCode: response.statusCode),
+  );
+}
+
 /// Mark a collaboration as completed (D3).
 ///
 /// `POST /api/v1/collaborations/{id}/complete` — empty body. On 200 it returns

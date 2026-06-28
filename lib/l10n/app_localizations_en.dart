@@ -1206,6 +1206,106 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not submit feedback. Please try again.';
 
   @override
+  String get kolabStarReviewTitle => 'Rate this Kolab ⭐';
+
+  @override
+  String kolabStarReviewSubtitle(String partnerName) {
+    return 'Got it — your answer is recorded. A quick 5-star review helps $partnerName build trust on Kolabing. Totally optional.';
+  }
+
+  @override
+  String get kolabStarReviewBizCommunicationLabel => 'Communication';
+
+  @override
+  String get kolabStarReviewBizCommunicationHelper =>
+      'Was it easy to coordinate?';
+
+  @override
+  String get kolabStarReviewBizReliabilityLabel => 'Reliability';
+
+  @override
+  String get kolabStarReviewBizReliabilityHelper =>
+      'Did the community show up and deliver?';
+
+  @override
+  String get kolabStarReviewBizFitLabel => 'Community fit';
+
+  @override
+  String get kolabStarReviewBizFitHelper => 'Was their audience a good match?';
+
+  @override
+  String get kolabStarReviewBizValueLabel => 'Business value';
+
+  @override
+  String get kolabStarReviewBizValueHelper =>
+      'Did the Kolab bring value to your business?';
+
+  @override
+  String get kolabStarReviewBizRepeatLabel => 'Would work with them again';
+
+  @override
+  String get kolabStarReviewBizRepeatHelper =>
+      'Would you repeat a Kolab with them?';
+
+  @override
+  String get kolabStarReviewComCommunicationLabel => 'Communication';
+
+  @override
+  String get kolabStarReviewComCommunicationHelper =>
+      'Was it easy to coordinate?';
+
+  @override
+  String get kolabStarReviewComReliabilityLabel => 'Reliability';
+
+  @override
+  String get kolabStarReviewComReliabilityHelper =>
+      'Did the business deliver what was agreed?';
+
+  @override
+  String get kolabStarReviewComFitLabel => 'Experience fit';
+
+  @override
+  String get kolabStarReviewComFitHelper =>
+      'Was the experience right for your community?';
+
+  @override
+  String get kolabStarReviewComValueLabel => 'Member value';
+
+  @override
+  String get kolabStarReviewComValueHelper =>
+      'Did your members get something valuable?';
+
+  @override
+  String get kolabStarReviewComRepeatLabel => 'Would Kolab again';
+
+  @override
+  String get kolabStarReviewComRepeatHelper =>
+      'Would you repeat a Kolab with them?';
+
+  @override
+  String get kolabStarReviewCommentLabel => 'Anything else you\'d like to add?';
+
+  @override
+  String get kolabStarReviewSubmit => 'Submit review';
+
+  @override
+  String get kolabStarReviewSubmitting => 'Submitting…';
+
+  @override
+  String get kolabStarReviewSkip => 'Skip for now';
+
+  @override
+  String get kolabStarReviewSuccess =>
+      'Thanks — your review helps improve future Kolabs.';
+
+  @override
+  String get kolabStarReviewAlreadyDone => 'You\'ve shared your feedback ✓';
+
+  @override
+  String get kolabStarReviewError =>
+      'Could not submit your review. Please try again.';
+
+  @override
   String get kolabCompletionCelebrationTitle => 'Kolab completed! 🎉';
 
   @override

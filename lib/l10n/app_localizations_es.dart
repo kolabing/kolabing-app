@@ -1213,6 +1213,104 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudieron enviar los comentarios. Inténtalo de nuevo.';
 
   @override
+  String get kolabStarReviewTitle => 'Valora este Kolab ⭐';
+
+  @override
+  String kolabStarReviewSubtitle(String partnerName) {
+    return 'Listo — tu respuesta está registrada. Una valoración rápida de 5 estrellas ayuda a $partnerName a generar confianza en Kolabing. Totalmente opcional.';
+  }
+
+  @override
+  String get kolabStarReviewBizCommunicationLabel => 'Comunicación';
+
+  @override
+  String get kolabStarReviewBizCommunicationHelper => '¿Fue fácil coordinar?';
+
+  @override
+  String get kolabStarReviewBizReliabilityLabel => 'Fiabilidad';
+
+  @override
+  String get kolabStarReviewBizReliabilityHelper =>
+      '¿La comunidad se presentó y cumplió?';
+
+  @override
+  String get kolabStarReviewBizFitLabel => 'Afinidad con la comunidad';
+
+  @override
+  String get kolabStarReviewBizFitHelper => '¿Su audiencia era un buen match?';
+
+  @override
+  String get kolabStarReviewBizValueLabel => 'Valor para el negocio';
+
+  @override
+  String get kolabStarReviewBizValueHelper =>
+      '¿El Kolab aportó valor a tu negocio?';
+
+  @override
+  String get kolabStarReviewBizRepeatLabel => 'Repetirías con ellos';
+
+  @override
+  String get kolabStarReviewBizRepeatHelper =>
+      '¿Repetirías un Kolab con ellos?';
+
+  @override
+  String get kolabStarReviewComCommunicationLabel => 'Comunicación';
+
+  @override
+  String get kolabStarReviewComCommunicationHelper => '¿Fue fácil coordinar?';
+
+  @override
+  String get kolabStarReviewComReliabilityLabel => 'Fiabilidad';
+
+  @override
+  String get kolabStarReviewComReliabilityHelper =>
+      '¿El negocio cumplió lo acordado?';
+
+  @override
+  String get kolabStarReviewComFitLabel => 'Afinidad de la experiencia';
+
+  @override
+  String get kolabStarReviewComFitHelper =>
+      '¿La experiencia era adecuada para tu comunidad?';
+
+  @override
+  String get kolabStarReviewComValueLabel => 'Valor para los miembros';
+
+  @override
+  String get kolabStarReviewComValueHelper =>
+      '¿Tus miembros obtuvieron algo valioso?';
+
+  @override
+  String get kolabStarReviewComRepeatLabel => 'Repetirías el Kolab';
+
+  @override
+  String get kolabStarReviewComRepeatHelper =>
+      '¿Repetirías un Kolab con ellos?';
+
+  @override
+  String get kolabStarReviewCommentLabel => '¿Quieres añadir algo más?';
+
+  @override
+  String get kolabStarReviewSubmit => 'Enviar valoración';
+
+  @override
+  String get kolabStarReviewSubmitting => 'Enviando…';
+
+  @override
+  String get kolabStarReviewSkip => 'Omitir por ahora';
+
+  @override
+  String get kolabStarReviewSuccess =>
+      'Gracias — tu valoración ayuda a mejorar futuros Kolabs.';
+
+  @override
+  String get kolabStarReviewAlreadyDone => 'Ya has compartido tu valoración ✓';
+
+  @override
+  String get kolabStarReviewError =>
+      'No se pudo enviar tu valoración. Inténtalo de nuevo.';
+
+  @override
   String get kolabCompletionCelebrationTitle => '¡Kolab completado! 🎉';
 
   @override

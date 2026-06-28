@@ -2266,6 +2266,180 @@ abstract class AppLocalizations {
   /// **'Could not submit feedback. Please try again.'**
   String get kolabCompletionSheetFeedbackError;
 
+  /// Title of the optional 5-star review step.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate this Kolab ⭐'**
+  String get kolabStarReviewTitle;
+
+  /// Subtitle of the optional 5-star review step.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it — your answer is recorded. A quick 5-star review helps {partnerName} build trust on Kolabing. Totally optional.'**
+  String kolabStarReviewSubtitle(String partnerName);
+
+  /// Business star review: communication row label
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get kolabStarReviewBizCommunicationLabel;
+
+  /// Business star review: communication row helper
+  ///
+  /// In en, this message translates to:
+  /// **'Was it easy to coordinate?'**
+  String get kolabStarReviewBizCommunicationHelper;
+
+  /// Business star review: reliability row label
+  ///
+  /// In en, this message translates to:
+  /// **'Reliability'**
+  String get kolabStarReviewBizReliabilityLabel;
+
+  /// Business star review: reliability row helper
+  ///
+  /// In en, this message translates to:
+  /// **'Did the community show up and deliver?'**
+  String get kolabStarReviewBizReliabilityHelper;
+
+  /// Business star review: fit row label
+  ///
+  /// In en, this message translates to:
+  /// **'Community fit'**
+  String get kolabStarReviewBizFitLabel;
+
+  /// Business star review: fit row helper
+  ///
+  /// In en, this message translates to:
+  /// **'Was their audience a good match?'**
+  String get kolabStarReviewBizFitHelper;
+
+  /// Business star review: value row label
+  ///
+  /// In en, this message translates to:
+  /// **'Business value'**
+  String get kolabStarReviewBizValueLabel;
+
+  /// Business star review: value row helper
+  ///
+  /// In en, this message translates to:
+  /// **'Did the Kolab bring value to your business?'**
+  String get kolabStarReviewBizValueHelper;
+
+  /// Business star review: repeat row label
+  ///
+  /// In en, this message translates to:
+  /// **'Would work with them again'**
+  String get kolabStarReviewBizRepeatLabel;
+
+  /// Business star review: repeat row helper
+  ///
+  /// In en, this message translates to:
+  /// **'Would you repeat a Kolab with them?'**
+  String get kolabStarReviewBizRepeatHelper;
+
+  /// Community star review: communication row label
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get kolabStarReviewComCommunicationLabel;
+
+  /// Community star review: communication row helper
+  ///
+  /// In en, this message translates to:
+  /// **'Was it easy to coordinate?'**
+  String get kolabStarReviewComCommunicationHelper;
+
+  /// Community star review: reliability row label
+  ///
+  /// In en, this message translates to:
+  /// **'Reliability'**
+  String get kolabStarReviewComReliabilityLabel;
+
+  /// Community star review: reliability row helper
+  ///
+  /// In en, this message translates to:
+  /// **'Did the business deliver what was agreed?'**
+  String get kolabStarReviewComReliabilityHelper;
+
+  /// Community star review: fit row label
+  ///
+  /// In en, this message translates to:
+  /// **'Experience fit'**
+  String get kolabStarReviewComFitLabel;
+
+  /// Community star review: fit row helper
+  ///
+  /// In en, this message translates to:
+  /// **'Was the experience right for your community?'**
+  String get kolabStarReviewComFitHelper;
+
+  /// Community star review: value row label
+  ///
+  /// In en, this message translates to:
+  /// **'Member value'**
+  String get kolabStarReviewComValueLabel;
+
+  /// Community star review: value row helper
+  ///
+  /// In en, this message translates to:
+  /// **'Did your members get something valuable?'**
+  String get kolabStarReviewComValueHelper;
+
+  /// Community star review: repeat row label
+  ///
+  /// In en, this message translates to:
+  /// **'Would Kolab again'**
+  String get kolabStarReviewComRepeatLabel;
+
+  /// Community star review: repeat row helper
+  ///
+  /// In en, this message translates to:
+  /// **'Would you repeat a Kolab with them?'**
+  String get kolabStarReviewComRepeatHelper;
+
+  /// Optional free-text comment field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything else you\'d like to add?'**
+  String get kolabStarReviewCommentLabel;
+
+  /// Submit the 5-star review.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit review'**
+  String get kolabStarReviewSubmit;
+
+  /// Loading label while the review is being submitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitting…'**
+  String get kolabStarReviewSubmitting;
+
+  /// Skip the optional star review step.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get kolabStarReviewSkip;
+
+  /// Success copy shown after a star review is submitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks — your review helps improve future Kolabs.'**
+  String get kolabStarReviewSuccess;
+
+  /// Shown when the viewer has already submitted a star review.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve shared your feedback ✓'**
+  String get kolabStarReviewAlreadyDone;
+
+  /// Error when star review submission fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not submit your review. Please try again.'**
+  String get kolabStarReviewError;
+
   /// Celebration step title.
   ///
   /// In en, this message translates to:
