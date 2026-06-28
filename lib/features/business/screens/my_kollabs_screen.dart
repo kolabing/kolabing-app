@@ -166,7 +166,9 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            success ? AppLocalizations.of(context).myKolabsClosed : errorMessage,
+            success
+                ? AppLocalizations.of(context).myKolabsClosed
+                : errorMessage,
           ),
           behavior: SnackBarBehavior.floating,
           backgroundColor: success
@@ -249,8 +251,9 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
         // Header (standalone only; the hub provides its own title)
         if (!widget.embedded) _buildHeader(isDark),
 
-        // Status tabs
-        _buildStatusTabs(currentStatus, isDark),
+        // Status tabs (+ count on the same row, so it never adds an extra
+        // row that pushes the list down)
+        _buildStatusTabs(currentStatus, isDark, listState),
 
         // List
         Expanded(
@@ -289,97 +292,104 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
       children: [
         Text(
           AppLocalizations.of(context).myKolabsTitle,
-          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 28, fontWeight: FontWeight.w800, color: isDark
+          style: KolabingTextStyles.bodyLarge.copyWith(
+            fontSize: 28,
+            fontWeight: FontWeight.w800,
+            color: isDark
                 ? context.colors.textOnDark
-                : context.colors.onSurface, letterSpacing: 1.2),
+                : context.colors.onSurface,
+            letterSpacing: 1.2,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           AppLocalizations.of(context).myKolabsSubtitle,
-          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
       ],
     ),
   );
 
-  Widget _buildStatusTabs(String? currentStatus, bool isDark) {
-    final selectedIndex = _statusTabs.indexWhere((t) => t.value == currentStatus);
+  Widget _buildStatusTabs(
+    String? currentStatus,
+    bool isDark,
+    MyKolabsState listState,
+  ) {
+    final selectedIndex = _statusTabs.indexWhere(
+      (t) => t.value == currentStatus,
+    );
     if (selectedIndex >= 0 &&
         _statusTabController.index != selectedIndex &&
         !_statusTabController.indexIsChanging) {
       _statusTabController.index = selectedIndex;
     }
 
-    return MyKolabsSubTabs(
-      controller: _statusTabController,
-      labels: _statusTabs
-          .map((t) => _statusTabLabel(context, t.value).toUpperCase())
-          .toList(),
+    final showCount = !listState.isLoading && listState.error == null;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+      child: MyKolabsSubTabs(
+        controller: _statusTabController,
+        labels: _statusTabs
+            .map((t) => _statusTabLabel(context, t.value).toUpperCase())
+            .toList(),
+        trailing: showCount
+            ? Text(
+                AppLocalizations.of(context).myKolabsCount(listState.total),
+                style: KolabingTextStyles.captionSecondary.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: isDark
+                      ? context.colors.textOnDark.withValues(alpha: 0.5)
+                      : context.colors.textTertiary,
+                ),
+              )
+            : null,
+      ),
     );
   }
 
-  Widget _buildList(MyKolabsState listState, bool isDark) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.md,
-          vertical: KolabingSpacing.sm,
-        ),
-        child: Text(
-          AppLocalizations.of(context).myKolabsCount(listState.total),
-          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: isDark
-                ? context.colors.textOnDark.withValues(alpha: 0.5)
-                : context.colors.textTertiary),
-        ),
+  Widget _buildList(MyKolabsState listState, bool isDark) => RefreshIndicator(
+    color: context.colors.primary,
+    onRefresh: () async {
+      await ref.read(myKolabsProvider.notifier).refresh();
+    },
+    child: ListView.separated(
+      controller: _scrollController,
+      padding: const EdgeInsets.fromLTRB(
+        KolabingSpacing.md,
+        0,
+        KolabingSpacing.md,
+        KolabingSpacing.xxl,
       ),
-      Expanded(
-        child: RefreshIndicator(
-          color: context.colors.primary,
-          onRefresh: () async {
-            await ref.read(myKolabsProvider.notifier).refresh();
-          },
-          child: ListView.separated(
-            controller: _scrollController,
-            padding: const EdgeInsets.fromLTRB(
-              KolabingSpacing.md,
-              0,
-              KolabingSpacing.md,
-              KolabingSpacing.xxl,
+      itemCount: listState.kolabs.length + (listState.isLoadingMore ? 1 : 0),
+      separatorBuilder: (context, index) =>
+          const SizedBox(height: KolabingSpacing.sm),
+      itemBuilder: (context, index) {
+        if (index >= listState.kolabs.length) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.all(KolabingSpacing.md),
+              child: CircularProgressIndicator(
+                color: context.colors.primary,
+                strokeWidth: 2,
+              ),
             ),
-            itemCount:
-                listState.kolabs.length + (listState.isLoadingMore ? 1 : 0),
-            separatorBuilder: (context, index) =>
-                const SizedBox(height: KolabingSpacing.sm),
-            itemBuilder: (context, index) {
-              if (index >= listState.kolabs.length) {
-                return Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(KolabingSpacing.md),
-                    child: CircularProgressIndicator(
-                      color: context.colors.primary,
-                      strokeWidth: 2,
-                    ),
-                  ),
-                );
-              }
-              final kolab = listState.kolabs[index];
-              return MyKolabCard(
-                kolab: kolab,
-                onView: kolab.id != null ? () => _onView(kolab) : null,
-                onEdit: () => _onEdit(kolab),
-                onShare: kolab.id != null ? () => _onShare(kolab) : null,
-                onPublish: kolab.id != null
-                    ? () => _onPublish(kolab.id!)
-                    : null,
-                onClose: kolab.id != null ? () => _onClose(kolab.id!) : null,
-                onDelete: kolab.id != null ? () => _onDelete(kolab.id!) : null,
-              );
-            },
-          ),
-        ),
-      ),
-    ],
+          );
+        }
+        final kolab = listState.kolabs[index];
+        return MyKolabCard(
+          kolab: kolab,
+          onView: kolab.id != null ? () => _onView(kolab) : null,
+          onEdit: () => _onEdit(kolab),
+          onShare: kolab.id != null ? () => _onShare(kolab) : null,
+          onPublish: kolab.id != null ? () => _onPublish(kolab.id!) : null,
+          onClose: kolab.id != null ? () => _onClose(kolab.id!) : null,
+          onDelete: kolab.id != null ? () => _onDelete(kolab.id!) : null,
+        );
+      },
+    ),
   );
 
   Widget _buildLoadingState(bool isDark) => SingleChildScrollView(
@@ -439,14 +449,20 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             AppLocalizations.of(context).myKolabsEmptyTitle,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: isDark
                   ? context.colors.textOnDark
-                  : context.colors.onSurface),
+                  : context.colors.onSurface,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             AppLocalizations.of(context).myKolabsEmptyMessage,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -478,14 +494,20 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             AppLocalizations.of(context).myKolabsSomethingWrong,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: isDark
                   ? context.colors.textOnDark
-                  : context.colors.onSurface),
+                  : context.colors.onSurface,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             error,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
