@@ -129,6 +129,18 @@ community_profiles, `status` (DEFAULT `'scheduled'`), `scheduled_date` date,
 reviewer_role, rating smallint, note, reviewed_profile_id → profiles, body,
 would_collaborate_again bool`.
 
+Optional 5-star review format (2026-06-28, PR 2 of the Kolab completion flow):
+`communication_rating, reliability_rating, fit_rating, value_rating,
+repeat_rating` (all smallint 1–5, nullable — null until a reviewer submits the
+new format), `public_comment text` (nullable, max 2000 chars, intended for
+display on the reviewed profile — distinct from the internal `note`/`body`).
+The model exposes an `overall_rating` accessor: average of the five rating
+columns when all are present, otherwise falls back to the legacy `rating`
+column. Submitting a review is optional and only available after a profile
+has confirmed completion as `yes`; each side may leave at most one review per
+collaboration (unique on `collaboration_id` + `reviewer_profile_id`) and earns
+`ReviewPosted` XP once per submission, independently of the other side.
+
 ### `collaboration_feedback` — richer post-kolab feedback
 `id, collaboration_id, reviewer_profile_id, reviewer_type, reviewer_role,
 rating (NN), posts_reels, expectation_match bool (NN), would_recommend bool (NN),

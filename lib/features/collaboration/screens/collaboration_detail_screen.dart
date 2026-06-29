@@ -42,7 +42,9 @@ class CollaborationDetailScreen extends ConsumerWidget {
         data: (collaboration) {
           if (collaboration == null) {
             return Center(
-              child: Text(AppLocalizations.of(context).collaborationDetailNotFound),
+              child: Text(
+                AppLocalizations.of(context).collaborationDetailNotFound,
+              ),
             );
           }
           return _CollaborationContent(
@@ -89,10 +91,7 @@ class _CollaborationContent extends ConsumerWidget {
           elevation: 0,
           pinned: true,
           leading: IconButton(
-            icon: Icon(
-              LucideIcons.arrowLeft,
-              color: context.colors.onSurface,
-            ),
+            icon: Icon(LucideIcons.arrowLeft, color: context.colors.onSurface),
             onPressed: () => context.pop(),
           ),
           title: Text(
@@ -254,13 +253,14 @@ class _CollaborationBody extends ConsumerWidget {
         // shown only inside the completion sheet. Now that feedback is
         // OPTIONAL and reachable separately, whoever skipped it inside the
         // sheet needs a way back to it — this is that way back.
-        if (interactive && collaboration.status == CollaborationStatus.completed)
+        if (interactive &&
+            collaboration.status == CollaborationStatus.completed)
           _PostCompletionFeedbackSection(
             collaborationId: collaborationId,
             partnerName: isBusiness
                 ? collaboration.communityPartner.name
                 : collaboration.businessPartner.name,
-            alreadySubmitted: collaboration.ownFeedbackSubmitted,
+            alreadySubmitted: collaboration.hasReviewed,
           ),
 
         // Gamification: Challenges Setup
@@ -439,7 +439,9 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
         SnackBar(
           content: Text(
             l10n.collaborationDetailScheduleUpdated,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.textOnDark,
+            ),
           ),
           backgroundColor: context.colors.success,
           behavior: SnackBarBehavior.floating,
@@ -452,7 +454,9 @@ class _EventInfoCardState extends ConsumerState<_EventInfoCard> {
         SnackBar(
           content: Text(
             l10n.collaborationDetailScheduleUpdateError(e.toString()),
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.textOnDark,
+            ),
           ),
           backgroundColor: context.colors.error,
           behavior: SnackBarBehavior.floating,
@@ -771,19 +775,29 @@ class _DeliverablesSection extends StatelessWidget {
     final items = <_CheckItem>[];
 
     if (deliverables.socialMediaContent) {
-      items.add(_CheckItem(l10n.collaborationDetailDeliverableSocialContent, true));
+      items.add(
+        _CheckItem(l10n.collaborationDetailDeliverableSocialContent, true),
+      );
     }
     if (deliverables.eventActivation) {
-      items.add(_CheckItem(l10n.collaborationDetailDeliverableEventActivation, true));
+      items.add(
+        _CheckItem(l10n.collaborationDetailDeliverableEventActivation, true),
+      );
     }
     if (deliverables.productPlacement) {
-      items.add(_CheckItem(l10n.collaborationDetailDeliverableProductPlacement, true));
+      items.add(
+        _CheckItem(l10n.collaborationDetailDeliverableProductPlacement, true),
+      );
     }
     if (deliverables.communityReach) {
-      items.add(_CheckItem(l10n.collaborationDetailDeliverableCommunityReach, true));
+      items.add(
+        _CheckItem(l10n.collaborationDetailDeliverableCommunityReach, true),
+      );
     }
     if (deliverables.reviewFeedback) {
-      items.add(_CheckItem(l10n.collaborationDetailDeliverableReviewFeedback, true));
+      items.add(
+        _CheckItem(l10n.collaborationDetailDeliverableReviewFeedback, true),
+      );
     }
     if (deliverables.other != null && deliverables.other!.isNotEmpty) {
       items.add(_CheckItem(deliverables.other!, true));
@@ -1151,11 +1165,7 @@ class _ChallengesSection extends ConsumerWidget {
           ),
           child: Row(
             children: [
-              Icon(
-                LucideIcons.info,
-                size: 14,
-                color: context.colors.onPrimary,
-              ),
+              Icon(LucideIcons.info, size: 14, color: context.colors.onPrimary),
               const SizedBox(width: KolabingSpacing.xs),
               Expanded(
                 child: Text(
@@ -1213,7 +1223,9 @@ class _ChallengesSection extends ConsumerWidget {
                 SnackBar(
                   content: Text(
                     l10n.collaborationDetailCustomChallengeSoon,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: context.colors.textOnDark,
+                    ),
                   ),
                   backgroundColor: context.colors.onSurfaceVariant,
                   behavior: SnackBarBehavior.floating,
@@ -1531,7 +1543,10 @@ class _QRCodeSectionState extends ConsumerState<_QRCodeSection> {
                 decoration: BoxDecoration(
                   color: context.colors.background,
                   borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(color: context.colors.darkBorder, width: 2),
+                  border: Border.all(
+                    color: context.colors.darkBorder,
+                    width: 2,
+                  ),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1580,9 +1595,7 @@ class _QRCodeSectionState extends ConsumerState<_QRCodeSection> {
                 height: 48,
                 child: ElevatedButton.icon(
                   onPressed: _isGenerating ? null : _openQr,
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                  ),
+                  style: ElevatedButton.styleFrom(elevation: 0),
                   icon: _isGenerating
                       ? SizedBox(
                           width: 18,
@@ -1761,11 +1774,7 @@ class _ResubscribePrompt extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                LucideIcons.lock,
-                size: 18,
-                color: context.colors.onPrimary,
-              ),
+              Icon(LucideIcons.lock, size: 18, color: context.colors.onPrimary),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -1934,7 +1943,9 @@ String _completionCtaLabel(
   required bool isToday,
 }) {
   if (ownStatus == null) {
-    return isToday ? l10n.collaborationDetailMarkDone : l10n.collaborationDetailItHappened;
+    return isToday
+        ? l10n.collaborationDetailMarkDone
+        : l10n.collaborationDetailItHappened;
   }
   if (ownStatus != 'yes') {
     return l10n.collaborationDetailUpdateStatus;
@@ -2078,7 +2089,11 @@ class _PostCompletionFeedbackSection extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.check_circle_rounded, size: 20, color: context.colors.activeText),
+            Icon(
+              Icons.check_circle_rounded,
+              size: 20,
+              color: context.colors.activeText,
+            ),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
               child: Text(
@@ -2114,7 +2129,11 @@ class _PostCompletionFeedbackSection extends ConsumerWidget {
         },
         child: Row(
           children: [
-            Icon(LucideIcons.star, size: 18, color: context.colors.onSurfaceVariant),
+            Icon(
+              LucideIcons.star,
+              size: 18,
+              color: context.colors.onSurfaceVariant,
+            ),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
               child: Text(
@@ -2158,17 +2177,17 @@ class _AwaitingPartnerConfirmation extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final (title, body) = switch (partnerStatus) {
       'no' => (
-          l10n.collaborationDetailPartnerSaidNoTitle(partnerName),
-          l10n.collaborationDetailPartnerSaidNoBody(partnerName),
-        ),
+        l10n.collaborationDetailPartnerSaidNoTitle(partnerName),
+        l10n.collaborationDetailPartnerSaidNoBody(partnerName),
+      ),
       'not_yet' => (
-          l10n.collaborationDetailPartnerSaidNotYetTitle(partnerName),
-          l10n.collaborationDetailPartnerSaidNotYetBody(partnerName),
-        ),
+        l10n.collaborationDetailPartnerSaidNotYetTitle(partnerName),
+        l10n.collaborationDetailPartnerSaidNotYetBody(partnerName),
+      ),
       _ => (
-          l10n.collaborationDetailFeedbackConfirmedTitle,
-          l10n.collaborationDetailFeedbackConfirmedBody(partnerName),
-        ),
+        l10n.collaborationDetailFeedbackConfirmedTitle,
+        l10n.collaborationDetailFeedbackConfirmedBody(partnerName),
+      ),
     };
 
     return Container(
