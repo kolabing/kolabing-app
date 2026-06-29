@@ -241,7 +241,14 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
       if (!mounted) return;
       setState(() {
         _isConfirming = false;
-        _step = 1; // optional, skippable impact data — reachable either way
+        // The 5-star review (POST /review) is only accepted by the backend for
+        // an active|completed collaboration. When /complete did NOT finish the
+        // Kolab (still awaiting the partner — e.g. a scheduled Kolab one party
+        // confirmed), go straight to the awaiting-partner step instead of the
+        // review form, which would 422 `collaboration_not_reviewable`. The
+        // review stays available from the detail screen once the Kolab actually
+        // completes (startAtFeedback re-entry).
+        _step = _completeSucceeded ? 1 : 4;
       });
       HapticFeedback.mediumImpact();
     } catch (_) {
