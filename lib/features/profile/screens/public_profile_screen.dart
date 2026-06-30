@@ -1269,7 +1269,7 @@ class _ReputationSummaryCard extends StatelessWidget {
               ),
               const SizedBox(width: KolabingSpacing.xxs),
               Text(
-                rep.averageRating!.toStringAsFixed(1),
+                rep.averageRating?.toStringAsFixed(1) ?? '—',
                 style: KolabingTextStyles.bodyLarge.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
