@@ -4170,6 +4170,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileReviewsLoadMore => 'Load more';
 
   @override
+  String get publicProfileReputationEmptyTitle => 'No reviews yet';
+
+  @override
+  String get publicProfileReputationEmptyBody =>
+      'Completed Kolabs will appear here once partners leave reviews.';
+
+  @override
+  String publicProfileReputationReviewsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reviews',
+      one: '1 review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String publicProfileReputationPartnersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count partners',
+      one: '1 partner',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get publicProfileAbout => 'About';
 
   @override

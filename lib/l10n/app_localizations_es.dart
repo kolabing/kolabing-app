@@ -4219,6 +4219,35 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileReviewsLoadMore => 'Cargar más';
 
   @override
+  String get publicProfileReputationEmptyTitle => 'Aún no hay reseñas';
+
+  @override
+  String get publicProfileReputationEmptyBody =>
+      'Los Kolabs completados aparecerán aquí cuando los socios dejen reseñas.';
+
+  @override
+  String publicProfileReputationReviewsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reseñas',
+      one: '1 reseña',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String publicProfileReputationPartnersCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count socios',
+      one: '1 socio',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get publicProfileAbout => 'Acerca de';
 
   @override

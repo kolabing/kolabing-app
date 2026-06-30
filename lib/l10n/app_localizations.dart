@@ -7510,6 +7510,30 @@ abstract class AppLocalizations {
   /// **'Load more'**
   String get profileReviewsLoadMore;
 
+  /// Title shown in the reputation summary card when a profile has no reviews
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get publicProfileReputationEmptyTitle;
+
+  /// Body text shown in the reputation summary card when a profile has no reviews
+  ///
+  /// In en, this message translates to:
+  /// **'Completed Kolabs will appear here once partners leave reviews.'**
+  String get publicProfileReputationEmptyBody;
+
+  /// Review count shown in the reputation summary card
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 review} other{{count} reviews}}'**
+  String publicProfileReputationReviewsCount(int count);
+
+  /// Unique partner count shown in the reputation summary card
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 partner} other{{count} partners}}'**
+  String publicProfileReputationPartnersCount(int count);
+
   /// Section title for the about/bio section on a public profile
   ///
   /// In en, this message translates to:
