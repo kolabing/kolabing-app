@@ -253,7 +253,9 @@ class PublicProfile {
         : null,
     friendsCount: (json['friends_count'] as num?)?.toInt() ?? 0,
     reputation: json['reputation'] != null
-        ? Reputation.fromJson((json['reputation'] as Map).cast<String, dynamic>())
+        ? Reputation.fromJson(
+            (json['reputation'] as Map).cast<String, dynamic>(),
+          )
         : null,
   );
 

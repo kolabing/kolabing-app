@@ -56,8 +56,10 @@ class PublicProfileScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: context.colors.background,
       body: profileAsync.when(
-        loading: () =>
-            _buildWithOptimisticHeader(context, body: _buildLoadingBody(context)),
+        loading: () => _buildWithOptimisticHeader(
+          context,
+          body: _buildLoadingBody(context),
+        ),
         error: (error, _) => _buildWithOptimisticHeader(
           context,
           body: _buildErrorBody(context, ref, error.toString()),
@@ -103,8 +105,8 @@ class PublicProfileScreen extends ConsumerWidget {
       return profile;
     }
     final needsName = !profile.hasRealDisplayName && cp.displayName.isNotEmpty;
-    final needsAvatar = (profile.avatarUrl == null ||
-            profile.avatarUrl!.trim().isEmpty) &&
+    final needsAvatar =
+        (profile.avatarUrl == null || profile.avatarUrl!.trim().isEmpty) &&
         (cp.avatarUrl != null && cp.avatarUrl!.trim().isNotEmpty);
     final needsType =
         profile.userType.trim().isEmpty && cp.userType.trim().isNotEmpty;
@@ -253,13 +255,20 @@ class PublicProfileScreen extends ConsumerWidget {
             children: [
               Text(
                 cp.displayName,
-                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+                style: KolabingTextStyles.bodyLarge.copyWith(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.onSurface,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
                 cp.userType.toUpperCase(),
-                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurfaceVariant),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -471,7 +480,11 @@ class _ProfileSliverHeader extends StatelessWidget {
                     children: [
                       Text(
                         profile.displayName,
-                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+                        style: KolabingTextStyles.bodyLarge.copyWith(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: context.colors.onSurface,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -479,7 +492,10 @@ class _ProfileSliverHeader extends StatelessWidget {
                       if (profile.typeLabel != null)
                         Text(
                           profile.typeLabel!,
-                          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurfaceVariant),
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: context.colors.onSurfaceVariant,
+                          ),
                         ),
                       if (profile.cityName != null &&
                           profile.cityName!.isNotEmpty) ...[
@@ -494,7 +510,10 @@ class _ProfileSliverHeader extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               profile.cityName!,
-                              style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
+                              style: KolabingTextStyles.captionSecondary
+                                  .copyWith(
+                                    color: context.colors.onSurfaceVariant,
+                                  ),
                             ),
                           ],
                         ),
@@ -599,11 +618,11 @@ class _MemberProfileContent extends ConsumerWidget {
                           padding: EdgeInsets.zero,
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            mainAxisSpacing: KolabingSpacing.sm,
-                            crossAxisSpacing: KolabingSpacing.sm,
-                            childAspectRatio: 0.82,
-                          ),
+                                crossAxisCount: 3,
+                                mainAxisSpacing: KolabingSpacing.sm,
+                                crossAxisSpacing: KolabingSpacing.sm,
+                                childAspectRatio: 0.82,
+                              ),
                           itemCount: card.recentBadges.length,
                           itemBuilder: (context, index) {
                             final award = card.recentBadges[index];
@@ -814,8 +833,9 @@ class _MemberHeroHeader extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   profile.cityName!,
-                  style: KolabingTextStyles.bodySmall
-                      .copyWith(color: KolabingColors.onSurfaceVariant),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: KolabingColors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -836,28 +856,28 @@ class _MemberFlankStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            value != null ? '$value' : '--',
-            style: KolabingTextStyles.bodyLarge.copyWith(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: KolabingColors.onSurface,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: KolabingTextStyles.bodySmall.copyWith(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: KolabingColors.onSurfaceVariant,
-            ),
-          ),
-        ],
-      );
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        value != null ? '$value' : '--',
+        style: KolabingTextStyles.bodyLarge.copyWith(
+          fontSize: 20,
+          fontWeight: FontWeight.w800,
+          color: KolabingColors.onSurface,
+        ),
+      ),
+      const SizedBox(height: 2),
+      Text(
+        label,
+        textAlign: TextAlign.center,
+        style: KolabingTextStyles.bodySmall.copyWith(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: KolabingColors.onSurfaceVariant,
+        ),
+      ),
+    ],
+  );
 }
 
 /// Member hero avatar: photo or initial circle, ringed in surface so it reads
@@ -894,24 +914,24 @@ class _MemberHeroAvatar extends StatelessWidget {
   }
 
   Widget _initialCircle(BoxBorder border) => Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: KolabingColors.primary.withValues(alpha: 0.25),
-          border: border,
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: KolabingColors.primary.withValues(alpha: 0.25),
+      border: border,
+    ),
+    child: Center(
+      child: Text(
+        initial,
+        style: KolabingTextStyles.bodyLarge.copyWith(
+          fontSize: 32,
+          fontWeight: FontWeight.w700,
+          color: KolabingColors.onPrimary,
         ),
-        child: Center(
-          child: Text(
-            initial,
-            style: KolabingTextStyles.bodyLarge.copyWith(
-              fontSize: 32,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.onPrimary,
-            ),
-          ),
-        ),
-      );
+      ),
+    ),
+  );
 }
 
 class _MemberStatsShimmer extends StatelessWidget {
@@ -919,16 +939,16 @@ class _MemberStatsShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Shimmer.fromColors(
-        baseColor: KolabingColors.surfaceVariant,
-        highlightColor: KolabingColors.surface,
-        child: Container(
-          height: 88,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: KolabingRadius.borderRadiusLg,
-          ),
-        ),
-      );
+    baseColor: KolabingColors.surfaceVariant,
+    highlightColor: KolabingColors.surface,
+    child: Container(
+      height: 88,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: KolabingRadius.borderRadiusLg,
+      ),
+    ),
+  );
 }
 
 class _MemberBadgesEmpty extends StatelessWidget {
@@ -1041,7 +1061,10 @@ class _AvatarWidget extends StatelessWidget {
     child: Center(
       child: Text(
         initial,
-        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
+        style: KolabingTextStyles.bodyMedium.copyWith(
+          fontWeight: FontWeight.w700,
+          color: context.colors.onSurface,
+        ),
       ),
     ),
   );
@@ -1104,7 +1127,11 @@ class _SectionCard extends StatelessWidget {
                 ),
                 child: Text(
                   '$count',
-                  style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                  style: KolabingTextStyles.labelSmall.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.onSurface,
+                  ),
                 ),
               ),
             ],
@@ -1153,7 +1180,10 @@ class _SocialLinkChip extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurface),
+            style: KolabingTextStyles.captionSecondary.copyWith(
+              fontWeight: FontWeight.w500,
+              color: context.colors.onSurface,
+            ),
           ),
         ],
       ),
@@ -1183,7 +1213,9 @@ class _SendKolabBottomBar extends ConsumerWidget {
       decoration: BoxDecoration(
         color: context.colors.surface,
         border: Border(
-          top: BorderSide(color: context.colors.darkBorder.withValues(alpha: 0.5)),
+          top: BorderSide(
+            color: context.colors.darkBorder.withValues(alpha: 0.5),
+          ),
         ),
       ),
       child: Row(
@@ -1197,7 +1229,9 @@ class _SendKolabBottomBar extends ConsumerWidget {
               ),
               child: Text(
                 AppLocalizations.of(context).publicProfileSaveForLater,
-                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -1205,7 +1239,9 @@ class _SendKolabBottomBar extends ConsumerWidget {
           Expanded(
             flex: 2,
             child: KolabingButton(
-              label: AppLocalizations.of(context).publicProfileSendKolabProposal,
+              label: AppLocalizations.of(
+                context,
+              ).publicProfileSendKolabProposal,
               onPressed: () async {
                 final allowed = await SubscriptionPaywall.checkAndShow(
                   context,
@@ -1262,11 +1298,7 @@ class _ReputationSummaryCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.star_rounded,
-                size: 22,
-                color: context.colors.primary,
-              ),
+              Icon(Icons.star_rounded, size: 22, color: context.colors.primary),
               const SizedBox(width: KolabingSpacing.xxs),
               Text(
                 rep.averageRating?.toStringAsFixed(1) ?? '—',
@@ -1280,9 +1312,7 @@ class _ReputationSummaryCard extends StatelessWidget {
           ),
           Flexible(
             child: _ReputationStat(
-              label: l10n.publicProfileReputationReviewsCount(
-                rep.reviewCount,
-              ),
+              label: l10n.publicProfileReputationReviewsCount(rep.reviewCount),
             ),
           ),
           Flexible(
@@ -1378,7 +1408,10 @@ class _PublicProfileReviewCard extends StatelessWidget {
                   children: [
                     Text(
                       review.reviewer.displayName,
-                      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: context.colors.onSurface,
+                      ),
                     ),
                     Text(
                       _formatReviewDate(review.createdAt),
