@@ -5216,6 +5216,24 @@
   "@profileReviewsLoadMore": {
     "description": "Button to load the next page of profile reviews"
   },
+  "publicProfileReputationEmptyTitle": "No reviews yet",
+  "@publicProfileReputationEmptyTitle": {
+    "description": "Title shown in the reputation summary card when a profile has no reviews"
+  },
+  "publicProfileReputationEmptyBody": "Completed Kolabs will appear here once partners leave reviews.",
+  "@publicProfileReputationEmptyBody": {
+    "description": "Body text shown in the reputation summary card when a profile has no reviews"
+  },
+  "publicProfileReputationReviewsCount": "{count, plural, =1{1 review} other{{count} reviews}}",
+  "@publicProfileReputationReviewsCount": {
+    "description": "Review count shown in the reputation summary card",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "publicProfileReputationPartnersCount": "{count, plural, =1{1 partner} other{{count} partners}}",
+  "@publicProfileReputationPartnersCount": {
+    "description": "Unique partner count shown in the reputation summary card",
+    "placeholders": { "count": { "type": "int" } }
+  },
   "publicProfileAbout": "About",
   "@publicProfileAbout": {
     "description": "Section title for the about/bio section on a public profile"

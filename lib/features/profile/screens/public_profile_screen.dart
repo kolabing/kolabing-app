@@ -12,6 +12,7 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/cards/kolabing_cards.dart';
 import '../../../widgets/gallery/public_gallery_section.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../event/widgets/past_events_section.dart';
@@ -132,6 +133,10 @@ class PublicProfileScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(KolabingSpacing.md),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
+                // Reputation summary
+                _ReputationSummaryCard(reputation: profile.reputation),
+                const SizedBox(height: KolabingSpacing.md),
+
                 // About
                 if (profile.hasAbout) ...[
                   _SectionCard(
@@ -1225,6 +1230,78 @@ class _SendKolabBottomBar extends ConsumerWidget {
           ),
         ],
       ),
+    ),
+  );
+}
+
+// =============================================================================
+// Reputation Summary Card
+// =============================================================================
+
+class _ReputationSummaryCard extends StatelessWidget {
+  const _ReputationSummaryCard({required this.reputation});
+
+  final Reputation? reputation;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final rep = reputation;
+
+    if (rep == null || !rep.hasReviews) {
+      return EmptyStateCard(
+        icon: LucideIcons.star,
+        title: l10n.publicProfileReputationEmptyTitle,
+        message: l10n.publicProfileReputationEmptyBody,
+      );
+    }
+
+    return PrimaryContentCard(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.star_rounded,
+                size: 22,
+                color: context.colors.primary,
+              ),
+              const SizedBox(width: KolabingSpacing.xxs),
+              Text(
+                rep.averageRating!.toStringAsFixed(1),
+                style: KolabingTextStyles.bodyLarge.copyWith(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.onSurface,
+                ),
+              ),
+            ],
+          ),
+          _ReputationStat(
+            label: l10n.publicProfileReputationReviewsCount(rep.reviewCount),
+          ),
+          _ReputationStat(
+            label: l10n.publicProfileReputationPartnersCount(
+              rep.uniquePartnerCount,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReputationStat extends StatelessWidget {
+  const _ReputationStat({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Text(
+    label,
+    style: KolabingTextStyles.bodySmall.copyWith(
+      color: context.colors.onSurfaceVariant,
     ),
   );
 }
