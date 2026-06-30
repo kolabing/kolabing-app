@@ -124,6 +124,60 @@ class PaginatedPublicProfileReviews {
   bool get hasMore => currentPage < lastPage;
 }
 
+@immutable
+class RatingBreakdown {
+  const RatingBreakdown({
+    required this.communication,
+    required this.reliability,
+    required this.fit,
+    required this.value,
+    required this.repeat,
+  });
+
+  factory RatingBreakdown.fromJson(Map<String, dynamic> json) =>
+      RatingBreakdown(
+        communication: (json['communication'] as num?)?.toDouble() ?? 0,
+        reliability: (json['reliability'] as num?)?.toDouble() ?? 0,
+        fit: (json['fit'] as num?)?.toDouble() ?? 0,
+        value: (json['value'] as num?)?.toDouble() ?? 0,
+        repeat: (json['repeat'] as num?)?.toDouble() ?? 0,
+      );
+
+  final double communication;
+  final double reliability;
+  final double fit;
+  final double value;
+  final double repeat;
+}
+
+@immutable
+class Reputation {
+  const Reputation({
+    this.averageRating,
+    required this.reviewCount,
+    required this.uniquePartnerCount,
+    this.breakdown,
+  });
+
+  factory Reputation.fromJson(Map<String, dynamic> json) => Reputation(
+    averageRating: (json['average_rating'] as num?)?.toDouble(),
+    reviewCount: (json['review_count'] as num?)?.toInt() ?? 0,
+    uniquePartnerCount: (json['unique_partner_count'] as num?)?.toInt() ?? 0,
+    breakdown: json['breakdown'] != null
+        ? RatingBreakdown.fromJson(
+            (json['breakdown'] as Map).cast<String, dynamic>(),
+          )
+        : null,
+  );
+
+  final double? averageRating;
+  final int reviewCount;
+  final int uniquePartnerCount;
+  final RatingBreakdown? breakdown;
+
+  bool get hasReviews => reviewCount > 0;
+}
+
 // =============================================================================
 // Public Profile Model
 // =============================================================================
@@ -148,6 +202,7 @@ class PublicProfile {
     this.recentReviews = const [],
     this.friendStatus,
     this.friendsCount = 0,
+    this.reputation,
   });
 
   factory PublicProfile.fromJson(Map<String, dynamic> json) => PublicProfile(
@@ -197,6 +252,9 @@ class PublicProfile {
         ? FriendStatus.fromApi(json['friend_status'] as String?)
         : null,
     friendsCount: (json['friends_count'] as num?)?.toInt() ?? 0,
+    reputation: json['reputation'] != null
+        ? Reputation.fromJson((json['reputation'] as Map).cast<String, dynamic>())
+        : null,
   );
 
   final String id;
@@ -228,6 +286,10 @@ class PublicProfile {
 
   /// Accepted-friends count for this profile (0 on older payloads).
   final int friendsCount;
+
+  /// PR 4: public reputation summary. Null on older/cached payloads that
+  /// predate the backend's `reputation` key.
+  final Reputation? reputation;
 
   String get initial =>
       displayName.isNotEmpty ? displayName[0].toUpperCase() : '?';
@@ -283,6 +345,7 @@ class PublicProfile {
     List<PublicProfileReview>? recentReviews,
     FriendStatus? friendStatus,
     int? friendsCount,
+    Reputation? reputation,
   }) => PublicProfile(
     id: id,
     userType: userType ?? this.userType,
@@ -301,6 +364,7 @@ class PublicProfile {
     recentReviews: recentReviews ?? this.recentReviews,
     friendStatus: friendStatus ?? this.friendStatus,
     friendsCount: friendsCount ?? this.friendsCount,
+    reputation: reputation ?? this.reputation,
   );
 }
 
