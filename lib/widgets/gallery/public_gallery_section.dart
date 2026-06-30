@@ -12,12 +12,12 @@ import 'photo_viewer_dialog.dart';
 ///
 /// Unlike [ProfileGallerySection], this does not allow adding or deleting photos.
 class PublicGallerySection extends StatelessWidget {
-  const PublicGallerySection({
-    required this.photos,
-    super.key,
-  });
+  const PublicGallerySection({required this.photos, super.key});
 
   final List<GalleryPhoto> photos;
+
+  /// Square thumbnail edge for the horizontal strip.
+  static const double _thumbSize = 112;
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +43,7 @@ class PublicGallerySection extends StatelessWidget {
           // Header
           Row(
             children: [
-              Icon(
-                LucideIcons.image,
-                size: 20,
-                color: context.colors.primary,
-              ),
+              Icon(LucideIcons.image, size: 20, color: context.colors.primary),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 'Gallery',
@@ -66,66 +62,73 @@ class PublicGallerySection extends StatelessWidget {
           ),
           const SizedBox(height: KolabingSpacing.md),
 
-          // Photo grid
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: KolabingSpacing.xs,
-              mainAxisSpacing: KolabingSpacing.xs,
-            ),
-            itemCount: photos.length,
-            itemBuilder: (context, index) {
-              final photo = photos[index];
-              return GestureDetector(
-                onTap: () => PhotoViewerDialog.show(
-                  context,
-                  photos: photos,
-                  initialIndex: index,
-                ),
-                child: ClipRRect(
-                  borderRadius: KolabingRadius.borderRadiusSm,
-                  child: photo.url.isEmpty
-                      ? Container(
-                          color: context.colors.surfaceVariant,
-                          child: Icon(
-                            LucideIcons.imageOff,
-                            size: 24,
-                            color: context.colors.textTertiary,
-                          ),
-                        )
-                      : Image.network(
-                          photo.url,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Container(
+          // Horizontal thumbnail strip — sizes to its content so 1–2 photos
+          // never leave a sparse 3-column grid with empty rows/columns; more
+          // photos scroll horizontally. Matches the own-profile gallery.
+          SizedBox(
+            height: _thumbSize,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.zero,
+              itemCount: photos.length,
+              separatorBuilder: (context, index) =>
+                  const SizedBox(width: KolabingSpacing.xs),
+              itemBuilder: (context, index) {
+                final photo = photos[index];
+                return GestureDetector(
+                  onTap: () => PhotoViewerDialog.show(
+                    context,
+                    photos: photos,
+                    initialIndex: index,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: KolabingRadius.borderRadiusMd,
+                    child: SizedBox(
+                      width: _thumbSize,
+                      height: _thumbSize,
+                      child: photo.url.isEmpty
+                          ? Container(
                               color: context.colors.surfaceVariant,
-                              child: Center(
-                                child: SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: context.colors.primary,
-                                  ),
+                              child: Icon(
+                                LucideIcons.imageOff,
+                                size: 24,
+                                color: context.colors.textTertiary,
+                              ),
+                            )
+                          : Image.network(
+                              photo.url,
+                              fit: BoxFit.cover,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Container(
+                                      color: context.colors.surfaceVariant,
+                                      child: Center(
+                                        child: SizedBox(
+                                          width: 16,
+                                          height: 16,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: context.colors.primary,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                              errorBuilder: (_, __, ___) => Container(
+                                color: context.colors.surfaceVariant,
+                                child: Icon(
+                                  LucideIcons.imageOff,
+                                  size: 24,
+                                  color: context.colors.textTertiary,
                                 ),
                               ),
-                            );
-                          },
-                          errorBuilder: (_, __, ___) => Container(
-                            color: context.colors.surfaceVariant,
-                            child: Icon(
-                              LucideIcons.imageOff,
-                              size: 24,
-                              color: context.colors.textTertiary,
                             ),
-                          ),
-                        ),
-                ),
-              );
-            },
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),

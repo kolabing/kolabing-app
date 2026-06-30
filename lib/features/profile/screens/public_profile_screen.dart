@@ -349,7 +349,11 @@ class PublicProfileScreen extends ConsumerWidget {
     icon: LucideIcons.trophy,
     title: AppLocalizations.of(context).publicProfilePastKolabs,
     count: profile.kolabsCount,
-    child: profile.hasCollaborations
+    // Branch on whether there are actual cards to show — NOT the count. The
+    // count can be > 0 while the list is empty (e.g. a backend count/list
+    // mismatch); rendering the list then would leave a blank box instead of
+    // the empty state.
+    child: profile.pastCollaborations.isNotEmpty
         ? SizedBox(
             height: 110,
             child: ListView.separated(
