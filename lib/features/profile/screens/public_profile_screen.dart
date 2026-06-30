@@ -1250,7 +1250,7 @@ class _ReputationSummaryCard extends StatelessWidget {
 
     if (rep == null || !rep.hasReviews) {
       return EmptyStateCard(
-        icon: LucideIcons.star,
+        icon: Icons.star_rounded,
         title: l10n.publicProfileReputationEmptyTitle,
         message: l10n.publicProfileReputationEmptyBody,
       );
@@ -1278,12 +1278,18 @@ class _ReputationSummaryCard extends StatelessWidget {
               ),
             ],
           ),
-          _ReputationStat(
-            label: l10n.publicProfileReputationReviewsCount(rep.reviewCount),
+          Flexible(
+            child: _ReputationStat(
+              label: l10n.publicProfileReputationReviewsCount(
+                rep.reviewCount,
+              ),
+            ),
           ),
-          _ReputationStat(
-            label: l10n.publicProfileReputationPartnersCount(
-              rep.uniquePartnerCount,
+          Flexible(
+            child: _ReputationStat(
+              label: l10n.publicProfileReputationPartnersCount(
+                rep.uniquePartnerCount,
+              ),
             ),
           ),
         ],
@@ -1300,6 +1306,7 @@ class _ReputationStat extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     label,
+    overflow: TextOverflow.ellipsis,
     style: KolabingTextStyles.bodySmall.copyWith(
       color: context.colors.onSurfaceVariant,
     ),
