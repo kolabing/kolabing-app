@@ -172,17 +172,20 @@ class PublicProfileService {
 
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body) as Map<String, dynamic>;
-      // The endpoint is paginated: `data` is the list of completed
-      // collaborations (each a PublicCollaborationResource), with `meta` for
-      // paging. We only render the first page on the profile screen.
+      // The endpoint paginates via `$paginator->through(...)` wrapped under the
+      // `data` key, so the items are NESTED at `data.data` (Laravel paginator
+      // shape), with a separate top-level `meta`. Tolerate a flat `data` list
+      // too, in case the backend shape changes. We only render the first page.
       final data = json['data'];
-      if (data is List) {
-        return data
-            .whereType<Map<String, dynamic>>()
-            .map(PastCollaboration.fromJson)
-            .toList();
-      }
-      return const [];
+      final list = data is List
+          ? data
+          : (data is Map<String, dynamic> && data['data'] is List
+                ? data['data'] as List
+                : const <dynamic>[]);
+      return list
+          .whereType<Map<String, dynamic>>()
+          .map(PastCollaboration.fromJson)
+          .toList();
     }
 
     if (response.statusCode == 401 && allowRetry) {
