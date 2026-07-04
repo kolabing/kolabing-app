@@ -34,13 +34,10 @@ class KolabCompletionResult {
 ///            `/completion` immediately (earns XP once, regardless of answer).
 ///            - 'yes' → also attempts `/complete`.
 ///            - 'no' / 'not yet' → acknowledges and closes; no `/complete` call.
-///   Step 1 — OPTIONAL, SKIPPABLE impact data (star rating + yes/no questions +
-///            role-aware metrics), reached after ANY 'yes' answer — whether
-///            `/complete` fully succeeded or is still waiting on the partner
-///            (QA fix 2026-06-27: previously only the SECOND confirmer ever
-///            saw this step; the first lost access to it permanently).
-///            POSTs `/feedback` only if the user fills it in; "Skip for now" is
-///            always available and does not block completion (it already
+///   Step 1 — OPTIONAL, SKIPPABLE 5-star review form, reached after ANY 'yes'
+///            answer by EITHER party (first or second confirmer). POSTs
+///            `/review` if filled in; "Skip for now" is always available and
+///            does not block completion (the completion confirmation already
 ///            happened from the caller's side). Whoever skips can come back
 ///            later from the collaboration detail screen.
 ///   Step 2 — Celebration + XP preview (only when `/complete` fully succeeded)
@@ -241,14 +238,10 @@ class _KolabCompletionSheetState extends State<KolabCompletionSheet>
       if (!mounted) return;
       setState(() {
         _isConfirming = false;
-        // The 5-star review (POST /review) is only accepted by the backend for
-        // an active|completed collaboration. When /complete did NOT finish the
-        // Kolab (still awaiting the partner — e.g. a scheduled Kolab one party
-        // confirmed), go straight to the awaiting-partner step instead of the
-        // review form, which would 422 `collaboration_not_reviewable`. The
-        // review stays available from the detail screen once the Kolab actually
-        // completes (startAtFeedback re-entry).
-        _step = _completeSucceeded ? 1 : 4;
+        // Always show the optional review form (Step 1) after a 'yes' answer,
+        // regardless of whether /complete succeeded yet. The destination after
+        // Step 1 is decided by _completeSucceeded inside _goToCelebration().
+        _step = 1;
       });
       HapticFeedback.mediumImpact();
     } catch (_) {
