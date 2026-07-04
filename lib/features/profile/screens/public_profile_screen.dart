@@ -1319,13 +1319,16 @@ class _ReputationSummaryCard extends StatelessWidget {
               label: l10n.publicProfileReputationReviewsCount(rep.reviewCount),
             ),
           ),
-          Flexible(
-            child: _ReputationStat(
-              label: l10n.publicProfileReputationPartnersCount(
-                rep.uniquePartnerCount,
+          // Hide the partner count entirely when there are none — "0 partners"
+          // is noise on a fresh profile.
+          if (rep.uniquePartnerCount > 0)
+            Flexible(
+              child: _ReputationStat(
+                label: l10n.publicProfileReputationPartnersCount(
+                  rep.uniquePartnerCount,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
