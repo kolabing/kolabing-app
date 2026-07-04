@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../providers/auth_state_provider.dart';
@@ -133,6 +134,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     final route = await initializationFuture;
     if (!mounted) return;
     context.go(route);
+
+    // A notification tap that cold-started the app was stashed while we were on
+    // splash (this `go` would otherwise wipe it off the stack). Replay it now,
+    // on top of the destination, so it opens its target screen. No-op when
+    // there was no notification tap.
+    markAppReadyForNotificationNav();
   }
 
   @override

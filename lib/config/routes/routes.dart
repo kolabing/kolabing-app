@@ -61,6 +61,7 @@ import '../../features/settings/screens/notification_settings_screen.dart';
 import '../../features/subscription/screens/subscription_screen.dart';
 import '../../services/notification_service.dart';
 import '../../services/one_signal_service.dart';
+import 'notification_nav_gate.dart';
 
 /// Kolabing route definitions
 ///
@@ -344,6 +345,18 @@ final GlobalKey<NavigatorState> kolabingNavigatorKey =
 ///
 /// Call once in main() after the app widget is running.
 /// Maps FCM `type` → app route and navigates accordingly.
+/// Holds notification taps that arrive during the cold-start splash sequence so
+/// they survive splash's stack-replacing `context.go` (see [NotificationNavGate]).
+final NotificationNavGate _notificationNavGate = NotificationNavGate(
+  onNavigate: kolabingRouter.push,
+);
+
+/// Called by [SplashScreen] once it has routed to the initial destination.
+/// Replays any notification route stashed during cold start, on top of that
+/// destination — so a killed-app notification tap opens its target screen
+/// instead of being wiped by splash's `context.go`.
+void markAppReadyForNotificationNav() => _notificationNavGate.markReady();
+
 void connectNotificationRouter() {
   void navigateFromPush(String? type, String? id, String? deeplink) {
     final route = resolveNotificationRoute(
@@ -351,7 +364,7 @@ void connectNotificationRouter() {
       id: id,
       deeplink: deeplink,
     );
-    kolabingRouter.push(route);
+    _notificationNavGate.navigate(route);
   }
 
   NotificationService.instance.registerNotificationTapHandler(navigateFromPush);
