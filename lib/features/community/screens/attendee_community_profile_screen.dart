@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/feature_flags.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -23,15 +24,17 @@ import 'community_detail_screen.dart';
 /// the business-shaped [PublicProfileScreen] (which is profile-id-keyed and shows
 /// Past Kolabs / Send-Kolab), this fetches the REAL community via
 /// `GET /communities/{id}` + its upcoming events via `GET /events?community_id=`
-/// and offers a state-aware join CTA. Index of the events sub-tab in
-/// [CommunityDetailScreen] is 2 — "See all →" routes there.
+/// and offers a state-aware join CTA. "See all →" routes to the events sub-tab
+/// in [CommunityDetailScreen] via [_eventsTabIndex].
 class AttendeeCommunityProfileScreen extends ConsumerWidget {
   const AttendeeCommunityProfileScreen({super.key, required this.communityId});
 
   final String communityId;
 
-  /// Events sub-tab index inside [CommunityDetailScreen] (Rewards·Members·Events).
-  static const int _eventsTabIndex = 2;
+  /// Events sub-tab index inside [CommunityDetailScreen]. The Members tab sits
+  /// between Rewards and Events, so hiding it (kCommunityMembersTabEnabled)
+  /// shifts Events from index 2 down to 1.
+  static const int _eventsTabIndex = kCommunityMembersTabEnabled ? 2 : 1;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
