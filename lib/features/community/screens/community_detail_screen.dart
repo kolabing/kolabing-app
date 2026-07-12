@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/feature_flags.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -43,8 +44,10 @@ class CommunityDetailScreen extends ConsumerStatefulWidget {
 
   final CommunityMembership membership;
 
-  /// Which sub-tab to open on (0 Rewards · 1 Members · 2 Events). The attendee
-  /// community profile's "See all →" routes here with index 2 (Events).
+  /// Which sub-tab to open on. Indices depend on [kCommunityMembersTabEnabled]:
+  /// with Members shown it's (0 Rewards · 1 Members · 2 Events); with Members
+  /// hidden it's (0 Rewards · 1 Events). The attendee community profile's
+  /// "See all →" routes here on the Events tab via `_eventsTabIndex`.
   final int initialTabIndex;
 
   /// When rendered as a bottom-nav tab body (the leader's COMMUNITY tab) rather
@@ -66,10 +69,11 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
   @override
   void initState() {
     super.initState();
+    final tabCount = kCommunityMembersTabEnabled ? 3 : 2;
     _tabs = TabController(
-      length: 3,
+      length: tabCount,
       vsync: this,
-      initialIndex: widget.initialTabIndex.clamp(0, 2),
+      initialIndex: widget.initialTabIndex.clamp(0, tabCount - 1),
     );
     // Refresh events + rewards on open so newly-granted tier content (or a new
     // event / goal) appears without a manual pull-to-refresh.
@@ -166,7 +170,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
           indicatorColor: context.colors.onSurface,
           tabs: [
             Tab(text: l10n.communityDetailTabRewards),
-            Tab(text: l10n.communityDetailTabMembers),
+            // Members tab hidden for now (see kCommunityMembersTabEnabled).
+            if (kCommunityMembersTabEnabled)
+              Tab(text: l10n.communityDetailTabMembers),
             Tab(text: l10n.communityDetailTabEvents),
           ],
         ),
@@ -179,7 +185,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
               controller: _tabs,
               children: [
                 _RewardsTab(communityId: c.id, canManage: _canManage),
-                _MembersTab(community: c, canManage: _canManage),
+                // Members tab hidden for now (see kCommunityMembersTabEnabled).
+                if (kCommunityMembersTabEnabled)
+                  _MembersTab(community: c, canManage: _canManage),
                 _EventsTab(communityId: c.id),
               ],
             ),

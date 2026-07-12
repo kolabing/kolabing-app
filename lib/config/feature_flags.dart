@@ -10,3 +10,8 @@ library;
 /// screen, and the "Scan Check-Ins" action on the event hub. Set to `true` to
 /// bring the attendee-facing check-in / challenge flow back.
 const bool kGamificationSetupEnabled = false;
+
+/// Hides the **Members** tab on the community detail screen (leaving Rewards +
+/// Events) while the member-roster surface is on hold. Set to `true` to bring
+/// the Members tab back.
+const bool kCommunityMembersTabEnabled = false;
