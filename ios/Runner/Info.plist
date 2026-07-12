@@ -12,6 +12,8 @@
 	</dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -55,8 +57,6 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Kolabing needs camera access to scan QR codes for event check-in.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Kolabing needs your location to show nearby collaboration opportunities and connect you with local businesses and communities.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Kolabing needs your location to show nearby collaboration opportunities and connect you with local businesses and communities.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -73,7 +73,6 @@
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
-		<string>location</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
