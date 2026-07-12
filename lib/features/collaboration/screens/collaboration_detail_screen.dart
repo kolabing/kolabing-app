@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/feature_flags.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
@@ -263,12 +264,16 @@ class _CollaborationBody extends ConsumerWidget {
             alreadySubmitted: collaboration.hasReviewed,
           ),
 
-        // Gamification: Challenges Setup
-        _ChallengesSection(collaborationId: collaborationId),
-        const SizedBox(height: KolabingSpacing.lg),
+        // Gamification challenge setup + QR check-in are hidden for now
+        // (see kGamificationSetupEnabled) until the attendee app flow ships.
+        if (kGamificationSetupEnabled) ...[
+          // Gamification: Challenges Setup
+          _ChallengesSection(collaborationId: collaborationId),
+          const SizedBox(height: KolabingSpacing.lg),
 
-        // QR Code Section
-        _QRCodeSection(collaborationId: collaborationId),
+          // QR Code Section
+          _QRCodeSection(collaborationId: collaborationId),
+        ],
       ],
     );
   }

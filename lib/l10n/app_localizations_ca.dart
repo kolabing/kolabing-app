@@ -672,7 +672,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get selectionCardCommunityTitle => 'Sóc una comunitat';
 
   @override
-  String get selectionCardAttendeeTitle => 'Sóc un assistent';
+  String get selectionCardAttendeeTitle => 'Sóc un membre';
 
   @override
   String get selectionCardBusinessDescription =>
@@ -685,6 +685,9 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get selectionCardAttendeeDescription =>
       'Unir-me a esdeveniments i completar reptes';
+
+  @override
+  String get selectionCardComingSoonBadge => 'Ben aviat';
 
   @override
   String selectionCardSemanticLabel(String title, String description) {

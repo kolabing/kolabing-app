@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
+import '../../../config/feature_flags.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -298,17 +299,20 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
                 if (v == 'scan') _scanCheckIns();
               },
               itemBuilder: (context) => [
-                PopupMenuItem<String>(
-                  value: 'scan',
-                  child: Row(
-                    children: [
-                      const Icon(LucideIcons.qrCode,
-                          size: 18, color: KolabingColors.onSurface),
-                      const SizedBox(width: KolabingSpacing.sm),
-                      Text(_l10n.eventHubScanCheckIns),
-                    ],
+                // QR check-in scanning is hidden for now
+                // (see kGamificationSetupEnabled) until the attendee flow ships.
+                if (kGamificationSetupEnabled)
+                  PopupMenuItem<String>(
+                    value: 'scan',
+                    child: Row(
+                      children: [
+                        const Icon(LucideIcons.qrCode,
+                            size: 18, color: KolabingColors.onSurface),
+                        const SizedBox(width: KolabingSpacing.sm),
+                        Text(_l10n.eventHubScanCheckIns),
+                      ],
+                    ),
                   ),
-                ),
                 if (_event.isRecurring)
                   PopupMenuItem<String>(
                     value: 'extend',
