@@ -14,6 +14,7 @@ import 'config/routes/routes.dart';
 import 'config/theme/theme.dart';
 import 'features/settings/providers/theme_provider.dart';
 import 'features/auth/providers/auth_provider.dart';
+import 'features/auth/widgets/reconsent_gate.dart';
 import 'features/settings/providers/locale_provider.dart';
 import 'features/settings/services/locale_service.dart';
 import 'l10n/app_localizations.dart';
@@ -187,7 +188,8 @@ class _AuthSessionRedirector extends ConsumerStatefulWidget {
 }
 
 class _AuthSessionRedirectorState
-    extends ConsumerState<_AuthSessionRedirector> {
+    extends ConsumerState<_AuthSessionRedirector>
+    with WidgetsBindingObserver {
   static const Set<String> _publicPaths = <String>{
     KolabingRoutes.splash,
     KolabingRoutes.welcome,
@@ -214,10 +216,31 @@ class _AuthSessionRedirectorState
   void initState() {
     super.initState();
     _hadAuthenticatedSession = ref.read(authProvider).isAuthenticated;
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // On resume, re-fetch the user so a Terms/Privacy version bumped while the
+    // app was backgrounded surfaces the re-consent gate.
+    if (state == AppLifecycleState.resumed &&
+        ref.read(authProvider).isAuthenticated) {
+      unawaited(ref.read(authProvider.notifier).refreshUser());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final needsConsent = ref.watch(
+      authProvider.select((s) => s.needsTermsConsent),
+    );
+
     ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.isAuthenticated) {
         _hadAuthenticatedSession = true;
@@ -257,6 +280,11 @@ class _AuthSessionRedirectorState
       });
     });
 
-    return widget.child;
+    return Stack(
+      children: [
+        widget.child,
+        if (needsConsent) const Positioned.fill(child: ReconsentGate()),
+      ],
+    );
   }
 }

@@ -7423,5 +7423,21 @@
   "missionsCategoryMilestone": "Milestones",
   "@missionsCategoryMilestone": { "description": "Mission category header: milestone" },
   "missionsCategoryOther": "Other",
-  "@missionsCategoryOther": { "description": "Mission category header: unknown/other category fallback" }
+  "@missionsCategoryOther": { "description": "Mission category header: unknown/other category fallback" },
+  "consentAgreeLead": "I agree to the ",
+  "@consentAgreeLead": { "description": "Leading text before the Terms of Service link in the sign-up consent checkbox" },
+  "consentTermsLabel": "Terms of Service",
+  "@consentTermsLabel": { "description": "Tappable label linking to the Terms of Service page" },
+  "consentAgreeConjunction": " and ",
+  "@consentAgreeConjunction": { "description": "Conjunction between the Terms of Service and Privacy Policy links" },
+  "consentPrivacyLabel": "Privacy Policy",
+  "@consentPrivacyLabel": { "description": "Tappable label linking to the Privacy Policy page" },
+  "reconsentTitle": "We've updated our terms",
+  "@reconsentTitle": { "description": "Title of the blocking re-consent screen shown when the agreement version changed" },
+  "reconsentBody": "To keep using Kolabing, please review and accept our updated agreements.",
+  "@reconsentBody": { "description": "Body text of the re-consent screen" },
+  "reconsentAcceptButton": "Accept and continue",
+  "@reconsentAcceptButton": { "description": "Button that records consent on the re-consent screen" },
+  "reconsentError": "Something went wrong. Please try again.",
+  "@reconsentError": { "description": "Error shown when recording consent fails" }
 }

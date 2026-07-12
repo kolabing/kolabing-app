@@ -215,6 +215,9 @@ class AuthService {
         'email': email,
         'password': password,
         'password_confirmation': password,
+        // Consent is mandatory: the sign-up form gates submission on the
+        // Terms + Privacy checkbox, so this is always true at this point.
+        'accepted_terms': true,
         ...onboardingData.toBusinessPayload(),
       };
 
@@ -260,6 +263,8 @@ class AuthService {
         'email': email,
         'password': password,
         'password_confirmation': password,
+        // Consent is mandatory: sign-up gates submission on the checkbox.
+        'accepted_terms': true,
         'name': onboardingData.name?.trim(),
         'community_type': onboardingData.typeSlug,
         'city_id': onboardingData.cityId,
@@ -392,6 +397,8 @@ class AuthService {
         'email': email,
         'password': password,
         'password_confirmation': password,
+        // Consent is mandatory: sign-up gates submission on the checkbox.
+        'accepted_terms': true,
       };
 
       debugPrint('🔐 Request body keys: ${body.keys.toList()}');
@@ -915,6 +922,55 @@ class AuthService {
         rethrow;
       }
       throw NetworkException('Failed to get user: $e');
+    }
+  }
+
+  /// Record acceptance of the current Terms of Service + Privacy Policy version.
+  ///
+  /// POST /api/v1/me/consent (authenticated, no body). The backend stamps the
+  /// current version; callers should re-fetch the user afterwards to refresh
+  /// the `terms` block.
+  Future<void> acceptTerms() async {
+    final token = await getToken();
+    if (token == null) {
+      throw const AuthException('Not authenticated');
+    }
+    if (_useMockApi) return;
+
+    final url = '$_baseUrl/me/consent';
+    debugPrint('📜 Accept terms: POST $url');
+    try {
+      final response = await _httpClient.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200 ||
+          response.statusCode == 201 ||
+          response.statusCode == 204) {
+        return;
+      }
+
+      Map<String, dynamic> json;
+      try {
+        json = response.body.isNotEmpty
+            ? jsonDecode(response.body) as Map<String, dynamic>
+            : <String, dynamic>{};
+      } on FormatException {
+        json = <String, dynamic>{};
+      }
+      throw ApiException(
+        error: ApiError.fromJson(json, statusCode: response.statusCode),
+      );
+    } catch (e) {
+      if (e is ApiException || e is NetworkException || e is AuthException) {
+        rethrow;
+      }
+      throw NetworkException('Failed to record consent: $e');
     }
   }
 

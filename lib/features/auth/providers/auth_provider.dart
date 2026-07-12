@@ -52,6 +52,11 @@ class AuthState {
   /// Whether there was an error
   bool get hasError => status == AuthStatus.error && error != null;
 
+  /// Whether the authenticated user must (re-)accept the current Terms of
+  /// Service + Privacy Policy version before continuing.
+  bool get needsTermsConsent =>
+      isAuthenticated && (user?.needsTermsAcceptance ?? false);
+
   AuthState copyWith({
     AuthStatus? status,
     UserModel? user,
@@ -326,6 +331,28 @@ class AuthNotifier extends Notifier<AuthState> {
       );
     }
     unawaited(_registerFcmToken());
+  }
+
+  /// Re-fetch the current user from the API and update auth state.
+  ///
+  /// Used to refresh the `terms` consent block (on app resume, or right after
+  /// recording consent) without disturbing the rest of the session. Silent on
+  /// failure — a transient network error must not sign the user out.
+  Future<void> refreshUser() async {
+    if (!state.isAuthenticated) return;
+    try {
+      final user = await _authService.getCurrentUser();
+      state = state.copyWith(status: AuthStatus.authenticated, user: user);
+    } on Exception catch (e) {
+      debugPrint('refreshUser error: $e');
+    }
+  }
+
+  /// Record acceptance of the current Terms + Privacy version, then refresh the
+  /// user so the re-consent gate clears. Throws on failure so the UI can retry.
+  Future<void> acceptTerms() async {
+    await _authService.acceptTerms();
+    await refreshUser();
   }
 
   /// Logout current user

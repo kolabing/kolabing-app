@@ -12055,6 +12055,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Other'**
   String get missionsCategoryOther;
+
+  /// Leading text before the Terms of Service link in the sign-up consent checkbox
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the '**
+  String get consentAgreeLead;
+
+  /// Tappable label linking to the Terms of Service page
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get consentTermsLabel;
+
+  /// Conjunction between the Terms of Service and Privacy Policy links
+  ///
+  /// In en, this message translates to:
+  /// **' and '**
+  String get consentAgreeConjunction;
+
+  /// Tappable label linking to the Privacy Policy page
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get consentPrivacyLabel;
+
+  /// Title of the blocking re-consent screen shown when the agreement version changed
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve updated our terms'**
+  String get reconsentTitle;
+
+  /// Body text of the re-consent screen
+  ///
+  /// In en, this message translates to:
+  /// **'To keep using Kolabing, please review and accept our updated agreements.'**
+  String get reconsentBody;
+
+  /// Button that records consent on the re-consent screen
+  ///
+  /// In en, this message translates to:
+  /// **'Accept and continue'**
+  String get reconsentAcceptButton;
+
+  /// Error shown when recording consent fails
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get reconsentError;
 }
 
 class _AppLocalizationsDelegate

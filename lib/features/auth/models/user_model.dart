@@ -302,6 +302,46 @@ class UserSubscription {
   };
 }
 
+/// Legal-agreement (Terms of Service + Privacy Policy) consent state, returned
+/// as a `terms` block on the user by GET /auth/me. The version is always read
+/// from the backend — never hardcoded in the app.
+class UserTerms {
+  const UserTerms({
+    this.currentVersion,
+    this.acceptedVersion,
+    this.acceptedAt,
+    this.needsAcceptance = false,
+  });
+
+  factory UserTerms.fromJson(Map<String, dynamic> json) => UserTerms(
+    currentVersion: json['current_version'] as String?,
+    acceptedVersion: json['accepted_version'] as String?,
+    acceptedAt: json['accepted_at'] != null
+        ? DateTime.tryParse(json['accepted_at'] as String)
+        : null,
+    needsAcceptance: json['needs_acceptance'] as bool? ?? false,
+  );
+
+  /// The currently-published agreement version (date-based, e.g. `2026-07-12`).
+  final String? currentVersion;
+
+  /// The version the user last accepted (null if never).
+  final String? acceptedVersion;
+
+  /// When the user last accepted.
+  final DateTime? acceptedAt;
+
+  /// True when the user must (re-)accept before continuing.
+  final bool needsAcceptance;
+
+  Map<String, dynamic> toJson() => {
+    if (currentVersion != null) 'current_version': currentVersion,
+    if (acceptedVersion != null) 'accepted_version': acceptedVersion,
+    if (acceptedAt != null) 'accepted_at': acceptedAt!.toIso8601String(),
+    'needs_acceptance': needsAcceptance,
+  };
+}
+
 /// Attendee profile model for gamification stats
 class AttendeeProfileData {
   const AttendeeProfileData({
@@ -360,6 +400,7 @@ class UserModel {
     this.interests = const [],
     this.cityId,
     this.cityName,
+    this.terms,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -405,6 +446,9 @@ class UserModel {
     // profile to carry it). Returned by /me/profile once the backend deploys.
     cityId: json['city_id'] as String?,
     cityName: json['city_name'] as String?,
+    terms: json['terms'] != null
+        ? UserTerms.fromJson(json['terms'] as Map<String, dynamic>)
+        : null,
   );
 
   final String id;
@@ -433,6 +477,13 @@ class UserModel {
 
   /// Community-type interest SLUGS chosen at onboarding (identity contract §2).
   final List<String> interests;
+
+  /// Legal-agreement consent state (`terms` block from GET /auth/me). Null on
+  /// older payloads / before the backend deploys the consent flow.
+  final UserTerms? terms;
+
+  /// True when the user must (re-)accept the current Terms + Privacy version.
+  bool get needsTermsAcceptance => terms?.needsAcceptance ?? false;
 
   /// Check if user is business type
   bool get isBusiness => userType == UserType.business;
@@ -486,6 +537,7 @@ class UserModel {
     if (name != null) 'name': name,
     if (handle != null) 'handle': handle,
     if (interests.isNotEmpty) 'interests': interests,
+    if (terms != null) 'terms': terms!.toJson(),
   };
 
   UserModel copyWith({
@@ -505,6 +557,7 @@ class UserModel {
     List<String>? interests,
     String? cityId,
     String? cityName,
+    UserTerms? terms,
   }) => UserModel(
     id: id ?? this.id,
     email: email ?? this.email,
@@ -522,5 +575,6 @@ class UserModel {
     interests: interests ?? this.interests,
     cityId: cityId ?? this.cityId,
     cityName: cityName ?? this.cityName,
+    terms: terms ?? this.terms,
   );
 }

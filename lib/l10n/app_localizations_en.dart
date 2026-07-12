@@ -6802,4 +6802,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get missionsCategoryOther => 'Other';
+
+  @override
+  String get consentAgreeLead => 'I agree to the ';
+
+  @override
+  String get consentTermsLabel => 'Terms of Service';
+
+  @override
+  String get consentAgreeConjunction => ' and ';
+
+  @override
+  String get consentPrivacyLabel => 'Privacy Policy';
+
+  @override
+  String get reconsentTitle => 'We\'ve updated our terms';
+
+  @override
+  String get reconsentBody =>
+      'To keep using Kolabing, please review and accept our updated agreements.';
+
+  @override
+  String get reconsentAcceptButton => 'Accept and continue';
+
+  @override
+  String get reconsentError => 'Something went wrong. Please try again.';
 }

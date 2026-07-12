@@ -2033,5 +2033,13 @@
   "missionsCategoryGrowth": "Creixement",
   "missionsCategorySocial": "Social",
   "missionsCategoryMilestone": "Fites",
-  "missionsCategoryOther": "Altres"
+  "missionsCategoryOther": "Altres",
+  "consentAgreeLead": "Accepto els ",
+  "consentTermsLabel": "Termes del Servei",
+  "consentAgreeConjunction": " i la ",
+  "consentPrivacyLabel": "Política de Privacitat",
+  "reconsentTitle": "Hem actualitzat els nostres termes",
+  "reconsentBody": "Per continuar utilitzant Kolabing, revisa i accepta els nostres acords actualitzats.",
+  "reconsentAcceptButton": "Accepta i continua",
+  "reconsentError": "Alguna cosa ha anat malament. Torna-ho a provar."
 }
