@@ -827,7 +827,7 @@
   "@selectionCardCommunityTitle": {
     "description": "User-type selection card title for the Community option."
   },
-  "selectionCardAttendeeTitle": "I'm an attendee",
+  "selectionCardAttendeeTitle": "I'm a member",
   "@selectionCardAttendeeTitle": {
     "description": "User-type selection card title for the Attendee option."
   },
@@ -842,6 +842,10 @@
   "selectionCardAttendeeDescription": "Joining events and completing challenges",
   "@selectionCardAttendeeDescription": {
     "description": "User-type selection card description for the Attendee option."
+  },
+  "selectionCardComingSoonBadge": "Coming soon",
+  "@selectionCardComingSoonBadge": {
+    "description": "Badge shown on the Attendee user-type selection card while that account type is not yet available."
   },
   "selectionCardSemanticLabel": "{title}. {description}",
   "@selectionCardSemanticLabel": {

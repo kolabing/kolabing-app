@@ -1333,7 +1333,7 @@ abstract class AppLocalizations {
   /// User-type selection card title for the Attendee option.
   ///
   /// In en, this message translates to:
-  /// **'I\'m an attendee'**
+  /// **'I\'m a member'**
   String get selectionCardAttendeeTitle;
 
   /// User-type selection card description for the Business option.
@@ -1353,6 +1353,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Joining events and completing challenges'**
   String get selectionCardAttendeeDescription;
+
+  /// Badge shown on the Attendee user-type selection card while that account type is not yet available.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get selectionCardComingSoonBadge;
 
   /// Accessibility label for a user-type selection card, combining its title and description.
   ///

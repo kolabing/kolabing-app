@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 import '../models/user_model.dart';
 import '../widgets/selection_card.dart';
@@ -57,7 +58,7 @@ class _UserTypeSelectionScreenState
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
+      const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: KolabingColors.background,
@@ -231,6 +232,9 @@ class _UserTypeSelectionScreenState
                     child: SelectionCard(
                       userType: SelectionUserType.attendee,
                       isSelected: _selectedType == SelectionUserType.attendee,
+                      isEnabled: false,
+                      badgeLabel: AppLocalizations.of(context)
+                          .selectionCardComingSoonBadge,
                       onTap: () => _handleCardTap(SelectionUserType.attendee),
                     ),
                   ),
