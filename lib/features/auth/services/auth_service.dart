@@ -33,11 +33,13 @@ class AuthService {
     FlutterSecureStorage? secureStorage,
     GoogleSignIn? googleSignIn,
     http.Client? httpClient,
-  }) : _secureStorage = secureStorage ?? const FlutterSecureStorage(
-           iOptions: IOSOptions(
-             accessibility: KeychainAccessibility.first_unlock,
+  }) : _secureStorage =
+           secureStorage ??
+           const FlutterSecureStorage(
+             iOptions: IOSOptions(
+               accessibility: KeychainAccessibility.first_unlock,
+             ),
            ),
-         ),
        _googleSignIn =
            googleSignIn ??
            GoogleSignIn(
@@ -352,10 +354,10 @@ class AuthService {
       final failingKeys = apiError.errors!.keys
           .map((k) => k.split('.').first)
           .toSet();
-      final onlyNewFields = failingKeys.isNotEmpty &&
+      final onlyNewFields =
+          failingKeys.isNotEmpty &&
           failingKeys.every(_onboardingFieldsToStrip.contains);
-      final bodyHasNewFields =
-          body.keys.any(_onboardingFieldsToStrip.contains);
+      final bodyHasNewFields = body.keys.any(_onboardingFieldsToStrip.contains);
 
       if (onlyNewFields && bodyHasNewFields) {
         debugPrint(

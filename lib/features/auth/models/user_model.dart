@@ -515,8 +515,8 @@ class UserModel {
     final raw = (isBusiness && businessProfile != null)
         ? businessProfile!.profilePhoto
         : (isCommunity && communityProfile != null)
-            ? communityProfile!.profilePhoto
-            : avatarUrl;
+        ? communityProfile!.profilePhoto
+        : avatarUrl;
     if (raw == null || raw.trim().isEmpty) return null;
     return normalizeRemoteMediaUrl(raw);
   }

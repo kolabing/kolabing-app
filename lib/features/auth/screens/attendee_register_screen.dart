@@ -443,8 +443,12 @@ class _AttendeeRegisterScreenState
                             }
                           },
                           decoration: _inputDecoration(
-                            label: AppLocalizations.of(context).authPasswordLabel,
-                            hint: AppLocalizations.of(context).attendeeRegisterPasswordHint,
+                            label: AppLocalizations.of(
+                              context,
+                            ).authPasswordLabel,
+                            hint: AppLocalizations.of(
+                              context,
+                            ).attendeeRegisterPasswordHint,
                             prefixIcon: Icons.lock_outline,
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -467,8 +471,12 @@ class _AttendeeRegisterScreenState
                           enabled: !_isLoading,
                           validator: _validateConfirmPassword,
                           decoration: _inputDecoration(
-                            label: AppLocalizations.of(context).authConfirmPasswordLabel,
-                            hint: AppLocalizations.of(context).attendeeRegisterConfirmPasswordHint,
+                            label: AppLocalizations.of(
+                              context,
+                            ).authConfirmPasswordLabel,
+                            hint: AppLocalizations.of(
+                              context,
+                            ).attendeeRegisterConfirmPasswordHint,
                             prefixIcon: Icons.lock_outline,
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -533,9 +541,9 @@ class _AttendeeRegisterScreenState
                                   isLoading: _isAppleLoading,
                                   showSuccess: _showSuccess,
                                   isEnabled:
-                                    !_anyLoading &&
-                                    !_showSuccess &&
-                                    _acceptedTerms,
+                                      !_anyLoading &&
+                                      !_showSuccess &&
+                                      _acceptedTerms,
                                   height: 48,
                                 ),
                               ),
@@ -563,7 +571,9 @@ class _AttendeeRegisterScreenState
                     KolabingButton(
                       label: _showSuccess
                           ? '✓'
-                          : AppLocalizations.of(context).attendeeRegisterCreateAccount,
+                          : AppLocalizations.of(
+                              context,
+                            ).attendeeRegisterCreateAccount,
                       onPressed: (_isLoading || !_acceptedTerms)
                           ? null
                           : _handleRegister,

@@ -187,8 +187,7 @@ class _AuthSessionRedirector extends ConsumerStatefulWidget {
       _AuthSessionRedirectorState();
 }
 
-class _AuthSessionRedirectorState
-    extends ConsumerState<_AuthSessionRedirector>
+class _AuthSessionRedirectorState extends ConsumerState<_AuthSessionRedirector>
     with WidgetsBindingObserver {
   static const Set<String> _publicPaths = <String>{
     KolabingRoutes.splash,

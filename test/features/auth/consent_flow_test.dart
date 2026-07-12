@@ -26,17 +26,19 @@ void main() {
       expect(user.needsTermsAcceptance, isTrue);
     });
 
-    test('missing terms block → needsTermsAcceptance is false (older payloads)',
-        () {
-      final user = UserModel.fromJson(<String, dynamic>{
-        'id': 2,
-        'email': 'c@d.com',
-        'user_type': 'business',
-      });
+    test(
+      'missing terms block → needsTermsAcceptance is false (older payloads)',
+      () {
+        final user = UserModel.fromJson(<String, dynamic>{
+          'id': 2,
+          'email': 'c@d.com',
+          'user_type': 'business',
+        });
 
-      expect(user.terms, isNull);
-      expect(user.needsTermsAcceptance, isFalse);
-    });
+        expect(user.terms, isNull);
+        expect(user.needsTermsAcceptance, isFalse);
+      },
+    );
 
     test('accepted the current version → no re-consent needed', () {
       final user = UserModel.fromJson(<String, dynamic>{
@@ -56,14 +58,11 @@ void main() {
 
   group('AuthState.needsTermsConsent gate', () {
     UserModel userNeeding(bool needs) => UserModel(
-          id: '1',
-          email: 'a@b.com',
-          userType: UserType.community,
-          terms: UserTerms(
-            currentVersion: '2026-07-12',
-            needsAcceptance: needs,
-          ),
-        );
+      id: '1',
+      email: 'a@b.com',
+      userType: UserType.community,
+      terms: UserTerms(currentVersion: '2026-07-12', needsAcceptance: needs),
+    );
 
     test('true when authenticated AND the user needs acceptance', () {
       final state = AuthState(

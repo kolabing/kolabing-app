@@ -857,8 +857,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                         TermsConsentCheckbox(
                           value: _acceptedTerms,
                           enabled: !_isLoading && !_showSuccess,
-                          onChanged: (v) =>
-                              setState(() => _acceptedTerms = v),
+                          onChanged: (v) => setState(() => _acceptedTerms = v),
                         ),
                         const SizedBox(height: 16),
                       ],
