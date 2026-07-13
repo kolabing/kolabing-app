@@ -1,6 +1,6 @@
 # Kolabing — Roles, Permissions & Features (Canonical Reference)
 
-**Last updated:** 2026-06-28 (added §7.4 gamification mission system v1 — curated `app_visible` mission set + event/general mission separation, mirrored from `kolabing-v2` #49; completion-flow simplification PR 1: `/complete` now gates on a lightweight yes/no/not_yet completion confirmation, not rich feedback — §2.9, §4; previous: onboarding-update, goal-based business onboarding + product path; kolab single-source-of-truth migration in flight; planned community verification — see §14–§16)
+**Last updated:** 2026-07-13 (added the **Legal consent (all roles)** callout below — mandatory Terms of Service + Privacy Policy acceptance at sign-up + a blocking re-consent gate on published-version bump, all three roles; mirrored from `kolabing-v2` #84/#85, app ticket #67; previous 2026-06-28: added §7.4 gamification mission system v1 — curated `app_visible` mission set + event/general mission separation, mirrored from `kolabing-v2` #49; completion-flow simplification PR 1: `/complete` now gates on a lightweight yes/no/not_yet completion confirmation, not rich feedback — §2.9, §4; previous: onboarding-update, goal-based business onboarding + product path; kolab single-source-of-truth migration in flight; planned community verification — see §14–§16)
 **Status:** Authoritative. This document overrides assumptions.
 **Sync note:** This file is duplicated in both repos (`kolabing-app` and `kolabing-v2`). Keep the two copies identical. When role behaviour changes, update both **and bump the Last updated date** in both.
 
@@ -19,6 +19,10 @@ Kolabing has three user types. Only two are in launch scope.
 | Business | Yes | Yes, €39.99/month or a 3-month plan | A venue or a product/service sponsor that wants community foot traffic and exposure. |
 | Community | Yes | No, free always | A real-life community (running club, yoga group, book club, and so on) that hosts events and needs venues or sponsors. |
 | Attendee | **[VERIFY]** code-live but spec-unconfirmed | Free for now | An individual who attends events. Gamification track (check-ins, challenges, badges, leaderboards, reward wallet) is **shipped in the backend**; see §7 and the backend map's §11. Whether attendees are formally part of launch and what the pricing/withdrawal model is needs to be confirmed with Daniel before any client-facing changes. |
+
+---
+
+> **Legal consent (all roles).** Every role must accept the Terms of Service + Privacy Policy to use Kolabing — this is a legal gate, not a paywall, and it applies equally to Business, Community, and Attendee (Communities being free does not exempt them). Two touch points: (1) a **mandatory consent checkbox** on every sign-up path (email/password, Google, Apple) — the primary button is disabled until it is checked, and email register sends `accepted_terms: true`; (2) a **blocking re-consent gate** shown on app launch/resume whenever the signed-in user's `terms.needs_acceptance` is `true` (the published legal version was bumped), clearing only after `POST /me/consent`. Never hardcode the version — read `terms.current_version` from `/auth/me`. Full contract: [`mobile-consent-flow.md`](./mobile-consent-flow.md); backend map §0. This is orthogonal to the Business paywall.
 
 ---
 
