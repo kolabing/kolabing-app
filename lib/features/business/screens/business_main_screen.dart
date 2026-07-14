@@ -138,9 +138,10 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
         ],
       ),
       floatingActionButton:
-          // Show only on Home (0) / Explore (1). Hidden on My Kolabs (2, has its
-          // own create FAB), Chats (3), and Profile (4).
-          _currentIndex < 2
+          // Hidden on Home (0, the yellow hero card already has a Create Kolab
+          // CTA), My Kolabs (2, has its own create FAB), Chats (3), Profile (4).
+          // Shown only on Explore (1).
+          _currentIndex == 1
           ? KolabingFAB(
               onPressed: _onFabPressed,
               tooltip: l10n.businessMainCreateKolabTooltip,
