@@ -17,6 +17,7 @@ import '../providers/auth_provider.dart';
 import '../utils/auth_navigation.dart';
 import '../widgets/apple_sign_in_button.dart';
 import '../widgets/google_sign_in_button.dart';
+import '../widgets/terms_consent_checkbox.dart';
 
 /// Attendee Registration Screen
 ///
@@ -43,6 +44,7 @@ class _AttendeeRegisterScreenState
   bool _showSuccess = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _acceptedTerms = false;
 
   String? _emailApiError;
   String? _passwordApiError;
@@ -441,8 +443,12 @@ class _AttendeeRegisterScreenState
                             }
                           },
                           decoration: _inputDecoration(
-                            label: AppLocalizations.of(context).authPasswordLabel,
-                            hint: AppLocalizations.of(context).attendeeRegisterPasswordHint,
+                            label: AppLocalizations.of(
+                              context,
+                            ).authPasswordLabel,
+                            hint: AppLocalizations.of(
+                              context,
+                            ).attendeeRegisterPasswordHint,
                             prefixIcon: Icons.lock_outline,
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -465,8 +471,12 @@ class _AttendeeRegisterScreenState
                           enabled: !_isLoading,
                           validator: _validateConfirmPassword,
                           decoration: _inputDecoration(
-                            label: AppLocalizations.of(context).authConfirmPasswordLabel,
-                            hint: AppLocalizations.of(context).attendeeRegisterConfirmPasswordHint,
+                            label: AppLocalizations.of(
+                              context,
+                            ).authConfirmPasswordLabel,
+                            hint: AppLocalizations.of(
+                              context,
+                            ).attendeeRegisterConfirmPasswordHint,
                             prefixIcon: Icons.lock_outline,
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -514,7 +524,10 @@ class _AttendeeRegisterScreenState
                                 buttonText: 'Google',
                                 isLoading: _isGoogleLoading,
                                 showSuccess: _showSuccess,
-                                isEnabled: !_anyLoading && !_showSuccess,
+                                isEnabled:
+                                    !_anyLoading &&
+                                    !_showSuccess &&
+                                    _acceptedTerms,
                                 height: 48,
                               ),
                             ),
@@ -527,7 +540,10 @@ class _AttendeeRegisterScreenState
                                   buttonText: 'Apple',
                                   isLoading: _isAppleLoading,
                                   showSuccess: _showSuccess,
-                                  isEnabled: !_anyLoading && !_showSuccess,
+                                  isEnabled:
+                                      !_anyLoading &&
+                                      !_showSuccess &&
+                                      _acceptedTerms,
                                   height: 48,
                                 ),
                               ),
@@ -546,22 +562,23 @@ class _AttendeeRegisterScreenState
                 padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
                 child: Column(
                   children: [
+                    TermsConsentCheckbox(
+                      value: _acceptedTerms,
+                      enabled: !_anyLoading && !_showSuccess,
+                      onChanged: (v) => setState(() => _acceptedTerms = v),
+                    ),
+                    const SizedBox(height: 12),
                     KolabingButton(
                       label: _showSuccess
                           ? '✓'
-                          : AppLocalizations.of(context).attendeeRegisterCreateAccount,
-                      onPressed: _isLoading ? null : _handleRegister,
+                          : AppLocalizations.of(
+                              context,
+                            ).attendeeRegisterCreateAccount,
+                      onPressed: (_isLoading || !_acceptedTerms)
+                          ? null
+                          : _handleRegister,
                       variant: KolabingButtonVariant.primary,
                       isLoading: _isLoading,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      AppLocalizations.of(context).attendeeRegisterTerms,
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                        fontSize: 12,
-                        color: context.colors.textTertiary,
-                      ),
-                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),

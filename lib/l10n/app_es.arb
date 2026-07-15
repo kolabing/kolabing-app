@@ -2033,5 +2033,13 @@
   "missionsCategoryGrowth": "Crecimiento",
   "missionsCategorySocial": "Social",
   "missionsCategoryMilestone": "Hitos",
-  "missionsCategoryOther": "Otros"
+  "missionsCategoryOther": "Otros",
+  "consentAgreeLead": "Acepto los ",
+  "consentTermsLabel": "Términos de Servicio",
+  "consentAgreeConjunction": " y la ",
+  "consentPrivacyLabel": "Política de Privacidad",
+  "reconsentTitle": "Hemos actualizado nuestros términos",
+  "reconsentBody": "Para seguir usando Kolabing, revisa y acepta nuestros acuerdos actualizados.",
+  "reconsentAcceptButton": "Aceptar y continuar",
+  "reconsentError": "Algo ha salido mal. Inténtalo de nuevo."
 }

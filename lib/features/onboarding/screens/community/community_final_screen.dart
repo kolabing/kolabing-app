@@ -8,6 +8,7 @@ import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../services/permission_service.dart';
+import '../../../auth/widgets/terms_consent_checkbox.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../utils/onboarding_field_label.dart';
 import '../../widgets/summary_card.dart';
@@ -34,6 +35,7 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
   bool _showSuccess = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _acceptedTerms = false;
 
   // API validation errors for specific fields
   String? _emailApiError;
@@ -560,12 +562,21 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                   padding: const EdgeInsets.all(24),
                   child: Column(
                     children: [
+                      // Mandatory Terms + Privacy consent (new-account sign-up).
+                      TermsConsentCheckbox(
+                        value: _acceptedTerms,
+                        enabled: !_isLoading && !_showSuccess,
+                        onChanged: (v) => setState(() => _acceptedTerms = v),
+                      ),
+                      const SizedBox(height: 16),
                       // Register button
                       SizedBox(
                         width: double.infinity,
                         height: 52,
                         child: ElevatedButton(
-                          onPressed: _isLoading ? null : _handleRegister,
+                          onPressed: (_isLoading || !_acceptedTerms)
+                              ? null
+                              : _handleRegister,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: context.colors.primary,
                             foregroundColor: context.colors.onPrimary,
@@ -592,20 +603,11 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
                                 )
                               : Text(
                                   l10n.communityFinalCreateAccountButton,
-                                  style: KolabingTextStyles.button.copyWith(fontSize: 16),
+                                  style: KolabingTextStyles.button.copyWith(
+                                    fontSize: 16,
+                                  ),
                                 ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Terms text
-                      Text(
-                        l10n.communityFinalTermsNotice,
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          fontSize: 12,
-                          color: context.colors.textTertiary,
-                        ),
-                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
