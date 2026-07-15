@@ -66,10 +66,13 @@ class _ReconsentGateState extends ConsumerState<ReconsentGate> {
       color: context.colors.onSurfaceVariant,
       height: 1.45,
     );
+    // Links use dark on-surface text (not the pale brand yellow, which is
+    // unreadable on the light gate background) — bold + underline signals tappability.
     final link = body.copyWith(
-      color: context.colors.primary,
-      fontWeight: FontWeight.w600,
+      color: context.colors.onSurface,
+      fontWeight: FontWeight.w700,
       decoration: TextDecoration.underline,
+      decorationColor: context.colors.onSurface,
     );
     _termsTap.onTap = () => _open(LegalLinks.termsUrl(lang));
     _privacyTap.onTap = () => _open(LegalLinks.privacyUrl(lang));

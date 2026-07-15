@@ -57,10 +57,13 @@ class _TermsConsentCheckboxState extends State<TermsConsentCheckbox> {
       fontSize: 12,
       color: context.colors.onSurfaceVariant,
     );
+    // Links use dark on-surface text (not the pale brand yellow, which is
+    // unreadable on the light card) — bold + underline signals tappability.
     final link = base.copyWith(
-      color: context.colors.primary,
-      fontWeight: FontWeight.w600,
+      color: context.colors.onSurface,
+      fontWeight: FontWeight.w700,
       decoration: TextDecoration.underline,
+      decorationColor: context.colors.onSurface,
     );
 
     _termsTap.onTap = () => _open(LegalLinks.termsUrl(lang));
