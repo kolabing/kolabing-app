@@ -261,6 +261,107 @@ class UpcomingCollaboration {
   }
 }
 
+/// Component breakdown behind a business's partner status — shown privately
+/// on the business's own dashboard (never to communities).
+@immutable
+class PartnerStatusBreakdown {
+  const PartnerStatusBreakdown({
+    this.completedKolabs = 0,
+    this.reviewCount = 0,
+    this.averageRating,
+    this.repeatPartnerCount = 0,
+  });
+
+  final int completedKolabs;
+  final int reviewCount;
+  final double? averageRating;
+  final int repeatPartnerCount;
+
+  factory PartnerStatusBreakdown.fromJson(Map<String, dynamic> json) {
+    final rawRating = json['average_rating'];
+    return PartnerStatusBreakdown(
+      completedKolabs: _asInt(json['completed_kolabs']),
+      reviewCount: _asInt(json['review_count']),
+      averageRating: rawRating is num ? rawRating.toDouble() : null,
+      repeatPartnerCount: _asInt(json['repeat_partner_count']),
+    );
+  }
+}
+
+/// A business's partner status (New/Active/Trusted Partner, Community
+/// Favourite) — computed server-side from real collaboration outcomes, not
+/// points. `label` and `icon` are ready to display as-is.
+@immutable
+class PartnerStatus {
+  const PartnerStatus({
+    required this.status,
+    required this.label,
+    required this.icon,
+    this.breakdown = const PartnerStatusBreakdown(),
+  });
+
+  final String status;
+  final String label;
+  final String icon;
+  final PartnerStatusBreakdown breakdown;
+
+  factory PartnerStatus.fromJson(Map<String, dynamic> json) {
+    return PartnerStatus(
+      status: json['status'] as String? ?? 'new_partner',
+      label: json['label'] as String? ?? '',
+      icon: json['icon'] as String? ?? '',
+      breakdown: json['breakdown'] is Map<String, dynamic>
+          ? PartnerStatusBreakdown.fromJson(
+              json['breakdown'] as Map<String, dynamic>,
+            )
+          : const PartnerStatusBreakdown(),
+    );
+  }
+}
+
+/// The single most useful next step for a business right now. `title` and
+/// `body` are server-provided display text (already resolved copy — no
+/// i18n lookup needed on this side, same as other backend-passed text).
+@immutable
+class NextAction {
+  const NextAction({
+    required this.key,
+    required this.title,
+    required this.body,
+  });
+
+  final String key;
+  final String title;
+  final String body;
+
+  factory NextAction.fromJson(Map<String, dynamic> json) {
+    return NextAction(
+      key: json['key'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      body: json['body'] as String? ?? '',
+    );
+  }
+}
+
+/// Rolling calendar-month collaboration goal. Deliberately not a streak —
+/// there is no "broken" state, just completed/goal for the current month.
+@immutable
+class MonthlyGoal {
+  const MonthlyGoal({this.completed = 0, this.goal = 0, this.met = false});
+
+  final int completed;
+  final int goal;
+  final bool met;
+
+  factory MonthlyGoal.fromJson(Map<String, dynamic> json) {
+    return MonthlyGoal(
+      completed: _asInt(json['completed']),
+      goal: _asInt(json['goal']),
+      met: json['met'] as bool? ?? false,
+    );
+  }
+}
+
 /// Business dashboard data
 @immutable
 class BusinessDashboard {
@@ -269,12 +370,18 @@ class BusinessDashboard {
     this.applicationsReceived = const ApplicationsReceivedStats(),
     this.collaborations = const CollaborationStats(),
     this.upcomingCollaborations = const [],
+    this.partnerStatus,
+    this.nextAction,
+    this.monthlyGoal,
   });
 
   final OpportunityStats opportunities;
   final ApplicationsReceivedStats applicationsReceived;
   final CollaborationStats collaborations;
   final List<UpcomingCollaboration> upcomingCollaborations;
+  final PartnerStatus? partnerStatus;
+  final NextAction? nextAction;
+  final MonthlyGoal? monthlyGoal;
 
   factory BusinessDashboard.fromJson(Map<String, dynamic> json) {
     final upcomingRaw = json['upcoming_collaborations'];
@@ -304,6 +411,17 @@ class BusinessDashboard {
             )
           : const CollaborationStats(),
       upcomingCollaborations: upcoming,
+      partnerStatus: json['partner_status'] is Map<String, dynamic>
+          ? PartnerStatus.fromJson(
+              json['partner_status'] as Map<String, dynamic>,
+            )
+          : null,
+      nextAction: json['next_action'] is Map<String, dynamic>
+          ? NextAction.fromJson(json['next_action'] as Map<String, dynamic>)
+          : null,
+      monthlyGoal: json['monthly_goal'] is Map<String, dynamic>
+          ? MonthlyGoal.fromJson(json['monthly_goal'] as Map<String, dynamic>)
+          : null,
     );
   }
 }

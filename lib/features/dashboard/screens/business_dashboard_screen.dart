@@ -19,6 +19,9 @@ import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/dashboard_shimmer.dart';
 import '../widgets/dashboard_stat_card.dart';
+import '../widgets/monthly_goal_card.dart';
+import '../widgets/next_action_card.dart';
+import '../widgets/partner_status_badge.dart';
 import '../widgets/upcoming_collaboration_card.dart';
 
 /// Business Dashboard Screen
@@ -58,7 +61,9 @@ class _BusinessDashboardScreenState
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardProvider);
     final authState = ref.watch(authProvider);
-    final userName = authState.user?.displayName ?? AppLocalizations.of(context).dashboardDefaultBusinessName;
+    final userName =
+        authState.user?.displayName ??
+        AppLocalizations.of(context).dashboardDefaultBusinessName;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
@@ -89,7 +94,10 @@ class _BusinessDashboardScreenState
 
     // No data fallback
     if (data == null) {
-      return _buildErrorState(AppLocalizations.of(context).dashboardErrorLoad, isDark);
+      return _buildErrorState(
+        AppLocalizations.of(context).dashboardErrorLoad,
+        isDark,
+      );
     }
 
     return ListView(
@@ -97,7 +105,26 @@ class _BusinessDashboardScreenState
       children: [
         // Header
         _buildHeader(userName, isDark),
+        if (data.partnerStatus != null) ...[
+          const SizedBox(height: KolabingSpacing.xs),
+          PartnerStatusBadge(partnerStatus: data.partnerStatus),
+        ],
         const SizedBox(height: KolabingSpacing.lg),
+
+        // Next best action — the single most useful thing to do right now
+        if (data.nextAction != null) ...[
+          NextActionCard(
+            nextAction: data.nextAction,
+            onTap: _onNextActionTap(data.nextAction!),
+          ),
+          const SizedBox(height: KolabingSpacing.md),
+        ],
+
+        // Monthly collaboration goal — progress only, never a broken streak
+        if (data.monthlyGoal != null) ...[
+          MonthlyGoalCard(monthlyGoal: data.monthlyGoal),
+          const SizedBox(height: KolabingSpacing.xl),
+        ],
 
         // Stats grid 2x2
         _buildStatsGrid(data),
@@ -141,7 +168,9 @@ class _BusinessDashboardScreenState
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
               AppLocalizations.of(context).dashboardWelcomeBack(userName),
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.textTertiary,
+              ),
             ),
           ],
         ),
@@ -172,7 +201,9 @@ class _BusinessDashboardScreenState
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(
             child: DashboardStatCard(
-              title: AppLocalizations.of(context).dashboardStatPendingApplications,
+              title: AppLocalizations.of(
+                context,
+              ).dashboardStatPendingApplications,
               count: data.applicationsReceived.pending,
               icon: LucideIcons.clock,
               iconSlug: UiIconSlug.clock,
@@ -214,22 +245,45 @@ class _BusinessDashboardScreenState
   // Quick Actions
   // ---------------------------------------------------------------------------
 
+  // ---------------------------------------------------------------------------
+  // Next best action
+  // ---------------------------------------------------------------------------
+
+  /// Maps a next-action `key` to an in-app destination where one is known.
+  /// Keys without a confirmed destination (review_pending_applications,
+  /// leave_review, complete_profile) render as informational-only for now —
+  /// no CTA rather than a guessed/wrong route.
+  VoidCallback? _onNextActionTap(NextAction action) {
+    switch (action.key) {
+      case 'create_first_offer':
+      case 'create_second_offer':
+        return _createKolab;
+      default:
+        return null;
+    }
+  }
+
+  Future<void> _createKolab() async {
+    final allowed = await SubscriptionPaywall.checkAndShow(context, ref);
+    if (!allowed || !mounted) return;
+    await context.push(KolabingRoutes.kolabNew);
+    if (mounted) {
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      if (mounted) ref.invalidate(dashboardProvider);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Quick Actions
+  // ---------------------------------------------------------------------------
+
   Widget _buildQuickActions() => Row(
     children: [
       Expanded(
         child: KolabingButton(
           label: AppLocalizations.of(context).dashboardCreateKolabRequest,
           onPressed: () async {
-            final allowed = await SubscriptionPaywall.checkAndShow(
-              context,
-              ref,
-            );
-            if (!allowed || !mounted) return;
-            await context.push(KolabingRoutes.kolabNew);
-            if (mounted) {
-              await Future<void>.delayed(const Duration(milliseconds: 300));
-              if (mounted) ref.invalidate(dashboardProvider);
-            }
+            await _createKolab();
           },
           variant: KolabingButtonVariant.primary,
           size: KolabingButtonSize.compact,
@@ -258,7 +312,10 @@ class _BusinessDashboardScreenState
     children: [
       Text(
         AppLocalizations.of(context).dashboardUpcomingKolabs,
-        style: KolabingTextStyles.labelLarge.copyWith(color: context.colors.onSurface, letterSpacing: 1.0),
+        style: KolabingTextStyles.labelLarge.copyWith(
+          color: context.colors.onSurface,
+          letterSpacing: 1.0,
+        ),
       ),
       const SizedBox(height: KolabingSpacing.sm),
 
@@ -294,9 +351,11 @@ class _BusinessDashboardScreenState
         const SizedBox(height: KolabingSpacing.sm),
         Text(
           AppLocalizations.of(context).dashboardNoUpcomingKolabs,
-          style: KolabingTextStyles.bodySmall.copyWith(color: isDark
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: isDark
                 ? context.colors.textOnDark.withValues(alpha: 0.5)
-                : context.colors.textTertiary),
+                : context.colors.textTertiary,
+          ),
         ),
       ],
     ),
@@ -312,15 +371,13 @@ class _BusinessDashboardScreenState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            LucideIcons.alertCircle,
-            size: 48,
-            color: context.colors.error,
-          ),
+          Icon(LucideIcons.alertCircle, size: 48, color: context.colors.error),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             message,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),

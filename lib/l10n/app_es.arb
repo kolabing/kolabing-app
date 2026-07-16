@@ -1479,6 +1479,19 @@
   "dashboardFindAKolab": "Buscar un Kolab",
   "dashboardMyApplications": "Mis solicitudes",
   "dashboardUpcomingKolabs": "PRÓXIMOS KOLABS",
+  "dashboardMonthlyGoalTitle": "OBJETIVO DE ESTE MES",
+  "dashboardMonthlyGoalProgress": "{completed} de {goal} Kolabs",
+  "@dashboardMonthlyGoalProgress": {
+    "description": "Monthly collaboration goal progress, e.g. '1 de 1 Kolabs'.",
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      }
+    }
+  },
   "dashboardNoUpcomingKolabs": "Aún no hay kolabs próximos",
   "dashboardDefaultBusinessName": "Negocio",
   "dashboardDefaultCommunityName": "Comunidad",
