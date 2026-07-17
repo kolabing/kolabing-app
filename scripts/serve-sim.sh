@@ -1,39 +1,40 @@
 #!/usr/bin/env bash
 #
-# Kolabing iOS QA — boot the iOS Simulator, run the DEV build, and stream it to a
-# browser via serve-sim (https://github.com/EvanBacon/serve-sim).
+# Kolabing iOS QA — boot the iOS Simulator, stream it to a browser via serve-sim,
+# and run the DEV build on it. Verified on macOS 26 / Xcode 26 / iPhone 17 (iOS 26.4).
 #
-#   *** macOS + Apple Silicon ONLY. The Linux agent box CANNOT run this. ***
+#   *** macOS + Apple Silicon ONLY. A Linux box CANNOT run this. ***
 #   *** The iOS Simulator is NEVER faked with a Flutter web build (web != iOS). ***
 #
-# Access the stream over Tailscale only — serve-sim has NO auth, so never expose the
-# port to a public network. The simulator always runs the DEV backend (dev data).
+# serve-sim (https://github.com/EvanBacon/serve-sim) streams the REAL Simulator to a
+# browser. It binds localhost by default; this script binds your Tailscale IP so you can
+# watch from another device on your tailnet (falls back to localhost if Tailscale is off).
+# serve-sim has NO password — only ever reach it over Tailscale, never a public network.
 #
-# Usage:   ./scripts/serve-sim.sh ["iPhone 16"] [PORT]
-#   arg 1  simulator device name (default "iPhone 16")
+# Usage:   ./scripts/serve-sim.sh ["iPhone 17"] [PORT]
+#   arg 1  simulator device name (optional; auto-detects an available iPhone)
 #   arg 2  serve-sim port (default 3200)
 #
-# Requirements (see docs/ios-serve-sim-qa.md for the one-time setup):
+# One-time requirements (see docs/ios-serve-sim-qa.md):
 #   Xcode + an iOS 15.5+ simulator runtime, Flutter (Dart >= 3.10.7), CocoaPods,
-#   Node >= 18 (for `npx serve-sim`), Tailscale up, tmux.
-#
-# NOTE: This is a first-run SCAFFOLD. serve-sim's exact start flags/default port can
-# change between versions — confirm with `npx serve-sim --help` on the Mac and adjust.
+#   Node >= 18 (for `npx serve-sim`), and ~15 GB free disk (a debug build needs it).
 set -euo pipefail
 
-DEVICE="${1:-}"          # optional simulator name; auto-detected if omitted or not present
+DEVICE="${1:-}"
 PORT="${2:-3200}"
-ENV_DEFINE="--dart-define=APP_ENV=dev"   # simulator always uses the DEV backend
+ENV_DEFINE="--dart-define=APP_ENV=dev"   # the simulator always runs the DEV backend
 
-if [[ "$(uname)" != "Darwin" ]]; then
-  echo "ERROR: iOS Simulator needs macOS (Apple Silicon). This host is $(uname). Aborting." >&2
-  exit 1
-fi
+[[ "$(uname)" == "Darwin" ]] || { echo "ERROR: iOS Simulator needs macOS (Apple Silicon). This is $(uname)." >&2; exit 1; }
 command -v flutter >/dev/null || { echo "ERROR: flutter not found — see docs/ios-serve-sim-qa.md" >&2; exit 1; }
-command -v tmux    >/dev/null || { echo "ERROR: tmux not found (brew install tmux)" >&2; exit 1; }
 
-# Resolve a usable simulator: the requested name if available, else the first available
-# iPhone (so this works on any Mac regardless of which simulator devices exist).
+# Disk guard — a debug build failed once with 'No space left on device' (errno 28).
+AVAIL_KB="$(df -k / | awk 'NR==2{print $4}')"
+if [[ -n "${AVAIL_KB:-}" && "$AVAIL_KB" -lt 12000000 ]]; then
+  echo "WARNING: only ~$((AVAIL_KB/1024/1024)) GB free on / — an iOS debug build needs ~10-15 GB." >&2
+  echo "         If it dies with 'No space left on device (errno 28)', free space and retry." >&2
+fi
+
+# Resolve a usable simulator: requested name if available, else the first available iPhone.
 read -r UDID PICKED < <(xcrun simctl list devices available -j | python3 -c '
 import json,sys
 want = sys.argv[1] if len(sys.argv) > 1 else ""
@@ -46,36 +47,38 @@ for x in devs:
     if x["name"].startswith("iPhone"): out(x); sys.exit()
 if devs: out(devs[0])
 ' "$DEVICE") || true
-[[ -n "${UDID:-}" ]] || { echo "ERROR: no available iOS simulator found. Add one in Xcode > Settings > Components." >&2; exit 1; }
+[[ -n "${UDID:-}" ]] || { echo "ERROR: no available iOS simulator. Add one in Xcode > Settings > Components." >&2; exit 1; }
 echo "==> Using simulator: $PICKED ($UDID)"
 xcrun simctl boot "$UDID" 2>/dev/null || true   # non-zero if already booted; ignore
 open -a Simulator
 
-echo "==> Fetching dependencies (first run is slow)"
+echo "==> Fetching dependencies"
 flutter pub get
 ( cd ios && pod install )
 
-echo "==> Running the app on the simulator (DEV backend), tmux session 'kolabing-run'"
-tmux kill-session -t kolabing-run 2>/dev/null || true
-tmux new-session -d -s kolabing-run "flutter run -d $UDID $ENV_DEFINE"
+# Bind serve-sim to the Tailscale interface only (reachable over the tailnet, NOT the
+# public LAN). Fall back to localhost-only if Tailscale is not up.
+BIND="$(tailscale ip -4 2>/dev/null | head -n1 || true)"
+if [[ -z "$BIND" ]]; then
+  BIND="127.0.0.1"; URL="http://127.0.0.1:$PORT   (localhost only — Tailscale not detected)"
+else
+  URL="http://$BIND:$PORT"
+fi
 
-echo "==> Starting serve-sim on port $PORT, tmux session 'serve-sim'"
-tmux kill-session -t serve-sim 2>/dev/null || true
-tmux new-session -d -s serve-sim "npx --yes serve-sim --port $PORT"
+echo "==> Starting serve-sim (daemon) on $BIND:$PORT"
+npx --yes serve-sim --kill >/dev/null 2>&1 || true    # clear any earlier stream
+npx --yes serve-sim --detach --host "$BIND" --port "$PORT"
 
-TS_IP="$(tailscale ip -4 2>/dev/null | head -n1 || true)"
 cat <<EOF
 
-serve-sim is starting. Open the live stream over Tailscale (NOT a public URL):
-$( [[ -n "$TS_IP" ]] && echo "   http://$TS_IP:$PORT" )
-   or via MagicDNS:   http://$(hostname -s):$PORT   (depends on your tailnet config)
+serve-sim is streaming. Open it in a browser on your tailnet:
+   $URL
 
-Agent control (run on this Mac, or over Tailscale SSH from the box):
-   serve-sim tap <x> <y>                         # normalized coords, 0..1
-   serve-sim button home|lock                    # hardware buttons
-   xcrun simctl io booted screenshot /tmp/shot.png   # reliable native screenshot
-   xcrun simctl openurl booted "<deep-link>"     # drive a deep link
+No auth — keep it on Tailscale only, never a public network.
+Stop the stream later with:   npx serve-sim --kill
 
-Attach:  tmux attach -t kolabing-run   |   tmux attach -t serve-sim
-Stop:    tmux kill-session -t kolabing-run ; tmux kill-session -t serve-sim
+Launching the app on the simulator (first build takes a few minutes)...
+Press q to quit the app; the stream keeps running until you --kill it.
 EOF
+
+exec flutter run -d "$UDID" $ENV_DEFINE
