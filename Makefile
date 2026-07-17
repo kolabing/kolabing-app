@@ -20,7 +20,7 @@
 DEV_DEFINE  := --dart-define=APP_ENV=dev
 PROD_DEFINE := --dart-define=APP_ENV=prod
 
-.PHONY: run-dev run-prod ipa-dev ipa-prod help
+.PHONY: run-dev run-prod ipa-dev ipa-prod serve-sim help
 
 help:
 	@echo "Targets:"
@@ -28,9 +28,15 @@ help:
 	@echo "  make run-prod   # flutter run against the PROD backend"
 	@echo "  make ipa-dev    # build a DEV IPA (for the dev TestFlight group)"
 	@echo "  make ipa-prod   # build a PROD IPA (for normal testers / release)"
+	@echo "  make serve-sim  # boot the iOS sim + stream it to a browser (macOS only; see docs/ios-serve-sim-qa.md)"
 
 run-dev:
 	flutter run $(DEV_DEFINE)
+
+# iOS Simulator QA streamed to a browser via serve-sim. macOS (Apple Silicon) ONLY —
+# never on the Linux agent box, never a Flutter web stand-in. See docs/ios-serve-sim-qa.md.
+serve-sim:
+	./scripts/serve-sim.sh
 
 run-prod:
 	flutter run $(PROD_DEFINE)
