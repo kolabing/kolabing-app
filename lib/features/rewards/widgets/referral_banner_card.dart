@@ -18,10 +18,19 @@ import '../../../widgets/kolabing_button.dart';
 /// where the user can copy or share the code.
 ///
 /// When [usePastelStyle] is true, uses a pastel yellow background and border.
+///
+/// When [compact] is true, renders a small secondary card (icon + two lines +
+/// share button) instead of the full step-by-step layout — used by dashboards
+/// that already have a primary hero card and just need a lightweight nudge.
 class ReferralBannerCard extends ConsumerWidget {
-  const ReferralBannerCard({super.key, this.usePastelStyle = false});
+  const ReferralBannerCard({
+    super.key,
+    this.usePastelStyle = false,
+    this.compact = false,
+  });
 
   final bool usePastelStyle;
+  final bool compact;
 
   // ---------------------------------------------------------------------------
   // Build
@@ -43,6 +52,13 @@ class ReferralBannerCard extends ConsumerWidget {
     const stepBoxFill = Color(0xFFFFF9E6);
     const badgeFill = Color(0xFFFFE28C);
     const arrowCircleFill = Color(0xFFFFFDF5);
+
+    if (compact) {
+      return _CompactReferralCard(
+        referralCode: referralCode,
+        onTap: () => _showReferralCodeSheet(context, referralCode),
+      );
+    }
 
     return Container(
       width: double.infinity,
@@ -439,5 +455,74 @@ class _ReferralCodeSheet extends StatelessWidget {
         );
       }
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Compact secondary card — small gift icon, two lines, share action
+// ---------------------------------------------------------------------------
+
+class _CompactReferralCard extends StatelessWidget {
+  const _CompactReferralCard({required this.referralCode, required this.onTap});
+
+  final String referralCode;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        borderRadius: KolabingRadius.borderRadiusLg,
+        border: Border.all(color: context.colors.softYellowBorder),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: context.colors.softYellow,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(LucideIcons.gift, size: 18, color: Color(0xFF19150F)),
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.referralBannerEarnBySharing,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.onSurface,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  l10n.referralBannerTagline,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    color: context.colors.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: KolabingSpacing.xs),
+          IconButton(
+            onPressed: onTap,
+            icon: const Icon(LucideIcons.share2, size: 18),
+            color: context.colors.onSurface,
+          ),
+        ],
+      ),
+    );
   }
 }

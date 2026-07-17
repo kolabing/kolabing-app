@@ -11,6 +11,7 @@ import '../../../../services/permission_service.dart';
 import '../../../../widgets/referral_code_field.dart';
 import '../../../auth/models/auth_response.dart';
 import '../../../auth/providers/auth_provider.dart';
+import '../../../auth/widgets/terms_consent_checkbox.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../utils/onboarding_field_label.dart';
 import '../../widgets/summary_card.dart';
@@ -39,6 +40,7 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
   bool _showSuccess = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _acceptedTerms = false;
 
   // API validation errors for specific fields
   String? _emailApiError;
@@ -850,12 +852,23 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                   padding: const EdgeInsets.all(24),
                   child: Column(
                     children: [
+                      // Mandatory consent for new-account (email) sign-up.
+                      if (!authenticatedFlow) ...[
+                        TermsConsentCheckbox(
+                          value: _acceptedTerms,
+                          enabled: !_isLoading && !_showSuccess,
+                          onChanged: (v) => setState(() => _acceptedTerms = v),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                       // Register button
                       SizedBox(
                         width: double.infinity,
                         height: 52,
                         child: ElevatedButton(
-                          onPressed: _isLoading
+                          onPressed:
+                              (_isLoading ||
+                                  (!authenticatedFlow && !_acceptedTerms))
                               ? null
                               : () => _handleSubmit(
                                   authenticatedFlow: authenticatedFlow,
@@ -898,23 +911,21 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
                                 ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-
-                      // Terms text
-                      Text(
-                        authenticatedFlow
-                            ? AppLocalizations.of(
-                                context,
-                              ).businessFinalTermsAuthenticated
-                            : AppLocalizations.of(
-                                context,
-                              ).businessFinalTermsNewAccount,
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          fontSize: 12,
-                          color: context.colors.textTertiary,
+                      // Social users already consented at account creation;
+                      // show them a passive notice instead of the checkbox.
+                      if (authenticatedFlow) ...[
+                        const SizedBox(height: 16),
+                        Text(
+                          AppLocalizations.of(
+                            context,
+                          ).businessFinalTermsAuthenticated,
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                            fontSize: 12,
+                            color: context.colors.textTertiary,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
+                      ],
                     ],
                   ),
                 ),

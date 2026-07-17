@@ -120,6 +120,7 @@ Builds on §3.2. Add a public-facing flow:
 - `welcome.blade.php` — 1582-line custom-CSS hero (separate from the Tailwind-CDN layout used by other pages). 7 sections: hero, manifesto, reveal, how-it-works, examples, FAQ, final CTA, footer. Real case-study imagery. Mobile responsive at 900 / 540 breakpoints.
 - `for-businesses` / `for-communities` use the Tailwind-CDN `marketing-page` layout.
 - Legal pages exist with proper copy.
+- **Legal consent flow (Terms + Privacy) — shipped (2026-07-13, `kolabing-v2` #84/#85; app #67).** The mobile app now links out to these pages (`/terms`, `/privacy`, and their `/es/` variants) from a mandatory sign-up consent checkbox and a blocking re-consent gate; register sends `accepted_terms: true`, `GET /auth/me` returns a `terms` block, `POST /me/consent` re-accepts. Provable consent for App Store / Google Play + GDPR/LOPDGDD. Full contract: [`mobile-consent-flow.md`](./mobile-consent-flow.md). Keep the EN/ES legal-page URLs stable — the app hardcodes only the paths, versioning lives server-side.
 
 **P0 — landing-page must-fixes before any traffic push:**
 - [ ] **All primary CTAs are broken** (`href="#"`):
