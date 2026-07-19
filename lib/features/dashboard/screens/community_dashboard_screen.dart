@@ -24,12 +24,6 @@ import '../widgets/dashboard_shimmer.dart';
 import '../widgets/upcoming_collaboration_card.dart';
 import '../../rewards/providers/wallet_provider.dart';
 
-/// Local-only preview switch — change this constant to compare layouts.
-/// Does not affect production builds.
-enum DashboardPreviewVariant { optionA, optionB, optionC }
-
-const _kDashboardVariant = DashboardPreviewVariant.optionB;
-
 /// Community Dashboard Screen
 ///
 /// Shows key metrics, quick actions, and upcoming collaborations
@@ -72,7 +66,8 @@ class _CommunityDashboardScreenState
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardProvider);
     final authState = ref.watch(authProvider);
-    final userName = authState.user?.displayName ??
+    final userName =
+        authState.user?.displayName ??
         AppLocalizations.of(context).dashboardDefaultCommunityName;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -104,7 +99,10 @@ class _CommunityDashboardScreenState
 
     // No data fallback
     if (data == null) {
-      return _buildErrorState(AppLocalizations.of(context).dashboardErrorLoad, isDark);
+      return _buildErrorState(
+        AppLocalizations.of(context).dashboardErrorLoad,
+        isDark,
+      );
     }
 
     return ListView(
@@ -112,7 +110,7 @@ class _CommunityDashboardScreenState
       children: [
         _buildHeader(userName, isDark),
         const SizedBox(height: KolabingSpacing.lg),
-        ..._buildVariantContent(data, isDark),
+        ..._buildDashboardContent(data, isDark),
         const SizedBox(height: KolabingSpacing.xl),
       ],
     );
@@ -141,7 +139,9 @@ class _CommunityDashboardScreenState
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
                 AppLocalizations.of(context).dashboardWelcomeBack(userName),
-                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: context.colors.textTertiary,
+                ),
               ),
             ],
           ),
@@ -154,21 +154,10 @@ class _CommunityDashboardScreenState
   }
 
   // ---------------------------------------------------------------------------
-  // Variant dispatcher
+  // Dashboard content
   // ---------------------------------------------------------------------------
 
-  List<Widget> _buildVariantContent(CommunityDashboard data, bool isDark) {
-    switch (_kDashboardVariant) {
-      case DashboardPreviewVariant.optionA:
-        return _buildVariantA(data, isDark);
-      case DashboardPreviewVariant.optionB:
-        return _buildVariantB(data, isDark);
-      case DashboardPreviewVariant.optionC:
-        return _buildVariantC(data, isDark);
-    }
-  }
-
-  List<Widget> _buildVariantB(CommunityDashboard data, bool isDark) {
+  List<Widget> _buildDashboardContent(CommunityDashboard data, bool isDark) {
     return [
       // 1. XP summary card (sage green, non-tappable)
       const CommunityXpSummaryCard(),
@@ -200,50 +189,6 @@ class _CommunityDashboardScreenState
       const SizedBox(height: KolabingSpacing.lg),
 
       // 7. Upcoming kolabs
-      _buildUpcomingSection(data, isDark),
-    ];
-  }
-
-  List<Widget> _buildVariantA(CommunityDashboard data, bool isDark) {
-    return [
-      const CommunityXpSummaryCard(),
-      const SizedBox(height: KolabingSpacing.lg),
-      const XpMissionsSection(),
-      const SizedBox(height: KolabingSpacing.lg),
-      CommunityStatsStrip(
-        pending: data.applicationsSent.pending,
-        accepted: data.applicationsSent.accepted,
-        active: data.collaborations.active,
-        completed: data.collaborations.completed,
-      ),
-      const SizedBox(height: KolabingSpacing.lg),
-      const ReferralBannerCard(usePastelStyle: true),
-      const SizedBox(height: KolabingSpacing.lg),
-      _buildQuickActions(isDark),
-      const SizedBox(height: KolabingSpacing.lg),
-      _buildUpcomingSection(data, isDark),
-    ];
-  }
-
-  List<Widget> _buildVariantC(CommunityDashboard data, bool isDark) {
-    return [
-      const CommunityXpSummaryCard(),
-      const SizedBox(height: KolabingSpacing.lg),
-      const XpMissionsSection(),
-      const SizedBox(height: KolabingSpacing.lg),
-      CommunityStatsStrip(
-        pending: data.applicationsSent.pending,
-        accepted: data.applicationsSent.accepted,
-        active: data.collaborations.active,
-        completed: data.collaborations.completed,
-      ),
-      const SizedBox(height: KolabingSpacing.lg),
-      const DashboardBadgesRow(),
-      const SizedBox(height: KolabingSpacing.lg),
-      const ReferralBannerCard(usePastelStyle: true),
-      const SizedBox(height: KolabingSpacing.lg),
-      _buildQuickActions(isDark),
-      const SizedBox(height: KolabingSpacing.lg),
       _buildUpcomingSection(data, isDark),
     ];
   }
@@ -285,7 +230,10 @@ class _CommunityDashboardScreenState
       children: [
         Text(
           AppLocalizations.of(context).dashboardUpcomingKolabs,
-          style: KolabingTextStyles.labelLarge.copyWith(color: context.colors.onSurface, letterSpacing: 1.0),
+          style: KolabingTextStyles.labelLarge.copyWith(
+            color: context.colors.onSurface,
+            letterSpacing: 1.0,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -332,9 +280,11 @@ class _CommunityDashboardScreenState
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             AppLocalizations.of(context).dashboardNoUpcomingKolabs,
-            style: KolabingTextStyles.bodySmall.copyWith(color: isDark
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: isDark
                   ? context.colors.textOnDark.withValues(alpha: 0.5)
-                  : context.colors.textTertiary),
+                  : context.colors.textTertiary,
+            ),
           ),
         ],
       ),
@@ -360,7 +310,9 @@ class _CommunityDashboardScreenState
             const SizedBox(height: KolabingSpacing.md),
             Text(
               message,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.lg),

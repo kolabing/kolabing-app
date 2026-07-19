@@ -83,7 +83,9 @@ class _BusinessDashboardScreenState
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardProvider);
     final authState = ref.watch(authProvider);
-    final userName = authState.user?.displayName ?? AppLocalizations.of(context).dashboardDefaultBusinessName;
+    final userName =
+        authState.user?.displayName ??
+        AppLocalizations.of(context).dashboardDefaultBusinessName;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return SafeArea(
@@ -114,7 +116,10 @@ class _BusinessDashboardScreenState
 
     // No data fallback
     if (data == null) {
-      return _buildErrorState(AppLocalizations.of(context).dashboardErrorLoad, isDark);
+      return _buildErrorState(
+        AppLocalizations.of(context).dashboardErrorLoad,
+        isDark,
+      );
     }
 
     return ListView(
@@ -168,7 +173,9 @@ class _BusinessDashboardScreenState
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
               AppLocalizations.of(context).dashboardWelcomeBack(userName),
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.textTertiary,
+              ),
             ),
           ],
         ),
@@ -189,7 +196,7 @@ class _BusinessDashboardScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Fill your business with the right people.',
+          AppLocalizations.of(context).dashboardPositioningTitle,
           style: KolabingTextStyles.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
             color: context.colors.onSurface,
@@ -197,7 +204,7 @@ class _BusinessDashboardScreenState
         ),
         const SizedBox(height: 2),
         Text(
-          'Create experiences that turn communities into visits, content and loyalty.',
+          AppLocalizations.of(context).dashboardPositioningSubtitle,
           style: KolabingTextStyles.bodySmall.copyWith(
             fontSize: 12,
             color: context.colors.textTertiary,
@@ -229,7 +236,7 @@ class _BusinessDashboardScreenState
             borderRadius: BorderRadius.all(Radius.circular(999)),
           ),
           child: Text(
-            'BUSINESS ACTIVITY',
+            AppLocalizations.of(context).dashboardActivityPillLabel,
             style: GoogleFonts.inter(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -246,7 +253,7 @@ class _BusinessDashboardScreenState
           style: GoogleFonts.anton(fontSize: 40, color: _inkDark, height: 0.9),
         ),
         Text(
-          'LIVE OFFERS',
+          AppLocalizations.of(context).dashboardLiveOffersLabel,
           style: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w700,
@@ -260,18 +267,27 @@ class _BusinessDashboardScreenState
         // Supporting stats
         Row(
           children: [
-            _HeroMiniStat(count: data.applicationsReceived.pending, label: 'NEW APPS'),
+            _HeroMiniStat(
+              count: data.applicationsReceived.pending,
+              label: AppLocalizations.of(context).dashboardNewAppsLabel,
+            ),
             const SizedBox(width: KolabingSpacing.xs),
-            _HeroMiniStat(count: data.collaborations.active, label: 'ACTIVE'),
+            _HeroMiniStat(
+              count: data.collaborations.active,
+              label: AppLocalizations.of(context).dashboardActiveStatLabel,
+            ),
             const SizedBox(width: KolabingSpacing.xs),
-            _HeroMiniStat(count: data.collaborations.completed, label: 'COMPLETED'),
+            _HeroMiniStat(
+              count: data.collaborations.completed,
+              label: AppLocalizations.of(context).dashboardCompletedStatLabel,
+            ),
           ],
         ),
 
         const SizedBox(height: KolabingSpacing.sm),
 
         KolabingButton(
-          label: '+ CREATE A KOLAB',
+          label: AppLocalizations.of(context).dashboardHeroCreateKolabButton,
           onPressed: _onCreateKolab,
           variant: KolabingButtonVariant.dark,
           height: 42,
@@ -286,26 +302,32 @@ class _BusinessDashboardScreenState
 
   Widget _buildGrowSection(BusinessDashboard data) {
     final pending = data.applicationsReceived.pending;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'GROW YOUR BUSINESS',
-          style: KolabingTextStyles.labelLarge.copyWith(color: context.colors.onSurface, letterSpacing: 1.0),
+          l10n.dashboardGrowSectionTitle,
+          style: KolabingTextStyles.labelLarge.copyWith(
+            color: context.colors.onSurface,
+            letterSpacing: 1.0,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         _GrowActionCard(
           icon: LucideIcons.plus,
-          title: 'Create a Kolab',
-          subtitle: 'Post a new offer for communities to apply',
+          title: l10n.dashboardGrowCreateTitle,
+          subtitle: l10n.dashboardGrowCreateSubtitle,
           onTap: _onCreateKolab,
         ),
         const SizedBox(height: KolabingSpacing.xs),
         _GrowActionCard(
           icon: LucideIcons.inbox,
-          title: 'Review applications',
-          subtitle: pending > 0 ? '$pending pending review' : 'No pending applications',
+          title: l10n.dashboardGrowReviewTitle,
+          subtitle: pending > 0
+              ? l10n.dashboardGrowReviewSubtitlePending(pending)
+              : l10n.dashboardGrowReviewSubtitleEmpty,
           onTap: () => widget.onSwitchTab?.call(2),
           highlighted: pending > 0,
           badgeCount: pending > 0 ? pending : null,
@@ -313,15 +335,18 @@ class _BusinessDashboardScreenState
         const SizedBox(height: KolabingSpacing.xs),
         _GrowActionCard(
           icon: LucideIcons.search,
-          title: AppLocalizations.of(context).dashboardFindAKolab,
-          subtitle: 'Browse community requests',
+          title: l10n.dashboardFindAKolab,
+          subtitle: l10n.dashboardGrowFindSubtitle,
           onTap: () => widget.onSwitchTab?.call(1),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         _GrowActionCard(
           icon: LucideIcons.users,
-          title: 'View your Kolabs',
-          subtitle: '${data.collaborations.active} active · ${data.collaborations.completed} completed',
+          title: l10n.dashboardGrowViewKolabsTitle,
+          subtitle: l10n.dashboardGrowViewKolabsSubtitle(
+            data.collaborations.active,
+            data.collaborations.completed,
+          ),
           onTap: () => widget.onSwitchTab?.call(2),
         ),
       ],
@@ -337,7 +362,10 @@ class _BusinessDashboardScreenState
     children: [
       Text(
         AppLocalizations.of(context).dashboardUpcomingKolabs,
-        style: KolabingTextStyles.labelLarge.copyWith(color: context.colors.onSurface, letterSpacing: 1.0),
+        style: KolabingTextStyles.labelLarge.copyWith(
+          color: context.colors.onSurface,
+          letterSpacing: 1.0,
+        ),
       ),
       const SizedBox(height: KolabingSpacing.sm),
 
@@ -385,8 +413,11 @@ class _BusinessDashboardScreenState
         ),
         const SizedBox(height: 2),
         Text(
-          'Create a Kolab to start filling your calendar',
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
+          AppLocalizations.of(context).dashboardEmptyUpcomingSubtitle,
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontSize: 12,
+            color: context.colors.textTertiary,
+          ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: KolabingSpacing.md),
@@ -411,15 +442,13 @@ class _BusinessDashboardScreenState
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            LucideIcons.alertCircle,
-            size: 48,
-            color: context.colors.error,
-          ),
+          Icon(LucideIcons.alertCircle, size: 48, color: context.colors.error),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             message,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
@@ -458,7 +487,11 @@ class _HeroMiniStat extends StatelessWidget {
         children: [
           Text(
             '$count',
-            style: GoogleFonts.anton(fontSize: 17, color: _inkDark, height: 1.0),
+            style: GoogleFonts.anton(
+              fontSize: 17,
+              color: _inkDark,
+              height: 1.0,
+            ),
           ),
           const SizedBox(height: 1),
           Text(
@@ -504,11 +537,16 @@ class _GrowActionCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: KolabingRadius.borderRadiusLg,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.sm, vertical: KolabingSpacing.sm),
+          padding: const EdgeInsets.symmetric(
+            horizontal: KolabingSpacing.sm,
+            vertical: KolabingSpacing.sm,
+          ),
           decoration: BoxDecoration(
             color: highlighted ? c.softYellow : c.surface,
             borderRadius: KolabingRadius.borderRadiusLg,
-            border: Border.all(color: highlighted ? c.softYellowBorder : c.hairline),
+            border: Border.all(
+              color: highlighted ? c.softYellowBorder : c.hairline,
+            ),
           ),
           child: Row(
             children: [
@@ -535,7 +573,10 @@ class _GrowActionCard extends StatelessWidget {
                     ),
                     Text(
                       subtitle,
-                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: c.textTertiary),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        fontSize: 12,
+                        color: c.textTertiary,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -544,11 +585,21 @@ class _GrowActionCard extends StatelessWidget {
               ),
               if (badgeCount != null) ...[
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: const BoxDecoration(color: _inkDark, borderRadius: BorderRadius.all(Radius.circular(999))),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: _inkDark,
+                    borderRadius: BorderRadius.all(Radius.circular(999)),
+                  ),
                   child: Text(
                     '$badgeCount',
-                    style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: _cardBg),
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: _cardBg,
+                    ),
                   ),
                 ),
                 const SizedBox(width: KolabingSpacing.xs),

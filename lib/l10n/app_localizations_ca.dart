@@ -1653,6 +1653,17 @@ class AppLocalizationsCa extends AppLocalizations {
       'Deixa comentaris opcionals';
 
   @override
+  String get collaborationDetailFeedbackCtaTitle => 'Valora aquest Kolab';
+
+  @override
+  String collaborationDetailFeedbackCtaBody(String partnerName) {
+    return 'La teva ressenya ajuda $partnerName a generar confiança a Kolabing.';
+  }
+
+  @override
+  String get collaborationDetailFeedbackCtaButton => 'Deixa una ressenya';
+
+  @override
   String get collaborationDetailFeedbackAlreadyLeft =>
       'Has compartit els teus comentaris ✓';
 
@@ -5115,6 +5126,69 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get dashboardDefaultCommunityName => 'Comunitat';
+
+  @override
+  String get dashboardPositioningTitle =>
+      'Omple el teu negoci amb les persones adequades.';
+
+  @override
+  String get dashboardPositioningSubtitle =>
+      'Crea experiències que converteixin les comunitats en visites, contingut i fidelitat.';
+
+  @override
+  String get dashboardActivityPillLabel => 'ACTIVITAT DEL NEGOCI';
+
+  @override
+  String get dashboardLiveOffersLabel => 'OFERTES ACTIVES';
+
+  @override
+  String get dashboardNewAppsLabel => 'NOVES SOL·LIC.';
+
+  @override
+  String get dashboardActiveStatLabel => 'ACTIUS';
+
+  @override
+  String get dashboardCompletedStatLabel => 'COMPLETATS';
+
+  @override
+  String get dashboardGrowSectionTitle => 'FES CRÉIXER EL TEU NEGOCI';
+
+  @override
+  String get dashboardGrowCreateTitle => 'Crear un Kolab';
+
+  @override
+  String get dashboardGrowCreateSubtitle =>
+      'Publica una nova oferta perquè les comunitats hi apliquin';
+
+  @override
+  String get dashboardGrowReviewTitle => 'Revisar sol·licituds';
+
+  @override
+  String dashboardGrowReviewSubtitlePending(int count) {
+    return '$count pendents de revisió';
+  }
+
+  @override
+  String get dashboardGrowReviewSubtitleEmpty =>
+      'No hi ha sol·licituds pendents';
+
+  @override
+  String get dashboardGrowFindSubtitle => 'Explora sol·licituds de comunitats';
+
+  @override
+  String get dashboardGrowViewKolabsTitle => 'Veure els teus Kolabs';
+
+  @override
+  String dashboardGrowViewKolabsSubtitle(int active, int completed) {
+    return '$active actius · $completed completats';
+  }
+
+  @override
+  String get dashboardEmptyUpcomingSubtitle =>
+      'Crea un Kolab per començar a omplir el teu calendari';
+
+  @override
+  String get dashboardHeroCreateKolabButton => '+ CREAR UN KOLAB';
 
   @override
   String get eventHubOpenChat => 'Obrir xat de l\'esdeveniment';

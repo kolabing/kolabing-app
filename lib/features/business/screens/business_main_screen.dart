@@ -107,10 +107,9 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
       ),
       NavItem(
         // Chats promoted to the nav (NF-12); business keeps its Profile tab.
-        // TODO(i18n): localize when chat strings are localized.
         icon: LucideIcons.messageCircle,
         activeIcon: LucideIcons.messageCircle,
-        label: 'Chats',
+        label: l10n.chatsTitle,
         badgeCount: chatUnread > 0 ? chatUnread : null,
       ),
       NavItem(

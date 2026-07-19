@@ -2028,6 +2028,23 @@
   "@collaborationDetailLeaveFeedbackLater": {
     "description": "Post-completion CTA letting a participant who skipped the optional feedback step come back to it later."
   },
+  "collaborationDetailFeedbackCtaTitle": "Rate this Kolab",
+  "@collaborationDetailFeedbackCtaTitle": {
+    "description": "Title of the post-completion review CTA card."
+  },
+  "collaborationDetailFeedbackCtaBody": "Your review helps {partnerName} build trust on Kolabing.",
+  "@collaborationDetailFeedbackCtaBody": {
+    "description": "Body copy of the post-completion review CTA card.",
+    "placeholders": {
+      "partnerName": {
+        "type": "String"
+      }
+    }
+  },
+  "collaborationDetailFeedbackCtaButton": "Leave a review",
+  "@collaborationDetailFeedbackCtaButton": {
+    "description": "Button label on the post-completion review CTA card."
+  },
   "collaborationDetailFeedbackAlreadyLeft": "You've shared your feedback ✓",
   "@collaborationDetailFeedbackAlreadyLeft": {
     "description": "Shown post-completion once the viewer has submitted optional feedback."
@@ -6247,6 +6264,43 @@
   "dashboardNoUpcomingKolabs": "No upcoming kolabs yet",
   "dashboardDefaultBusinessName": "Business",
   "dashboardDefaultCommunityName": "Community",
+  "dashboardPositioningTitle": "Fill your business with the right people.",
+  "dashboardPositioningSubtitle": "Create experiences that turn communities into visits, content and loyalty.",
+  "dashboardActivityPillLabel": "BUSINESS ACTIVITY",
+  "dashboardLiveOffersLabel": "LIVE OFFERS",
+  "dashboardNewAppsLabel": "NEW APPS",
+  "dashboardActiveStatLabel": "ACTIVE",
+  "dashboardCompletedStatLabel": "COMPLETED",
+  "dashboardGrowSectionTitle": "GROW YOUR BUSINESS",
+  "dashboardGrowCreateTitle": "Create a Kolab",
+  "dashboardGrowCreateSubtitle": "Post a new offer for communities to apply",
+  "dashboardGrowReviewTitle": "Review applications",
+  "dashboardGrowReviewSubtitlePending": "{count} pending review",
+  "@dashboardGrowReviewSubtitlePending": {
+    "description": "Grow-section subtitle when there are pending applications.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardGrowReviewSubtitleEmpty": "No pending applications",
+  "dashboardGrowFindSubtitle": "Browse community requests",
+  "dashboardGrowViewKolabsTitle": "View your Kolabs",
+  "dashboardGrowViewKolabsSubtitle": "{active} active · {completed} completed",
+  "@dashboardGrowViewKolabsSubtitle": {
+    "description": "Grow-section subtitle summarizing active/completed collaborations.",
+    "placeholders": {
+      "active": {
+        "type": "int"
+      },
+      "completed": {
+        "type": "int"
+      }
+    }
+  },
+  "dashboardEmptyUpcomingSubtitle": "Create a Kolab to start filling your calendar",
+  "dashboardHeroCreateKolabButton": "+ CREATE A KOLAB",
 
   "eventHubOpenChat": "Open event chat",
   "@eventHubOpenChat": { "description": "Event hub: button to open the event chat thread" },
