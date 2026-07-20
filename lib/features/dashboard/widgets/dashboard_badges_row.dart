@@ -11,17 +11,20 @@ import '../../rewards/providers/wallet_provider.dart';
 /// Horizontally scrollable badge chips row for the community dashboard.
 ///
 /// Reads [RewardBadge] list from [walletProvider].
-/// Earned badges use a warm yellow tint; locked ones are greyed out.
+/// Shows earned badges only — locked placeholders are hidden here (the full
+/// grid with locked states lives on the wallet screen). The whole row
+/// disappears until the first badge is earned.
 class DashboardBadgesRow extends ConsumerWidget {
   const DashboardBadgesRow({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final badges = ref.watch(walletProvider.select((s) => s.badges));
-    if (badges.isEmpty) return const SizedBox.shrink();
+    final earnedBadges = badges.where((b) => b.isUnlocked).toList();
+    if (earnedBadges.isEmpty) return const SizedBox.shrink();
 
     final c = context.colors;
-    final earnedCount = badges.where((b) => b.isUnlocked).length;
+    final earnedCount = earnedBadges.length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,9 +54,10 @@ class DashboardBadgesRow extends ConsumerWidget {
           height: 72,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
-            itemCount: badges.length,
-            separatorBuilder: (context, index) => const SizedBox(width: KolabingSpacing.xs),
-            itemBuilder: (context, i) => _BadgeChip(badge: badges[i]),
+            itemCount: earnedBadges.length,
+            separatorBuilder: (context, index) =>
+                const SizedBox(width: KolabingSpacing.xs),
+            itemBuilder: (context, i) => _BadgeChip(badge: earnedBadges[i]),
           ),
         ),
       ],
