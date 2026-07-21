@@ -1019,11 +1019,21 @@ class _CreateOpportunityScreenState
             color: context.colors.primary,
             backgroundColor: context.colors.darkBorder,
           ),
-          error: (e, _) => Text(
-            l10n.createOpportunityCitiesLoadError(e.toString()),
-            style: KolabingTextStyles.captionSecondary.copyWith(
-              color: context.colors.error,
-            ),
+          error: (e, _) => Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.createOpportunityCitiesLoadError(e.toString()),
+                  style: KolabingTextStyles.captionSecondary.copyWith(
+                    color: context.colors.error,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => ref.invalidate(citiesProvider),
+                child: Text(l10n.commonRetry),
+              ),
+            ],
           ),
           data: (cities) => DropdownButtonFormField<String>(
             value: opp.preferredCity.isNotEmpty ? opp.preferredCity : null,

@@ -317,9 +317,21 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             color: context.colors.primary,
             backgroundColor: context.colors.darkBorder,
           ),
-          error: (_, _) => Text(
-            l10n.productDetailsFailedToLoadCities,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.error),
+          error: (_, _) => Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.productDetailsFailedToLoadCities,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.error,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => ref.invalidate(citiesProvider),
+                child: Text(l10n.commonRetry),
+              ),
+            ],
           ),
         ),
 
