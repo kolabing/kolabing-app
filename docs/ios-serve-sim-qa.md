@@ -116,3 +116,34 @@ serve-sim has **no authentication** and, when bound beyond localhost, exposes a 
 shell-exec route. Keep it reachable **only over Tailscale** (this script binds the Tailscale
 interface, not `0.0.0.0`); never forward the port to a public network. The sim runs the **dev**
 backend, never prod.
+
+## Remote start (box -> Mac bridge)
+
+The agent box (`serra-ops-01`, Linux) can't run the Simulator itself (macOS-only), so an agent
+driving QA needs a way to (re)start `serve-sim` on a Mac that's already set up (above) without a
+human at that Mac's keyboard. Because `./scripts/serve-sim.sh` ends by `exec`ing `flutter run` in
+the foreground (correct for a human watching the terminal), a plain SSH call to it would hang the
+SSH session for the life of the app. `./scripts/serve-sim-remote.sh` wraps it: backgrounds the run,
+logs to `/tmp/kolabing-serve-sim.log`, and adds `start` / `status` / `stop`.
+
+**Set up once, on the Mac that will host the sim** (Daniel's, or whoever's running QA):
+add this to `~/.ssh/authorized_keys` — a single line, all on one line, forced-command so the key
+can only ever launch/check/stop the sim, never open a general shell:
+
+```
+command="cd ~/kolabing-app && ./scripts/serve-sim-remote.sh ${SSH_ORIGINAL_COMMAND:-start}",no-port-forwarding,no-x11-forwarding,no-agent-forwarding,no-pty ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJJc9x526tFUIuoIAh5lCRSkIFcwvxwJ3nag8SLicIJr serra-ops-01 -> dmg@mac (kolabing ios qa)
+```
+
+Requires macOS **Remote Login** on (System Settings -> General -> Sharing -> Remote Login), and
+`~/kolabing-app` to be the checked-out repo path (adjust the `cd` if different). Reachable **only
+over Tailscale** — same posture as serve-sim itself, never expose SSH beyond the tailnet.
+
+**From the box, once authorized:**
+```bash
+ssh -i ~/.ssh/id_box_to_mac daniel@<mac-tailscale-name> start    # boots the sim + streams; prints the URL
+ssh -i ~/.ssh/id_box_to_mac daniel@<mac-tailscale-name> status   # is it running, and the URL
+ssh -i ~/.ssh/id_box_to_mac daniel@<mac-tailscale-name> stop
+```
+The forced command ignores anything after `start`/`status`/`stop` beyond what
+`serve-sim-remote.sh` itself parses (device name / port as extra args to `start`), so the key
+cannot be used to run arbitrary commands on the Mac.
