@@ -451,6 +451,33 @@ class AppLocalizationsEs extends AppLocalizations {
   String get commonDismiss => 'Descartar';
 
   @override
+  String get routeNotFoundTitle => 'Página no encontrada';
+
+  @override
+  String get routeNotFoundBody => 'No hemos podido encontrar esa página';
+
+  @override
+  String get routeNotFoundGoToDashboard => 'Ir al panel';
+
+  @override
+  String get routeNotFoundSignOut => 'Cerrar sesión';
+
+  @override
+  String get routeNotFoundBackToLogin => 'Volver al inicio de sesión';
+
+  @override
+  String opportunityLoadError(Object error) {
+    return 'No se pudo cargar la oportunidad: $error';
+  }
+
+  @override
+  String get profileMenuTitle => 'Perfil';
+
+  @override
+  String get networkOfflineBannerMessage =>
+      'Sin conexión a internet. Desactiva el modo avión o reconéctate, y vuelve a intentarlo.';
+
+  @override
   String get commonGotIt => 'Entendido';
 
   @override
@@ -1116,6 +1143,9 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get myKolabsEmptyMessage =>
       'Crea tu primer kolab para empezar a conectar con comunidades';
+
+  @override
+  String get myKolabsCreateNewButton => 'Crear un Kolab';
 
   @override
   String get myKolabsCreate => 'Crear Kolab';
@@ -4228,6 +4258,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileReviewsEmpty => 'Aún no hay reseñas.';
+
+  @override
+  String get profileReviewsEmptyBody =>
+      'Las reseñas aparecerán aquí cuando este perfil complete su primer Kolab.';
 
   @override
   String get profileReviewsLoadMore => 'Cargar más';

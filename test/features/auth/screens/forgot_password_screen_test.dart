@@ -47,16 +47,19 @@ void main() {
     await _pumpForgotPassword(tester);
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(SingleChildScrollView), findsNothing);
+    // The form scrolls rather than risking clipping on shorter screens —
+    // the opposite of a stale "must never scroll" assumption.
+    expect(find.byType(SingleChildScrollView), findsOneWidget);
 
     final logo = tester.widget<KolabingLogo>(find.byType(KolabingLogo));
-    expect(logo.variant, KolabingLogoVariant.yellowTransparent);
+    expect(logo.variant, KolabingLogoVariant.onYellow);
 
     expect(find.text('RESET ACCESS.'), findsOneWidget);
-    expect(find.text('GET BACK IN.'), findsOneWidget);
-    expect(find.text('FORGOT PASSWORD?'), findsOneWidget);
-    expect(find.text('Reset your password'), findsOneWidget);
-    expect(find.text('SEND RESET LINK'), findsOneWidget);
+    expect(
+      find.text("Enter your account email and we'll send a secure reset link."),
+      findsOneWidget,
+    );
+    expect(find.text('Send reset link'), findsOneWidget);
   });
 
   testWidgets('forgot password screen stays stable on compact safe areas', (
@@ -70,10 +73,10 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.text('FORGOT PASSWORD?'), findsOneWidget);
-    expect(find.text('SEND RESET LINK'), findsOneWidget);
+    expect(find.text('RESET ACCESS.'), findsOneWidget);
+    expect(find.text('Send reset link'), findsOneWidget);
     expect(
-      tester.getBottomLeft(find.text('SEND RESET LINK')).dy,
+      tester.getBottomLeft(find.text('Send reset link')).dy,
       lessThanOrEqualTo(640),
     );
   });

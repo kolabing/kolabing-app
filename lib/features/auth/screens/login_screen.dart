@@ -65,6 +65,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   bool _showSuccess = false;
   bool _obscurePassword = true;
 
+  /// Off until the first failed submit, then per-keystroke — so a stale
+  /// "Please enter a valid email" clears as soon as the user fixes the field
+  /// instead of persisting until the next Sign in tap.
+  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
+
   @override
   void initState() {
     super.initState();
@@ -79,9 +84,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       vsync: this,
     );
     _fadeIn = CurvedAnimation(parent: _entryController, curve: Curves.easeOut);
-    _exitAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(parent: _exitController, curve: Curves.easeIn),
-    );
+    _exitAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _exitController, curve: Curves.easeIn));
 
     _entryController.forward();
   }
@@ -146,7 +152,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   Future<void> _handleEmailLogin() async {
     if (_isLoading || _isGoogleLoading || _showSuccess) return;
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      // From now on, revalidate as the user types so the error clears the
+      // moment the field is corrected.
+      setState(() => _autovalidateMode = AutovalidateMode.onUserInteraction);
+      return;
+    }
 
     FocusScope.of(context).unfocus();
     setState(() => _isLoading = true);
@@ -292,8 +303,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       return destination;
     }
 
-    final hasShownPermissions =
-        await PermissionService.instance.hasShownPermissionScreen();
+    final hasShownPermissions = await PermissionService.instance
+        .hasShownPermissionScreen();
     if (!hasShownPermissions) {
       return '$_kPermissionsRoute?destination='
           '${Uri.encodeComponent(destination)}';
@@ -402,9 +413,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   left: 0,
                   right: 0,
                   height: waveHeight,
-                  child: CustomPaint(
-                    painter: _WavePainter(color: _kCream),
-                  ),
+                  child: CustomPaint(painter: _WavePainter(color: _kCream)),
                 ),
 
                 // Main layout
@@ -429,8 +438,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   children: [
                                     _HeroButton(
                                       onTap: _handleBack,
-                                      isEnabled:
-                                          !_anyLoading && !_showSuccess,
+                                      isEnabled: !_anyLoading && !_showSuccess,
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
@@ -455,8 +463,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                     ),
                                     _HeroButton(
                                       onTap: _navigateToSignUp,
-                                      isEnabled:
-                                          !_anyLoading && !_showSuccess,
+                                      isEnabled: !_anyLoading && !_showSuccess,
                                       child: Text(
                                         AppLocalizations.of(
                                           context,
@@ -497,6 +504,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           top: false,
                           child: Form(
                             key: _formKey,
+                            autovalidateMode: _autovalidateMode,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
@@ -505,10 +513,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   'WELCOME BACK.',
                                   style: KolabingTextStyles.displayMedium
                                       .copyWith(
-                                    color: _kInk,
-                                    height: 0.98,
-                                    letterSpacing: 0,
-                                  ),
+                                        color: _kInk,
+                                        height: 0.98,
+                                        letterSpacing: 0,
+                                      ),
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
@@ -558,9 +566,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   obscureText: _obscurePassword,
                                   enabled: !_anyLoading,
                                   validator: _validatePassword,
-                                  autofillHints: const [
-                                    AutofillHints.password,
-                                  ],
+                                  autofillHints: const [AutofillHints.password],
                                   textInputAction: TextInputAction.done,
                                   onFieldSubmitted: (_) => _handleEmailLogin(),
                                   style: GoogleFonts.inter(
@@ -608,8 +614,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   child: TextButton(
                                     onPressed: _anyLoading || _showSuccess
                                         ? null
-                                        : () =>
-                                            context.push(_kForgotPasswordRoute),
+                                        : () => context.push(
+                                            _kForgotPasswordRoute,
+                                          ),
                                     style: TextButton.styleFrom(
                                       foregroundColor: _kMuted,
                                       minimumSize: const Size(0, 32),
@@ -888,16 +895,8 @@ class _WavePainter extends CustomPainter {
     final path = Path()
       ..moveTo(0, 130 * sy)
       ..lineTo(0, 66 * sy)
-      ..cubicTo(
-        72 * sx, 22 * sy,
-        150 * sx, 52 * sy,
-        230 * sx, 60 * sy,
-      )
-      ..cubicTo(
-        300 * sx, 67 * sy,
-        352 * sx, 34 * sy,
-        402 * sx, 50 * sy,
-      )
+      ..cubicTo(72 * sx, 22 * sy, 150 * sx, 52 * sy, 230 * sx, 60 * sy)
+      ..cubicTo(300 * sx, 67 * sy, 352 * sx, 34 * sy, 402 * sx, 50 * sy)
       ..lineTo(402 * sx, 130 * sy)
       ..close();
 

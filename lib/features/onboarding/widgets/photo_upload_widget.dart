@@ -115,9 +115,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              AppLocalizations.of(context).photoUploadSelectFailed,
-            ),
+            content: Text(AppLocalizations.of(context).photoUploadSelectFailed),
             backgroundColor: context.colors.error,
           ),
         );
@@ -148,7 +146,9 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
           children: [
             ListTile(
               leading: const Icon(LucideIcons.image),
-              title: Text(AppLocalizations.of(context).photoUploadChooseLibrary),
+              title: Text(
+                AppLocalizations.of(context).photoUploadChooseLibrary,
+              ),
               onTap: () {
                 Navigator.pop(context);
                 _pickImageFromSource(ImageSource.gallery);
@@ -161,6 +161,11 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                 Navigator.pop(context);
                 _pickImageFromSource(ImageSource.camera);
               },
+            ),
+            ListTile(
+              leading: const Icon(LucideIcons.x),
+              title: Text(AppLocalizations.of(context).commonCancel),
+              onTap: () => Navigator.pop(context),
             ),
           ],
         ),
@@ -202,10 +207,7 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
               },
             ),
             ListTile(
-              leading: Icon(
-                LucideIcons.trash2,
-                color: context.colors.error,
-              ),
+              leading: Icon(LucideIcons.trash2, color: context.colors.error),
               title: Text(
                 AppLocalizations.of(context).photoUploadRemovePhoto,
                 style: TextStyle(color: context.colors.error),
@@ -295,7 +297,10 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget>
                   widget.photoBase64 == null
                       ? widget.addLabel
                       : AppLocalizations.of(context).photoUploadTapToChange,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    color: context.colors.textTertiary,
+                  ),
                 ),
               ],
             ),

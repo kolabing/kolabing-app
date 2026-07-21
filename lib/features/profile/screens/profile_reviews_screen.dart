@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/cards/kolabing_cards.dart';
 import '../models/public_profile.dart';
 import '../services/public_profile_service.dart';
 
@@ -100,7 +102,11 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
         elevation: 0,
         title: Text(
           title,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: context.colors.onSurface,
+          ),
         ),
       ),
       body: _buildBody(context),
@@ -133,10 +139,12 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
 
     if (_reviews.isEmpty) {
       return Center(
-        child: Text(
-          l10n.profileReviewsEmpty,
-          style: KolabingTextStyles.bodyMedium.copyWith(
-            color: context.colors.onSurfaceVariant,
+        child: Padding(
+          padding: const EdgeInsets.all(KolabingSpacing.xl),
+          child: EmptyStateCard(
+            icon: LucideIcons.star,
+            title: l10n.profileReviewsEmpty,
+            message: l10n.profileReviewsEmptyBody,
           ),
         ),
       );
@@ -200,7 +208,11 @@ class _ProfileReviewListCard extends StatelessWidget {
                 children: [
                   Text(
                     review.reviewer.displayName,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.onSurface,
+                    ),
                   ),
                   Text(
                     _formatReviewDate(review.createdAt),
@@ -258,7 +270,10 @@ class _ReviewAvatar extends StatelessWidget {
       backgroundColor: context.colors.primary.withValues(alpha: 0.12),
       child: Text(
         reviewer.initial,
-        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
+        style: KolabingTextStyles.bodyMedium.copyWith(
+          fontWeight: FontWeight.w700,
+          color: context.colors.onSurface,
+        ),
       ),
     );
   }

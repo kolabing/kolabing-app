@@ -41,6 +41,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
   late final Animation<Offset> _buttonSlideAnimation;
 
   bool _isLoading = false;
+
+  /// Off until the first failed submit, then per-keystroke — clears stale
+  /// validation errors as soon as the user corrects the field.
+  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
   bool _resetSuccess = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -147,7 +151,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
   Future<void> _handleResetPassword() async {
     if (_isLoading) return;
 
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      setState(() => _autovalidateMode = AutovalidateMode.onUserInteraction);
+      return;
+    }
 
     FocusScope.of(context).unfocus();
 
@@ -322,6 +329,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
 
   Widget _buildFormContent() => Form(
     key: _formKey,
+    autovalidateMode: _autovalidateMode,
     child: Column(
       children: [
         const SizedBox(height: 48),
@@ -546,7 +554,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
   }) => InputDecoration(
     labelText: label,
     hintText: hint,
-    labelStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
+    labelStyle: KolabingTextStyles.bodyMedium.copyWith(
+      color: context.colors.textTertiary,
+    ),
     hintStyle: KolabingTextStyles.bodyMedium.copyWith(
       color: context.colors.textTertiary.withValues(alpha: 0.6),
     ),
@@ -574,7 +584,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
       borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(color: context.colors.error, width: 2),
     ),
-    errorStyle: KolabingTextStyles.bodySmall.copyWith(color: context.colors.error, fontSize: 12),
+    errorStyle: KolabingTextStyles.bodySmall.copyWith(
+      color: context.colors.error,
+      fontSize: 12,
+    ),
   );
 }
 

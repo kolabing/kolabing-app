@@ -546,6 +546,43 @@
   "@commonDismiss": {
     "description": "Generic action to dismiss a snackbar or notification."
   },
+  "routeNotFoundTitle": "Page Not Found",
+  "@routeNotFoundTitle": {
+    "description": "App bar title on the unknown-route fallback screen."
+  },
+  "routeNotFoundBody": "We couldn't find that page",
+  "@routeNotFoundBody": {
+    "description": "Body headline on the unknown-route fallback screen."
+  },
+  "routeNotFoundGoToDashboard": "Go to dashboard",
+  "@routeNotFoundGoToDashboard": {
+    "description": "Recovery button on the unknown-route screen for a signed-in user."
+  },
+  "routeNotFoundSignOut": "Sign out",
+  "@routeNotFoundSignOut": {
+    "description": "Recovery button on the unknown-route screen for a signed-in user."
+  },
+  "routeNotFoundBackToLogin": "Back to login",
+  "@routeNotFoundBackToLogin": {
+    "description": "Recovery button on the unknown-route screen for a signed-out user."
+  },
+  "opportunityLoadError": "Could not load opportunity: {error}",
+  "@opportunityLoadError": {
+    "description": "Error shown when an opportunity fails to load for editing.",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileMenuTitle": "Profile",
+  "@profileMenuTitle": {
+    "description": "Title of the profile-avatar dropdown/menu entry."
+  },
+  "networkOfflineBannerMessage": "No internet connection. Turn off airplane mode or reconnect, then try again.",
+  "@networkOfflineBannerMessage": {
+    "description": "Global offline banner shown when a request fails due to no connectivity."
+  },
   "commonGotIt": "Got it",
   "@commonGotIt": {
     "description": "Generic acknowledgement button to close an informational dialog."
@@ -1396,6 +1433,10 @@
   "myKolabsEmptyMessage": "Create your first kolab to start connecting with communities",
   "@myKolabsEmptyMessage": {
     "description": "Empty state message"
+  },
+  "myKolabsCreateNewButton": "Create a Kolab",
+  "@myKolabsCreateNewButton": {
+    "description": "Empty-state CTA button that opens the create-Kolab flow."
   },
   "myKolabsCreate": "Create Kolab",
   "@myKolabsCreate": {
@@ -5232,6 +5273,10 @@
   "profileReviewsEmpty": "No reviews yet.",
   "@profileReviewsEmpty": {
     "description": "Empty state message when a profile has no reviews"
+  },
+  "profileReviewsEmptyBody": "Reviews appear here once this profile completes its first Kolab.",
+  "@profileReviewsEmptyBody": {
+    "description": "Empty state body explaining when reviews will appear."
   },
   "profileReviewsLoadMore": "Load more",
   "@profileReviewsLoadMore": {

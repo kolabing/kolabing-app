@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../config/constants/spacing.dart';
 import '../../config/theme/colors.dart';
+import '../../l10n/app_localizations.dart';
 import '../../features/auth/models/user_model.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/business/screens/business_profile_screen.dart';
@@ -54,7 +55,7 @@ class ProfileAvatarButton extends ConsumerWidget {
             foregroundColor: context.colors.charcoal,
             elevation: 0,
             scrolledUnderElevation: 0,
-            title: const Text('Profile'),
+            title: Text(AppLocalizations.of(context).profileMenuTitle),
           ),
           body: screen,
         ),

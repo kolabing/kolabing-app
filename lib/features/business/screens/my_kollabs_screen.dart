@@ -11,6 +11,7 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../kolab/models/kolab.dart';
 import '../../kolab/providers/my_kolabs_provider.dart';
 import '../../kolab/widgets/my_kolab_card.dart';
@@ -464,6 +465,14 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
               color: context.colors.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: KolabingSpacing.lg),
+          KolabingButton(
+            label: AppLocalizations.of(context).myKolabsCreateNewButton,
+            onPressed: _onCreateNew,
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
+            icon: const Icon(LucideIcons.plus),
           ),
         ],
       ),

@@ -158,8 +158,11 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
         children: [
           _CommunityHomeTab(onSwitchTab: _onTabChanged),
           const _CommunityExploreTab(),
-          _CommunityMyOppsTab(initialSubTab: widget.initialKolabsSubTab),
-          const ChatsScreen(embedded: true),
+          _CommunityMyOppsTab(
+            initialSubTab: widget.initialKolabsSubTab,
+            onExploreTap: () => _onTabChanged(1),
+          ),
+          ChatsScreen(embedded: true, onExplore: () => _onTabChanged(1)),
           const _CommunityLeaderTab(),
         ],
       ),
@@ -210,9 +213,10 @@ class _CommunityExploreTab extends StatelessWidget {
 }
 
 class _CommunityMyOppsTab extends StatelessWidget {
-  const _CommunityMyOppsTab({this.initialSubTab = 0});
+  const _CommunityMyOppsTab({this.initialSubTab = 0, this.onExploreTap});
 
   final int initialSubTab;
+  final VoidCallback? onExploreTap;
 
   @override
   Widget build(BuildContext context) => MyKolabsHubScreen(
@@ -225,6 +229,7 @@ class _CommunityMyOppsTab extends StatelessWidget {
     // list (expected — applications still resolve via the backend bridge).
     offersTab: const MyKollabsScreen(embedded: true),
     initialSubTab: initialSubTab,
+    onExploreTap: onExploreTap,
   );
 }
 

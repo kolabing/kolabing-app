@@ -45,6 +45,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   late final Animation<double> _fadeIn;
 
   bool _isLoading = false;
+
+  /// Off until the first failed submit, then per-keystroke — clears stale
+  /// validation errors as soon as the user corrects the field.
+  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
   bool _emailSent = false;
   String? _networkError;
 
@@ -105,7 +109,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 
   Future<void> _handleSendResetLink() async {
     if (_isLoading || _emailSent) return;
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      setState(() => _autovalidateMode = AutovalidateMode.onUserInteraction);
+      return;
+    }
 
     FocusScope.of(context).unfocus();
     setState(() {
@@ -180,9 +187,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 left: 0,
                 right: 0,
                 height: waveHeight,
-                child: CustomPaint(
-                  painter: const _WavePainter(color: _kCream),
-                ),
+                child: CustomPaint(painter: const _WavePainter(color: _kCream)),
               ),
 
               // Main layout
@@ -267,13 +272,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                         top: false,
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
-                            minHeight: size.height -
+                            minHeight:
+                                size.height -
                                 heroHeight -
                                 MediaQuery.paddingOf(context).top -
                                 80,
                           ),
                           child: Form(
                             key: _formKey,
+                            autovalidateMode: _autovalidateMode,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
@@ -282,10 +289,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                   'RESET ACCESS.',
                                   style: KolabingTextStyles.displayMedium
                                       .copyWith(
-                                    color: _kInk,
-                                    height: 0.98,
-                                    letterSpacing: 0,
-                                  ),
+                                        color: _kInk,
+                                        height: 0.98,
+                                        letterSpacing: 0,
+                                      ),
                                 ),
                                 const SizedBox(height: 6),
 
@@ -394,8 +401,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                 // Footer link
                                 Center(
                                   child: GestureDetector(
-                                    onTap:
-                                        _isLoading ? null : _handleGoToLogin,
+                                    onTap: _isLoading ? null : _handleGoToLogin,
                                     child: RichText(
                                       text: TextSpan(
                                         style: GoogleFonts.inter(
@@ -439,48 +445,45 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   InputDecoration _fieldDecoration({
     required String hint,
     required IconData prefixIcon,
-  }) =>
-      InputDecoration(
-        hintText: hint,
-        hintStyle: GoogleFonts.inter(
-          fontSize: 15,
-          fontWeight: FontWeight.w400,
-          color: _kMuted,
-        ),
-        prefixIcon: Icon(prefixIcon, color: _kMuted, size: 19),
-        prefixIconConstraints:
-            const BoxConstraints(minWidth: 50, minHeight: 56),
-        isDense: false,
-        filled: true,
-        fillColor: _kInputFill,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(color: _kInputBorder, width: 1.5),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(color: _kInputBorder, width: 1.5),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: const BorderSide(color: _kInk, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide(color: const Color(0xFFBA1A1A)),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide(color: const Color(0xFFBA1A1A), width: 1.5),
-        ),
-        errorStyle: GoogleFonts.inter(
-          fontSize: 11.5,
-          fontWeight: FontWeight.w500,
-          color: const Color(0xFFBA1A1A),
-        ),
-      );
+  }) => InputDecoration(
+    hintText: hint,
+    hintStyle: GoogleFonts.inter(
+      fontSize: 15,
+      fontWeight: FontWeight.w400,
+      color: _kMuted,
+    ),
+    prefixIcon: Icon(prefixIcon, color: _kMuted, size: 19),
+    prefixIconConstraints: const BoxConstraints(minWidth: 50, minHeight: 56),
+    isDense: false,
+    filled: true,
+    fillColor: _kInputFill,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(24),
+      borderSide: const BorderSide(color: _kInputBorder, width: 1.5),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(24),
+      borderSide: const BorderSide(color: _kInputBorder, width: 1.5),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(24),
+      borderSide: const BorderSide(color: _kInk, width: 1.5),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(24),
+      borderSide: BorderSide(color: const Color(0xFFBA1A1A)),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(24),
+      borderSide: BorderSide(color: const Color(0xFFBA1A1A), width: 1.5),
+    ),
+    errorStyle: GoogleFonts.inter(
+      fontSize: 11.5,
+      fontWeight: FontWeight.w500,
+      color: const Color(0xFFBA1A1A),
+    ),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -500,59 +503,65 @@ class _SendCta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        width: double.infinity,
-        height: 54,
-        child: GestureDetector(
-          onTap: isEnabled ? onPressed : null,
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 150),
-            opacity: isEnabled ? 1.0 : 0.45,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: _kYellow,
-                borderRadius: BorderRadius.circular(999),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF141210).withValues(alpha: 0.12),
-                    blurRadius: 26,
-                    offset: const Offset(0, 12),
-                  ),
-                ],
+    width: double.infinity,
+    height: 54,
+    child: GestureDetector(
+      onTap: isEnabled ? onPressed : null,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 150),
+        opacity: isEnabled ? 1.0 : 0.45,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: _kYellow,
+            borderRadius: BorderRadius.circular(999),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF141210).withValues(alpha: 0.12),
+                blurRadius: 26,
+                offset: const Offset(0, 12),
               ),
-              child: Center(
-                child: isLoading
-                    ? const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          valueColor: AlwaysStoppedAnimation<Color>(_kInk),
-                        ),
-                      )
-                    : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Send reset link',
-                            style: GoogleFonts.inter(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w700,
-                              color: _kInk,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          const Icon(
-                            Icons.arrow_forward_rounded,
-                            size: 18,
+            ],
+          ),
+          child: Center(
+            child: isLoading
+                ? const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(_kInk),
+                    ),
+                  )
+                // FittedBox(scaleDown) so the label+icon shrink together
+                // on narrow screens instead of overflowing the pill
+                // (matches KolabingButton's compact-width strategy).
+                : FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Send reset link',
+                          style: GoogleFonts.inter(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
                             color: _kInk,
                           ),
-                        ],
-                      ),
-              ),
-            ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 18,
+                          color: _kInk,
+                        ),
+                      ],
+                    ),
+                  ),
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -572,61 +581,61 @@ class _SuccessState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SizedBox(
-            width: double.infinity,
-            height: 54,
-            child: GestureDetector(
-              onTap: onBackToLogin,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: _kYellow,
-                  borderRadius: BorderRadius.circular(999),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF141210).withValues(alpha: 0.12),
-                      blurRadius: 26,
-                      offset: const Offset(0, 12),
-                    ),
-                  ],
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      SizedBox(
+        width: double.infinity,
+        height: 54,
+        child: GestureDetector(
+          onTap: onBackToLogin,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: _kYellow,
+              borderRadius: BorderRadius.circular(999),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF141210).withValues(alpha: 0.12),
+                  blurRadius: 26,
+                  offset: const Offset(0, 12),
                 ),
-                child: Center(
-                  child: Text(
-                    AppLocalizations.of(context).forgotPasswordBackToSignIn,
-                    style: GoogleFonts.inter(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      color: _kInk,
-                    ),
-                  ),
-                ),
-              ),
+              ],
             ),
-          ),
-          const SizedBox(height: 8),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: onTryAnother,
-              style: TextButton.styleFrom(
-                foregroundColor: _kMuted,
-                minimumSize: const Size(0, 32),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                padding: EdgeInsets.zero,
-              ),
+            child: Center(
               child: Text(
-                AppLocalizations.of(context).forgotPasswordUseAnotherEmail,
+                AppLocalizations.of(context).forgotPasswordBackToSignIn,
                 style: GoogleFonts.inter(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: _kMuted,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: _kInk,
                 ),
               ),
             ),
           ),
-        ],
-      );
+        ),
+      ),
+      const SizedBox(height: 8),
+      Align(
+        alignment: Alignment.centerRight,
+        child: TextButton(
+          onPressed: onTryAnother,
+          style: TextButton.styleFrom(
+            foregroundColor: _kMuted,
+            minimumSize: const Size(0, 32),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            padding: EdgeInsets.zero,
+          ),
+          child: Text(
+            AppLocalizations.of(context).forgotPasswordUseAnotherEmail,
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: _kMuted,
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -653,30 +662,30 @@ class _HeroButtonState extends State<_HeroButton> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTapDown: (_) {
-          if (widget.isEnabled) setState(() => _pressed = true);
-        },
-        onTapUp: (_) {
-          if (widget.isEnabled) setState(() => _pressed = false);
-        },
-        onTapCancel: () {
-          if (widget.isEnabled) setState(() => _pressed = false);
-        },
-        onTap: () {
-          if (widget.isEnabled) {
-            HapticFeedback.lightImpact();
-            widget.onTap();
-          }
-        },
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 100),
-          opacity: widget.isEnabled ? (_pressed ? 0.5 : 1.0) : 0.35,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-            child: widget.child,
-          ),
-        ),
-      );
+    onTapDown: (_) {
+      if (widget.isEnabled) setState(() => _pressed = true);
+    },
+    onTapUp: (_) {
+      if (widget.isEnabled) setState(() => _pressed = false);
+    },
+    onTapCancel: () {
+      if (widget.isEnabled) setState(() => _pressed = false);
+    },
+    onTap: () {
+      if (widget.isEnabled) {
+        HapticFeedback.lightImpact();
+        widget.onTap();
+      }
+    },
+    child: AnimatedOpacity(
+      duration: const Duration(milliseconds: 100),
+      opacity: widget.isEnabled ? (_pressed ? 0.5 : 1.0) : 0.35,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        child: widget.child,
+      ),
+    ),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -697,22 +706,8 @@ class _WavePainter extends CustomPainter {
     final path = Path()
       ..moveTo(0, 130 * sy)
       ..lineTo(0, 66 * sy)
-      ..cubicTo(
-        72 * sx,
-        22 * sy,
-        150 * sx,
-        52 * sy,
-        230 * sx,
-        60 * sy,
-      )
-      ..cubicTo(
-        300 * sx,
-        67 * sy,
-        352 * sx,
-        34 * sy,
-        402 * sx,
-        50 * sy,
-      )
+      ..cubicTo(72 * sx, 22 * sy, 150 * sx, 52 * sy, 230 * sx, 60 * sy)
+      ..cubicTo(300 * sx, 67 * sy, 352 * sx, 34 * sy, 402 * sx, 50 * sy)
       ..lineTo(402 * sx, 130 * sy)
       ..close();
 
