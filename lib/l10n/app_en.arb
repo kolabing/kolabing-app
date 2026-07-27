@@ -486,6 +486,14 @@
   "@applyModalNoDates": {
     "description": "Shown when the opportunity has no selectable dates."
   },
+  "applyModalClosedSnack": "Applications for this Kolab are closed",
+  "@applyModalClosedSnack": {
+    "description": "Snackbar shown when the apply modal is opened for a closed/date-exhausted opportunity."
+  },
+  "exploreApplicationsClosed": "Applications closed",
+  "@exploreApplicationsClosed": {
+    "description": "Label shown on an offer whose application window has closed or is date-exhausted."
+  },
   "applyModalNotesLabel": "Additional notes (optional)",
   "@applyModalNotesLabel": {
     "description": "Label for the optional availability notes field."

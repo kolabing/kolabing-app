@@ -852,6 +852,19 @@ class _CommunityOfferDetailScreenState
       );
     }
 
+    // Applications closed: opportunity closed/completed or no date left.
+    if (!opportunityApplicationsOpen(opportunity)) {
+      return _buildBottomButtonShell(
+        child: KolabingButton(
+          label: AppLocalizations.of(context).exploreApplicationsClosed,
+          onPressed: null,
+          variant: KolabingButtonVariant.secondary,
+          icon: const Icon(LucideIcons.calendarX),
+          isDisabled: true,
+        ),
+      );
+    }
+
     return _buildBottomButtonShell(
       child: KolabingButton(
         label: AppLocalizations.of(context).communityOfferDetailApplyNow,

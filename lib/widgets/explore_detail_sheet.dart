@@ -7,6 +7,8 @@ import '../config/constants/radius.dart';
 import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
 import '../config/theme/typography.dart';
+import '../features/application/widgets/apply_modal.dart'
+    show opportunityApplicationsOpen;
 import '../features/discovery/models/discovery_item.dart';
 import '../features/event/models/event.dart';
 import '../features/event/providers/event_provider.dart';
@@ -658,7 +660,11 @@ class ExploreDetailSheet extends ConsumerWidget {
 
   Widget _buildActionButtons(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
-    final showsSubscribeAction = !canApply && onSubscribe != null;
+    // Applications closed (opportunity closed/completed or no date left): the
+    // Apply CTA is disabled and never falls through to the paywall.
+    final applicationsOpen = opportunityApplicationsOpen(opportunity);
+    final showsSubscribeAction =
+        applicationsOpen && !canApply && onSubscribe != null;
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -680,15 +686,26 @@ class ExploreDetailSheet extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          KolabingButton(
-            label: showsSubscribeAction
-                ? AppLocalizations.of(context).exploreDetailUnlockToApply
-                : AppLocalizations.of(context).exploreDetailApplyNow,
-            onPressed: canApply ? onApply : onSubscribe,
-            variant: KolabingButtonVariant.primary,
-            icon: Icon(showsSubscribeAction ? LucideIcons.crown : LucideIcons.send),
-            height: 52,
-          ),
+          if (!applicationsOpen)
+            KolabingButton(
+              label: AppLocalizations.of(context).exploreApplicationsClosed,
+              onPressed: null,
+              variant: KolabingButtonVariant.primary,
+              icon: const Icon(LucideIcons.calendarX),
+              height: 52,
+            )
+          else
+            KolabingButton(
+              label: showsSubscribeAction
+                  ? AppLocalizations.of(context).exploreDetailUnlockToApply
+                  : AppLocalizations.of(context).exploreDetailApplyNow,
+              onPressed: canApply ? onApply : onSubscribe,
+              variant: KolabingButtonVariant.primary,
+              icon: Icon(
+                showsSubscribeAction ? LucideIcons.crown : LucideIcons.send,
+              ),
+              height: 52,
+            ),
           if (onViewCreatorProfile != null && !hideCreatorIdentity) ...[
             const SizedBox(height: KolabingSpacing.xs),
             // C9: secondary link to the creator's public profile. Routes
