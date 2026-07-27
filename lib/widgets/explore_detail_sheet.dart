@@ -171,7 +171,8 @@ class ExploreDetailSheet extends ConsumerWidget {
     // render the true values and let [BlurredIdentity] obscure them. Everything
     // else in this sheet stays fully visible.
     final displayName =
-        creator?.displayName ?? AppLocalizations.of(context).exploreDetailUnknownCreator;
+        creator?.displayName ??
+        AppLocalizations.of(context).exploreDetailUnknownCreator;
     final initial = creator?.initial ?? '?';
     final avatarUrl = creator?.avatarUrl;
     final userType = creator?.userType ?? '';
@@ -385,7 +386,11 @@ class ExploreDetailSheet extends ConsumerWidget {
             shape: BoxShape.circle,
           ),
           child: Center(
-            child: Icon(icon, size: 16, color: context.colors.categoryOrangeText),
+            child: Icon(
+              icon,
+              size: 16,
+              color: context.colors.categoryOrangeText,
+            ),
           ),
         ),
         const SizedBox(width: KolabingSpacing.sm),
@@ -417,7 +422,10 @@ class ExploreDetailSheet extends ConsumerWidget {
     ),
   );
 
-  String _buildScaleLabel(BuildContext context, CommunityRequestSummary request) {
+  String _buildScaleLabel(
+    BuildContext context,
+    CommunityRequestSummary request,
+  ) {
     final l10n = AppLocalizations.of(context);
     final parts = <String>[];
     if (request.communitySize != null) {
@@ -453,11 +461,7 @@ class ExploreDetailSheet extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              LucideIcons.gift,
-              size: 18,
-              color: context.colors.onPrimary,
-            ),
+            Icon(LucideIcons.gift, size: 18, color: context.colors.onPrimary),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
               child: Text(
@@ -519,9 +523,7 @@ class ExploreDetailSheet extends ConsumerWidget {
     return Wrap(
       spacing: KolabingSpacing.xs,
       runSpacing: KolabingSpacing.xs,
-      children: items
-          .map((item) => _buildDetailPill(context, item))
-          .toList(),
+      children: items.map((item) => _buildDetailPill(context, item)).toList(),
     );
   }
 
@@ -716,9 +718,7 @@ class ExploreDetailSheet extends ConsumerWidget {
               icon: const Icon(LucideIcons.user, size: 16),
               label: Text(
                 AppLocalizations.of(context).exploreDetailViewCreatorProfile,
-                style: KolabingTextStyles.labelLarge.copyWith(
-                  fontSize: 13,
-                ),
+                style: KolabingTextStyles.labelLarge.copyWith(fontSize: 13),
               ),
               style: TextButton.styleFrom(
                 foregroundColor: context.colors.onSurfaceVariant,

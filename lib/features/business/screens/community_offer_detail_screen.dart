@@ -844,7 +844,9 @@ class _CommunityOfferDetailScreenState
     if (opportunity.hasApplied == true) {
       return _buildBottomButtonShell(
         child: KolabingButton(
-          label: AppLocalizations.of(context).communityOfferDetailAlreadyApplied,
+          label: AppLocalizations.of(
+            context,
+          ).communityOfferDetailAlreadyApplied,
           onPressed: null,
           variant: KolabingButtonVariant.secondary,
           isDisabled: true,

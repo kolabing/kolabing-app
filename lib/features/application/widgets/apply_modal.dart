@@ -63,8 +63,10 @@ bool opportunityApplicationsOpen(Opportunity opportunity, {DateTime? today}) {
   // buildSelectableApplicationDates returns the original (past) range for a
   // fully-expired window, so require at least one date that is today or later.
   final todayDate = DateUtils.dateOnly(today ?? DateTime.now());
-  return buildSelectableApplicationDates(opportunity, today: todayDate)
-      .any((date) => !date.isBefore(todayDate));
+  return buildSelectableApplicationDates(
+    opportunity,
+    today: todayDate,
+  ).any((date) => !date.isBefore(todayDate));
 }
 
 class ApplyModal extends ConsumerStatefulWidget {
@@ -175,8 +177,11 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
     // Validate date selection
     setState(() => _availabilityError = null);
     if (_selectedDates.isEmpty) {
-      setState(() => _availabilityError =
-          AppLocalizations.of(context).applyModalSelectDateError);
+      setState(
+        () => _availabilityError = AppLocalizations.of(
+          context,
+        ).applyModalSelectDateError,
+      );
       return;
     }
 
@@ -350,8 +355,9 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
 
                     // Message field — optional, but encouraged
                     _buildSectionTitle(
-                        AppLocalizations.of(context).applyModalMessageTitle,
-                        optional: true),
+                      AppLocalizations.of(context).applyModalMessageTitle,
+                      optional: true,
+                    ),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
                       AppLocalizations.of(context).applyModalMessageHelp,
@@ -375,8 +381,9 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
 
                     // Availability field — date picker constrained to opportunity range
                     _buildSectionTitle(
-                        AppLocalizations.of(context).applyModalSelectDatesTitle,
-                        required: true),
+                      AppLocalizations.of(context).applyModalSelectDatesTitle,
+                      required: true,
+                    ),
                     const SizedBox(height: KolabingSpacing.xs),
                     Text(
                       AppLocalizations.of(context).applyModalSelectDatesHelp,
@@ -562,11 +569,7 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
     ),
     child: Row(
       children: [
-        Icon(
-          LucideIcons.clock,
-          size: 18,
-          color: context.colors.textTertiary,
-        ),
+        Icon(LucideIcons.clock, size: 18, color: context.colors.textTertiary),
         const SizedBox(width: KolabingSpacing.sm),
         // Start time
         Expanded(
@@ -702,7 +705,8 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
   Widget _buildHeroCard() {
     final creator = widget.opportunity.creatorProfile;
     final creatorName =
-        creator?.displayName ?? AppLocalizations.of(context).applyModalUnknownHost;
+        creator?.displayName ??
+        AppLocalizations.of(context).applyModalUnknownHost;
     final creatorTypeLabel = (creator?.userType.isNotEmpty ?? false)
         ? '${creator!.userType[0].toUpperCase()}${creator.userType.substring(1)}'
         : AppLocalizations.of(context).applyModalHostFallback;
@@ -854,7 +858,11 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(f.icon, size: 13, color: context.colors.onSurfaceVariant),
+                  Icon(
+                    f.icon,
+                    size: 13,
+                    color: context.colors.onSurfaceVariant,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     f.label,
