@@ -7,6 +7,8 @@ import '../config/constants/radius.dart';
 import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
 import '../config/theme/typography.dart';
+import '../features/application/widgets/apply_modal.dart'
+    show opportunityApplicationsOpen;
 import '../features/discovery/models/discovery_item.dart';
 import '../features/event/models/event.dart';
 import '../features/event/providers/event_provider.dart';
@@ -169,7 +171,8 @@ class ExploreDetailSheet extends ConsumerWidget {
     // render the true values and let [BlurredIdentity] obscure them. Everything
     // else in this sheet stays fully visible.
     final displayName =
-        creator?.displayName ?? AppLocalizations.of(context).exploreDetailUnknownCreator;
+        creator?.displayName ??
+        AppLocalizations.of(context).exploreDetailUnknownCreator;
     final initial = creator?.initial ?? '?';
     final avatarUrl = creator?.avatarUrl;
     final userType = creator?.userType ?? '';
@@ -383,7 +386,11 @@ class ExploreDetailSheet extends ConsumerWidget {
             shape: BoxShape.circle,
           ),
           child: Center(
-            child: Icon(icon, size: 16, color: context.colors.categoryOrangeText),
+            child: Icon(
+              icon,
+              size: 16,
+              color: context.colors.categoryOrangeText,
+            ),
           ),
         ),
         const SizedBox(width: KolabingSpacing.sm),
@@ -415,7 +422,10 @@ class ExploreDetailSheet extends ConsumerWidget {
     ),
   );
 
-  String _buildScaleLabel(BuildContext context, CommunityRequestSummary request) {
+  String _buildScaleLabel(
+    BuildContext context,
+    CommunityRequestSummary request,
+  ) {
     final l10n = AppLocalizations.of(context);
     final parts = <String>[];
     if (request.communitySize != null) {
@@ -451,11 +461,7 @@ class ExploreDetailSheet extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              LucideIcons.gift,
-              size: 18,
-              color: context.colors.onPrimary,
-            ),
+            Icon(LucideIcons.gift, size: 18, color: context.colors.onPrimary),
             const SizedBox(width: KolabingSpacing.sm),
             Expanded(
               child: Text(
@@ -517,9 +523,7 @@ class ExploreDetailSheet extends ConsumerWidget {
     return Wrap(
       spacing: KolabingSpacing.xs,
       runSpacing: KolabingSpacing.xs,
-      children: items
-          .map((item) => _buildDetailPill(context, item))
-          .toList(),
+      children: items.map((item) => _buildDetailPill(context, item)).toList(),
     );
   }
 
@@ -658,7 +662,11 @@ class ExploreDetailSheet extends ConsumerWidget {
 
   Widget _buildActionButtons(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
-    final showsSubscribeAction = !canApply && onSubscribe != null;
+    // Applications closed (opportunity closed/completed or no date left): the
+    // Apply CTA is disabled and never falls through to the paywall.
+    final applicationsOpen = opportunityApplicationsOpen(opportunity);
+    final showsSubscribeAction =
+        applicationsOpen && !canApply && onSubscribe != null;
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -680,15 +688,26 @@ class ExploreDetailSheet extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          KolabingButton(
-            label: showsSubscribeAction
-                ? AppLocalizations.of(context).exploreDetailUnlockToApply
-                : AppLocalizations.of(context).exploreDetailApplyNow,
-            onPressed: canApply ? onApply : onSubscribe,
-            variant: KolabingButtonVariant.primary,
-            icon: Icon(showsSubscribeAction ? LucideIcons.crown : LucideIcons.send),
-            height: 52,
-          ),
+          if (!applicationsOpen)
+            KolabingButton(
+              label: AppLocalizations.of(context).exploreApplicationsClosed,
+              onPressed: null,
+              variant: KolabingButtonVariant.primary,
+              icon: const Icon(LucideIcons.calendarX),
+              height: 52,
+            )
+          else
+            KolabingButton(
+              label: showsSubscribeAction
+                  ? AppLocalizations.of(context).exploreDetailUnlockToApply
+                  : AppLocalizations.of(context).exploreDetailApplyNow,
+              onPressed: canApply ? onApply : onSubscribe,
+              variant: KolabingButtonVariant.primary,
+              icon: Icon(
+                showsSubscribeAction ? LucideIcons.crown : LucideIcons.send,
+              ),
+              height: 52,
+            ),
           if (onViewCreatorProfile != null && !hideCreatorIdentity) ...[
             const SizedBox(height: KolabingSpacing.xs),
             // C9: secondary link to the creator's public profile. Routes
@@ -699,9 +718,7 @@ class ExploreDetailSheet extends ConsumerWidget {
               icon: const Icon(LucideIcons.user, size: 16),
               label: Text(
                 AppLocalizations.of(context).exploreDetailViewCreatorProfile,
-                style: KolabingTextStyles.labelLarge.copyWith(
-                  fontSize: 13,
-                ),
+                style: KolabingTextStyles.labelLarge.copyWith(fontSize: 13),
               ),
               style: TextButton.styleFrom(
                 foregroundColor: context.colors.onSurfaceVariant,
