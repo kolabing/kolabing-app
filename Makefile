@@ -20,17 +20,33 @@
 DEV_DEFINE  := --dart-define=APP_ENV=dev
 PROD_DEFINE := --dart-define=APP_ENV=prod
 
-.PHONY: run-dev run-prod ipa-dev ipa-prod help
+.PHONY: run-dev run-prod ipa-dev ipa-prod serve-sim serve-sim-status serve-sim-stop help
 
 help:
 	@echo "Targets:"
-	@echo "  make run-dev    # flutter run against the DEV backend"
-	@echo "  make run-prod   # flutter run against the PROD backend"
-	@echo "  make ipa-dev    # build a DEV IPA (for the dev TestFlight group)"
-	@echo "  make ipa-prod   # build a PROD IPA (for normal testers / release)"
+	@echo "  make run-dev          # flutter run against the DEV backend"
+	@echo "  make run-prod         # flutter run against the PROD backend"
+	@echo "  make ipa-dev          # build a DEV IPA (for the dev TestFlight group)"
+	@echo "  make ipa-prod         # build a PROD IPA (for normal testers / release)"
+	@echo "  make serve-sim        # boot the iOS sim + stream it to a browser (macOS only; see docs/ios-serve-sim-qa.md)"
+	@echo "  make serve-sim-status # check whether a backgrounded serve-sim (started remotely) is running"
+	@echo "  make serve-sim-stop   # stop a backgrounded serve-sim"
 
 run-dev:
 	flutter run $(DEV_DEFINE)
+
+# iOS Simulator QA streamed to a browser via serve-sim. macOS (Apple Silicon) ONLY —
+# never on the Linux agent box, never a Flutter web stand-in. See docs/ios-serve-sim-qa.md.
+serve-sim:
+	./scripts/serve-sim.sh
+
+# Backgrounded start/status/stop, for a human at the terminal OR the SSH remote-launch
+# bridge (see docs/ios-serve-sim-qa.md, "Remote start (box -> Mac bridge)").
+serve-sim-status:
+	./scripts/serve-sim-remote.sh status
+
+serve-sim-stop:
+	./scripts/serve-sim-remote.sh stop
 
 run-prod:
 	flutter run $(PROD_DEFINE)
