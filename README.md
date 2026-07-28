@@ -80,45 +80,33 @@ Primary Logo: Kolabing "K" mark in yellow circle
 
 ### Primary Colors
 
+> **Single source of truth: `lib/config/theme/colors.dart` (`KolabingColors`).**
+> This is an abridged reference — when it disagrees with the code, the code wins.
+> Current palette is the warm "Atmospheric Editorial" set.
+
 ```dart
 class KolabingColors {
   // Primary Brand Colors
-  static const Color primary = Color(0xFFFFD861);        // Yellow - Main brand
-  static const Color primaryDark = Color(0xFFE5C057);    // Darker yellow for pressed states
-  static const Color onPrimary = Color(0xFF000000);      // Black text on primary
+  static const Color primary = Color(0xFFFFE28C);        // Warm yellow - Main brand
+  static const Color primaryDark = Color(0xFFF5D070);    // Darker yellow for pressed states
+  static const Color onPrimary = Color(0xFF19150F);      // Dark ink text on primary
 
   // Background Colors
-  static const Color background = Color(0xFFF7F8FA);     // Light gray background
+  static const Color background = Color(0xFFFAF5EA);     // Warm parchment background
   static const Color surface = Color(0xFFFFFFFF);        // White surfaces/cards
-  static const Color surfaceVariant = Color(0xFFF5F6F8); // Input backgrounds
+  static const Color surfaceVariant = Color(0xFFF5EFE3); // Input backgrounds
 
   // Text Colors
-  static const Color textPrimary = Color(0xFF232323);    // Primary text
-  static const Color textSecondary = Color(0xFF606060);  // Secondary/muted text
-  static const Color textTertiary = Color(0xFF888888);   // Tertiary/hint text
+  static const Color textPrimary = Color(0xFF1C1C16);    // Primary text (ink)
+  static const Color textSecondary = Color(0xFF3F3A32);  // Secondary/muted text
+  static const Color textTertiary = Color(0xFF8C8474);   // Tertiary/hint text
   static const Color textOnDark = Color(0xFFFFFFFF);     // White text on dark
 
-  // Dark Theme Colors (for auth screens)
-  static const Color darkBackground = Color(0xFF000000); // Black background
-  static const Color darkSurface = Color(0xFF222222);    // Dark surface/inputs
-  static const Color darkBorder = Color(0xFF444444);     // Dark borders
-
   // Semantic Colors
-  static const Color success = Color(0xFF7AE7A3);        // Success green
+  static const Color success = Color(0xFF56624D);        // Success (sage)
   static const Color warning = Color(0xFFFBC02D);        // Warning yellow
-  static const Color error = Color(0xFFE14D76);          // Error/destructive red
+  static const Color error = Color(0xFFBA1A1A);          // Error/destructive red
   static const Color info = Color(0xFF2196F3);           // Info blue
-
-  // Border Colors
-  static const Color border = Color(0xFFEBEBEB);         // Default border
-  static const Color borderFocus = Color(0xFFE8D7A0);    // Focus border
-  static const Color borderError = Color(0xFFFF6B6B);    // Error border
-
-  // Accent Colors (for categories/badges)
-  static const Color accentOrange = Color(0xFFFFDDAC);   // Orange badge bg
-  static const Color accentOrangeText = Color(0xFFD8910B); // Orange badge text
-  static const Color softYellow = Color(0xFFFFF6D8);     // Soft yellow bg
-  static const Color softYellowBorder = Color(0xFFF9E9AC); // Soft yellow border
 }
 ```
 
@@ -126,12 +114,11 @@ class KolabingColors {
 
 | Context | Color | Usage |
 |---------|-------|-------|
-| Primary Actions | `primary (#FFD861)` | Main CTAs, active tabs, highlights |
+| Primary Actions | `primary (#FFE28C)` | Main CTAs, active tabs, highlights |
 | Secondary Actions | `surface + border` | Secondary buttons, outlined actions |
-| Text on Yellow | `onPrimary (#000000)` | Always use black on yellow |
+| Text on Yellow | `onPrimary (#19150F)` | Always use dark ink on yellow |
 | Card Backgrounds | `surface (#FFFFFF)` | Cards, modals, bottom sheets |
-| Page Backgrounds | `background (#F7F8FA)` | Main app background |
-| Auth Screens | `darkBackground (#000000)` | Login, signup, onboarding |
+| Page Backgrounds | `background (#FAF5EA)` | Main app background |
 
 ### Gradient (Optional)
 
@@ -140,8 +127,8 @@ static const LinearGradient primaryGradient = LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
   colors: [
-    Color(0xFFFFD861),
-    Color(0xFFFFE082),
+    Color(0xFFFFE28C),
+    Color(0xFFFFF1C6),
   ],
 );
 ```
@@ -152,63 +139,27 @@ static const LinearGradient primaryGradient = LinearGradient(
 
 ### Font Families
 
+> **Single source of truth: `lib/config/theme/typography.dart`.** Fonts are loaded
+> at runtime via the `google_fonts` package — there are **no bundled `.ttf` assets**.
+
 ```dart
 class KolabingTypography {
-  // Primary Fonts
-  static const String fontDisplay = 'Rubik';        // Headlines, titles
-  static const String fontBody = 'Open Sans';       // Body text, inputs
-  static const String fontAccent = 'Darker Grotesque'; // Buttons, CTAs
-
-  // Fallback
-  static const String fontFallback = 'Inter';
+  // Display/headlines — Anton (editorial, uppercase)
+  static String get fontDisplay => GoogleFonts.anton().fontFamily!;
+  // Body / labels / buttons — Inter (readable, neutral)
+  static String get fontBody => GoogleFonts.inter().fontFamily!;
+  static String get fontLabel => GoogleFonts.inter().fontFamily!;
+  static String get fontFallback => GoogleFonts.inter().fontFamily!;
 }
-```
-
-### Font Installation (pubspec.yaml)
-
-```yaml
-fonts:
-  - family: Rubik
-    fonts:
-      - asset: assets/fonts/Rubik-Regular.ttf
-        weight: 400
-      - asset: assets/fonts/Rubik-Medium.ttf
-        weight: 500
-      - asset: assets/fonts/Rubik-SemiBold.ttf
-        weight: 600
-      - asset: assets/fonts/Rubik-Bold.ttf
-        weight: 700
-      - asset: assets/fonts/Rubik-ExtraBold.ttf
-        weight: 800
-
-  - family: OpenSans
-    fonts:
-      - asset: assets/fonts/OpenSans-Regular.ttf
-        weight: 400
-      - asset: assets/fonts/OpenSans-Medium.ttf
-        weight: 500
-      - asset: assets/fonts/OpenSans-SemiBold.ttf
-        weight: 600
-      - asset: assets/fonts/OpenSans-Bold.ttf
-        weight: 700
-
-  - family: DarkerGrotesque
-    fonts:
-      - asset: assets/fonts/DarkerGrotesque-Medium.ttf
-        weight: 500
-      - asset: assets/fonts/DarkerGrotesque-SemiBold.ttf
-        weight: 600
-      - asset: assets/fonts/DarkerGrotesque-Bold.ttf
-        weight: 700
 ```
 
 ### Text Styles
 
 ```dart
 class KolabingTextStyles {
-  // Display - Hero headings (Rubik, uppercase)
+  // Display - Hero headings (Anton, uppercase)
   static const TextStyle displayLarge = TextStyle(
-    fontFamily: 'Rubik',
+    fontFamily: 'Anton',
     fontSize: 32,
     fontWeight: FontWeight.w800,
     letterSpacing: 1.5,
@@ -216,7 +167,7 @@ class KolabingTextStyles {
   );
 
   static const TextStyle displayMedium = TextStyle(
-    fontFamily: 'Rubik',
+    fontFamily: 'Anton',
     fontSize: 28,
     fontWeight: FontWeight.w800,
     letterSpacing: 1.2,
@@ -224,82 +175,82 @@ class KolabingTextStyles {
   );
 
   static const TextStyle displaySmall = TextStyle(
-    fontFamily: 'Rubik',
+    fontFamily: 'Anton',
     fontSize: 24,
     fontWeight: FontWeight.w700,
     letterSpacing: 1.0,
     height: 1.2,
   );
 
-  // Headlines - Section headings (Rubik)
+  // Headlines - Section headings (Anton)
   static const TextStyle headlineLarge = TextStyle(
-    fontFamily: 'Rubik',
+    fontFamily: 'Anton',
     fontSize: 22,
     fontWeight: FontWeight.w700,
     height: 1.3,
   );
 
   static const TextStyle headlineMedium = TextStyle(
-    fontFamily: 'Rubik',
+    fontFamily: 'Anton',
     fontSize: 20,
     fontWeight: FontWeight.w600,
     height: 1.3,
   );
 
   static const TextStyle headlineSmall = TextStyle(
-    fontFamily: 'Rubik',
+    fontFamily: 'Anton',
     fontSize: 18,
     fontWeight: FontWeight.w600,
     height: 1.3,
   );
 
-  // Title - Card titles, navigation (Open Sans)
+  // Title - Card titles, navigation (Inter)
   static const TextStyle titleLarge = TextStyle(
-    fontFamily: 'OpenSans',
+    fontFamily: 'Inter',
     fontSize: 18,
     fontWeight: FontWeight.w700,
     height: 1.4,
   );
 
   static const TextStyle titleMedium = TextStyle(
-    fontFamily: 'OpenSans',
+    fontFamily: 'Inter',
     fontSize: 16,
     fontWeight: FontWeight.w600,
     height: 1.4,
   );
 
   static const TextStyle titleSmall = TextStyle(
-    fontFamily: 'OpenSans',
+    fontFamily: 'Inter',
     fontSize: 14,
     fontWeight: FontWeight.w600,
     height: 1.4,
   );
 
-  // Body - Regular text (Open Sans)
+  // Body - Regular text (Inter)
   static const TextStyle bodyLarge = TextStyle(
-    fontFamily: 'OpenSans',
+    fontFamily: 'Inter',
     fontSize: 16,
     fontWeight: FontWeight.w400,
     height: 1.5,
   );
 
   static const TextStyle bodyMedium = TextStyle(
-    fontFamily: 'OpenSans',
+    fontFamily: 'Inter',
     fontSize: 14,
     fontWeight: FontWeight.w400,
     height: 1.5,
   );
 
   static const TextStyle bodySmall = TextStyle(
-    fontFamily: 'OpenSans',
+    fontFamily: 'Inter',
     fontSize: 12,
     fontWeight: FontWeight.w400,
     height: 1.5,
   );
 
-  // Label - Buttons, form labels (Darker Grotesque)
+  // Label - Buttons, form labels (Inter)
   static const TextStyle labelLarge = TextStyle(
-    fontFamily: 'DarkerGrotesque',
+    fontFamily: 'Inter',
     fontSize: 16,
     fontWeight: FontWeight.w600,
     letterSpacing: 0.5,
@@ -307,7 +258,7 @@ class KolabingTextStyles {
   );
 
   static const TextStyle labelMedium = TextStyle(
-    fontFamily: 'DarkerGrotesque',
+    fontFamily: 'Inter',
     fontSize: 14,
     fontWeight: FontWeight.w500,
     letterSpacing: 0.4,
@@ -315,16 +266,16 @@ class KolabingTextStyles {
   );
 
   static const TextStyle labelSmall = TextStyle(
-    fontFamily: 'DarkerGrotesque',
+    fontFamily: 'Inter',
     fontSize: 12,
     fontWeight: FontWeight.w500,
     letterSpacing: 0.4,
     height: 1.2,
   );
 
-  // Button - CTA buttons (Darker Grotesque, uppercase)
+  // Button - CTA buttons (Inter, uppercase)
   static const TextStyle button = TextStyle(
-    fontFamily: 'DarkerGrotesque',
+    fontFamily: 'Inter',
     fontSize: 16,
     fontWeight: FontWeight.w600,
     letterSpacing: 1.0,
@@ -436,8 +387,8 @@ class KolabingPrimaryButton extends StatelessWidget {
   final bool isFullWidth;
 
   // Specifications:
-  // - Background: primary (#FFD861)
-  // - Text: black, Darker Grotesque, uppercase, semibold
+  // - Background: primary (#FFE28C)
+  // - Text: black, Inter, uppercase, semibold
   // - Height: 52dp
   // - Border radius: 12dp
   // - Padding: horizontal 24dp
@@ -449,7 +400,7 @@ class KolabingSecondaryButton extends StatelessWidget {
   // Specifications:
   // - Background: transparent or white
   // - Border: 1.5px solid border color
-  // - Text: textPrimary, Darker Grotesque
+  // - Text: textPrimary, Inter
   // - Height: 48dp
   // - Border radius: 12dp
 }
@@ -458,7 +409,7 @@ class KolabingSecondaryButton extends StatelessWidget {
 class KolabingTextButton extends StatelessWidget {
   // Specifications:
   // - No background or border
-  // - Text: primary color (#FFD861)
+  // - Text: primary color (#FFE28C)
   // - Underline on hover/focus
 }
 ```
@@ -471,15 +422,15 @@ class KolabingTextField extends StatelessWidget {
   // - Background: #222222
   // - Border: 1px solid #444444
   // - Text: white
-  // - Hint: #888888
+  // - Hint: #8C8474
   // - Border radius: 12dp
   // - Padding: 16dp horizontal, 14dp vertical
 
   // Light theme (Dashboard):
-  // - Background: #F5F6F8
+  // - Background: #F5EFE3
   // - Border: none (or 1px solid #EBEBEB)
-  // - Text: #232323
-  // - Hint: #888888
+  // - Text: #1C1C16
+  // - Hint: #8C8474
   // - Border radius: 8dp
 
   // Focus state:
@@ -487,8 +438,8 @@ class KolabingTextField extends StatelessWidget {
   // - Shadow: 0 0 0 3px rgba(255, 246, 216, 0.4)
 
   // Error state:
-  // - Border: 1px solid #FF6B6B
-  // - Helper text: #FF6B6B
+  // - Border: 1px solid #BA1A1A
+  // - Helper text: #BA1A1A
 }
 ```
 
@@ -504,7 +455,7 @@ class KolabingCard extends StatelessWidget {
   // - Padding: 16dp
 
   // Opportunity Card (Soft Yellow):
-  // - Background: #FFF6D8
+  // - Background: #FFF1C6
   // - Border radius: 18dp
   // - Border: 1.5px solid #F9E9AC
   // - Shadow: custom yellow shadow
@@ -542,8 +493,8 @@ class KolabingBottomNav extends StatelessWidget {
   // Items:
   // - Icon size: 24dp
   // - Label: labelSmall
-  // - Active: primary color (#FFD861)
-  // - Inactive: textSecondary (#606060)
+  // - Active: primary color (#FFE28C)
+  // - Inactive: textSecondary (#3F3A32)
 
   // Business tabs:
   // 1. Home (Dashboard)
@@ -1114,9 +1065,9 @@ PageRouteBuilder<T> slideUpRoute<T>(Widget page) {
 ### Color Contrast
 
 - Text on primary (yellow): Use black (#000000) - 12:1 ratio
-- Primary text on white: #232323 - 15.5:1 ratio
-- Secondary text: #606060 - 7:1 ratio
-- Error text on white: #E14D76 - 4.5:1 ratio (passes WCAG AA)
+- Primary text on white: #1C1C16 - 15.5:1 ratio
+- Secondary text: #3F3A32 - 7:1 ratio
+- Error text on white: #BA1A1A - 4.5:1 ratio (passes WCAG AA)
 
 ### Screen Reader Support
 

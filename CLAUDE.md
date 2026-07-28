@@ -406,19 +406,21 @@ Key route patterns:
 
 ## Design System Reference
 
-All design tokens are defined in README.md. Key values:
+The single source of truth for design tokens is **`lib/config/theme/colors.dart`**
+(`KolabingColors`) and **`lib/config/theme/typography.dart`** (`KolabingTypography`) —
+NOT the prose here or in README.md/DESIGN.md. When they disagree, the code wins. Key
+values (as of the "Atmospheric Editorial" palette):
 
 ### Colors
-- Primary: `#FFD861` (Yellow) - Always use black text on yellow
-- Background: `#F7F8FA` (Light Gray)
-- Dark Background: `#000000` (Auth screens only)
-- Text Primary: `#232323`
-- Success: `#7AE7A3`, Error: `#E14D76`
+- Primary: `#FFE28C` (warm yellow) — always use dark ink (`#19150F`) on yellow
+- Background: `#FAF5EA` (warm parchment)
+- Surface: `#FFFFFF`
+- Text Primary: `#1C1C16` (ink `#19150F` for on-surface)
+- Success: `#56624D`, Error: `#BA1A1A`
 
-### Typography
-- Display/Headlines: Rubik (bold, uppercase for display)
-- Body: Open Sans
-- Buttons/Labels: Darker Grotesque (uppercase)
+### Typography (via `google_fonts`, no bundled `.ttf`)
+- Display/Headlines: **Anton** (uppercase, editorial)
+- Body / Labels / Buttons: **Inter**
 
 ### Component Specs
 - Button height: 52dp, radius: 12dp
@@ -430,7 +432,7 @@ All design tokens are defined in README.md. Key values:
 
 1. **Auth state flow:** Check onboarding completion → Check auth state → Route to appropriate dashboard based on `user_type`
 
-2. **Bottom nav:** Both roles have the SAME 4 tabs — Home, Explore, My Kolabs, Profile (only the My Kolabs icon differs: briefcase for business, star for community). The former standalone "Applications" tab was merged into My Kolabs, which is a 4-sub-tab hub (`MyKolabsHubScreen`): **Offers** (role-specific list) · **Requests** (the absorbed Applications screen, embedded) · **Active** (scheduled/in-progress collaborations) · **Finished** (completed/cancelled). Nav is an `IndexedStack` in `business_main_screen.dart` / `community_main_screen.dart`; the legacy `/business/applications` & `/community/applications` routes still resolve (they open My Kolabs with the Requests sub-tab preselected).
+2. **Bottom nav:** Both roles share the first **4** tabs — Home, Explore, My Kolabs, Chats — and differ on the **5th**: Business has **Profile**, Community has **Community** (the leader's community hub; the community/attendee standalone Profile moved to a pushed screen). So each role has **5** tabs total (the My Kolabs icon also differs: briefcase for business, star for community). The former standalone "Applications" tab was merged into My Kolabs, which is a 4-sub-tab hub (`MyKolabsHubScreen`): **Offers** (role-specific list) · **Requests** (the absorbed Applications screen, embedded) · **Active** (scheduled/in-progress collaborations) · **Finished** (completed/cancelled). Nav is an `IndexedStack` in `business_main_screen.dart` / `community_main_screen.dart`; the legacy `/business/applications` & `/community/applications` routes still resolve (they open My Kolabs with the Requests sub-tab preselected).
 
 3. **Profile completion:** Optional post-registration flow with photo, city, category, social links
 
