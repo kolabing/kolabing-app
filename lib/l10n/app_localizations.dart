@@ -1405,7 +1405,7 @@ abstract class AppLocalizations {
   /// User-type selection card description for the Community option. 'kolab' is brand terminology, keep untranslated.
   ///
   /// In en, this message translates to:
-  /// **'Seeking sponsors and kolab partners'**
+  /// **'Looking for brands to Kolab with'**
   String get selectionCardCommunityDescription;
 
   /// User-type selection card description for the Attendee option.
@@ -5575,7 +5575,7 @@ abstract class AppLocalizations {
   /// Offering option: sponsorship, title
   ///
   /// In en, this message translates to:
-  /// **'Sponsorship budget'**
+  /// **'Collaboration budget'**
   String get offeringSponsorshipTitle;
 
   /// Offering option: sponsorship, subtitle
@@ -6211,7 +6211,7 @@ abstract class AppLocalizations {
   /// Intent option title: find a venue or sponsor
   ///
   /// In en, this message translates to:
-  /// **'Find a Venue or Sponsor'**
+  /// **'Find a Venue or Brand'**
   String get intentSelectionFindVenueTitle;
 
   /// Intent option subtitle: find a venue or sponsor
@@ -8537,13 +8537,13 @@ abstract class AppLocalizations {
   /// Community size value (members in the community)
   ///
   /// In en, this message translates to:
-  /// **'{count} community'**
+  /// **'{count} members'**
   String exploreDetailScaleCommunity(num count);
 
   /// Typical attendance value (expected attendees)
   ///
   /// In en, this message translates to:
-  /// **'{count} expected'**
+  /// **'~{count} expected to attend'**
   String exploreDetailScaleExpected(num count);
 
   /// Offer summary section title in the detail sheet
@@ -12143,8 +12143,26 @@ abstract class AppLocalizations {
   /// Business product path: offering field hint
   ///
   /// In en, this message translates to:
-  /// **'e.g., 20% off for community members, free samples, sponsored prizes'**
+  /// **'e.g., 20% off for community members, free samples, giveaway prizes'**
   String get businessProductOfferingHint;
+
+  /// Venue mode label: hosted at the business location
+  ///
+  /// In en, this message translates to:
+  /// **'Business Venue'**
+  String get venueModeBusinessVenue;
+
+  /// Venue mode label: hosted at the community location
+  ///
+  /// In en, this message translates to:
+  /// **'Community Venue'**
+  String get venueModeCommunityVenue;
+
+  /// Venue mode label: no specific venue yet (online or to be arranged)
+  ///
+  /// In en, this message translates to:
+  /// **'No venue yet'**
+  String get venueModeNoVenue;
 
   /// Business product path: photos field label
   ///

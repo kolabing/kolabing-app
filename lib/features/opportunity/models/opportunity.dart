@@ -76,7 +76,7 @@ enum VenueMode {
       case VenueMode.communityVenue:
         return 'Community Venue';
       case VenueMode.noVenue:
-        return 'No Venue';
+        return 'No venue yet';
     }
   }
 

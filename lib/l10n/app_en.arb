@@ -880,7 +880,7 @@
   "@selectionCardBusinessDescription": {
     "description": "User-type selection card description for the Business option."
   },
-  "selectionCardCommunityDescription": "Seeking sponsors and kolab partners",
+  "selectionCardCommunityDescription": "Looking for brands to Kolab with",
   "@selectionCardCommunityDescription": {
     "description": "User-type selection card description for the Community option. 'kolab' is brand terminology, keep untranslated."
   },
@@ -3848,7 +3848,7 @@
   "@offeringContentCreationSubtitle": {
     "description": "Offering option: content creation, subtitle"
   },
-  "offeringSponsorshipTitle": "Sponsorship budget",
+  "offeringSponsorshipTitle": "Collaboration budget",
   "@offeringSponsorshipTitle": {
     "description": "Offering option: sponsorship, title"
   },
@@ -4315,7 +4315,7 @@
   "@intentSelectionBusinessSubtitle": {
     "description": "Subtitle for business users on the intent selection screen"
   },
-  "intentSelectionFindVenueTitle": "Find a Venue or Sponsor",
+  "intentSelectionFindVenueTitle": "Find a Venue or Brand",
   "@intentSelectionFindVenueTitle": {
     "description": "Intent option title: find a venue or sponsor"
   },
@@ -5973,7 +5973,7 @@
   "@exploreDetailCommunitySize": {
     "description": "Summary card title for community size"
   },
-  "exploreDetailScaleCommunity": "{count} community",
+  "exploreDetailScaleCommunity": "{count} members",
   "@exploreDetailScaleCommunity": {
     "description": "Community size value (members in the community)",
     "placeholders": {
@@ -5982,7 +5982,7 @@
       }
     }
   },
-  "exploreDetailScaleExpected": "{count} expected",
+  "exploreDetailScaleExpected": "~{count} expected to attend",
   "@exploreDetailScaleExpected": {
     "description": "Typical attendance value (expected attendees)",
     "placeholders": {
@@ -7487,8 +7487,14 @@
   "@businessProductAboutSubtitle": { "description": "Business product path about step: subtitle" },
   "businessProductOfferingLabel": "What you offer",
   "@businessProductOfferingLabel": { "description": "Business product path: offering field label" },
-  "businessProductOfferingHint": "e.g., 20% off for community members, free samples, sponsored prizes",
+  "businessProductOfferingHint": "e.g., 20% off for community members, free samples, giveaway prizes",
   "@businessProductOfferingHint": { "description": "Business product path: offering field hint" },
+  "venueModeBusinessVenue": "Business Venue",
+  "@venueModeBusinessVenue": { "description": "Venue mode label: hosted at the business location" },
+  "venueModeCommunityVenue": "Community Venue",
+  "@venueModeCommunityVenue": { "description": "Venue mode label: hosted at the community location" },
+  "venueModeNoVenue": "No venue yet",
+  "@venueModeNoVenue": { "description": "Venue mode label: no specific venue yet (online or to be arranged)" },
   "businessProductPhotosLabel": "Photos (optional)",
   "@businessProductPhotosLabel": { "description": "Business product path: photos field label" },
 

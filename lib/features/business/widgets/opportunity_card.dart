@@ -7,9 +7,11 @@ import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../widgets/category_icon.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../opportunity/models/opportunity.dart';
+import '../../opportunity/opportunity_l10n.dart';
 
 /// Card widget for displaying an opportunity in the explore list
 ///
@@ -223,7 +225,7 @@ class OpportunityCard extends StatelessWidget {
           ),
         _TagPill(
           icon: LucideIcons.building2,
-          label: opportunity.venueMode.displayName,
+          label: opportunity.venueMode.label(AppLocalizations.of(context)),
           isDark: isDark,
         ),
         _TagPill(icon: LucideIcons.calendar, label: dateText, isDark: isDark),

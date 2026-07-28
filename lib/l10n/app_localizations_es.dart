@@ -709,7 +709,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get selectionCardCommunityDescription =>
-      'Busco patrocinadores y socios para kolabs';
+      'Busco marcas para hacer Kolabs';
 
   @override
   String get selectionCardAttendeeDescription =>
@@ -3091,7 +3091,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get offeringContentCreationSubtitle => 'Fotos y vídeo profesionales';
 
   @override
-  String get offeringSponsorshipTitle => 'Presupuesto de patrocinio';
+  String get offeringSponsorshipTitle => 'Presupuesto de colaboración';
 
   @override
   String get offeringSponsorshipSubtitle => 'Apoyo económico para el kolab';
@@ -3468,8 +3468,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Elige qué quieres promocionar a las comunidades.';
 
   @override
-  String get intentSelectionFindVenueTitle =>
-      'Encuentra un local o patrocinador';
+  String get intentSelectionFindVenueTitle => 'Encuentra un local o marca';
 
   @override
   String get intentSelectionFindVenueSubtitle =>
@@ -4830,12 +4829,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String exploreDetailScaleCommunity(num count) {
-    return '$count en la comunidad';
+    return '$count miembros';
   }
 
   @override
   String exploreDetailScaleExpected(num count) {
-    return '$count esperados';
+    return '~$count asistentes previstos';
   }
 
   @override
@@ -6932,7 +6931,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get businessProductOfferingHint =>
-      'p. ej., 20% de descuento para miembros de la comunidad, muestras gratis, premios patrocinados';
+      'p. ej., 20% de descuento para miembros de la comunidad, muestras gratis, premios para sorteos';
+
+  @override
+  String get venueModeBusinessVenue => 'Local del negocio';
+
+  @override
+  String get venueModeCommunityVenue => 'Local de la comunidad';
+
+  @override
+  String get venueModeNoVenue => 'Sin local aún';
 
   @override
   String get businessProductPhotosLabel => 'Fotos (opcional)';

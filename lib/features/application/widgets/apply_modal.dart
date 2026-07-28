@@ -12,6 +12,7 @@ import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/time_picker.dart';
 import '../../auth/models/auth_response.dart';
 import '../../opportunity/models/opportunity.dart';
+import '../../opportunity/opportunity_l10n.dart';
 import '../providers/application_provider.dart';
 
 /// Modal bottom sheet for applying to an opportunity
@@ -836,7 +837,10 @@ class _ApplyModalState extends ConsumerState<ApplyModal> {
         _FactItem(LucideIcons.mapPin, opp.preferredCity),
       _FactItem(LucideIcons.calendar, _formatDateRange()),
       _FactItem(LucideIcons.clock, opp.availabilityMode.displayName),
-      _FactItem(LucideIcons.building2, opp.venueMode.displayName),
+      _FactItem(
+        LucideIcons.building2,
+        opp.venueMode.label(AppLocalizations.of(context)),
+      ),
       if (opp.categories.isNotEmpty)
         _FactItem(LucideIcons.tag, opp.categories.take(2).join(', ')),
     ];
