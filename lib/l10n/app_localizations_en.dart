@@ -402,6 +402,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get applyModalNoDates => 'No available dates for this kolab';
 
   @override
+  String get applyModalClosedSnack => 'Applications for this Kolab are closed';
+
+  @override
+  String get exploreApplicationsClosed => 'Applications closed';
+
+  @override
   String get applyModalNotesLabel => 'Additional notes (optional)';
 
   @override
@@ -1633,6 +1639,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get collaborationDetailLeaveFeedbackLater => 'Leave optional feedback';
+
+  @override
+  String get collaborationDetailFeedbackCtaTitle => 'Rate this Kolab';
+
+  @override
+  String collaborationDetailFeedbackCtaBody(String partnerName) {
+    return 'Your review helps $partnerName build trust on Kolabing.';
+  }
+
+  @override
+  String get collaborationDetailFeedbackCtaButton => 'Leave a review';
 
   @override
   String get collaborationDetailFeedbackAlreadyLeft =>
@@ -5041,6 +5058,68 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dashboardDefaultCommunityName => 'Community';
+
+  @override
+  String get dashboardPositioningTitle =>
+      'Fill your business with the right people.';
+
+  @override
+  String get dashboardPositioningSubtitle =>
+      'Create experiences that turn communities into visits, content and loyalty.';
+
+  @override
+  String get dashboardActivityPillLabel => 'BUSINESS ACTIVITY';
+
+  @override
+  String get dashboardLiveOffersLabel => 'LIVE OFFERS';
+
+  @override
+  String get dashboardNewAppsLabel => 'NEW APPS';
+
+  @override
+  String get dashboardActiveStatLabel => 'ACTIVE';
+
+  @override
+  String get dashboardCompletedStatLabel => 'COMPLETED';
+
+  @override
+  String get dashboardGrowSectionTitle => 'GROW YOUR BUSINESS';
+
+  @override
+  String get dashboardGrowCreateTitle => 'Create a Kolab';
+
+  @override
+  String get dashboardGrowCreateSubtitle =>
+      'Post a new offer for communities to apply';
+
+  @override
+  String get dashboardGrowReviewTitle => 'Review applications';
+
+  @override
+  String dashboardGrowReviewSubtitlePending(int count) {
+    return '$count pending review';
+  }
+
+  @override
+  String get dashboardGrowReviewSubtitleEmpty => 'No pending applications';
+
+  @override
+  String get dashboardGrowFindSubtitle => 'Browse community requests';
+
+  @override
+  String get dashboardGrowViewKolabsTitle => 'View your Kolabs';
+
+  @override
+  String dashboardGrowViewKolabsSubtitle(int active, int completed) {
+    return '$active active · $completed completed';
+  }
+
+  @override
+  String get dashboardEmptyUpcomingSubtitle =>
+      'Create a Kolab to start filling your calendar';
+
+  @override
+  String get dashboardHeroCreateKolabButton => '+ CREATE A KOLAB';
 
   @override
   String get eventHubOpenChat => 'Open event chat';

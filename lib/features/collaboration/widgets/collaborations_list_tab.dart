@@ -53,7 +53,7 @@ class CollaborationsListTab extends ConsumerWidget {
         error: (e, _) => _ScrollableCenter(
           child: _Message(
             icon: LucideIcons.alertCircle,
-            title: 'Something went wrong',
+            title: AppLocalizations.of(context).commonErrorGeneric,
             message: '$e',
             isDark: isDark,
           ),
@@ -101,17 +101,20 @@ class _CollaborationCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final partner = collaboration.businessPartner.name.isNotEmpty
-        ? '${collaboration.businessPartner.name} × ${collaboration.communityPartner.name}'
-        : collaboration.communityPartner.name;
-
-    // Show the counterpart (the party you are kolabing with) first: business
-    // viewers see the community partner, community viewers see the business
-    // partner. Fall back to the kolab's own posted photo.
+    // Show the counterpart (the party you are kolabing with), not your own
+    // name: business viewers see the community partner, community viewers
+    // see the business partner. Previously this always led with the business
+    // name, so a long business name would push the actual partner off the
+    // card entirely (maxLines: 2 truncated before "× partner" ever showed).
     final viewer = ref.watch(authProvider).user;
     final counterpart = viewer?.isBusiness ?? false
         ? collaboration.communityPartner
         : collaboration.businessPartner;
+    final partner = counterpart.name.isNotEmpty
+        ? counterpart.name
+        : (collaboration.businessPartner.name.isNotEmpty
+              ? collaboration.businessPartner.name
+              : collaboration.communityPartner.name);
     final counterpartPhoto = counterpart.profilePhoto;
     final imageUrl = (counterpartPhoto != null && counterpartPhoto.isNotEmpty)
         ? counterpartPhoto
@@ -140,7 +143,11 @@ class _CollaborationCard extends ConsumerWidget {
           const SizedBox(height: 7),
           Row(
             children: [
-              Icon(LucideIcons.calendar, size: 12, color: context.colors.textTertiary),
+              Icon(
+                LucideIcons.calendar,
+                size: 12,
+                color: context.colors.textTertiary,
+              ),
               const SizedBox(width: 4),
               Text(
                 collaboration.formattedDate,
@@ -151,7 +158,11 @@ class _CollaborationCard extends ConsumerWidget {
               if (collaboration.scheduledTime != null &&
                   collaboration.scheduledTime!.isNotEmpty) ...[
                 const SizedBox(width: KolabingSpacing.sm),
-                Icon(LucideIcons.clock, size: 12, color: context.colors.textTertiary),
+                Icon(
+                  LucideIcons.clock,
+                  size: 12,
+                  color: context.colors.textTertiary,
+                ),
                 const SizedBox(width: 4),
                 Flexible(
                   child: Text(
@@ -164,7 +175,11 @@ class _CollaborationCard extends ConsumerWidget {
                 ),
               ],
               const Spacer(),
-              Icon(LucideIcons.chevronRight, size: 16, color: context.colors.textTertiary),
+              Icon(
+                LucideIcons.chevronRight,
+                size: 16,
+                color: context.colors.textTertiary,
+              ),
             ],
           ),
           // Two-sided feedback gate: once the viewer confirmed but the Kolab is
@@ -184,8 +199,9 @@ class _CollaborationCard extends ConsumerWidget {
                 const SizedBox(width: 4),
                 Flexible(
                   child: Text(
-                    AppLocalizations.of(context)
-                        .collaborationCardWaitingForPartner,
+                    AppLocalizations.of(
+                      context,
+                    ).collaborationCardWaitingForPartner,
                     style: KolabingTextStyles.labelSmall.copyWith(
                       fontWeight: FontWeight.w600,
                       color: context.colors.onSurfaceVariant,

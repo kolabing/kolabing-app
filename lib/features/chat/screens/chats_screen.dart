@@ -8,6 +8,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/cards/kolabing_cards.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../models/chat_thread.dart';
 import '../providers/chat_providers.dart';
 import '../widgets/chat_management.dart';
@@ -228,10 +229,23 @@ class _ThreadTile extends ConsumerWidget {
 
   final ChatThread thread;
 
-  String _titleFor(AppLocalizations l10n) {
+  String _titleFor(AppLocalizations l10n, WidgetRef ref) {
     if (thread.name != null && thread.name!.isNotEmpty) return thread.name!;
     if (thread.participants.isNotEmpty) {
-      return thread.participants.map((p) => p.name).join(', ');
+      // Show the counterpart(s), not the viewer's own name — a 1:1
+      // collaboration thread previously joined ALL participants (including
+      // yourself), so e.g. a business saw "Real Run Club, Eixample 46 …"
+      // instead of just "Real Run Club".
+      final user = ref.watch(authProvider).user;
+      final myProfileId =
+          user?.communityProfile?.id ?? user?.businessProfile?.id;
+      final others = (myProfileId == null || myProfileId.isEmpty)
+          ? thread.participants
+          : thread.participants
+                .where((p) => p.profileId != myProfileId)
+                .toList();
+      final names = others.isNotEmpty ? others : thread.participants;
+      return names.map((p) => p.name).join(', ');
     }
     return l10n.chatThreadFallbackTitle;
   }
@@ -278,7 +292,7 @@ class _ThreadTile extends ConsumerWidget {
             ),
           ),
           title: Text(
-            _titleFor(l10n),
+            _titleFor(l10n, ref),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: KolabingTextStyles.bodyMedium.copyWith(

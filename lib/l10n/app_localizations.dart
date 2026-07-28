@@ -838,6 +838,18 @@ abstract class AppLocalizations {
   /// **'No available dates for this kolab'**
   String get applyModalNoDates;
 
+  /// Snackbar shown when the apply modal is opened for a closed/date-exhausted opportunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications for this Kolab are closed'**
+  String get applyModalClosedSnack;
+
+  /// Label shown on an offer whose application window has closed or is date-exhausted.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications closed'**
+  String get exploreApplicationsClosed;
+
   /// Label for the optional availability notes field.
   ///
   /// In en, this message translates to:
@@ -3003,6 +3015,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Leave optional feedback'**
   String get collaborationDetailLeaveFeedbackLater;
+
+  /// Title of the post-completion review CTA card.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate this Kolab'**
+  String get collaborationDetailFeedbackCtaTitle;
+
+  /// Body copy of the post-completion review CTA card.
+  ///
+  /// In en, this message translates to:
+  /// **'Your review helps {partnerName} build trust on Kolabing.'**
+  String collaborationDetailFeedbackCtaBody(String partnerName);
+
+  /// Button label on the post-completion review CTA card.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave a review'**
+  String get collaborationDetailFeedbackCtaButton;
 
   /// Shown post-completion once the viewer has submitted optional feedback.
   ///
@@ -9007,6 +9037,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Community'**
   String get dashboardDefaultCommunityName;
+
+  /// No description provided for @dashboardPositioningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill your business with the right people.'**
+  String get dashboardPositioningTitle;
+
+  /// No description provided for @dashboardPositioningSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create experiences that turn communities into visits, content and loyalty.'**
+  String get dashboardPositioningSubtitle;
+
+  /// No description provided for @dashboardActivityPillLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'BUSINESS ACTIVITY'**
+  String get dashboardActivityPillLabel;
+
+  /// No description provided for @dashboardLiveOffersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE OFFERS'**
+  String get dashboardLiveOffersLabel;
+
+  /// No description provided for @dashboardNewAppsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'NEW APPS'**
+  String get dashboardNewAppsLabel;
+
+  /// No description provided for @dashboardActiveStatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ACTIVE'**
+  String get dashboardActiveStatLabel;
+
+  /// No description provided for @dashboardCompletedStatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'COMPLETED'**
+  String get dashboardCompletedStatLabel;
+
+  /// No description provided for @dashboardGrowSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'GROW YOUR BUSINESS'**
+  String get dashboardGrowSectionTitle;
+
+  /// No description provided for @dashboardGrowCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Kolab'**
+  String get dashboardGrowCreateTitle;
+
+  /// No description provided for @dashboardGrowCreateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Post a new offer for communities to apply'**
+  String get dashboardGrowCreateSubtitle;
+
+  /// No description provided for @dashboardGrowReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review applications'**
+  String get dashboardGrowReviewTitle;
+
+  /// Grow-section subtitle when there are pending applications.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} pending review'**
+  String dashboardGrowReviewSubtitlePending(int count);
+
+  /// No description provided for @dashboardGrowReviewSubtitleEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending applications'**
+  String get dashboardGrowReviewSubtitleEmpty;
+
+  /// No description provided for @dashboardGrowFindSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse community requests'**
+  String get dashboardGrowFindSubtitle;
+
+  /// No description provided for @dashboardGrowViewKolabsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'View your Kolabs'**
+  String get dashboardGrowViewKolabsTitle;
+
+  /// Grow-section subtitle summarizing active/completed collaborations.
+  ///
+  /// In en, this message translates to:
+  /// **'{active} active · {completed} completed'**
+  String dashboardGrowViewKolabsSubtitle(int active, int completed);
+
+  /// No description provided for @dashboardEmptyUpcomingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Kolab to start filling your calendar'**
+  String get dashboardEmptyUpcomingSubtitle;
+
+  /// No description provided for @dashboardHeroCreateKolabButton.
+  ///
+  /// In en, this message translates to:
+  /// **'+ CREATE A KOLAB'**
+  String get dashboardHeroCreateKolabButton;
 
   /// Event hub: button to open the event chat thread
   ///

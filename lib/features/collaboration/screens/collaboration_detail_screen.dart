@@ -2114,43 +2114,70 @@ class _PostCompletionFeedbackSection extends ConsumerWidget {
       );
     }
 
+    // Styled to match _CompleteKolabSection's weight (title + body + solid
+    // button) instead of a plain text row — reviews are a core trust signal
+    // for the marketplace, not a throwaway "optional" line.
     return Container(
       margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
-        color: context.colors.surface,
+        color: context.colors.primary.withOpacity(0.12),
         borderRadius: KolabingRadius.borderRadiusLg,
-        border: Border.all(color: context.colors.darkBorder),
+        border: Border.all(color: context.colors.primaryDark.withOpacity(0.4)),
       ),
-      child: GestureDetector(
-        onTap: () async {
-          await KolabCompletionSheet.show(
-            context,
-            collaborationId: collaborationId,
-            partnerName: partnerName,
-            startAtFeedback: true,
-          );
-          ref.invalidate(collaborationDetailProvider(collaborationId));
-        },
-        child: Row(
-          children: [
-            Icon(
-              LucideIcons.star,
-              size: 18,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const Text('⭐', style: TextStyle(fontSize: 18)),
+              const SizedBox(width: 8),
+              Text(
+                l10n.collaborationDetailFeedbackCtaTitle,
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.onSurface,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            l10n.collaborationDetailFeedbackCtaBody(partnerName),
+            style: KolabingTextStyles.captionSecondary.copyWith(
               color: context.colors.onSurfaceVariant,
             ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
+          ),
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: () async {
+              await KolabCompletionSheet.show(
+                context,
+                collaborationId: collaborationId,
+                partnerName: partnerName,
+                startAtFeedback: true,
+              );
+              ref.invalidate(collaborationDetailProvider(collaborationId));
+            },
+            child: Container(
+              height: 48,
+              decoration: BoxDecoration(
+                color: context.colors.primary,
+                borderRadius: BorderRadius.circular(KolabingRadius.md),
+              ),
+              alignment: Alignment.center,
               child: Text(
-                l10n.collaborationDetailLeaveFeedbackLater,
+                l10n.collaborationDetailFeedbackCtaButton,
                 style: KolabingTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
                   color: context.colors.onSurface,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

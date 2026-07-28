@@ -34,4 +34,88 @@ void main() {
       expect(dates.map((date) => date.day).toList(), <int>[11, 13]);
     },
   );
+
+  group('opportunityApplicationsOpen', () {
+    Opportunity build({
+      required AvailabilityMode mode,
+      required DateTime start,
+      required DateTime end,
+      List<int> recurringDays = const <int>[],
+      OpportunityStatus status = OpportunityStatus.published,
+    }) => Opportunity(
+      id: 'opp-1',
+      title: 'T',
+      description: 'D',
+      businessOffer: const BusinessOffer(),
+      communityDeliverables: const CommunityDeliverables(),
+      categories: const <String>['Wellness'],
+      availabilityMode: mode,
+      availabilityStart: start,
+      availabilityEnd: end,
+      recurringDays: recurringDays,
+      venueMode: VenueMode.businessVenue,
+      preferredCity: 'Barcelona',
+      status: status,
+    );
+
+    final today = DateTime(2030, 6, 10); // a Monday
+
+    test('open when a one-time window is still in the future', () {
+      final o = build(
+        mode: AvailabilityMode.oneTime,
+        start: DateTime(2030, 6, 10),
+        end: DateTime(2030, 6, 16),
+      );
+      expect(opportunityApplicationsOpen(o, today: today), isTrue);
+    });
+
+    test('closed when the window is entirely in the past', () {
+      final o = build(
+        mode: AvailabilityMode.oneTime,
+        start: DateTime(2020, 1, 1),
+        end: DateTime(2020, 1, 5),
+      );
+      expect(opportunityApplicationsOpen(o, today: today), isFalse);
+    });
+
+    test('open when a recurring day still falls in the remaining window', () {
+      final o = build(
+        mode: AvailabilityMode.recurring,
+        start: DateTime(2030, 6, 10),
+        end: DateTime(2030, 6, 16),
+        recurringDays: const <int>[2, 4], // Tue, Thu
+      );
+      expect(opportunityApplicationsOpen(o, today: today), isTrue);
+    });
+
+    test('closed when no recurring day remains in the window', () {
+      final o = build(
+        mode: AvailabilityMode.recurring,
+        start: DateTime(2030, 6, 11), // Tue
+        end: DateTime(2030, 6, 16), // Sun — no Monday in range
+        recurringDays: const <int>[1], // Monday only
+      );
+      expect(opportunityApplicationsOpen(o, today: today), isFalse);
+    });
+
+    test('closed when status is closed even with valid future dates', () {
+      final o = build(
+        mode: AvailabilityMode.oneTime,
+        start: DateTime(2030, 6, 10),
+        end: DateTime(2030, 6, 16),
+        status: OpportunityStatus.closed,
+      );
+      expect(opportunityApplicationsOpen(o, today: today), isFalse);
+    });
+
+    test('closed when status is completed even with valid future dates', () {
+      final o = build(
+        mode: AvailabilityMode.oneTime,
+        start: DateTime(2030, 6, 10),
+        end: DateTime(2030, 6, 16),
+        status: OpportunityStatus.completed,
+      );
+      expect(opportunityApplicationsOpen(o, today: today), isFalse);
+    });
+  });
 }
