@@ -402,6 +402,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get applyModalNoDates => 'No available dates for this kolab';
 
   @override
+  String get applyModalClosedSnack => 'Applications for this Kolab are closed';
+
+  @override
+  String get exploreApplicationsClosed => 'Applications closed';
+
+  @override
   String get applyModalNotesLabel => 'Additional notes (optional)';
 
   @override

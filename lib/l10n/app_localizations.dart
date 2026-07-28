@@ -838,6 +838,18 @@ abstract class AppLocalizations {
   /// **'No available dates for this kolab'**
   String get applyModalNoDates;
 
+  /// Snackbar shown when the apply modal is opened for a closed/date-exhausted opportunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications for this Kolab are closed'**
+  String get applyModalClosedSnack;
+
+  /// Label shown on an offer whose application window has closed or is date-exhausted.
+  ///
+  /// In en, this message translates to:
+  /// **'Applications closed'**
+  String get exploreApplicationsClosed;
+
   /// Label for the optional availability notes field.
   ///
   /// In en, this message translates to:

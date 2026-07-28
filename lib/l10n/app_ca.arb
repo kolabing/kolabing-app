@@ -123,6 +123,8 @@
   "applyModalSelectDatesHelp": "Tria entre les dates disponibles per a aquest kolab",
   "applyModalSelectDateError": "Selecciona almenys una data",
   "applyModalNoDates": "No hi ha dates disponibles per a aquest kolab",
+  "applyModalClosedSnack": "Les inscripcions per a aquest kolab estan tancades",
+  "exploreApplicationsClosed": "Inscripcions tancades",
   "applyModalNotesLabel": "Notes addicionals (opcional)",
   "applyModalNotesHint": "p. ex., Flexible amb l'horari, prefereixo els matins...",
   "applyModalTimeFrom": "Des de",

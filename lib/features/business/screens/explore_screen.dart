@@ -528,8 +528,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       // Never surface the viewer's own post — you can't collaborate with
       // yourself. (The discovery feed doesn't exclude own items server-side.)
       if (_isOwnItem(item)) return false;
-      final end = item.availability.end;
-      return !end.isBefore(DateTime(today.year, today.month, today.day));
+      // Drop date-exhausted Kolabs from the discovery deck (recurring-aware,
+      // not just an end-date check). Saved list is intentionally NOT filtered.
+      return opportunityApplicationsOpen(item.toOpportunity(), today: today);
     }).toList();
 
     final itemCount = activeItems.length + (listState.isLoadingMore ? 1 : 0);

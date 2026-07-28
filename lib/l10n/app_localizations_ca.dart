@@ -406,6 +406,13 @@ class AppLocalizationsCa extends AppLocalizations {
       'No hi ha dates disponibles per a aquest kolab';
 
   @override
+  String get applyModalClosedSnack =>
+      'Les inscripcions per a aquest kolab estan tancades';
+
+  @override
+  String get exploreApplicationsClosed => 'Inscripcions tancades';
+
+  @override
   String get applyModalNotesLabel => 'Notes addicionals (opcional)';
 
   @override
