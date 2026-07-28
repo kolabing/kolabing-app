@@ -19,12 +19,16 @@ import 'chat_thread_screen.dart';
 /// attendee = main + tier-granted + RSVP'd event chats). The app just groups
 /// whatever it receives by type.
 class ChatsScreen extends ConsumerStatefulWidget {
-  const ChatsScreen({super.key, this.embedded = false});
+  const ChatsScreen({super.key, this.embedded = false, this.onExplore});
 
   /// When true, render as a bottom-nav tab body — no Scaffold/AppBar, since the
   /// role shell already supplies the KolabingAppBar (NF-12). When false, it's a
   /// standalone pushed screen with its own "Chats" app bar.
   final bool embedded;
+
+  /// Jumps to the Explore tab from the empty-inbox state; hidden when null
+  /// (e.g. the standalone pushed screen has no tab shell to switch).
+  final VoidCallback? onExplore;
 
   @override
   ConsumerState<ChatsScreen> createState() => _ChatsScreenState();
@@ -66,7 +70,10 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
         final joinable = threads.where((t) => t.canJoin).toList();
         final manageable = _manageableCommunities(threads);
         if (threads.isEmpty && manageable.isEmpty) {
-          return _EmptyChats(onCreate: _onCreateChat(manageable));
+          return _EmptyChats(
+            onCreate: _onCreateChat(manageable),
+            onExplore: widget.onExplore,
+          );
         }
         return RefreshIndicator(
           onRefresh: () => ref.read(chatThreadsProvider.notifier).reload(),
@@ -470,14 +477,32 @@ class _SectionLabel extends StatelessWidget {
 }
 
 class _EmptyChats extends StatelessWidget {
-  const _EmptyChats({this.onCreate});
+  const _EmptyChats({this.onCreate, this.onExplore});
 
   /// When set (manager with no chats yet), shows a create-chat button.
   final VoidCallback? onCreate;
 
+  /// Chats only open once you have an accepted application, so an empty
+  /// inbox is usually a "go find a Kolab" moment, not just a dead end.
+  final VoidCallback? onExplore;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final actions = <Widget>[
+      if (onCreate != null)
+        FilledButton.icon(
+          onPressed: onCreate,
+          icon: const Icon(LucideIcons.plus, size: 18),
+          label: Text(l10n.chatManageCreateChat),
+        ),
+      if (onExplore != null)
+        OutlinedButton.icon(
+          onPressed: onExplore,
+          icon: const Icon(LucideIcons.search, size: 18),
+          label: Text(l10n.dashboardFindAKolab),
+        ),
+    ];
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(KolabingSpacing.xl),
@@ -485,12 +510,17 @@ class _EmptyChats extends StatelessWidget {
           icon: LucideIcons.messageCircle,
           title: l10n.chatInboxEmptyTitle,
           message: l10n.chatInboxEmptyBody,
-          action: onCreate == null
+          action: actions.isEmpty
               ? null
-              : FilledButton.icon(
-                  onPressed: onCreate,
-                  icon: const Icon(LucideIcons.plus, size: 18),
-                  label: Text(l10n.chatManageCreateChat),
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final w in actions) ...[
+                      w,
+                      if (w != actions.last)
+                        const SizedBox(height: KolabingSpacing.xs),
+                    ],
+                  ],
                 ),
         ),
       ),

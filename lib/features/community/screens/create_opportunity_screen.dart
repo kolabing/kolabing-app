@@ -13,6 +13,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/time_picker.dart';
 import '../../onboarding/widgets/photo_upload_widget.dart';
 import '../../opportunity/models/opportunity.dart';
+import '../../opportunity/opportunity_l10n.dart';
 import '../../opportunity/providers/opportunity_form_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../opportunity/utils/opportunity_share_launcher.dart';
@@ -350,11 +351,7 @@ class _CreateOpportunityScreenState
       color: context.colors.errorBg,
       child: Row(
         children: [
-          Icon(
-            LucideIcons.alertCircle,
-            size: 18,
-            color: context.colors.error,
-          ),
+          Icon(LucideIcons.alertCircle, size: 18, color: context.colors.error),
           const SizedBox(width: KolabingSpacing.xs),
           Expanded(
             child: Text(
@@ -367,11 +364,7 @@ class _CreateOpportunityScreenState
           GestureDetector(
             onTap: () =>
                 ref.read(opportunityFormProvider.notifier).clearError(),
-            child: Icon(
-              LucideIcons.x,
-              size: 16,
-              color: context.colors.error,
-            ),
+            child: Icon(LucideIcons.x, size: 16, color: context.colors.error),
           ),
         ],
       ),
@@ -502,7 +495,9 @@ class _CreateOpportunityScreenState
                     Text(
                       category,
                       style: KolabingTextStyles.captionSecondary.copyWith(
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
                         color: isSelected
                             ? context.colors.onSurface
                             : context.colors.onSurfaceVariant,
@@ -937,26 +932,27 @@ class _CreateOpportunityScreenState
           children: AvailabilityMode.values
               .where((mode) => mode != AvailabilityMode.immediate)
               .map((mode) {
-            final isSelected = opp.availabilityMode == mode;
-            return Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  right: mode != AvailabilityMode.recurring
-                      ? KolabingSpacing.xs
-                      : 0,
-                ),
-                child: _buildSelectionCard(
-                  icon: _availabilityModeIcon(mode),
-                  title: mode.displayName,
-                  description: mode.description,
-                  isSelected: isSelected,
-                  onTap: () => ref
-                      .read(opportunityFormProvider.notifier)
-                      .updateAvailabilityMode(mode),
-                ),
-              ),
-            );
-          }).toList(),
+                final isSelected = opp.availabilityMode == mode;
+                return Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      right: mode != AvailabilityMode.recurring
+                          ? KolabingSpacing.xs
+                          : 0,
+                    ),
+                    child: _buildSelectionCard(
+                      icon: _availabilityModeIcon(mode),
+                      title: mode.displayName,
+                      description: mode.description,
+                      isSelected: isSelected,
+                      onTap: () => ref
+                          .read(opportunityFormProvider.notifier)
+                          .updateAvailabilityMode(mode),
+                    ),
+                  ),
+                );
+              })
+              .toList(),
         ),
         const SizedBox(height: KolabingSpacing.lg),
 
@@ -1019,11 +1015,21 @@ class _CreateOpportunityScreenState
             color: context.colors.primary,
             backgroundColor: context.colors.darkBorder,
           ),
-          error: (e, _) => Text(
-            l10n.createOpportunityCitiesLoadError(e.toString()),
-            style: KolabingTextStyles.captionSecondary.copyWith(
-              color: context.colors.error,
-            ),
+          error: (e, _) => Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.createOpportunityCitiesLoadError(e.toString()),
+                  style: KolabingTextStyles.captionSecondary.copyWith(
+                    color: context.colors.error,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => ref.invalidate(citiesProvider),
+                child: Text(l10n.commonRetry),
+              ),
+            ],
           ),
           data: (cities) => DropdownButtonFormField<String>(
             value: opp.preferredCity.isNotEmpty ? opp.preferredCity : null,
@@ -1200,7 +1206,7 @@ class _CreateOpportunityScreenState
               // Venue mode
               _buildReviewInfoRow(
                 LucideIcons.building,
-                opp.venueMode.displayName,
+                opp.venueMode.label(AppLocalizations.of(context)),
               ),
             ],
           ),
@@ -1267,9 +1273,7 @@ class _CreateOpportunityScreenState
               ),
               child: Text(
                 l10n.createOpportunityBackButton,
-                style: KolabingTextStyles.button.copyWith(
-                  letterSpacing: 0.5,
-                ),
+                style: KolabingTextStyles.button.copyWith(letterSpacing: 0.5),
               ),
             ),
           ),
@@ -1317,9 +1321,7 @@ class _CreateOpportunityScreenState
                 ),
                 child: Text(
                   l10n.createOpportunityBackButton,
-                  style: KolabingTextStyles.button.copyWith(
-                    letterSpacing: 0.5,
-                  ),
+                  style: KolabingTextStyles.button.copyWith(letterSpacing: 0.5),
                 ),
               ),
             ),
@@ -1473,7 +1475,9 @@ class _CreateOpportunityScreenState
               : context.colors.surface,
           borderRadius: KolabingRadius.borderRadiusMd,
           border: Border.all(
-            color: isSelected ? context.colors.primary : context.colors.darkBorder,
+            color: isSelected
+                ? context.colors.primary
+                : context.colors.darkBorder,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -1543,7 +1547,9 @@ class _CreateOpportunityScreenState
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
+            hintStyle: KolabingTextStyles.bodyMedium.copyWith(
+              color: context.colors.textTertiary,
+            ),
             filled: true,
             fillColor: context.colors.surface,
             counterText: maxLength != null ? null : '',
@@ -1563,10 +1569,7 @@ class _CreateOpportunityScreenState
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(
-                color: context.colors.primary,
-                width: 2,
-              ),
+              borderSide: BorderSide(color: context.colors.primary, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
@@ -1582,7 +1585,9 @@ class _CreateOpportunityScreenState
   InputDecoration _inputDecoration({required String hint}) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
+      hintStyle: KolabingTextStyles.bodyMedium.copyWith(
+        color: context.colors.textTertiary,
+      ),
       filled: true,
       fillColor: context.colors.surface,
       border: OutlineInputBorder(
@@ -1619,11 +1624,7 @@ class _CreateOpportunityScreenState
     ),
     child: Row(
       children: [
-        Icon(
-          LucideIcons.alertCircle,
-          size: 14,
-          color: context.colors.error,
-        ),
+        Icon(LucideIcons.alertCircle, size: 14, color: context.colors.error),
         const SizedBox(width: KolabingSpacing.xs),
         Expanded(
           child: Text(
@@ -1856,8 +1857,9 @@ class _CreateOpportunityScreenState
                 Text(
                   value != null
                       ? value.format(context)
-                      : AppLocalizations.of(context)
-                          .createOpportunitySelectTime,
+                      : AppLocalizations.of(
+                          context,
+                        ).createOpportunitySelectTime,
                   style: KolabingTextStyles.bodySmall.copyWith(
                     color: value != null
                         ? context.colors.onSurface

@@ -554,6 +554,43 @@
   "@commonDismiss": {
     "description": "Generic action to dismiss a snackbar or notification."
   },
+  "routeNotFoundTitle": "Page Not Found",
+  "@routeNotFoundTitle": {
+    "description": "App bar title on the unknown-route fallback screen."
+  },
+  "routeNotFoundBody": "We couldn't find that page",
+  "@routeNotFoundBody": {
+    "description": "Body headline on the unknown-route fallback screen."
+  },
+  "routeNotFoundGoToDashboard": "Go to dashboard",
+  "@routeNotFoundGoToDashboard": {
+    "description": "Recovery button on the unknown-route screen for a signed-in user."
+  },
+  "routeNotFoundSignOut": "Sign out",
+  "@routeNotFoundSignOut": {
+    "description": "Recovery button on the unknown-route screen for a signed-in user."
+  },
+  "routeNotFoundBackToLogin": "Back to login",
+  "@routeNotFoundBackToLogin": {
+    "description": "Recovery button on the unknown-route screen for a signed-out user."
+  },
+  "opportunityLoadError": "Could not load opportunity: {error}",
+  "@opportunityLoadError": {
+    "description": "Error shown when an opportunity fails to load for editing.",
+    "placeholders": {
+      "error": {
+        "type": "Object"
+      }
+    }
+  },
+  "profileMenuTitle": "Profile",
+  "@profileMenuTitle": {
+    "description": "Title of the profile-avatar dropdown/menu entry."
+  },
+  "networkOfflineBannerMessage": "No internet connection. Turn off airplane mode or reconnect, then try again.",
+  "@networkOfflineBannerMessage": {
+    "description": "Global offline banner shown when a request fails due to no connectivity."
+  },
   "commonGotIt": "Got it",
   "@commonGotIt": {
     "description": "Generic acknowledgement button to close an informational dialog."
@@ -843,7 +880,7 @@
   "@selectionCardBusinessDescription": {
     "description": "User-type selection card description for the Business option."
   },
-  "selectionCardCommunityDescription": "Seeking sponsors and kolab partners",
+  "selectionCardCommunityDescription": "Looking for brands to Kolab with",
   "@selectionCardCommunityDescription": {
     "description": "User-type selection card description for the Community option. 'kolab' is brand terminology, keep untranslated."
   },
@@ -1404,6 +1441,10 @@
   "myKolabsEmptyMessage": "Create your first kolab to start connecting with communities",
   "@myKolabsEmptyMessage": {
     "description": "Empty state message"
+  },
+  "myKolabsCreateNewButton": "Create a Kolab",
+  "@myKolabsCreateNewButton": {
+    "description": "Empty-state CTA button that opens the create-Kolab flow."
   },
   "myKolabsCreate": "Create Kolab",
   "@myKolabsCreate": {
@@ -3807,7 +3848,7 @@
   "@offeringContentCreationSubtitle": {
     "description": "Offering option: content creation, subtitle"
   },
-  "offeringSponsorshipTitle": "Sponsorship budget",
+  "offeringSponsorshipTitle": "Collaboration budget",
   "@offeringSponsorshipTitle": {
     "description": "Offering option: sponsorship, title"
   },
@@ -4274,7 +4315,7 @@
   "@intentSelectionBusinessSubtitle": {
     "description": "Subtitle for business users on the intent selection screen"
   },
-  "intentSelectionFindVenueTitle": "Find a Venue or Sponsor",
+  "intentSelectionFindVenueTitle": "Find a Venue or Brand",
   "@intentSelectionFindVenueTitle": {
     "description": "Intent option title: find a venue or sponsor"
   },
@@ -5241,6 +5282,10 @@
   "@profileReviewsEmpty": {
     "description": "Empty state message when a profile has no reviews"
   },
+  "profileReviewsEmptyBody": "Reviews appear here once this profile completes its first Kolab.",
+  "@profileReviewsEmptyBody": {
+    "description": "Empty state body explaining when reviews will appear."
+  },
   "profileReviewsLoadMore": "Load more",
   "@profileReviewsLoadMore": {
     "description": "Button to load the next page of profile reviews"
@@ -5261,6 +5306,11 @@
   "publicProfileReputationPartnersCount": "{count, plural, =1{1 partner} other{{count} partners}}",
   "@publicProfileReputationPartnersCount": {
     "description": "Unique partner count shown in the reputation summary card",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "reputationCompletedKolabsCount": "{count, plural, =1{1 completed} other{{count} completed}}",
+  "@reputationCompletedKolabsCount": {
+    "description": "Completed Kolabs count shown in the reputation summary card",
     "placeholders": { "count": { "type": "int" } }
   },
   "publicProfileAbout": "About",
@@ -5923,7 +5973,7 @@
   "@exploreDetailCommunitySize": {
     "description": "Summary card title for community size"
   },
-  "exploreDetailScaleCommunity": "{count} community",
+  "exploreDetailScaleCommunity": "{count} members",
   "@exploreDetailScaleCommunity": {
     "description": "Community size value (members in the community)",
     "placeholders": {
@@ -5932,7 +5982,7 @@
       }
     }
   },
-  "exploreDetailScaleExpected": "{count} expected",
+  "exploreDetailScaleExpected": "~{count} expected to attend",
   "@exploreDetailScaleExpected": {
     "description": "Typical attendance value (expected attendees)",
     "placeholders": {
@@ -7450,8 +7500,14 @@
   "@businessProductAboutSubtitle": { "description": "Business product path about step: subtitle" },
   "businessProductOfferingLabel": "What you offer",
   "@businessProductOfferingLabel": { "description": "Business product path: offering field label" },
-  "businessProductOfferingHint": "e.g., 20% off for community members, free samples, sponsored prizes",
+  "businessProductOfferingHint": "e.g., 20% off for community members, free samples, giveaway prizes",
   "@businessProductOfferingHint": { "description": "Business product path: offering field hint" },
+  "venueModeBusinessVenue": "Business Venue",
+  "@venueModeBusinessVenue": { "description": "Venue mode label: hosted at the business location" },
+  "venueModeCommunityVenue": "Community Venue",
+  "@venueModeCommunityVenue": { "description": "Venue mode label: hosted at the community location" },
+  "venueModeNoVenue": "No venue yet",
+  "@venueModeNoVenue": { "description": "Venue mode label: no specific venue yet (online or to be arranged)" },
   "businessProductPhotosLabel": "Photos (optional)",
   "@businessProductPhotosLabel": { "description": "Business product path: photos field label" },
 

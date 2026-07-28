@@ -197,6 +197,131 @@ class OnboardingData {
   /// Current onboarding step (1-4)
   final int currentStep;
 
+  /// Serializes the full draft for local persistence (see
+  /// `OnboardingDraftService`) — NOT the backend registration payload; use
+  /// [toBusinessPayload]/[toCommunityPayload] for that.
+  Map<String, dynamic> toJson() => {
+    'user_type': userType.toApiValue(),
+    if (name != null) 'name': name,
+    if (photoBase64 != null) 'photo_base64': photoBase64,
+    if (photoFileName != null) 'photo_file_name': photoFileName,
+    if (photoMimeType != null) 'photo_mime_type': photoMimeType,
+    if (type != null) 'type': type,
+    if (typeSlug != null) 'type_slug': typeSlug,
+    if (typeName != null) 'type_name': typeName,
+    'business_type_ids': businessTypeIds,
+    'business_type_slugs': businessTypeSlugs,
+    'business_type_names': businessTypeNames,
+    if (hasVenue != null) 'has_venue': hasVenue,
+    'target_city_ids': targetCityIds,
+    'target_city_names': targetCityNames,
+    if (offering != null) 'offering': offering,
+    if (productType != null) 'product_type': productType,
+    if (communitySize != null) 'community_size': communitySize,
+    if (cityId != null) 'city_id': cityId,
+    if (cityName != null) 'city_name': cityName,
+    if (location != null) 'location': location!.toJson(),
+    if (importedPlaceId != null) 'imported_place_id': importedPlaceId,
+    if (venueName != null) 'venue_name': venueName,
+    if (venueType != null) 'venue_type': venueType,
+    if (venueCapacity != null) 'venue_capacity': venueCapacity,
+    'venue_photos': venuePhotos.map((p) => p.toJson()).toList(),
+    if (venuePhone != null) 'venue_phone': venuePhone,
+    if (venueWebsite != null) 'venue_website': venueWebsite,
+    'venue_opening_hours': venueOpeningHours,
+    if (venueDescription != null) 'venue_description': venueDescription,
+    if (venuePriceLevel != null) 'venue_price_level': venuePriceLevel,
+    if (venueRating != null) 'venue_rating': venueRating,
+    if (venueUserRatingsTotal != null)
+      'venue_user_ratings_total': venueUserRatingsTotal,
+    'venue_google_place_types': venueGooglePlaceTypes,
+    if (about != null) 'about': about,
+    if (phone != null) 'phone': phone,
+    if (instagram != null) 'instagram': instagram,
+    if (tiktok != null) 'tiktok': tiktok,
+    if (website != null) 'website': website,
+    if (referralCode != null) 'referral_code': referralCode,
+    'current_step': currentStep,
+  };
+
+  /// Inverse of [toJson] — restores a persisted draft.
+  factory OnboardingData.fromJson(Map<String, dynamic> json) => OnboardingData(
+    userType: UserType.fromString(json['user_type']?.toString() ?? ''),
+    name: json['name']?.toString(),
+    photoBase64: json['photo_base64']?.toString(),
+    photoFileName: json['photo_file_name']?.toString(),
+    photoMimeType: json['photo_mime_type']?.toString(),
+    type: json['type']?.toString(),
+    typeSlug: json['type_slug']?.toString(),
+    typeName: json['type_name']?.toString(),
+    businessTypeIds:
+        (json['business_type_ids'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const [],
+    businessTypeSlugs:
+        (json['business_type_slugs'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const [],
+    businessTypeNames:
+        (json['business_type_names'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const [],
+    hasVenue: json['has_venue'] as bool?,
+    targetCityIds:
+        (json['target_city_ids'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const [],
+    targetCityNames:
+        (json['target_city_names'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const [],
+    offering: json['offering']?.toString(),
+    productType: json['product_type']?.toString(),
+    communitySize: (json['community_size'] as num?)?.toInt(),
+    cityId: json['city_id']?.toString(),
+    cityName: json['city_name']?.toString(),
+    location: json['location'] != null
+        ? PlaceSuggestion.fromJson(json['location'] as Map<String, dynamic>)
+        : null,
+    importedPlaceId: json['imported_place_id']?.toString(),
+    venueName: json['venue_name']?.toString(),
+    venueType: json['venue_type']?.toString(),
+    venueCapacity: (json['venue_capacity'] as num?)?.toInt(),
+    venuePhotos:
+        (json['venue_photos'] as List<dynamic>?)
+            ?.map((e) => OnboardingPhoto.fromJson(e as Map<String, dynamic>))
+            .toList() ??
+        const [],
+    venuePhone: json['venue_phone']?.toString(),
+    venueWebsite: json['venue_website']?.toString(),
+    venueOpeningHours:
+        (json['venue_opening_hours'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const [],
+    venueDescription: json['venue_description']?.toString(),
+    venuePriceLevel: json['venue_price_level']?.toString(),
+    venueRating: (json['venue_rating'] as num?)?.toDouble(),
+    venueUserRatingsTotal: (json['venue_user_ratings_total'] as num?)?.toInt(),
+    venueGooglePlaceTypes:
+        (json['venue_google_place_types'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const [],
+    about: json['about']?.toString(),
+    phone: json['phone']?.toString(),
+    instagram: json['instagram']?.toString(),
+    tiktok: json['tiktok']?.toString(),
+    website: json['website']?.toString(),
+    referralCode: json['referral_code']?.toString(),
+    currentStep: (json['current_step'] as num?)?.toInt() ?? 1,
+  );
+
   /// Resolved business ids including legacy single-select data.
   List<String> get selectedBusinessTypeIds {
     if (businessTypeIds.isNotEmpty) return businessTypeIds;

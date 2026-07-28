@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kolabing_app/l10n/app_localizations.dart';
 import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
@@ -17,19 +18,21 @@ void main() {
     );
 
     await tester.pumpWidget(
-      MediaQuery(
-        data: const MediaQueryData(size: Size(320, 800)),
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: SizedBox(
-              width: 320,
-              child: MyKolabCard(
-                kolab: kolab,
-                onView: () {},
-                onEdit: () {},
-                onClose: () {},
+      ProviderScope(
+        child: MediaQuery(
+          data: const MediaQueryData(size: Size(320, 800)),
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: SizedBox(
+                width: 320,
+                child: MyKolabCard(
+                  kolab: kolab,
+                  onView: () {},
+                  onEdit: () {},
+                  onClose: () {},
+                ),
               ),
             ),
           ),
@@ -39,10 +42,14 @@ void main() {
 
     // For a published kolab, only VIEW is rendered as a text button.
     // EDIT and CLOSE are secondary icon-only buttons (no text label).
+    // The button wraps its label in a FittedBox(scaleDown) rather than
+    // fading/ellipsis-truncating — the whole icon+label group shrinks
+    // together instead of clipping, so there's no separate Text.overflow to
+    // assert here (see KolabingButton._buildButton).
     final text = tester.widget<Text>(find.text('VIEW'));
     expect(text.maxLines, 1);
     expect(text.softWrap, isFalse);
-    expect(text.overflow, TextOverflow.fade);
+    expect(find.byType(FittedBox), findsWidgets);
     expect(tester.takeException(), isNull);
   });
 
@@ -61,20 +68,22 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MediaQuery(
-          data: const MediaQueryData(size: Size(320, 800)),
-          child: MaterialApp(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: Scaffold(
-              body: SizedBox(
-                width: 320,
-                child: MyKolabCard(
-                  kolab: kolab,
-                  onView: () {},
-                  onEdit: () {},
-                  onClose: () {},
-                  onDelete: () {},
+        ProviderScope(
+          child: MediaQuery(
+            data: const MediaQueryData(size: Size(320, 800)),
+            child: MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: Scaffold(
+                body: SizedBox(
+                  width: 320,
+                  child: MyKolabCard(
+                    kolab: kolab,
+                    onView: () {},
+                    onEdit: () {},
+                    onClose: () {},
+                    onDelete: () {},
+                  ),
                 ),
               ),
             ),

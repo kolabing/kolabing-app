@@ -10,6 +10,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolab_card_shell.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/kolab_status_badge.dart';
 import '../../kolab/widgets/my_kolabs_sub_tabs.dart';
 import '../models/application.dart';
@@ -18,12 +19,16 @@ import '../providers/application_provider.dart';
 /// Applications list screen showing both sent and received applications
 /// via a tabbed interface.
 class ApplicationsScreen extends ConsumerStatefulWidget {
-  const ApplicationsScreen({super.key, this.embedded = false});
+  const ApplicationsScreen({super.key, this.embedded = false, this.onExplore});
 
   /// When true, renders only the filter chips + list (no Scaffold, AppBar or
   /// page header) so it can be embedded as the "Requests" tab inside
   /// [MyKolabsHubScreen].
   final bool embedded;
+
+  /// Jumps to the Explore tab from the sent-applications empty state
+  /// ("Find a Kolab"); hidden when null.
+  final VoidCallback? onExplore;
 
   @override
   ConsumerState<ApplicationsScreen> createState() => _ApplicationsScreenState();
@@ -61,7 +66,7 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
       controller: _tabController,
       children: [
         // Tab 1: Sent applications
-        _SentApplicationsTab(),
+        _SentApplicationsTab(onExplore: widget.onExplore),
         // Tab 2: Received applications
         _ReceivedApplicationsTab(),
       ],
@@ -111,6 +116,10 @@ class _ApplicationsScreenState extends ConsumerState<ApplicationsScreen>
 // =============================================================================
 
 class _SentApplicationsTab extends ConsumerWidget {
+  const _SentApplicationsTab({this.onExplore});
+
+  final VoidCallback? onExplore;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(myApplicationsProvider);
@@ -119,7 +128,12 @@ class _SentApplicationsTab extends ConsumerWidget {
     return RefreshIndicator(
       onRefresh: () => ref.read(myApplicationsProvider.notifier).refresh(),
       color: context.colors.primary,
-      child: _buildBody(context, state, isDark: isDark),
+      child: _buildBody(
+        context,
+        state,
+        isDark: isDark,
+        onRetry: () => ref.read(myApplicationsProvider.notifier).refresh(),
+      ),
     );
   }
 
@@ -127,13 +141,14 @@ class _SentApplicationsTab extends ConsumerWidget {
     BuildContext context,
     ApplicationsState state, {
     required bool isDark,
+    VoidCallback? onRetry,
   }) {
     if (state.isLoading) {
       return _buildLoadingState(context, isDark);
     }
 
     if (state.error != null) {
-      return _buildErrorState(context, state.error!, isDark);
+      return _buildErrorState(context, state.error!, isDark, onRetry: onRetry);
     }
 
     // Requests shows only items still awaiting a decision. Accepted
@@ -144,7 +159,7 @@ class _SentApplicationsTab extends ConsumerWidget {
         .toList();
 
     if (requests.isEmpty) {
-      return _buildSentEmptyState(context, isDark);
+      return _buildSentEmptyState(context, isDark, onExplore: onExplore);
     }
 
     return ListView.separated(
@@ -163,7 +178,11 @@ class _SentApplicationsTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildSentEmptyState(BuildContext context, bool isDark) => Center(
+  Widget _buildSentEmptyState(
+    BuildContext context,
+    bool isDark, {
+    VoidCallback? onExplore,
+  }) => Center(
     child: Padding(
       padding: const EdgeInsets.all(KolabingSpacing.xl),
       child: Column(
@@ -199,6 +218,16 @@ class _SentApplicationsTab extends ConsumerWidget {
             ),
             textAlign: TextAlign.center,
           ),
+          if (onExplore != null) ...[
+            const SizedBox(height: KolabingSpacing.lg),
+            KolabingButton(
+              label: AppLocalizations.of(context).dashboardFindAKolab,
+              onPressed: onExplore,
+              variant: KolabingButtonVariant.primary,
+              size: KolabingButtonSize.compact,
+              icon: const Icon(LucideIcons.search),
+            ),
+          ],
         ],
       ),
     ),
@@ -219,21 +248,28 @@ class _ReceivedApplicationsTab extends ConsumerWidget {
       onRefresh: () =>
           ref.read(receivedApplicationsProvider.notifier).refresh(),
       color: context.colors.primary,
-      child: _buildBody(context, state, isDark),
+      child: _buildBody(
+        context,
+        state,
+        isDark,
+        onRetry: () =>
+            ref.read(receivedApplicationsProvider.notifier).refresh(),
+      ),
     );
   }
 
   Widget _buildBody(
     BuildContext context,
     ApplicationsState state,
-    bool isDark,
-  ) {
+    bool isDark, {
+    VoidCallback? onRetry,
+  }) {
     if (state.isLoading) {
       return _buildLoadingState(context, isDark);
     }
 
     if (state.error != null) {
-      return _buildErrorState(context, state.error!, isDark);
+      return _buildErrorState(context, state.error!, isDark, onRetry: onRetry);
     }
 
     // Requests shows only items still awaiting a decision. Accepted
@@ -337,39 +373,49 @@ Widget _buildLoadingState(BuildContext context, bool isDark) =>
       ),
     );
 
-Widget _buildErrorState(BuildContext context, String error, bool isDark) =>
-    Center(
-      child: Padding(
-        padding: const EdgeInsets.all(KolabingSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              LucideIcons.alertCircle,
-              size: 48,
-              color: context.colors.error,
-            ),
-            const SizedBox(height: KolabingSpacing.md),
-            Text(
-              AppLocalizations.of(context).applicationsErrorTitle,
-              style: KolabingTextStyles.titleMedium.copyWith(
-                color: isDark
-                    ? context.colors.textOnDark
-                    : context.colors.onSurface,
-              ),
-            ),
-            const SizedBox(height: KolabingSpacing.xs),
-            Text(
-              error,
-              style: KolabingTextStyles.bodySmall.copyWith(
-                color: context.colors.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+Widget _buildErrorState(
+  BuildContext context,
+  String error,
+  bool isDark, {
+  VoidCallback? onRetry,
+}) => Center(
+  child: Padding(
+    padding: const EdgeInsets.all(KolabingSpacing.xl),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(LucideIcons.alertCircle, size: 48, color: context.colors.error),
+        const SizedBox(height: KolabingSpacing.md),
+        Text(
+          AppLocalizations.of(context).applicationsErrorTitle,
+          style: KolabingTextStyles.titleMedium.copyWith(
+            color: isDark
+                ? context.colors.textOnDark
+                : context.colors.onSurface,
+          ),
         ),
-      ),
-    );
+        const SizedBox(height: KolabingSpacing.xs),
+        Text(
+          error,
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        if (onRetry != null) ...[
+          const SizedBox(height: KolabingSpacing.lg),
+          KolabingButton(
+            label: AppLocalizations.of(context).commonRetry,
+            onPressed: onRetry,
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
+            icon: const Icon(LucideIcons.refreshCw),
+          ),
+        ],
+      ],
+    ),
+  ),
+);
 
 // =============================================================================
 // Application Card Widget

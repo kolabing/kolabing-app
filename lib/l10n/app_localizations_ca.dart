@@ -462,6 +462,33 @@ class AppLocalizationsCa extends AppLocalizations {
   String get commonDismiss => 'Descartar';
 
   @override
+  String get routeNotFoundTitle => 'Pàgina no trobada';
+
+  @override
+  String get routeNotFoundBody => 'No hem pogut trobar aquesta pàgina';
+
+  @override
+  String get routeNotFoundGoToDashboard => 'Anar al tauler';
+
+  @override
+  String get routeNotFoundSignOut => 'Tancar sessió';
+
+  @override
+  String get routeNotFoundBackToLogin => 'Tornar a l\'inici de sessió';
+
+  @override
+  String opportunityLoadError(Object error) {
+    return 'No s\'ha pogut carregar l\'oportunitat: $error';
+  }
+
+  @override
+  String get profileMenuTitle => 'Perfil';
+
+  @override
+  String get networkOfflineBannerMessage =>
+      'Sense connexió a internet. Desactiva el mode avió o torna a connectar-te, i torna-ho a provar.';
+
+  @override
   String get commonGotIt => 'Entesos';
 
   @override
@@ -687,7 +714,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get selectionCardCommunityDescription =>
-      'Cerco patrocinadors i socis per a kolabs';
+      'Cerco marques per fer Kolabs';
 
   @override
   String get selectionCardAttendeeDescription =>
@@ -1128,6 +1155,9 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get myKolabsEmptyMessage =>
       'Crea el teu primer kolab per començar a connectar amb comunitats';
+
+  @override
+  String get myKolabsCreateNewButton => 'Crear un Kolab';
 
   @override
   String get myKolabsCreate => 'Crear Kolab';
@@ -3076,7 +3106,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get offeringContentCreationSubtitle => 'Fotos i vídeo professionals';
 
   @override
-  String get offeringSponsorshipTitle => 'Pressupost de patrocini';
+  String get offeringSponsorshipTitle => 'Pressupost de col·laboració';
 
   @override
   String get offeringSponsorshipSubtitle => 'Suport econòmic per al kolab';
@@ -3455,7 +3485,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'Tria què vols promocionar a les comunitats.';
 
   @override
-  String get intentSelectionFindVenueTitle => 'Troba un local o patrocinador';
+  String get intentSelectionFindVenueTitle => 'Troba un local o marca';
 
   @override
   String get intentSelectionFindVenueSubtitle =>
@@ -4260,6 +4290,10 @@ class AppLocalizationsCa extends AppLocalizations {
   String get profileReviewsEmpty => 'Encara no hi ha ressenyes.';
 
   @override
+  String get profileReviewsEmptyBody =>
+      'Les ressenyes apareixeran aquí quan aquest perfil completi el seu primer Kolab.';
+
+  @override
   String get profileReviewsLoadMore => 'Carregar-ne més';
 
   @override
@@ -4287,6 +4321,17 @@ class AppLocalizationsCa extends AppLocalizations {
       locale: localeName,
       other: '$count socis',
       one: '1 soci',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reputationCompletedKolabsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count completats',
+      one: '1 completat',
     );
     return '$_temp0';
   }
@@ -4807,12 +4852,12 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String exploreDetailScaleCommunity(num count) {
-    return '$count a la comunitat';
+    return '$count membres';
   }
 
   @override
   String exploreDetailScaleExpected(num count) {
-    return '$count esperats';
+    return '~$count assistents previstos';
   }
 
   @override
@@ -6932,7 +6977,16 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get businessProductOfferingHint =>
-      'p. ex., 20% de descompte per a membres de la comunitat, mostres gratis, premis patrocinats';
+      'p. ex., 20% de descompte per a membres de la comunitat, mostres gratis, premis per a sortejos';
+
+  @override
+  String get venueModeBusinessVenue => 'Local del negoci';
+
+  @override
+  String get venueModeCommunityVenue => 'Local de la comunitat';
+
+  @override
+  String get venueModeNoVenue => 'Encara sense local';
 
   @override
   String get businessProductPhotosLabel => 'Fotos (opcional)';

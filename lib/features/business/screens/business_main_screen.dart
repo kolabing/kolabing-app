@@ -131,8 +131,11 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
         children: [
           _BusinessHomeTab(onSwitchTab: _onTabChanged),
           const _BusinessExploreTab(),
-          _BusinessKollabsTab(initialSubTab: widget.initialKolabsSubTab),
-          const ChatsScreen(embedded: true),
+          _BusinessKollabsTab(
+            initialSubTab: widget.initialKolabsSubTab,
+            onExploreTap: () => _onTabChanged(1),
+          ),
+          ChatsScreen(embedded: true, onExplore: () => _onTabChanged(1)),
           const _BusinessProfileTab(),
         ],
       ),
@@ -177,14 +180,16 @@ class _BusinessExploreTab extends StatelessWidget {
 }
 
 class _BusinessKollabsTab extends StatelessWidget {
-  const _BusinessKollabsTab({this.initialSubTab = 0});
+  const _BusinessKollabsTab({this.initialSubTab = 0, this.onExploreTap});
 
   final int initialSubTab;
+  final VoidCallback? onExploreTap;
 
   @override
   Widget build(BuildContext context) => MyKolabsHubScreen(
     offersTab: const MyKollabsScreen(embedded: true),
     initialSubTab: initialSubTab,
+    onExploreTap: onExploreTap,
   );
 }
 

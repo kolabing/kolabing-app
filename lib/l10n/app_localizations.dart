@@ -940,6 +940,54 @@ abstract class AppLocalizations {
   /// **'Dismiss'**
   String get commonDismiss;
 
+  /// App bar title on the unknown-route fallback screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Page Not Found'**
+  String get routeNotFoundTitle;
+
+  /// Body headline on the unknown-route fallback screen.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find that page'**
+  String get routeNotFoundBody;
+
+  /// Recovery button on the unknown-route screen for a signed-in user.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to dashboard'**
+  String get routeNotFoundGoToDashboard;
+
+  /// Recovery button on the unknown-route screen for a signed-in user.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get routeNotFoundSignOut;
+
+  /// Recovery button on the unknown-route screen for a signed-out user.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to login'**
+  String get routeNotFoundBackToLogin;
+
+  /// Error shown when an opportunity fails to load for editing.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load opportunity: {error}'**
+  String opportunityLoadError(Object error);
+
+  /// Title of the profile-avatar dropdown/menu entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileMenuTitle;
+
+  /// Global offline banner shown when a request fails due to no connectivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Turn off airplane mode or reconnect, then try again.'**
+  String get networkOfflineBannerMessage;
+
   /// Generic acknowledgement button to close an informational dialog.
   ///
   /// In en, this message translates to:
@@ -1357,7 +1405,7 @@ abstract class AppLocalizations {
   /// User-type selection card description for the Community option. 'kolab' is brand terminology, keep untranslated.
   ///
   /// In en, this message translates to:
-  /// **'Seeking sponsors and kolab partners'**
+  /// **'Looking for brands to Kolab with'**
   String get selectionCardCommunityDescription;
 
   /// User-type selection card description for the Attendee option.
@@ -2109,6 +2157,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create your first kolab to start connecting with communities'**
   String get myKolabsEmptyMessage;
+
+  /// Empty-state CTA button that opens the create-Kolab flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Kolab'**
+  String get myKolabsCreateNewButton;
 
   /// Create kolab button
   ///
@@ -5521,7 +5575,7 @@ abstract class AppLocalizations {
   /// Offering option: sponsorship, title
   ///
   /// In en, this message translates to:
-  /// **'Sponsorship budget'**
+  /// **'Collaboration budget'**
   String get offeringSponsorshipTitle;
 
   /// Offering option: sponsorship, subtitle
@@ -6157,7 +6211,7 @@ abstract class AppLocalizations {
   /// Intent option title: find a venue or sponsor
   ///
   /// In en, this message translates to:
-  /// **'Find a Venue or Sponsor'**
+  /// **'Find a Venue or Brand'**
   String get intentSelectionFindVenueTitle;
 
   /// Intent option subtitle: find a venue or sponsor
@@ -7540,6 +7594,12 @@ abstract class AppLocalizations {
   /// **'No reviews yet.'**
   String get profileReviewsEmpty;
 
+  /// Empty state body explaining when reviews will appear.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews appear here once this profile completes its first Kolab.'**
+  String get profileReviewsEmptyBody;
+
   /// Button to load the next page of profile reviews
   ///
   /// In en, this message translates to:
@@ -7569,6 +7629,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 partner} other{{count} partners}}'**
   String publicProfileReputationPartnersCount(int count);
+
+  /// Completed Kolabs count shown in the reputation summary card
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 completed} other{{count} completed}}'**
+  String reputationCompletedKolabsCount(int count);
 
   /// Section title for the about/bio section on a public profile
   ///
@@ -8471,13 +8537,13 @@ abstract class AppLocalizations {
   /// Community size value (members in the community)
   ///
   /// In en, this message translates to:
-  /// **'{count} community'**
+  /// **'{count} members'**
   String exploreDetailScaleCommunity(num count);
 
   /// Typical attendance value (expected attendees)
   ///
   /// In en, this message translates to:
-  /// **'{count} expected'**
+  /// **'~{count} expected to attend'**
   String exploreDetailScaleExpected(num count);
 
   /// Offer summary section title in the detail sheet
@@ -12089,8 +12155,26 @@ abstract class AppLocalizations {
   /// Business product path: offering field hint
   ///
   /// In en, this message translates to:
-  /// **'e.g., 20% off for community members, free samples, sponsored prizes'**
+  /// **'e.g., 20% off for community members, free samples, giveaway prizes'**
   String get businessProductOfferingHint;
+
+  /// Venue mode label: hosted at the business location
+  ///
+  /// In en, this message translates to:
+  /// **'Business Venue'**
+  String get venueModeBusinessVenue;
+
+  /// Venue mode label: hosted at the community location
+  ///
+  /// In en, this message translates to:
+  /// **'Community Venue'**
+  String get venueModeCommunityVenue;
+
+  /// Venue mode label: no specific venue yet (online or to be arranged)
+  ///
+  /// In en, this message translates to:
+  /// **'No venue yet'**
+  String get venueModeNoVenue;
 
   /// Business product path: photos field label
   ///

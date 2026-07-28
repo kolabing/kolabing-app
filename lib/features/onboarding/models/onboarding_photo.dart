@@ -98,6 +98,33 @@ class OnboardingPhoto {
         previewUrl: remoteUrl,
       );
 
+  /// Inverse of [toJson] — round-trips a photo for local draft persistence.
+  factory OnboardingPhoto.fromJson(Map<String, dynamic> json) =>
+      OnboardingPhoto._(
+        id: json['id']?.toString() ?? '',
+        source: OnboardingPhotoSource.values.firstWhere(
+          (s) => s.name == json['source'],
+          orElse: () => OnboardingPhotoSource.upload,
+        ),
+        base64: json['base64']?.toString(),
+        fileName: json['file_name']?.toString(),
+        mimeType: json['mime_type']?.toString(),
+        resourceName: json['resource_name']?.toString(),
+        previewUrl: json['preview_url']?.toString(),
+        remoteUrl: json['remote_url']?.toString(),
+        width: (json['width'] as num?)?.toInt(),
+        height: (json['height'] as num?)?.toInt(),
+        authorAttributions:
+            (json['author_attributions'] as List<dynamic>?)
+                ?.map(
+                  (item) => OnboardingPhotoAttribution.fromJson(
+                    item as Map<String, dynamic>,
+                  ),
+                )
+                .toList() ??
+            const [],
+      );
+
   final String id;
   final OnboardingPhotoSource source;
   final String? base64;

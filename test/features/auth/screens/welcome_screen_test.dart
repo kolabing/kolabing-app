@@ -110,12 +110,7 @@ void main() {
       }
 
       // Offset typographic headline + tagline.
-      for (final line in [
-        'where',
-        'businesses',
-        'communities',
-        'together',
-      ]) {
+      for (final line in ['where', 'businesses', 'communities', 'together']) {
         expect(find.text(line), findsOneWidget);
       }
       expect(find.text('KOLAB'), findsOneWidget);
@@ -167,6 +162,10 @@ void main() {
     // assert the key chrome still renders and nothing else blew up.
     expect(find.byType(KolabingLogo), findsOneWidget);
     expect(find.text('Start kolabing'), findsOneWidget);
-    expect(find.text('Log in'), findsOneWidget);
+    // The login link is a raw RichText (two TextSpans: "Already in? " +
+    // "Log in"), not a plain Text — find.text only matches RichText when
+    // findRichText is set, and the search term is a substring of the whole
+    // span, so textContaining is needed too.
+    expect(find.textContaining('Log in', findRichText: true), findsOneWidget);
   });
 }

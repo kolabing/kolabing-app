@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../features/application/screens/application_review_screen.dart';
 import '../../features/application/screens/chat_screen.dart';
 import '../../features/chat/screens/chats_screen.dart';
@@ -764,7 +765,13 @@ final GoRouter kolabingRouter = GoRouter(
                 body: Center(child: CircularProgressIndicator()),
               ),
               error: (error, stackTrace) => Scaffold(
-                body: Center(child: Text('Could not load opportunity: $error')),
+                body: Center(
+                  child: Builder(
+                    builder: (context) => Text(
+                      AppLocalizations.of(context).opportunityLoadError(error),
+                    ),
+                  ),
+                ),
               ),
             );
           },
@@ -1010,13 +1017,14 @@ class _RouteNotFoundScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(authProvider);
+    final l10n = AppLocalizations.of(context);
     debugPrint(
       '[B2] errorBuilder fired: url=$failedUrl '
       'authStatus=${auth.status} userType=${auth.user?.userType}',
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Page Not Found')),
+      appBar: AppBar(title: Text(l10n.routeNotFoundTitle)),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -1030,7 +1038,7 @@ class _RouteNotFoundScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                "We couldn't find that page",
+                l10n.routeNotFoundBody,
                 style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),
@@ -1050,7 +1058,7 @@ class _RouteNotFoundScreen extends ConsumerWidget {
                     );
                     context.go(destination);
                   },
-                  child: const Text('Go to dashboard'),
+                  child: Text(l10n.routeNotFoundGoToDashboard),
                 ),
                 const SizedBox(height: 8),
                 TextButton(
@@ -1058,12 +1066,12 @@ class _RouteNotFoundScreen extends ConsumerWidget {
                     await ref.read(authProvider.notifier).logout();
                     if (context.mounted) context.go(KolabingRoutes.login);
                   },
-                  child: const Text('Sign out'),
+                  child: Text(l10n.routeNotFoundSignOut),
                 ),
               ] else ...[
                 FilledButton(
                   onPressed: () => context.go(KolabingRoutes.login),
-                  child: const Text('Back to login'),
+                  child: Text(l10n.routeNotFoundBackToLogin),
                 ),
               ],
             ],

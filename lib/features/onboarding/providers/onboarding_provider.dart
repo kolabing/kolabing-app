@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -14,6 +15,7 @@ import '../models/onboarding_photo.dart';
 import '../models/onboarding_state.dart';
 import '../models/place_details_import.dart';
 import '../models/place_suggestion.dart';
+import '../services/onboarding_draft_service.dart';
 import '../services/onboarding_service.dart';
 
 /// Onboarding service provider
@@ -85,11 +87,45 @@ final filteredCitiesProvider = Provider.autoDispose
 /// Onboarding state notifier using modern Riverpod 3.x Notifier
 class OnboardingNotifier extends Notifier<OnboardingData?> {
   @override
-  OnboardingData? build() => null;
+  OnboardingData? build() {
+    // Persist every change so the app closing or crashing mid-onboarding
+    // doesn't lose what the user already entered. Best-effort — a failed
+    // write never blocks onboarding (see OnboardingDraftService).
+    listenSelf((previous, next) {
+      if (next == null) {
+        unawaited(OnboardingDraftService.instance.clear());
+      } else {
+        unawaited(OnboardingDraftService.instance.save(next));
+      }
+    });
+    return null;
+  }
 
-  /// Initialize onboarding with user type
+  /// Initialize onboarding with user type. If a persisted draft exists for
+  /// the SAME user type, restores it instead of starting blank — the fix for
+  /// "closing/crashing mid-onboarding loses everything". Guarded so a draft
+  /// can never clobber input the user has already typed in this session (the
+  /// async restore only applies while state is still the blank value this
+  /// call just set).
   void initialize(UserType userType) {
     state = OnboardingData(userType: userType);
+    unawaited(_tryRestoreDraft(userType));
+  }
+
+  Future<void> _tryRestoreDraft(UserType userType) async {
+    final draft = await OnboardingDraftService.instance.load();
+    if (draft == null || draft.userType != userType) return;
+    final current = state;
+    final stillBlank =
+        current != null &&
+        current.name == null &&
+        current.type == null &&
+        current.cityId == null &&
+        current.currentStep == 1 &&
+        current.venuePhotos.isEmpty;
+    if (stillBlank) {
+      state = draft;
+    }
   }
 
   /// Update name (step 1).
@@ -719,6 +755,10 @@ class OnboardingNotifier extends Notifier<OnboardingData?> {
       // sign-out -> create-account starts clean instead of showing
       // "session expired" on every tab.
       await ref.read(authProvider.notifier).onRegistered();
+
+      // Registration succeeded — the draft would otherwise resurrect a
+      // finished onboarding the next time this user type starts a new one.
+      await OnboardingDraftService.instance.clear();
 
       return OnboardingResult(success: true, user: authResponse.user);
     } on ApiException catch (e) {

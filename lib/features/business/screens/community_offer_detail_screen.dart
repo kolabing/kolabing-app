@@ -14,6 +14,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/blurred_identity.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../application/widgets/apply_modal.dart';
+import '../../opportunity/opportunity_l10n.dart';
 import '../../application/widgets/apply_success_sheet.dart';
 import '../../auth/models/user_model.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -765,7 +766,7 @@ class _CommunityOfferDetailScreenState
           _buildInfoRow(
             icon: LucideIcons.building2,
             label: AppLocalizations.of(context).communityOfferDetailVenue,
-            value: opportunity.venueMode.displayName,
+            value: opportunity.venueMode.label(AppLocalizations.of(context)),
           ),
           if (opportunity.address?.isNotEmpty ?? false) ...[
             const SizedBox(height: KolabingSpacing.sm),

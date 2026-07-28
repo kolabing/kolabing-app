@@ -216,11 +216,22 @@ class _BusinessProductIdentityScreenState
                           color: context.colors.primary,
                         ),
                       ),
-                      error: (_, __) => Text(
-                        l10n.businessStep2BusinessTypesLoadError,
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          color: context.colors.error,
-                        ),
+                      error: (_, __) => Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              l10n.businessStep2BusinessTypesLoadError,
+                              style: KolabingTextStyles.bodySmall.copyWith(
+                                color: context.colors.error,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () =>
+                                ref.invalidate(businessTypesProvider),
+                            child: Text(l10n.commonRetry),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 20),
