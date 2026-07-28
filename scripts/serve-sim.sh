@@ -58,7 +58,17 @@ flutter pub get
 
 # Bind serve-sim to the Tailscale interface only (reachable over the tailnet, NOT the
 # public LAN). Fall back to localhost-only if Tailscale is not up.
-BIND="$(tailscale ip -4 2>/dev/null | head -n1 || true)"
+# Resolve the tailscale CLI explicitly: under an SSH forced-command (headless, non-login)
+# it is often not on PATH, and on macOS it lives at a Homebrew path or inside the app
+# bundle rather than a standard bin dir. Without this, detection fails and the stream
+# silently binds localhost-only (unreachable over the tailnet, incl. from the box).
+TS_BIN="$(command -v tailscale || true)"
+for _c in /usr/local/bin/tailscale /opt/homebrew/bin/tailscale \
+          /Applications/Tailscale.app/Contents/MacOS/Tailscale; do
+  [[ -n "$TS_BIN" ]] && break
+  [[ -x "$_c" ]] && TS_BIN="$_c"
+done
+BIND="$( [[ -n "$TS_BIN" ]] && "$TS_BIN" ip -4 2>/dev/null | head -n1 || true )"
 if [[ -z "$BIND" ]]; then
   BIND="127.0.0.1"; URL="http://127.0.0.1:$PORT   (localhost only — Tailscale not detected)"
 else
