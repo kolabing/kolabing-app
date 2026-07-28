@@ -4253,6 +4253,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String reputationCompletedKolabsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count completed',
+      one: '1 completed',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get publicProfileAbout => 'About';
 
   @override

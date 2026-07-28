@@ -21,6 +21,8 @@ import '../models/notification_preferences.dart';
 import '../models/subscription.dart';
 import '../providers/profile_provider.dart';
 import '../../event/widgets/past_events_section.dart';
+import '../../profile/providers/public_profile_provider.dart';
+import '../../profile/widgets/reputation_summary_card.dart';
 
 /// Business profile screen
 class BusinessProfileScreen extends ConsumerStatefulWidget {
@@ -492,6 +494,9 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
 
             const SizedBox(height: KolabingSpacing.md),
 
+            // Reputation summary (owner sees the same reputation others see).
+            _buildReputationSection(profile),
+
             // About Section
             if (hasAbout) ...[
               _buildAboutSection(about, isDark),
@@ -540,6 +545,34 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
         ),
       ),
     );
+  }
+
+  /// Reputation summary for the owner's own profile. Reuses the public-profile
+  /// endpoint (`GET /profiles/{id}`) so the owner sees exactly what others see.
+  /// Non-critical: renders nothing while loading or on error, and is skipped
+  /// entirely when the business profile id is unavailable.
+  Widget _buildReputationSection(UserModel profile) {
+    final profileId = profile.businessProfile?.id;
+    if (profileId == null || profileId.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return ref
+        .watch(publicProfileProvider(profileId))
+        .when(
+          data: (public) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ReputationSummaryCard(
+                reputation: public.reputation,
+                completedKolabsCount: public.completedKolabsCount,
+              ),
+              const SizedBox(height: KolabingSpacing.md),
+            ],
+          ),
+          loading: () => const SizedBox.shrink(),
+          error: (_, _) => const SizedBox.shrink(),
+        );
   }
 
   Widget _buildProfileHeader(UserModel profile, bool isUpdating, bool isDark) {

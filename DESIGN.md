@@ -6,22 +6,23 @@ design:
   theme: light-primary / dark-auth
 
 colors:
+  # Source of truth: lib/config/theme/colors.dart (KolabingColors). Update there first.
   brand:
-    primary: "#FFD861"
-    primary-dark: "#E5C057"
-    primary-soft: "#FFF6D8"
+    primary: "#FFE28C"
+    primary-dark: "#F5D070"
+    primary-soft: "#FFF1C6"
     primary-soft-border: "#F9E9AC"
-    on-primary: "#000000"
+    on-primary: "#19150F"
 
   background:
-    default: "#F7F8FA"
+    default: "#FAF5EA"
     surface: "#FFFFFF"
-    surface-variant: "#F5F6F8"
+    surface-variant: "#F5EFE3"
 
   text:
-    primary: "#232323"
-    secondary: "#606060"
-    tertiary: "#888888"
+    primary: "#1C1C16"
+    secondary: "#3F3A32"
+    tertiary: "#8C8474"
     on-dark: "#FFFFFF"
 
   dark-theme:
@@ -35,9 +36,9 @@ colors:
     error: "#FF6B6B"
 
   semantic:
-    success: "#7AE7A3"
+    success: "#56624D"
     warning: "#FBC02D"
-    error: "#E14D76"
+    error: "#BA1A1A"
     info: "#2196F3"
 
   accent:
@@ -55,107 +56,108 @@ colors:
     declined-text: "#721C24"
 
   gradient:
-    primary-start: "#FFD861"
-    primary-end: "#FFE082"
+    primary-start: "#FFE28C"
+    primary-end: "#FFF1C6"
     primary-direction: top-left to bottom-right
 
+# Source of truth: lib/config/theme/typography.dart (loaded via google_fonts).
 typography:
   families:
-    display: "Rubik"
-    body: "Open Sans"
-    label: "DM Sans"
+    display: "Anton"
+    body: "Inter"
+    label: "Inter"
     fallback: "Inter"
 
   scale:
     display-large:
-      family: Rubik
+      family: Anton
       size: 32
       weight: 800
       letter-spacing: 1.5
       line-height: 1.2
     display-medium:
-      family: Rubik
+      family: Anton
       size: 28
       weight: 800
       letter-spacing: 1.2
       line-height: 1.2
     display-small:
-      family: Rubik
+      family: Anton
       size: 24
       weight: 700
       letter-spacing: 1.0
       line-height: 1.2
     headline-large:
-      family: Rubik
+      family: Anton
       size: 22
       weight: 700
       line-height: 1.3
     headline-medium:
-      family: Rubik
+      family: Anton
       size: 20
       weight: 600
       line-height: 1.3
     headline-small:
-      family: Rubik
+      family: Anton
       size: 18
       weight: 600
       line-height: 1.3
     title-large:
-      family: Open Sans
+      family: Inter
       size: 18
       weight: 700
       line-height: 1.4
     title-medium:
-      family: Open Sans
+      family: Inter
       size: 16
       weight: 600
       line-height: 1.4
     title-small:
-      family: Open Sans
+      family: Inter
       size: 14
       weight: 600
       line-height: 1.4
     body-large:
-      family: Open Sans
+      family: Inter
       size: 16
       weight: 400
       line-height: 1.5
     body-medium:
-      family: Open Sans
+      family: Inter
       size: 14
       weight: 400
       line-height: 1.5
     body-small:
-      family: Open Sans
+      family: Inter
       size: 12
       weight: 400
       line-height: 1.5
     label-large:
-      family: DM Sans
+      family: Inter
       size: 16
       weight: 600
       letter-spacing: 0.5
       line-height: 1.2
     label-medium:
-      family: DM Sans
+      family: Inter
       size: 14
       weight: 500
       letter-spacing: 0.4
       line-height: 1.2
     label-small:
-      family: DM Sans
+      family: Inter
       size: 12
       weight: 500
       letter-spacing: 0.4
       line-height: 1.2
     button:
-      family: DM Sans
+      family: Inter
       size: 16
       weight: 600
       letter-spacing: 1.0
       line-height: 1.2
     button-small:
-      family: DM Sans
+      family: Inter
       size: 14
       weight: 600
       letter-spacing: 0.8
@@ -220,7 +222,7 @@ components:
     height: 52
     radius: 12
     font: button
-    background: "#FFD861"
+    background: "#FFE28C"
     color: "#000000"
   button-secondary:
     height: 48
@@ -229,7 +231,7 @@ components:
   input-light:
     height: 48
     radius: 8
-    fill: "#F5F6F8"
+    fill: "#F5EFE3"
     border-width: 1.5
     padding-x: 16
     padding-y: 14
@@ -295,7 +297,7 @@ layout:
 
 Kolabing is a community marketing platform built for a mobile-first audience. The design is minimal, direct, and energetic — avoiding corporate polish in favour of warmth, clarity, and motion. The visual identity draws from Apple and Linear: generous whitespace, strong typography, subtle animation. Nothing decorative that doesn't serve a purpose.
 
-The yellow (`#FFD861`) is the single expressive element. Everything else — backgrounds, text, borders — is intentionally neutral, letting the primary colour do all the emotional lifting. Black text always sits on yellow. Never reverse this.
+The yellow (`#FFE28C`) is the single expressive element. Everything else — backgrounds, text, borders — is intentionally neutral, letting the primary colour do all the emotional lifting. Black text always sits on yellow. Never reverse this.
 
 ## Two Modes: Light App / Dark Auth
 
@@ -303,33 +305,33 @@ The app runs in **two visual contexts** that must never bleed into each other:
 
 **Auth screens** (splash, welcome, login, registration, onboarding): pure black backgrounds (`#000000`), white or yellow text, dark input fields (`#222222`), 12dp input radius. This creates a premium, focused feeling at first touch.
 
-**Main app screens** (dashboards, explore, offers, applications): light background (`#F7F8FA`), white cards, dark text, 8dp input radius. Feels clean and airy once the user is inside the product.
+**Main app screens** (dashboards, explore, offers, applications): light background (`#FAF5EA`), white cards, dark text, 8dp input radius. Feels clean and airy once the user is inside the product.
 
 The transition between the two contexts — when the user successfully authenticates and reaches their dashboard — should feel like stepping into a brighter space.
 
 ## Typography
 
-Headings always use **Rubik**, bold and slightly tracked. It's strong without being aggressive. Use uppercase for display-level text (hero headlines, splash screens).
+Headings always use **Anton**, bold and slightly tracked. It's strong without being aggressive. Use uppercase for display-level text (hero headlines, splash screens).
 
-Body and UI copy uses **Open Sans**. Readable, neutral, trustworthy.
+Body and UI copy uses **Inter**. Readable, neutral, trustworthy.
 
-Buttons and labels use **DM Sans**. Slightly technical feel, good at small sizes, tracks nicely at higher letter-spacing.
+Buttons and labels use **Inter**. Slightly technical feel, good at small sizes, tracks nicely at higher letter-spacing.
 
-Never mix Rubik with Open Sans at the same visual level — they serve different hierarchical roles.
+Never mix Anton with Inter at the same visual level — they serve different hierarchical roles.
 
 ## Color
 
 The palette is deliberately restrained:
 
-- **Yellow (`#FFD861`)** — primary action, selection state, brand accent, CTAs. Only use with black (`#000000`) text.
+- **Yellow (`#FFE28C`)** — primary action, selection state, brand accent, CTAs. Only use with black (`#000000`) text.
 - **Black (`#000000`)** — auth screens only; creates drama and focus.
-- **Light gray (`#F7F8FA`)** — app background. Not white. The slight warmth reduces eye strain.
+- **Light gray (`#FAF5EA`)** — app background. Not white. The slight warmth reduces eye strain.
 - **White (`#FFFFFF`)** — card surfaces, elevated content.
-- **Text (`#232323 / #606060 / #888888`)** — three levels of text hierarchy on light backgrounds.
+- **Text (`#1C1C16 / #3F3A32 / #8C8474`)** — three levels of text hierarchy on light backgrounds.
 
 Status colours (success green, error red, warning orange) are used only in badges and inline feedback — never as background fills or decorative elements.
 
-The primary gradient (`#FFD861` → `#FFE082`) is used sparingly — FAB backgrounds, highlighted cards, promotional banners. Never apply it to text or icons.
+The primary gradient (`#FFE28C` → `#FFF1C6`) is used sparingly — FAB backgrounds, highlighted cards, promotional banners. Never apply it to text or icons.
 
 ## Spacing
 
@@ -349,22 +351,22 @@ Shadows exist only for interactive or floating elements:
 ## Components
 
 ### Buttons
-Primary buttons are 52dp tall, 12dp radius, yellow fill, black text, DM Sans semi-bold with 1.0 letter-spacing. Full-width on most screens.
+Primary buttons are 52dp tall, 12dp radius, yellow fill, black text, Inter semi-bold with 1.0 letter-spacing. Full-width on most screens.
 
 Secondary buttons are 48dp tall, same radius, either outlined or surface-fill. Never use grey backgrounds for secondary actions — use outlined instead.
 
 ### Inputs
 **Dark theme (auth):** 52dp, 12dp radius, `#222222` fill, `#444444` border, white text.  
-**Light theme (app):** 48dp, 8dp radius, `#F5F6F8` fill, `#EBEBEB` border, `#232323` text. On focus, border becomes `#E8D7A0` (a warm yellow-tinted border, not the full primary yellow).
+**Light theme (app):** 48dp, 8dp radius, `#F5EFE3` fill, `#EBEBEB` border, `#1C1C16` text. On focus, border becomes `#E8D7A0` (a warm yellow-tinted border, not the full primary yellow).
 
 ### Cards
 16dp radius, 1px border (`#EBEBEB`), white surface, 0 elevation, 16px padding. Cards never have coloured fills unless they are status badges or promotional banners.
 
 ### Chips and Badges
-12dp radius, 12px horizontal padding, 4px vertical. Status badges follow a paired bg/text colour system (pending = orange tones, active = green tones, completed = grey tones, declined = red tones). Badge font: DM Sans 11px medium.
+12dp radius, 12px horizontal padding, 4px vertical. Status badges follow a paired bg/text colour system (pending = orange tones, active = green tones, completed = grey tones, declined = red tones). Badge font: Inter 11px medium.
 
 ### Bottom Navigation
-80dp total height (including safe area). 5 tabs for Business and Community users, 3 tabs for Attendees. Active tab: yellow icon + DM Sans semi-bold label. Inactive: `#888888` icon + regular label. Badge: yellow dot or numbered pill on Applications tab.
+80dp total height (including safe area). 5 tabs for Business and Community users, 3 tabs for Attendees. Active tab: yellow icon + Inter semi-bold label. Inactive: `#8C8474` icon + regular label. Badge: yellow dot or numbered pill on Applications tab.
 
 ### FAB (Floating Action Button)
 Circle, yellow fill, black icon, 28dp icon size, elevation 6. Always positioned bottom-right. Used as the primary creation entry point on main screens.
@@ -373,7 +375,7 @@ Circle, yellow fill, black icon, 28dp icon size, elevation 6. Always positioned 
 20dp radius on top corners only. Always includes a drag handle at top. Used for filters, explore details, and confirmations.
 
 ### Swipe Cards (Explore)
-20dp radius, white surface with card shadow. Large name in Rubik 22px bold. Category and type as small DM Sans chips below. Description in Open Sans 14px. Day availability shown as small circles (36dp). Dot pagination indicator at bottom.
+20dp radius, white surface with card shadow. Large name in Anton 22px bold. Category and type as small Inter chips below. Description in Inter 14px. Day availability shown as small circles (36dp). Dot pagination indicator at bottom.
 
 ## Motion
 
@@ -387,10 +389,10 @@ Selection cards (user type, intent selection) animate at **200ms** with a **1.02
 
 Profile photos and gallery images use 16dp radius clip masks. No harsh square crops anywhere in the UI.
 
-Media upload placeholders use the surface-variant fill (`#F5F6F8`) with a dashed border and a centred upload icon. Empty states use the same pattern — neutral background, icon, short message, and a single action button.
+Media upload placeholders use the surface-variant fill (`#F5EFE3`) with a dashed border and a centred upload icon. Empty states use the same pattern — neutral background, icon, short message, and a single action button.
 
 ## Accessibility
 
-Minimum touch target is **48×48dp** on all interactive elements. Text on yellow (`#FFD861`) must always be black (`#000000`) — this is the only combination that meets contrast requirements for that background. Never use yellow text on white or light backgrounds.
+Minimum touch target is **48×48dp** on all interactive elements. Text on yellow (`#FFE28C`) must always be black (`#000000`) — this is the only combination that meets contrast requirements for that background. Never use yellow text on white or light backgrounds.
 
-Text hierarchy must be maintained at all times: primary (`#232323`), secondary (`#606060`), tertiary (`#888888`). Do not use tertiary text for interactive elements.
+Text hierarchy must be maintained at all times: primary (`#1C1C16`), secondary (`#3F3A32`), tertiary (`#8C8474`). Do not use tertiary text for interactive elements.

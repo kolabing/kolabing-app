@@ -5308,6 +5308,11 @@
     "description": "Unique partner count shown in the reputation summary card",
     "placeholders": { "count": { "type": "int" } }
   },
+  "reputationCompletedKolabsCount": "{count, plural, =1{1 completed} other{{count} completed}}",
+  "@reputationCompletedKolabsCount": {
+    "description": "Completed Kolabs count shown in the reputation summary card",
+    "placeholders": { "count": { "type": "int" } }
+  },
   "publicProfileAbout": "About",
   "@publicProfileAbout": {
     "description": "Section title for the about/bio section on a public profile"

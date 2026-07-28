@@ -7630,6 +7630,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 partner} other{{count} partners}}'**
   String publicProfileReputationPartnersCount(int count);
 
+  /// Completed Kolabs count shown in the reputation summary card
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 completed} other{{count} completed}}'**
+  String reputationCompletedKolabsCount(int count);
+
   /// Section title for the about/bio section on a public profile
   ///
   /// In en, this message translates to:

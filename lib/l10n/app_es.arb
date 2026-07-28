@@ -1255,6 +1255,7 @@
   "publicProfileReputationEmptyBody": "Los Kolabs completados aparecerán aquí cuando los socios dejen reseñas.",
   "publicProfileReputationReviewsCount": "{count, plural, =1{1 reseña} other{{count} reseñas}}",
   "publicProfileReputationPartnersCount": "{count, plural, =1{1 socio} other{{count} socios}}",
+  "reputationCompletedKolabsCount": "{count, plural, =1{1 completado} other{{count} completados}}",
   "publicProfileAbout": "Acerca de",
   "publicProfileLoadError": "No se ha podido cargar el perfil",
   "publicProfilePastKolabs": "Kolabs anteriores",
