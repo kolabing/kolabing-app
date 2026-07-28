@@ -88,12 +88,40 @@ void main() {
       expect(opportunityApplicationsOpen(o, today: today), isTrue);
     });
 
-    test('closed when no recurring day remains in the window', () {
+    test(
+      'open for a recurring window still in the future even when today is not '
+      'a matching weekday (gate is genuine-expiry, not weekday-match)',
+      () {
+        final o = build(
+          mode: AvailabilityMode.recurring,
+          start: DateTime(2030, 6, 11), // Tue
+          end: DateTime(2030, 6, 16), // Sun — window not yet ended
+          recurringDays: const <int>[1], // Monday only
+        );
+        expect(opportunityApplicationsOpen(o, today: today), isTrue);
+      },
+    );
+
+    test(
+      'open for a degenerate window (start==end==today) — regression #94: '
+      'discovery items with a defaulted window must not hide the whole feed',
+      () {
+        final o = build(
+          mode: AvailabilityMode.recurring,
+          start: today, // Mon 2030-06-10
+          end: today,
+          recurringDays: const <int>[6], // Saturday — never matches today
+        );
+        expect(opportunityApplicationsOpen(o, today: today), isTrue);
+      },
+    );
+
+    test('closed when a recurring window has genuinely ended', () {
       final o = build(
         mode: AvailabilityMode.recurring,
-        start: DateTime(2030, 6, 11), // Tue
-        end: DateTime(2030, 6, 16), // Sun — no Monday in range
-        recurringDays: const <int>[1], // Monday only
+        start: DateTime(2020, 1, 1),
+        end: DateTime(2020, 1, 31),
+        recurringDays: const <int>[2, 4],
       );
       expect(opportunityApplicationsOpen(o, today: today), isFalse);
     });

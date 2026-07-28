@@ -52,22 +52,24 @@ List<DateTime> buildSelectableApplicationDates(
 }
 
 /// Single source of truth for whether a community can still apply to
-/// [opportunity]. Applications are OPEN only when the opportunity is neither
-/// closed nor completed AND at least one application date is still selectable
-/// from [today] onward. Used to gate the Explore deck, the offer-detail Apply
-/// CTA, and [ApplyModal.show] so they can never disagree.
+/// [opportunity]. Applications are CLOSED only when the opportunity is closed /
+/// completed, or its availability window has genuinely ended (end date strictly
+/// before [today]). Used to gate the Explore deck, the offer-detail Apply CTA,
+/// and [ApplyModal.show] so they can never disagree.
+///
+/// We intentionally do NOT require a matching recurring weekday here: discovery
+/// items frequently arrive with an absent/degenerate availability window
+/// (`start`/`end` default to "now" when the backend omits them), and the
+/// stricter selectable-date check hid the entire Explore feed (see #94). The
+/// date picker inside the modal still narrows to real selectable days.
 bool opportunityApplicationsOpen(Opportunity opportunity, {DateTime? today}) {
   if (opportunity.status == OpportunityStatus.closed ||
       opportunity.status == OpportunityStatus.completed) {
     return false;
   }
-  // buildSelectableApplicationDates returns the original (past) range for a
-  // fully-expired window, so require at least one date that is today or later.
   final todayDate = DateUtils.dateOnly(today ?? DateTime.now());
-  return buildSelectableApplicationDates(
-    opportunity,
-    today: todayDate,
-  ).any((date) => !date.isBefore(todayDate));
+  final end = DateUtils.dateOnly(opportunity.availabilityEnd);
+  return !end.isBefore(todayDate);
 }
 
 class ApplyModal extends ConsumerStatefulWidget {
