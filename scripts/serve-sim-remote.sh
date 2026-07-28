@@ -38,6 +38,16 @@ elif [[ -x /usr/local/bin/brew ]]; then
   eval "$(/usr/local/bin/brew shellenv)"
 fi
 
+# The forced-command key expands ${SSH_ORIGINAL_COMMAND} unquoted, but the Mac's
+# login shell is zsh, which -- unlike bash -- does NOT word-split unquoted
+# expansions. So `ssh ... shot 01-login` arrives here as a single argument
+# "shot 01-login" that matches no case. Re-split it (this script is bash, which
+# does word-split) so multi-arg verbs work regardless of the calling shell.
+if [[ $# -eq 1 && "$1" == *" "* ]]; then
+  # shellcheck disable=SC2086
+  set -- $1
+fi
+
 LOG=/tmp/kolabing-serve-sim.log
 PIDFILE=/tmp/kolabing-serve-sim.pid
 QADIR=/tmp/kolabing-qa
