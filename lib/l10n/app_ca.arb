@@ -1245,6 +1245,7 @@
   "publicProfileReputationEmptyBody": "Els Kolabs completats apareixeran aquí quan els socis deixin ressenyes.",
   "publicProfileReputationReviewsCount": "{count, plural, =1{1 ressenya} other{{count} ressenyes}}",
   "publicProfileReputationPartnersCount": "{count, plural, =1{1 soci} other{{count} socis}}",
+  "reputationCompletedKolabsCount": "{count, plural, =1{1 completat} other{{count} completats}}",
   "publicProfileAbout": "Sobre",
   "publicProfileLoadError": "No s'ha pogut carregar el perfil",
   "publicProfilePastKolabs": "Kolabs anteriors",
