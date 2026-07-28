@@ -27,6 +27,10 @@ import '../../opportunity/providers/saved_kolabs_provider.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../widgets/opportunity_card.dart';
 
+/// Vertical space reserved at the bottom of Explore's scrollables so the
+/// create-Kolab FAB (56dp + margin) never covers card actions.
+const double _fabClearance = 88;
+
 class ExploreScreen extends ConsumerStatefulWidget {
   const ExploreScreen({
     super.key,
@@ -489,7 +493,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               KolabingSpacing.md,
               KolabingSpacing.xs,
               KolabingSpacing.md,
-              KolabingSpacing.xxl,
+              _fabClearance,
             ),
             itemCount: saved.length,
             separatorBuilder: (_, _) =>
@@ -531,49 +535,54 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
     final itemCount = activeItems.length + (listState.isLoadingMore ? 1 : 0);
 
-    return PageView.builder(
-      controller: _pageController,
-      scrollDirection: Axis.vertical,
-      onPageChanged: _onPageChanged,
-      itemCount: itemCount,
-      itemBuilder: (BuildContext context, int index) {
-        if (index >= activeItems.length) {
-          return Center(
-            child: CircularProgressIndicator(
-              color: context.colors.primary,
-              strokeWidth: 2,
-            ),
-          );
-        }
-
-        final item = activeItems[index];
-        // Blur the community identity only for a FREE business; subscribing
-        // reveals it (§2.6).
-        final hideCreatorIdentity =
-            !_isCommunityViewer &&
-            item.isCommunityRequest &&
-            !hasBusinessSubscription;
-        return Stack(
-          children: [
-            ExploreSwipeCard(
-              item: item,
-              showKolabFirst: !_isCommunityViewer && item.isCommunityRequest,
-              hideCreatorIdentity: hideCreatorIdentity,
-              onTap: () =>
-                  _onCardTap(item, hasSubscription: hasBusinessSubscription),
-            ),
-            if (item.id.isNotEmpty)
-              Positioned(
-                top: KolabingSpacing.md,
-                right: KolabingSpacing.md,
-                child: _SaveBookmarkButton(
-                  isSaved: savedIds.contains(item.id),
-                  onTap: () => _toggleSaved(item.id),
-                ),
+    // Reserve the FAB's zone under each card so it never covers the card's
+    // bottom-right action area (View Details / bookmark).
+    return Padding(
+      padding: const EdgeInsets.only(bottom: _fabClearance),
+      child: PageView.builder(
+        controller: _pageController,
+        scrollDirection: Axis.vertical,
+        onPageChanged: _onPageChanged,
+        itemCount: itemCount,
+        itemBuilder: (BuildContext context, int index) {
+          if (index >= activeItems.length) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: context.colors.primary,
+                strokeWidth: 2,
               ),
-          ],
-        );
-      },
+            );
+          }
+
+          final item = activeItems[index];
+          // Blur the community identity only for a FREE business; subscribing
+          // reveals it (§2.6).
+          final hideCreatorIdentity =
+              !_isCommunityViewer &&
+              item.isCommunityRequest &&
+              !hasBusinessSubscription;
+          return Stack(
+            children: [
+              ExploreSwipeCard(
+                item: item,
+                showKolabFirst: !_isCommunityViewer && item.isCommunityRequest,
+                hideCreatorIdentity: hideCreatorIdentity,
+                onTap: () =>
+                    _onCardTap(item, hasSubscription: hasBusinessSubscription),
+              ),
+              if (item.id.isNotEmpty)
+                Positioned(
+                  top: KolabingSpacing.md,
+                  right: KolabingSpacing.md,
+                  child: _SaveBookmarkButton(
+                    isSaved: savedIds.contains(item.id),
+                    onTap: () => _toggleSaved(item.id),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 

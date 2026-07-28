@@ -39,6 +39,10 @@ class _AttendeeRegisterScreenState
   final _confirmPasswordController = TextEditingController();
 
   bool _isLoading = false;
+
+  /// Off until the first failed submit, then per-keystroke — clears stale
+  /// validation errors as soon as the user corrects the field.
+  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
   bool _isGoogleLoading = false;
   bool _isAppleLoading = false;
   bool _showSuccess = false;
@@ -114,7 +118,10 @@ class _AttendeeRegisterScreenState
     if (_isLoading || _showSuccess) return;
 
     _clearApiErrors();
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      setState(() => _autovalidateMode = AutovalidateMode.onUserInteraction);
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -381,6 +388,7 @@ class _AttendeeRegisterScreenState
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Form(
                     key: _formKey,
+                    autovalidateMode: _autovalidateMode,
                     child: Column(
                       children: [
                         const SizedBox(height: 12),

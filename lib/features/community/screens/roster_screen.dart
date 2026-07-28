@@ -413,11 +413,22 @@ class MemberRosterEditSheetState extends ConsumerState<MemberRosterEditSheet> {
           const SizedBox(height: KolabingSpacing.xs),
           tiersAsync.when(
             loading: () => const LinearProgressIndicator(),
-            error: (e, _) => Text(
-              e.toString(),
-              style: KolabingTextStyles.bodySmall.copyWith(
-                color: context.colors.error,
-              ),
+            error: (e, _) => Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    e.toString(),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: context.colors.error,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () =>
+                      ref.read(communityManageProvider.notifier).reloadTiers(),
+                  child: Text(l10n.commonRetry),
+                ),
+              ],
             ),
             data: (tiers) => DropdownButtonFormField<String?>(
               initialValue: tiers.any((t) => t.id == _tierId) ? _tierId : null,

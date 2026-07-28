@@ -26,6 +26,7 @@ class MyKolabsHubScreen extends ConsumerStatefulWidget {
   const MyKolabsHubScreen({
     required this.offersTab,
     this.initialSubTab = 0,
+    this.onExploreTap,
     super.key,
   });
 
@@ -34,6 +35,11 @@ class MyKolabsHubScreen extends ConsumerStatefulWidget {
 
   /// Initial sub-tab: 0 Offers, 1 Requests, 2 Active, 3 Finished.
   final int initialSubTab;
+
+  /// Switches the parent shell to the Explore tab. Powers the empty-state
+  /// CTAs ("Find a Kolab") on the Requests/Active tabs; when null the CTAs
+  /// are hidden (e.g. hub opened outside the main tab shell).
+  final VoidCallback? onExploreTap;
 
   @override
   ConsumerState<MyKolabsHubScreen> createState() => _MyKolabsHubScreenState();
@@ -125,11 +131,15 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
                 controller: _tabController,
                 children: [
                   widget.offersTab,
-                  const ApplicationsScreen(embedded: true),
+                  ApplicationsScreen(
+                    embedded: true,
+                    onExplore: widget.onExploreTap,
+                  ),
                   CollaborationsListTab(
                     bucket: CollaborationBucket.active,
                     emptyTitle: l10n.myKolabsHubActiveEmptyTitle,
                     emptyMessage: l10n.myKolabsHubActiveEmptyMessage,
+                    onEmptyExplore: widget.onExploreTap,
                   ),
                   CollaborationsListTab(
                     bucket: CollaborationBucket.finished,

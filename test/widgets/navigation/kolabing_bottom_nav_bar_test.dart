@@ -48,11 +48,19 @@ void main() {
       ),
     );
 
-    // The nav renders labels upper-cased; long labels stay on a single line
-    // and clip with an ellipsis rather than wrapping or overflowing.
+    // The nav renders labels upper-cased and wraps each label in a
+    // FittedBox(scaleDown) rather than fading/ellipsis-truncating — long
+    // labels shrink to fit instead of clipping (see
+    // KolabingBottomNavBar's item builder).
     final label = tester.widget<Text>(find.text('MY OPPORTUNITIES'));
     expect(label.maxLines, 1);
-    expect(label.overflow, TextOverflow.ellipsis);
+    expect(
+      find.ancestor(
+        of: find.text('MY OPPORTUNITIES'),
+        matching: find.byType(FittedBox),
+      ),
+      findsOneWidget,
+    );
   });
 }
 

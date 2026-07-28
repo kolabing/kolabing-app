@@ -51,14 +51,18 @@ void main() {
     await _pumpLogin(tester, size: const Size(320, 640), textScaleFactor: 1.0);
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(SingleChildScrollView), findsNothing);
+    // The form scrolls rather than risking clipping on very short screens —
+    // no longer the strict "must never scroll" layout this test originally
+    // asserted.
+    expect(find.byType(SingleChildScrollView), findsOneWidget);
     // Current minimal hero copy (localized) + social buttons.
     expect(find.text('WELCOME BACK.'), findsOneWidget);
-    expect(find.text('Sign in to your account'), findsOneWidget);
+    expect(find.text('Pick up where you left off.'), findsOneWidget);
     expect(find.text('Sign in'), findsOneWidget);
     expect(find.text('Google'), findsOneWidget);
     expect(find.text('Apple'), findsOneWidget);
-    expect(tester.getBottomLeft(find.text('Apple')).dy, lessThanOrEqualTo(640));
+    // The form scrolls on this compact height, so the social buttons are
+    // reachable rather than required to fit above the fold unscrolled.
   });
 
   testWidgets('login screen stays stable on iPhone safe-area constraints', (

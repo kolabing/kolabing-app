@@ -106,7 +106,15 @@ class _CommunityDashboardScreenState
     }
 
     return ListView(
-      padding: const EdgeInsets.all(KolabingSpacing.md),
+      // Extra bottom inset so the create-opportunity FAB (56dp + margin)
+      // never covers the last card / quick-action buttons when scrolled to
+      // the end.
+      padding: const EdgeInsets.fromLTRB(
+        KolabingSpacing.md,
+        KolabingSpacing.md,
+        KolabingSpacing.md,
+        KolabingSpacing.md + 88,
+      ),
       children: [
         _buildHeader(userName, isDark),
         const SizedBox(height: KolabingSpacing.lg),
@@ -159,12 +167,16 @@ class _CommunityDashboardScreenState
 
   List<Widget> _buildDashboardContent(CommunityDashboard data, bool isDark) {
     return [
-      // 1. XP summary card (sage green, non-tappable)
-      const CommunityXpSummaryCard(),
+      // Marketplace first: Find a Kolab / My applications stay above the
+      // fold; all gamification content (XP, missions, badges, referral)
+      // renders below the marketplace sections.
+
+      // 1. Quick actions
+      _buildQuickActions(isDark),
       const SizedBox(height: KolabingSpacing.lg),
 
-      // 2. Today's XP missions
-      const XpMissionsSection(),
+      // 2. Upcoming kolabs
+      _buildUpcomingSection(data, isDark),
       const SizedBox(height: KolabingSpacing.lg),
 
       // 3. Compact stats strip
@@ -176,20 +188,21 @@ class _CommunityDashboardScreenState
       ),
       const SizedBox(height: KolabingSpacing.lg),
 
-      // 4. Badges row
+      // 4. XP summary card (sage green, non-tappable)
+      const CommunityXpSummaryCard(),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 5. Today's XP missions
+      const XpMissionsSection(),
+      const SizedBox(height: KolabingSpacing.lg),
+
+      // 6. Badges row (earned badges only)
       const DashboardBadgesRow(),
       const SizedBox(height: KolabingSpacing.lg),
 
-      // 5. Referral card — pastel yellow style
-      const ReferralBannerCard(usePastelStyle: true),
-      const SizedBox(height: KolabingSpacing.lg),
-
-      // 6. Quick actions
-      _buildQuickActions(isDark),
-      const SizedBox(height: KolabingSpacing.lg),
-
-      // 7. Upcoming kolabs
-      _buildUpcomingSection(data, isDark),
+      // 7. Referral card — compact nudge; the full €75 hero card lives in
+      // the wallet/referral surfaces, not the dashboard.
+      const ReferralBannerCard(compact: true),
     ];
   }
 

@@ -427,13 +427,24 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                           color: context.colors.primary,
                         ),
                       ),
-                      error: (_, __) => Text(
-                        AppLocalizations.of(
-                          context,
-                        ).businessStep2BusinessTypesLoadError,
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          color: context.colors.error,
-                        ),
+                      error: (_, __) => Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              AppLocalizations.of(
+                                context,
+                              ).businessStep2BusinessTypesLoadError,
+                              style: KolabingTextStyles.bodySmall.copyWith(
+                                color: context.colors.error,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () =>
+                                ref.invalidate(businessTypesProvider),
+                            child: Text(AppLocalizations.of(context).commonRetry),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 24),

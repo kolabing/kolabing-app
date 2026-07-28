@@ -9,6 +9,7 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_status_badge.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../models/collaboration.dart';
 import '../providers/collaborations_list_provider.dart';
@@ -22,6 +23,7 @@ class CollaborationsListTab extends ConsumerWidget {
     required this.bucket,
     required this.emptyTitle,
     required this.emptyMessage,
+    this.onEmptyExplore,
     super.key,
   });
 
@@ -29,6 +31,10 @@ class CollaborationsListTab extends ConsumerWidget {
   final CollaborationBucket bucket;
   final String emptyTitle;
   final String emptyMessage;
+
+  /// When set, the empty state offers a "Find a Kolab" CTA that jumps to the
+  /// Explore tab — so an empty Active tab is a starting point, not a dead end.
+  final VoidCallback? onEmptyExplore;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,6 +62,7 @@ class CollaborationsListTab extends ConsumerWidget {
             title: AppLocalizations.of(context).commonErrorGeneric,
             message: '$e',
             isDark: isDark,
+            onRetry: () => ref.refresh(collaborationsListProvider.future),
           ),
         ),
         data: (items) {
@@ -68,6 +75,15 @@ class CollaborationsListTab extends ConsumerWidget {
                 title: emptyTitle,
                 message: emptyMessage,
                 isDark: isDark,
+                action: onEmptyExplore == null
+                    ? null
+                    : KolabingButton(
+                        label: AppLocalizations.of(context).dashboardFindAKolab,
+                        onPressed: onEmptyExplore!,
+                        variant: KolabingButtonVariant.secondary,
+                        size: KolabingButtonSize.compact,
+                        icon: const Icon(LucideIcons.search),
+                      ),
               ),
             );
           }
@@ -242,12 +258,21 @@ class _Message extends StatelessWidget {
     required this.title,
     required this.message,
     required this.isDark,
+    this.onRetry,
+    this.action,
   });
 
   final IconData icon;
   final String title;
   final String message;
   final bool isDark;
+
+  /// Optional retry handler — renders a Retry button under the message.
+  final VoidCallback? onRetry;
+
+  /// Optional custom action widget (e.g. an empty-state CTA). Rendered after
+  /// [onRetry] when both are present.
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -287,6 +312,20 @@ class _Message extends StatelessWidget {
           ),
           textAlign: TextAlign.center,
         ),
+        if (onRetry != null) ...[
+          const SizedBox(height: KolabingSpacing.lg),
+          KolabingButton(
+            label: AppLocalizations.of(context).commonRetry,
+            onPressed: onRetry!,
+            variant: KolabingButtonVariant.primary,
+            size: KolabingButtonSize.compact,
+            icon: const Icon(LucideIcons.refreshCw),
+          ),
+        ],
+        if (action != null) ...[
+          const SizedBox(height: KolabingSpacing.lg),
+          action!,
+        ],
       ],
     ),
   );

@@ -192,6 +192,11 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
                 ),
                 onTap: () => Navigator.pop(context, ImageSource.gallery),
               ),
+              const SizedBox(height: KolabingSpacing.xs),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(AppLocalizations.of(context).commonCancel),
+              ),
               const SizedBox(height: KolabingSpacing.md),
             ],
           ),

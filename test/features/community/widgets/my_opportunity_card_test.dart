@@ -67,10 +67,15 @@ void main() {
     );
 
     // Only the primary action (View) carries a visible label now; it is a
-    // GlassButton that uppercases the label and keeps it on a single line.
-    final viewLabel = tester.widget<Text>(find.text('VIEW'));
+    // KolabingButton that wraps its label in a FittedBox(scaleDown) rather
+    // than fading/ellipsis-truncating — the whole icon+label group shrinks
+    // together instead of clipping (see KolabingButton._buildButton).
+    final l10n = AppLocalizations.of(tester.element(find.byType(Scaffold)));
+    final viewLabel = tester.widget<Text>(
+      find.text(l10n.myOpportunityCardActionView),
+    );
     expect(viewLabel.maxLines, 1);
-    expect(viewLabel.overflow, TextOverflow.ellipsis);
+    expect(viewLabel.softWrap, isFalse);
 
     // Edit, Share and Close are icon-only buttons (tooltips), never wrapping.
     for (final tooltip in ['Edit', 'Share', 'Close']) {
