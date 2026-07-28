@@ -139,11 +139,28 @@ case "${1:-start}" in
     shift || true
     xcrun simctl ui booted appearance "${1:-light}" >/dev/null 2>&1 && echo "appearance ${1:-light}"
     ;;
+  paste)
+    # Set the sim clipboard. serve-sim `type` is US-keyboard-only and drops shifted
+    # symbols (e.g. `@` -> `2`), so special-char input (emails, passwords) goes via the
+    # clipboard: `paste <text>` then long-press the field and tap Paste.
+    shift || true
+    printf '%s' "$*" | xcrun simctl pbcopy booted >/dev/null 2>&1 && echo "clip set (${#*} chars)"
+    ;;
+  longpress)
+    # Long press = gesture begin, hold, end at the same point (no move) -> brings up the
+    # iOS text popover (Select All / Paste). Screenshot after to read the popover.
+    shift || true
+    x="${1:-0.5}"; y="${2:-0.5}"
+    npx --yes serve-sim gesture "{\"type\":\"begin\",\"x\":$x,\"y\":$y}" >/dev/null 2>&1
+    sleep 0.9
+    npx --yes serve-sim gesture "{\"type\":\"end\",\"x\":$x,\"y\":$y}" >/dev/null 2>&1
+    echo "longpressed $x,$y"
+    ;;
   log)
     tail -n "${2:-40}" "$LOG" 2>/dev/null || echo "(no log yet)"
     ;;
   *)
-    echo "usage: $0 {start|status|stop|shot|tap|type|button|openurl|swipe|appearance|log} [args]" >&2
+    echo "usage: $0 {start|status|stop|shot|tap|type|button|openurl|swipe|appearance|paste|longpress|log} [args]" >&2
     exit 1
     ;;
 esac
