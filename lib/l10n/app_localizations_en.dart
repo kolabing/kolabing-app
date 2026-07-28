@@ -706,7 +706,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectionCardCommunityDescription =>
-      'Seeking sponsors and kolab partners';
+      'Looking for brands to Kolab with';
 
   @override
   String get selectionCardAttendeeDescription =>
@@ -3063,7 +3063,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get offeringContentCreationSubtitle => 'Professional photos/video';
 
   @override
-  String get offeringSponsorshipTitle => 'Sponsorship budget';
+  String get offeringSponsorshipTitle => 'Collaboration budget';
 
   @override
   String get offeringSponsorshipSubtitle => 'Financial support for the kolab';
@@ -3433,7 +3433,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Choose what you want to promote to communities.';
 
   @override
-  String get intentSelectionFindVenueTitle => 'Find a Venue or Sponsor';
+  String get intentSelectionFindVenueTitle => 'Find a Venue or Brand';
 
   @override
   String get intentSelectionFindVenueSubtitle => 'for my community event';
@@ -4776,12 +4776,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exploreDetailScaleCommunity(num count) {
-    return '$count community';
+    return '$count members';
   }
 
   @override
   String exploreDetailScaleExpected(num count) {
-    return '$count expected';
+    return '~$count expected to attend';
   }
 
   @override
@@ -6863,7 +6863,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get businessProductOfferingHint =>
-      'e.g., 20% off for community members, free samples, sponsored prizes';
+      'e.g., 20% off for community members, free samples, giveaway prizes';
+
+  @override
+  String get venueModeBusinessVenue => 'Business Venue';
+
+  @override
+  String get venueModeCommunityVenue => 'Community Venue';
+
+  @override
+  String get venueModeNoVenue => 'No venue yet';
 
   @override
   String get businessProductPhotosLabel => 'Photos (optional)';

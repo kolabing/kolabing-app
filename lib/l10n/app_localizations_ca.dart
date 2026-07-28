@@ -714,7 +714,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get selectionCardCommunityDescription =>
-      'Cerco patrocinadors i socis per a kolabs';
+      'Cerco marques per fer Kolabs';
 
   @override
   String get selectionCardAttendeeDescription =>
@@ -3106,7 +3106,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get offeringContentCreationSubtitle => 'Fotos i vídeo professionals';
 
   @override
-  String get offeringSponsorshipTitle => 'Pressupost de patrocini';
+  String get offeringSponsorshipTitle => 'Pressupost de col·laboració';
 
   @override
   String get offeringSponsorshipSubtitle => 'Suport econòmic per al kolab';
@@ -3485,7 +3485,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'Tria què vols promocionar a les comunitats.';
 
   @override
-  String get intentSelectionFindVenueTitle => 'Troba un local o patrocinador';
+  String get intentSelectionFindVenueTitle => 'Troba un local o marca';
 
   @override
   String get intentSelectionFindVenueSubtitle =>
@@ -4852,12 +4852,12 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String exploreDetailScaleCommunity(num count) {
-    return '$count a la comunitat';
+    return '$count membres';
   }
 
   @override
   String exploreDetailScaleExpected(num count) {
-    return '$count esperats';
+    return '~$count assistents previstos';
   }
 
   @override
@@ -6969,7 +6969,16 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get businessProductOfferingHint =>
-      'p. ex., 20% de descompte per a membres de la comunitat, mostres gratis, premis patrocinats';
+      'p. ex., 20% de descompte per a membres de la comunitat, mostres gratis, premis per a sortejos';
+
+  @override
+  String get venueModeBusinessVenue => 'Local del negoci';
+
+  @override
+  String get venueModeCommunityVenue => 'Local de la comunitat';
+
+  @override
+  String get venueModeNoVenue => 'Encara sense local';
 
   @override
   String get businessProductPhotosLabel => 'Fotos (opcional)';

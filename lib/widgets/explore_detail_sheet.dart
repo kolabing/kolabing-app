@@ -13,6 +13,7 @@ import '../features/discovery/models/discovery_item.dart';
 import '../features/event/models/event.dart';
 import '../features/event/providers/event_provider.dart';
 import '../features/opportunity/models/opportunity.dart';
+import '../features/opportunity/opportunity_l10n.dart';
 import '../l10n/app_localizations.dart';
 import 'blurred_identity.dart';
 import 'kolabing_button.dart';
@@ -505,7 +506,7 @@ class ExploreDetailSheet extends ConsumerWidget {
         ),
       _DetailItem(
         icon: LucideIcons.building2,
-        label: opportunity.venueMode.displayName,
+        label: opportunity.venueMode.label(AppLocalizations.of(context)),
         kind: _DetailPillKind.sand,
       ),
       _DetailItem(
