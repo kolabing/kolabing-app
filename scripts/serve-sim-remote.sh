@@ -156,11 +156,26 @@ case "${1:-start}" in
     npx --yes serve-sim gesture "{\"type\":\"end\",\"x\":$x,\"y\":$y}" >/dev/null 2>&1
     echo "longpressed $x,$y"
     ;;
+  relaunch)
+    # Terminate + relaunch the app WITHOUT a rebuild, optionally forcing a language
+    # (-AppleLanguages). For onboarding-persistence (#23: force-quit mid-flow, relaunch,
+    # confirm restore) and localization (#31: relaunch in es/ca). NOTE: this detaches from
+    # `flutter run`, so `log` stops capturing console output until the next stop+start.
+    shift || true
+    BUNDLE=com.kolabing.kolabingApp
+    xcrun simctl terminate booted "$BUNDLE" >/dev/null 2>&1 || true
+    sleep 1
+    if [[ -n "${1:-}" ]]; then
+      xcrun simctl launch booted "$BUNDLE" -AppleLanguages "($1)" -AppleLocale "$1" >/dev/null 2>&1 && echo "relaunched lang=$1"
+    else
+      xcrun simctl launch booted "$BUNDLE" >/dev/null 2>&1 && echo "relaunched"
+    fi
+    ;;
   log)
     tail -n "${2:-40}" "$LOG" 2>/dev/null || echo "(no log yet)"
     ;;
   *)
-    echo "usage: $0 {start|status|stop|shot|tap|type|button|openurl|swipe|appearance|paste|longpress|log} [args]" >&2
+    echo "usage: $0 {start|status|stop|shot|tap|type|button|openurl|swipe|appearance|paste|longpress|relaunch|log} [args]" >&2
     exit 1
     ;;
 esac
