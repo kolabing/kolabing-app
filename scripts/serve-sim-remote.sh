@@ -18,6 +18,17 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# An SSH forced-command runs in a NON-interactive, NON-login shell, so the user's
+# zsh rc files never load and Homebrew's bin dir is not on PATH -- `flutter`, `node`
+# and `pod` (all under /opt/homebrew/bin on Apple Silicon) then resolve as "not found"
+# and serve-sim.sh aborts. Load the Homebrew environment so a box-triggered start
+# sees the same toolchain an interactive Terminal does. Harmless if brew is absent.
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
 LOG=/tmp/kolabing-serve-sim.log
 PIDFILE=/tmp/kolabing-serve-sim.pid
 
