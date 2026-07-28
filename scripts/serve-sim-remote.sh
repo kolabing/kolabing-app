@@ -15,6 +15,15 @@
 #   ./scripts/serve-sim-remote.sh start ["iPhone 17"] [PORT]
 #   ./scripts/serve-sim-remote.sh status
 #   ./scripts/serve-sim-remote.sh stop
+#
+# Agent QA verbs (so the box can drive a smoke run and pull evidence without a
+# general shell — everything runs on the Mac, against the booted sim):
+#   ./scripts/serve-sim-remote.sh shot [name]      # screenshot -> base64 to stdout
+#   ./scripts/serve-sim-remote.sh tap <x> <y>      # normalized 0..1 coords
+#   ./scripts/serve-sim-remote.sh type <text...>
+#   ./scripts/serve-sim-remote.sh button <name>    # home | lock
+#   ./scripts/serve-sim-remote.sh openurl <url>    # deep-link into the sim
+#   ./scripts/serve-sim-remote.sh log [N]          # last N lines of the run log
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -31,6 +40,7 @@ fi
 
 LOG=/tmp/kolabing-serve-sim.log
 PIDFILE=/tmp/kolabing-serve-sim.pid
+QADIR=/tmp/kolabing-qa
 
 running() { [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; }
 
@@ -68,8 +78,39 @@ case "${1:-start}" in
     fi
     echo "stopped"
     ;;
+  shot)
+    # Screenshot the booted sim and stream it back base64-encoded over the SSH
+    # channel (the forced-command key has no port-forwarding / scp; base64-on-stdout
+    # is how evidence leaves the Mac). Box side: `ssh ... shot login | base64 -d > login.png`.
+    shift || true
+    name="$(printf '%s' "${1:-shot}" | tr -cd 'A-Za-z0-9._-')"; [[ -n "$name" ]] || name="shot"
+    mkdir -p "$QADIR"
+    if ! xcrun simctl io booted screenshot "$QADIR/$name.png" >/dev/null 2>&1; then
+      echo "SHOT_FAILED (no booted sim?)" >&2; exit 1
+    fi
+    base64 < "$QADIR/$name.png"
+    ;;
+  tap)
+    shift || true
+    npx --yes serve-sim tap "$@" >/dev/null 2>&1 && echo "tapped $*"
+    ;;
+  type)
+    shift || true
+    npx --yes serve-sim type "$@" >/dev/null 2>&1 && echo "typed"
+    ;;
+  button)
+    shift || true
+    npx --yes serve-sim button "$@" >/dev/null 2>&1 && echo "button $*"
+    ;;
+  openurl)
+    shift || true
+    xcrun simctl openurl booted "$@" >/dev/null 2>&1 && echo "opened $*"
+    ;;
+  log)
+    tail -n "${2:-40}" "$LOG" 2>/dev/null || echo "(no log yet)"
+    ;;
   *)
-    echo "usage: $0 {start|status|stop} [device] [port]" >&2
+    echo "usage: $0 {start|status|stop|shot|tap|type|button|openurl|log} [args]" >&2
     exit 1
     ;;
 esac
