@@ -102,9 +102,6 @@ class OpportunityService {
       final response = await _httpClient.get(uri, headers: headers);
 
       debugPrint('Browse response status: ${response.statusCode}');
-      debugPrint(
-        'Browse response body (first 500): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
-      );
 
       if (response.statusCode == 200) {
         return _parsePaginatedResponse(response.body);
