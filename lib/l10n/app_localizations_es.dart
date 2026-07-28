@@ -5145,6 +5145,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dashboardUpcomingKolabs => 'PRÓXIMOS KOLABS';
 
   @override
+  String get dashboardMonthlyGoalTitle => 'OBJETIVO DE ESTE MES';
+
+  @override
+  String dashboardMonthlyGoalProgress(int completed, int goal) {
+    return '$completed de $goal Kolabs';
+  }
+
+  @override
   String get dashboardNoUpcomingKolabs => 'Aún no hay kolabs próximos';
 
   @override

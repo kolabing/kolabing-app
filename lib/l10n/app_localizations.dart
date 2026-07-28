@@ -9074,6 +9074,18 @@ abstract class AppLocalizations {
   /// **'UPCOMING KOLABS'**
   String get dashboardUpcomingKolabs;
 
+  /// No description provided for @dashboardMonthlyGoalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'THIS MONTH\'S GOAL'**
+  String get dashboardMonthlyGoalTitle;
+
+  /// Monthly collaboration goal progress, e.g. '1 of 1 Kolabs'.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {goal} Kolabs'**
+  String dashboardMonthlyGoalProgress(int completed, int goal);
+
   /// No description provided for @dashboardNoUpcomingKolabs.
   ///
   /// In en, this message translates to:

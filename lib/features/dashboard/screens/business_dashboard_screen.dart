@@ -21,6 +21,9 @@ import '../../subscription/widgets/subscription_paywall.dart';
 import '../models/dashboard_model.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/dashboard_shimmer.dart';
+import '../widgets/monthly_goal_card.dart';
+import '../widgets/next_action_card.dart';
+import '../widgets/partner_status_badge.dart';
 import '../widgets/upcoming_collaboration_card.dart';
 
 // Design tokens for the "Business Activity" hero card — matches the
@@ -79,6 +82,20 @@ class _BusinessDashboardScreenState
     }
   }
 
+  /// Maps a next-action `key` to an in-app destination where one is known.
+  /// Keys without a confirmed destination (review_pending_applications,
+  /// leave_review, complete_profile) render as informational-only for now —
+  /// no CTA rather than a guessed/wrong route.
+  VoidCallback? _onNextActionTap(NextAction action) {
+    switch (action.key) {
+      case 'create_first_offer':
+      case 'create_second_offer':
+        return _onCreateKolab;
+      default:
+        return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final dashboardState = ref.watch(dashboardProvider);
@@ -127,11 +144,30 @@ class _BusinessDashboardScreenState
       children: [
         // Header
         _buildHeader(userName, isDark),
+        if (data.partnerStatus != null) ...[
+          const SizedBox(height: KolabingSpacing.xs),
+          PartnerStatusBadge(partnerStatus: data.partnerStatus),
+        ],
         const SizedBox(height: KolabingSpacing.sm),
 
         // Positioning message
         _buildPositioningMessage(),
         const SizedBox(height: KolabingSpacing.lg),
+
+        // Next best action — the single most useful thing to do right now
+        if (data.nextAction != null) ...[
+          NextActionCard(
+            nextAction: data.nextAction,
+            onTap: _onNextActionTap(data.nextAction!),
+          ),
+          const SizedBox(height: KolabingSpacing.md),
+        ],
+
+        // Monthly collaboration goal — progress only, never a broken streak
+        if (data.monthlyGoal != null) ...[
+          MonthlyGoalCard(monthlyGoal: data.monthlyGoal),
+          const SizedBox(height: KolabingSpacing.lg),
+        ],
 
         // Main yellow "Business Activity" card
         _buildActivityHeroCard(data),
