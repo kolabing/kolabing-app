@@ -23,6 +23,8 @@
 #   ./scripts/serve-sim-remote.sh type <text...>
 #   ./scripts/serve-sim-remote.sh button <name>    # home | lock
 #   ./scripts/serve-sim-remote.sh openurl <url>    # deep-link into the sim
+#   ./scripts/serve-sim-remote.sh swipe <x1> <y1> <x2> <y2>   # drag/scroll, normalized 0..1
+#   ./scripts/serve-sim-remote.sh appearance <light|dark>     # sim UI appearance
 #   ./scripts/serve-sim-remote.sh log [N]          # last N lines of the run log
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -116,11 +118,32 @@ case "${1:-start}" in
     shift || true
     xcrun simctl openurl booted "$@" >/dev/null 2>&1 && echo "opened $*"
     ;;
+  swipe)
+    # Drag/scroll: serve-sim's gesture API is event-based (begin/move/end, normalized
+    # 0..1) and the detached daemon tracks the touch across separate CLI calls, so one
+    # swipe = a begin, a few interpolated moves, and an end sent in sequence.
+    shift || true
+    x1="${1:-0.5}"; y1="${2:-0.8}"; x2="${3:-0.5}"; y2="${4:-0.2}"
+    gest() { npx --yes serve-sim gesture "$1" >/dev/null 2>&1; }
+    gest "{\"type\":\"begin\",\"x\":$x1,\"y\":$y1}"
+    for f in 0.2 0.4 0.6 0.8; do
+      mx=$(awk "BEGIN{printf \"%.4f\", $x1+($x2-$x1)*$f}")
+      my=$(awk "BEGIN{printf \"%.4f\", $y1+($y2-$y1)*$f}")
+      gest "{\"type\":\"move\",\"x\":$mx,\"y\":$my}"
+    done
+    gest "{\"type\":\"move\",\"x\":$x2,\"y\":$y2}"
+    gest "{\"type\":\"end\",\"x\":$x2,\"y\":$y2}"
+    echo "swiped $x1,$y1 -> $x2,$y2"
+    ;;
+  appearance)
+    shift || true
+    xcrun simctl ui booted appearance "${1:-light}" >/dev/null 2>&1 && echo "appearance ${1:-light}"
+    ;;
   log)
     tail -n "${2:-40}" "$LOG" 2>/dev/null || echo "(no log yet)"
     ;;
   *)
-    echo "usage: $0 {start|status|stop|shot|tap|type|button|openurl|log} [args]" >&2
+    echo "usage: $0 {start|status|stop|shot|tap|type|button|openurl|swipe|appearance|log} [args]" >&2
     exit 1
     ;;
 esac
