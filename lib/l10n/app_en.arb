@@ -695,7 +695,7 @@
   "@loginUserNotFoundTitle": {
     "description": "Dialog title shown when Google sign-in finds no matching account."
   },
-  "loginUserNotFoundMessage": "No account exists with this Google email. Please create an account first.",
+  "loginUserNotFoundMessage": "No account exists for this sign-in yet. Please create an account first.",
   "@loginUserNotFoundMessage": {
     "description": "Dialog body shown when Google sign-in finds no matching account."
   },

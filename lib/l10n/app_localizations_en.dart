@@ -566,7 +566,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginUserNotFoundMessage =>
-      'No account exists with this Google email. Please create an account first.';
+      'No account exists for this sign-in yet. Please create an account first.';
 
   @override
   String get loginCreateAccountButton => 'Create Account';

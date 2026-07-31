@@ -174,7 +174,7 @@
   "loginHeroWelcome": "Benvingut de nou.",
   "loginSignUpLink": "Registrar-se",
   "loginUserNotFoundTitle": "Compte no trobat",
-  "loginUserNotFoundMessage": "No existeix cap compte amb aquest correu de Google. Crea un compte primer.",
+  "loginUserNotFoundMessage": "Encara no existeix cap compte per a aquest inici de sessió. Crea un compte primer.",
   "loginCreateAccountButton": "Crear compte",
   "forgotPasswordFormTitle": "Restableix la teva contrasenya",
   "forgotPasswordFormSubtitle": "Introdueix el correu del teu compte i t'enviarem un enllaç segur per restablir-la.",

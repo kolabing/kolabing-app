@@ -573,7 +573,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get loginUserNotFoundMessage =>
-      'No existeix cap compte amb aquest correu de Google. Crea un compte primer.';
+      'Encara no existeix cap compte per a aquest inici de sessió. Crea un compte primer.';
 
   @override
   String get loginCreateAccountButton => 'Crear compte';

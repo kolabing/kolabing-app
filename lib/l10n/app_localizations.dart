@@ -1147,7 +1147,7 @@ abstract class AppLocalizations {
   /// Dialog body shown when Google sign-in finds no matching account.
   ///
   /// In en, this message translates to:
-  /// **'No account exists with this Google email. Please create an account first.'**
+  /// **'No account exists for this sign-in yet. Please create an account first.'**
   String get loginUserNotFoundMessage;
 
   /// Button in the user-not-found dialog to start account creation.
