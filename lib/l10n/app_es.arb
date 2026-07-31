@@ -174,7 +174,7 @@
   "loginHeroWelcome": "Bienvenido de nuevo.",
   "loginSignUpLink": "Registrarse",
   "loginUserNotFoundTitle": "Cuenta no encontrada",
-  "loginUserNotFoundMessage": "No existe ninguna cuenta con este correo de Google. Crea una cuenta primero.",
+  "loginUserNotFoundMessage": "Aún no existe ninguna cuenta para este inicio de sesión. Crea una cuenta primero.",
   "loginCreateAccountButton": "Crear cuenta",
   "forgotPasswordFormTitle": "Restablece tu contraseña",
   "forgotPasswordFormSubtitle": "Introduce el correo de tu cuenta y te enviaremos un enlace seguro para restablecerla.",
