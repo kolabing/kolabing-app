@@ -12,6 +12,8 @@ import '../features/application/widgets/apply_modal.dart'
 import '../features/discovery/models/discovery_item.dart';
 import '../features/event/models/event.dart';
 import '../features/event/providers/event_provider.dart';
+import '../features/moderation/services/moderation_service.dart';
+import '../features/moderation/widgets/moderation_menu.dart';
 import '../features/opportunity/models/opportunity.dart';
 import '../features/opportunity/opportunity_l10n.dart';
 import '../l10n/app_localizations.dart';
@@ -224,6 +226,22 @@ class ExploreDetailSheet extends ConsumerWidget {
             ],
           ),
         ),
+
+        // UGC moderation (App Review 1.2): report this Kolab.
+        if (opportunity.id != null && opportunity.id!.isNotEmpty)
+          IconButton(
+            tooltip: AppLocalizations.of(context).moderationReportKolab,
+            onPressed: () => ModerationMenu.report(
+              context,
+              targetType: ReportTargetType.kolab,
+              targetId: opportunity.id!,
+              reportedProfileId: creator?.id,
+            ),
+            icon: const Icon(LucideIcons.flag),
+            style: IconButton.styleFrom(
+              foregroundColor: context.colors.textTertiary,
+            ),
+          ),
 
         // Close button
         IconButton(

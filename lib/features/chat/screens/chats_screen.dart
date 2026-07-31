@@ -9,6 +9,7 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/cards/kolabing_cards.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../moderation/providers/blocked_profiles_provider.dart';
 import '../models/chat_thread.dart';
 import '../providers/chat_providers.dart';
 import '../widgets/chat_management.dart';
@@ -66,7 +67,11 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
         message: e.toString(),
         onRetry: () => ref.read(chatThreadsProvider.notifier).reload(),
       ),
-      data: (threads) {
+      data: (allThreads) {
+        // UGC moderation (App Review 1.2): hide direct threads whose sole
+        // counterpart the viewer has blocked, for instant local effect.
+        final blocked = ref.watch(blockedProfilesProvider);
+        final threads = _filterBlockedThreads(allThreads, blocked);
         final joinable = threads.where((t) => t.canJoin).toList();
         final manageable = _manageableCommunities(threads);
         if (threads.isEmpty && manageable.isEmpty) {
@@ -128,6 +133,32 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
       floatingActionButton: fab,
       body: body,
     );
+  }
+
+  /// Drop threads whose only counterpart is a blocked profile. Group/community/
+  /// event chats (more than one non-viewer participant) are never hidden — a
+  /// block only removes 1:1 conversations with the blocked user.
+  List<ChatThread> _filterBlockedThreads(
+    List<ChatThread> threads,
+    Set<String> blocked,
+  ) {
+    if (blocked.isEmpty) return threads;
+    final viewer = ref.read(authProvider).user;
+    final myIds = <String>{
+      if (viewer?.id != null) viewer!.id,
+      if (viewer?.businessProfile?.id != null) viewer!.businessProfile!.id,
+      if (viewer?.communityProfile?.id != null) viewer!.communityProfile!.id,
+    };
+    return threads.where((t) {
+      final others = t.participants
+          .map((p) => p.profileId)
+          .whereType<String>()
+          .where((id) => id.isNotEmpty && !myIds.contains(id))
+          .toSet();
+      // Hide only a strict 1:1 thread with a blocked counterpart.
+      if (others.length == 1 && blocked.contains(others.first)) return false;
+      return true;
+    }).toList();
   }
 
   /// The communities the viewer can manage, derived from the thread list: any

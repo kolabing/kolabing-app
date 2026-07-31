@@ -6968,4 +6968,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reconsentError => 'Something went wrong. Please try again.';
+
+  @override
+  String get authNoToleranceNotice =>
+      'We have zero tolerance for objectionable content and abusive users.';
+
+  @override
+  String get moderationReport => 'Report';
+
+  @override
+  String get moderationBlockUser => 'Block user';
+
+  @override
+  String get moderationReportUser => 'Report user';
+
+  @override
+  String get moderationReportKolab => 'Report this Kolab';
+
+  @override
+  String get moderationReportReview => 'Report review';
+
+  @override
+  String get moderationReportSheetTitle => 'Report content';
+
+  @override
+  String get moderationReportSheetSubtitle =>
+      'Tell us why. Your report is confidential.';
+
+  @override
+  String get moderationReasonSpam => 'Spam';
+
+  @override
+  String get moderationReasonHarassment => 'Harassment';
+
+  @override
+  String get moderationReasonInappropriate => 'Inappropriate content';
+
+  @override
+  String get moderationReasonOther => 'Other';
+
+  @override
+  String get moderationNoteHint => 'Add details (optional)';
+
+  @override
+  String get moderationSubmitReport => 'Submit report';
+
+  @override
+  String get moderationReportSuccess => 'Thanks — your report has been sent.';
+
+  @override
+  String get moderationReportError =>
+      'Couldn\'t send your report. Please try again.';
+
+  @override
+  String get moderationBlockConfirmTitle => 'Block this user?';
+
+  @override
+  String get moderationBlockConfirmBody =>
+      'You won\'t see their content and they won\'t be able to reach you. You can unblock them later.';
+
+  @override
+  String get moderationBlockConfirmAction => 'Block';
+
+  @override
+  String get moderationBlockSuccess => 'User blocked.';
+
+  @override
+  String get moderationBlockError =>
+      'Couldn\'t block this user. Please try again.';
 }

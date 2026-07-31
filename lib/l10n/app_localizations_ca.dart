@@ -7075,4 +7075,72 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get reconsentError =>
       'Alguna cosa ha anat malament. Torna-ho a provar.';
+
+  @override
+  String get authNoToleranceNotice =>
+      'Tenim tolerància zero amb els continguts censurables i els usuaris abusius.';
+
+  @override
+  String get moderationReport => 'Denuncia';
+
+  @override
+  String get moderationBlockUser => 'Bloqueja l\'usuari';
+
+  @override
+  String get moderationReportUser => 'Denuncia l\'usuari';
+
+  @override
+  String get moderationReportKolab => 'Denuncia aquest Kolab';
+
+  @override
+  String get moderationReportReview => 'Denuncia la ressenya';
+
+  @override
+  String get moderationReportSheetTitle => 'Denuncia contingut';
+
+  @override
+  String get moderationReportSheetSubtitle =>
+      'Digues-nos per què. La teva denúncia és confidencial.';
+
+  @override
+  String get moderationReasonSpam => 'Correu brossa';
+
+  @override
+  String get moderationReasonHarassment => 'Assetjament';
+
+  @override
+  String get moderationReasonInappropriate => 'Contingut inadequat';
+
+  @override
+  String get moderationReasonOther => 'Altres';
+
+  @override
+  String get moderationNoteHint => 'Afegeix detalls (opcional)';
+
+  @override
+  String get moderationSubmitReport => 'Envia la denúncia';
+
+  @override
+  String get moderationReportSuccess => 'Gràcies: hem rebut la teva denúncia.';
+
+  @override
+  String get moderationReportError =>
+      'No s\'ha pogut enviar la denúncia. Torna-ho a provar.';
+
+  @override
+  String get moderationBlockConfirmTitle => 'Vols bloquejar aquest usuari?';
+
+  @override
+  String get moderationBlockConfirmBody =>
+      'No veuràs el seu contingut i no et podrà contactar. El podràs desbloquejar més tard.';
+
+  @override
+  String get moderationBlockConfirmAction => 'Bloqueja';
+
+  @override
+  String get moderationBlockSuccess => 'Usuari bloquejat.';
+
+  @override
+  String get moderationBlockError =>
+      'No s\'ha pogut bloquejar aquest usuari. Torna-ho a provar.';
 }
