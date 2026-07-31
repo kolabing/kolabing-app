@@ -21,6 +21,7 @@ import '../../discovery/models/discovery_filters.dart';
 import '../../discovery/models/discovery_item.dart';
 import '../../discovery/providers/discovery_provider.dart';
 import '../../discovery/widgets/discovery_quick_filters.dart';
+import '../../moderation/providers/blocked_profiles_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/saved_kolabs_provider.dart';
@@ -30,6 +31,32 @@ import '../widgets/opportunity_card.dart';
 /// Vertical space reserved at the bottom of Explore's scrollables so the
 /// create-Kolab FAB (56dp + margin) never covers card actions.
 const double _fabClearance = 88;
+
+/// The Explore deck's item filter, extracted so it can be unit-tested.
+///
+/// Drops, in order: the viewer's own posts (can't collaborate with yourself),
+/// posts by a blocked creator ([blockedProfileIds] — App Review 1.2 instant
+/// client-side hide), and date-exhausted Kolabs (no longer open for applying).
+List<DiscoveryItem> filterExploreDeckItems(
+  List<DiscoveryItem> items, {
+  required Set<String> blockedProfileIds,
+  required String? myProfileId,
+  required DateTime today,
+}) {
+  return items.where((DiscoveryItem item) {
+    final creatorId = item.creatorProfile.id;
+    if (myProfileId != null &&
+        myProfileId.isNotEmpty &&
+        creatorId.isNotEmpty &&
+        creatorId == myProfileId) {
+      return false;
+    }
+    if (creatorId.isNotEmpty && blockedProfileIds.contains(creatorId)) {
+      return false;
+    }
+    return opportunityApplicationsOpen(item.toOpportunity(), today: today);
+  }).toList();
+}
 
 class ExploreScreen extends ConsumerStatefulWidget {
   const ExploreScreen({
@@ -524,14 +551,17 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     required Set<String> savedIds,
   }) {
     final today = DateTime.now();
-    final activeItems = listState.items.where((DiscoveryItem item) {
-      // Never surface the viewer's own post — you can't collaborate with
-      // yourself. (The discovery feed doesn't exclude own items server-side.)
-      if (_isOwnItem(item)) return false;
-      // Drop date-exhausted Kolabs from the discovery deck (recurring-aware,
-      // not just an end-date check). Saved list is intentionally NOT filtered.
-      return opportunityApplicationsOpen(item.toOpportunity(), today: today);
-    }).toList();
+    // UGC moderation (App Review 1.2): hide Kolabs whose creator the viewer has
+    // blocked so blocked content disappears from the deck instantly.
+    final blocked = ref.watch(blockedProfilesProvider);
+    final user = ref.read(authProvider).user;
+    final myProfileId = user?.communityProfile?.id ?? user?.businessProfile?.id;
+    final activeItems = filterExploreDeckItems(
+      listState.items,
+      blockedProfileIds: blocked,
+      myProfileId: myProfileId,
+      today: today,
+    );
 
     final itemCount = activeItems.length + (listState.isLoadingMore ? 1 : 0);
 

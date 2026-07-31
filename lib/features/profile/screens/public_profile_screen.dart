@@ -13,12 +13,15 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/gallery/public_gallery_section.dart';
+import '../../auth/models/user_model.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../event/widgets/past_events_section.dart';
 import '../../friends/models/friendship.dart';
 import '../../friends/widgets/friend_cta_button.dart';
 import '../../gamification/providers/stats_provider.dart';
 import '../../gamification/widgets/badge_card.dart';
+import '../../moderation/services/moderation_service.dart';
+import '../../moderation/widgets/moderation_menu.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../models/public_profile.dart';
@@ -71,13 +74,27 @@ class PublicProfileScreen extends ConsumerWidget {
           // lives on the base profiles table the public-profile resource may
           // not surface yet.
           final resolved = _withOptimisticFallback(profile);
+          // UGC moderation (App Review 1.2): allow reporting/blocking the
+          // profile owner — but only when viewing someone else's profile.
+          final isViewingSelf = _isViewingSelf(viewer);
           if (resolved.isAttendee) {
             return _MemberProfileContent(
               profile: resolved,
               creatorProfile: creatorProfile,
             );
           }
-          return _buildProfileContent(context, resolved);
+          return _buildProfileContent(
+            context,
+            resolved,
+            moderationActions: isViewingSelf
+                ? const []
+                : [
+                    _ModerationOverflowButton(
+                      profileId: profileId,
+                      reportTargetId: resolved.id,
+                    ),
+                  ],
+          );
         },
       ),
       // C9: business viewing a community → primary CTA to send a Kolab proposal.
@@ -124,73 +141,88 @@ class PublicProfileScreen extends ConsumerWidget {
   // Full profile content
   // ---------------------------------------------------------------------------
 
-  Widget _buildProfileContent(BuildContext context, PublicProfile profile) =>
-      CustomScrollView(
-        slivers: [
-          // Hero header
-          _ProfileSliverHeader(profile: profile),
+  /// Whether the profile being viewed belongs to the current viewer — in which
+  /// case the report/block overflow is suppressed.
+  bool _isViewingSelf(UserModel? viewer) {
+    if (viewer == null) return false;
+    final myIds = <String?>[
+      viewer.id,
+      viewer.businessProfile?.id,
+      viewer.communityProfile?.id,
+    ].whereType<String>().where((s) => s.isNotEmpty).toList();
+    return myIds.contains(profileId);
+  }
 
-          // Body sections
-          SliverPadding(
-            padding: const EdgeInsets.all(KolabingSpacing.md),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                // Reputation summary
-                ReputationSummaryCard(
-                  reputation: profile.reputation,
-                  completedKolabsCount: profile.completedKolabsCount,
-                ),
-                const SizedBox(height: KolabingSpacing.md),
+  Widget _buildProfileContent(
+    BuildContext context,
+    PublicProfile profile, {
+    List<Widget> moderationActions = const [],
+  }) => CustomScrollView(
+    slivers: [
+      // Hero header
+      _ProfileSliverHeader(profile: profile, actions: moderationActions),
 
-                // About
-                if (profile.hasAbout) ...[
-                  _SectionCard(
-                    icon: LucideIcons.fileText,
-                    title: AppLocalizations.of(context).publicProfileAbout,
-                    child: Text(
-                      profile.about!,
-                      style: KolabingTextStyles.bodyMedium.copyWith(
-                        color: context.colors.onSurfaceVariant,
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: KolabingSpacing.md),
-                ],
-
-                // Gallery
-                if (profile.hasGallery) ...[
-                  PublicGallerySection(photos: profile.gallery),
-                  const SizedBox(height: KolabingSpacing.md),
-                ],
-
-                // Past Events
-                PastEventsSection(profileId: profileId),
-                const SizedBox(height: KolabingSpacing.md),
-
-                // Past collaborations
-                _buildCollaborationsSection(context, profile),
-                const SizedBox(height: KolabingSpacing.md),
-
-                // Recent reviews
-                if (profile.recentReviews.isNotEmpty) ...[
-                  _RecentReviewsSection(profile: profile),
-                  const SizedBox(height: KolabingSpacing.md),
-                ],
-
-                // Social links
-                if (profile.hasSocialLinks) ...[
-                  _buildSocialLinksSection(context, profile),
-                  const SizedBox(height: KolabingSpacing.md),
-                ],
-
-                // Bottom spacing
-                const SizedBox(height: KolabingSpacing.xl),
-              ]),
+      // Body sections
+      SliverPadding(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        sliver: SliverList(
+          delegate: SliverChildListDelegate([
+            // Reputation summary
+            ReputationSummaryCard(
+              reputation: profile.reputation,
+              completedKolabsCount: profile.completedKolabsCount,
             ),
-          ),
-        ],
-      );
+            const SizedBox(height: KolabingSpacing.md),
+
+            // About
+            if (profile.hasAbout) ...[
+              _SectionCard(
+                icon: LucideIcons.fileText,
+                title: AppLocalizations.of(context).publicProfileAbout,
+                child: Text(
+                  profile.about!,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+              const SizedBox(height: KolabingSpacing.md),
+            ],
+
+            // Gallery
+            if (profile.hasGallery) ...[
+              PublicGallerySection(photos: profile.gallery),
+              const SizedBox(height: KolabingSpacing.md),
+            ],
+
+            // Past Events
+            PastEventsSection(profileId: profileId),
+            const SizedBox(height: KolabingSpacing.md),
+
+            // Past collaborations
+            _buildCollaborationsSection(context, profile),
+            const SizedBox(height: KolabingSpacing.md),
+
+            // Recent reviews
+            if (profile.recentReviews.isNotEmpty) ...[
+              _RecentReviewsSection(profile: profile),
+              const SizedBox(height: KolabingSpacing.md),
+            ],
+
+            // Social links
+            if (profile.hasSocialLinks) ...[
+              _buildSocialLinksSection(context, profile),
+              const SizedBox(height: KolabingSpacing.md),
+            ],
+
+            // Bottom spacing
+            const SizedBox(height: KolabingSpacing.xl),
+          ]),
+        ),
+      ),
+    ],
+  );
 
   // ---------------------------------------------------------------------------
   // Optimistic header (shows creator info while loading full profile)
@@ -442,9 +474,10 @@ class PublicProfileScreen extends ConsumerWidget {
 // =============================================================================
 
 class _ProfileSliverHeader extends StatelessWidget {
-  const _ProfileSliverHeader({required this.profile});
+  const _ProfileSliverHeader({required this.profile, this.actions = const []});
 
   final PublicProfile profile;
+  final List<Widget> actions;
 
   @override
   Widget build(BuildContext context) => SliverAppBar(
@@ -452,6 +485,7 @@ class _ProfileSliverHeader extends StatelessWidget {
     pinned: true,
     backgroundColor: context.colors.primary,
     leading: const _BackButton(),
+    actions: actions,
     flexibleSpace: FlexibleSpaceBar(
       background: DecoratedBox(
         decoration: BoxDecoration(
@@ -1407,4 +1441,45 @@ String _formatReviewDate(DateTime? date) {
   ];
 
   return '${date.day} ${monthNames[date.month - 1]} ${date.year}';
+}
+
+/// Overflow (⋮) button on another user's profile: Report user / Block user
+/// (App Review Guideline 1.2).
+class _ModerationOverflowButton extends ConsumerWidget {
+  const _ModerationOverflowButton({
+    required this.profileId,
+    required this.reportTargetId,
+  });
+
+  /// The profile id used for blocking (from the route / caller).
+  final String profileId;
+
+  /// The report target id (the loaded profile's id).
+  final String reportTargetId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return PopupMenuButton<String>(
+      icon: Icon(LucideIcons.moreVertical, color: context.colors.onSurface),
+      onSelected: (value) {
+        if (value == ModerationMenu.reportAction) {
+          ModerationMenu.report(
+            context,
+            targetType: ReportTargetType.profile,
+            targetId: reportTargetId.isNotEmpty ? reportTargetId : profileId,
+            reportedProfileId: profileId,
+          );
+        } else if (value == ModerationMenu.blockAction) {
+          ModerationMenu.confirmAndBlock(context, ref, profileId: profileId);
+        }
+      },
+      itemBuilder: (context) => [
+        ModerationMenu.reportItem(
+          context,
+          label: AppLocalizations.of(context).moderationReportUser,
+        ),
+        ModerationMenu.blockItem(context),
+      ],
+    );
+  }
 }
