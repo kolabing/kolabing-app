@@ -118,6 +118,7 @@ class ChatThread {
     this.isMember = false,
     this.isParticipant = false,
     this.lastMessageAt,
+    this.lastMessagePreview,
     this.unreadCount = 0,
     this.participants = const [],
     required this.createdAt,
@@ -148,6 +149,8 @@ class ChatThread {
       lastMessageAt: json['last_message_at'] != null
           ? DateTime.parse(json['last_message_at'] as String)
           : null,
+      lastMessagePreview:
+          (json['last_message'] as Map<String, dynamic>?)?['content'] as String?,
       unreadCount: json['unread_count'] as int? ?? 0,
       participants: parts,
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -191,6 +194,11 @@ class ChatThread {
 
   /// Null until the first message — the business "active" filter keys off this.
   final DateTime? lastMessageAt;
+
+  /// Preview text of the most recent message (from the backend `last_message`
+  /// block), shown in the chat list. Null when the backend omits it or the
+  /// thread has no messages.
+  final String? lastMessagePreview;
   final int unreadCount;
   final List<ChatParticipant> participants;
   final DateTime createdAt;
@@ -224,6 +232,8 @@ class ChatThread {
         'is_participant': isParticipant,
         if (lastMessageAt != null)
           'last_message_at': lastMessageAt!.toIso8601String(),
+        if (lastMessagePreview != null)
+          'last_message': {'content': lastMessagePreview},
         'unread_count': unreadCount,
         'participant_summary': participants.map((p) => p.toJson()).toList(),
         'created_at': createdAt.toIso8601String(),
@@ -244,6 +254,7 @@ class ChatThread {
     bool? isMember,
     bool? isParticipant,
     DateTime? lastMessageAt,
+    String? lastMessagePreview,
     int? unreadCount,
     List<ChatParticipant>? participants,
     DateTime? createdAt,
@@ -263,6 +274,7 @@ class ChatThread {
         isMember: isMember ?? this.isMember,
         isParticipant: isParticipant ?? this.isParticipant,
         lastMessageAt: lastMessageAt ?? this.lastMessageAt,
+        lastMessagePreview: lastMessagePreview ?? this.lastMessagePreview,
         unreadCount: unreadCount ?? this.unreadCount,
         participants: participants ?? this.participants,
         createdAt: createdAt ?? this.createdAt,

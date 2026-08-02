@@ -27,6 +27,11 @@ class Event {
   final bool isUpcoming;
   final String? communityId;
 
+  /// The host community's `profiles.id` (NOT `communityId`, which is a
+  /// `communities.id`). Used to open the host's profile-id-keyed
+  /// `PublicProfileScreen` without 404ing (F1). Null on older backends.
+  final String? hostProfileId;
+
   /// Viewer-scoped gate (`can_access` from the API). False when this member's
   /// tier is not in the event's `tier_gate` — the app then locks the event
   /// (no open into details). Defaults to true (legacy/ungated events stay open).
@@ -60,6 +65,7 @@ class Event {
     this.waitlistPosition,
     this.isUpcoming = false,
     this.communityId,
+    this.hostProfileId,
     this.canAccess = true,
     this.seriesId,
     this.occurrenceIndex,
@@ -121,6 +127,7 @@ class Event {
       waitlistPosition: waitlistPosition,
       isUpcoming: json['is_upcoming'] as bool? ?? false,
       communityId: json['community_id'] as String?,
+      hostProfileId: json['host_profile_id'] as String?,
       canAccess: json['can_access'] as bool? ?? true,
       seriesId: json['series_id'] as String?,
       occurrenceIndex: (json['occurrence_index'] as num?)?.toInt(),
@@ -173,6 +180,7 @@ class Event {
     int? waitlistPosition,
     bool? isUpcoming,
     String? communityId,
+    String? hostProfileId,
     bool? canAccess,
     String? seriesId,
     int? occurrenceIndex,
@@ -196,6 +204,7 @@ class Event {
     waitlistPosition: waitlistPosition ?? this.waitlistPosition,
     isUpcoming: isUpcoming ?? this.isUpcoming,
     communityId: communityId ?? this.communityId,
+    hostProfileId: hostProfileId ?? this.hostProfileId,
     canAccess: canAccess ?? this.canAccess,
     seriesId: seriesId ?? this.seriesId,
     occurrenceIndex: occurrenceIndex ?? this.occurrenceIndex,
