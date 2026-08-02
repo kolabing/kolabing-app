@@ -2112,5 +2112,8 @@
   "moderationBlockConfirmBody": "No veuràs el seu contingut i no et podrà contactar. El podràs desbloquejar més tard.",
   "moderationBlockConfirmAction": "Bloqueja",
   "moderationBlockSuccess": "Usuari bloquejat.",
-  "moderationBlockError": "No s'ha pogut bloquejar aquest usuari. Torna-ho a provar."
+  "moderationBlockError": "No s'ha pogut bloquejar aquest usuari. Torna-ho a provar.",
+  "subscriptionLegalAutoRenewNotice": "El pagament es carregarà al teu compte de la botiga en confirmar la compra. Les subscripcions es renoven automàticament tret que es cancel·lin com a mínim 24 hores abans que acabi el període en curs. Pots gestionar-les o cancel·lar-les quan vulguis des de la configuració del teu compte.",
+  "subscriptionLegalTermsOfUse": "Termes d'Ús (EULA)",
+  "subscriptionLegalPrivacyPolicy": "Política de Privacitat"
 }

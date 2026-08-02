@@ -7036,4 +7036,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get moderationBlockError =>
       'Couldn\'t block this user. Please try again.';
+
+  @override
+  String get subscriptionLegalAutoRenewNotice =>
+      'Payment is charged to your store account at confirmation of purchase. Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in your account settings.';
+
+  @override
+  String get subscriptionLegalTermsOfUse => 'Terms of Use (EULA)';
+
+  @override
+  String get subscriptionLegalPrivacyPolicy => 'Privacy Policy';
 }

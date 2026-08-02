@@ -7143,4 +7143,14 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get moderationBlockError =>
       'No s\'ha pogut bloquejar aquest usuari. Torna-ho a provar.';
+
+  @override
+  String get subscriptionLegalAutoRenewNotice =>
+      'El pagament es carregarà al teu compte de la botiga en confirmar la compra. Les subscripcions es renoven automàticament tret que es cancel·lin com a mínim 24 hores abans que acabi el període en curs. Pots gestionar-les o cancel·lar-les quan vulguis des de la configuració del teu compte.';
+
+  @override
+  String get subscriptionLegalTermsOfUse => 'Termes d\'Ús (EULA)';
+
+  @override
+  String get subscriptionLegalPrivacyPolicy => 'Política de Privacitat';
 }

@@ -18,6 +18,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../providers/iap_provider.dart';
 import '../services/iap_service.dart';
+import 'subscription_legal_footer.dart';
 
 /// Subscription paywall shown when business users try to publish
 /// without an active subscription.
@@ -355,6 +356,11 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                 isLoading: isLoading,
                 isDisabled: !canStartApplePurchase,
               ),
+              const SizedBox(height: KolabingSpacing.md),
+
+              // Auto-renew disclosure + Terms of Use (EULA) / Privacy links
+              // (App Store Guideline 3.1.2 — required at the point of purchase).
+              const SubscriptionLegalFooter(),
               const SizedBox(height: KolabingSpacing.sm),
 
               // Not now button

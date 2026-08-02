@@ -14,6 +14,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/referral_code_field.dart';
+import '../widgets/subscription_legal_footer.dart';
 import '../../auth/models/auth_response.dart';
 import '../../business/models/subscription.dart';
 import '../../business/providers/profile_provider.dart';
@@ -805,6 +806,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               textAlign: TextAlign.center,
             ),
           ],
+          const SizedBox(height: KolabingSpacing.lg),
+          // Auto-renew disclosure + Terms of Use (EULA) / Privacy links
+          // (App Store Guideline 3.1.2 — required at the point of purchase).
+          const SubscriptionLegalFooter(),
         ],
 
         // Update Payment Method (past due)
