@@ -4954,8 +4954,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionSubscribeButton => 'SUBSCRIBE';
 
   @override
-  String get subscriptionSubscribePricedButton =>
-      'SUBSCRIBE FOR 49 EUR/MONTH';
+  String get subscriptionSubscribePricedButton => 'SUBSCRIBE FOR 49 EUR/MONTH';
 
   @override
   String get subscriptionUpdatePaymentButton => 'UPDATE PAYMENT METHOD';
