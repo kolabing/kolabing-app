@@ -102,9 +102,6 @@ class OpportunityService {
       final response = await _httpClient.get(uri, headers: headers);
 
       debugPrint('Browse response status: ${response.statusCode}');
-      debugPrint(
-        'Browse response body (first 500): ${response.body.length > 500 ? response.body.substring(0, 500) : response.body}',
-      );
 
       if (response.statusCode == 200) {
         return _parsePaginatedResponse(response.body);
@@ -332,7 +329,6 @@ class OpportunityService {
     final uri = Uri.parse('$_baseUrl/opportunities');
     final body = jsonEncode(opportunity.toJson());
     debugPrint('OpportunityService: POST $uri');
-    debugPrint('Request body: $body');
 
     try {
       final response = await _httpClient.post(
@@ -342,7 +338,6 @@ class OpportunityService {
       );
 
       debugPrint('Create response status: ${response.statusCode}');
-      debugPrint('Response body: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -397,7 +392,6 @@ class OpportunityService {
     final uri = Uri.parse('$_baseUrl/opportunities/$id');
     final body = jsonEncode(opportunity.toJson());
     debugPrint('OpportunityService: PUT $uri');
-    debugPrint('PUT body: $body');
 
     try {
       final response = await _httpClient.put(
@@ -464,7 +458,6 @@ class OpportunityService {
       );
 
       debugPrint('Publish response status: ${response.statusCode}');
-      debugPrint('Publish response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
