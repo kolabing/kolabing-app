@@ -16,7 +16,7 @@ Kolabing has three user types. Only two are in launch scope.
 
 | Role | In launch scope | Pays? | One-line definition |
 |---|---|---|---|
-| Business | Yes | Yes, €39.99/month or a 3-month plan | A venue or a product/service sponsor that wants community foot traffic and exposure. |
+| Business | Yes | Yes, €49.99/month or a 3-month plan | A venue or a product/service sponsor that wants community foot traffic and exposure. |
 | Community | Yes | No, free always | A real-life community (running club, yoga group, book club, and so on) that hosts events and needs venues or sponsors. |
 | Attendee | **[VERIFY]** code-live but spec-unconfirmed | Free for now | An individual who attends events. Gamification track (check-ins, challenges, badges, leaderboards, reward wallet) is **shipped in the backend**; see §7 and the backend map's §11. Whether attendees are formally part of launch and what the pricing/withdrawal model is needs to be confirmed with Daniel before any client-facing changes. |
 
@@ -40,7 +40,7 @@ Kolabing has three user types. Only two are in launch scope.
 ## 2. Business role
 
 ### 2.1 Identity and pricing
-Businesses are venues (café, restaurant, bar, bakery, coworking, coliving, gym, salon, retail, hotel) or product/service sponsors. They are the paying side. Price: €39.99/month, or a 3-month plan. Registration and exploration are free; the subscription unlocks the two gated actions only.
+Businesses are venues (café, restaurant, bar, bakery, coworking, coliving, gym, salon, retail, hotel) or product/service sponsors. They are the paying side. Price: €49.99/month, or a 3-month plan. Registration and exploration are free; the subscription unlocks the two gated actions only.
 
 > **Backend note:** `coliving` is part of the spec list but is **not currently in `BusinessOnboardingRequest::BUSINESS_TYPES`**. Adding it is tracked in the backend map's mistakes-to-fix checklist. Until added, a `coliving` business onboarding payload will fail server-side validation.
 

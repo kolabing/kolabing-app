@@ -8777,7 +8777,7 @@ abstract class AppLocalizations {
   /// Monthly price value shown in plan details
   ///
   /// In en, this message translates to:
-  /// **'49 EUR/month'**
+  /// **'49.99 EUR/month'**
   String get subscriptionPriceMonthly;
 
   /// Detail row label: current billing period start
@@ -8843,7 +8843,7 @@ abstract class AppLocalizations {
   /// Subscribe button label with price (Android/Stripe)
   ///
   /// In en, this message translates to:
-  /// **'SUBSCRIBE FOR 49 EUR/MONTH'**
+  /// **'SUBSCRIBE FOR 49.99 EUR/MONTH'**
   String get subscriptionSubscribePricedButton;
 
   /// Button to update payment method when past due

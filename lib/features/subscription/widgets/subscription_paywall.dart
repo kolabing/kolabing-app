@@ -430,7 +430,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   Widget _buildPlanPicker(AppLocalizations l10n, IAPState iapState) {
     if (!Platform.isIOS) {
       return _buildSinglePriceBox(
-        price: '€49',
+        price: '€49.99',
         suffix: l10n.subscriptionPaywallPerMonth,
       );
     }
@@ -449,7 +449,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
     // EUR-forced prices (Kolabing is euro-priced; never show the storefront's $).
     final monthlyPrice =
-        iapState.eurPriceFor(SubscriptionPlan.monthly) ?? '€49';
+        iapState.eurPriceFor(SubscriptionPlan.monthly) ?? '€49.99';
     final threeMonthsPrice =
         iapState.eurPriceFor(SubscriptionPlan.threeMonths) ?? '€99.99';
 

@@ -4989,7 +4989,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get subscriptionDetailPriceLabel => 'Preu';
 
   @override
-  String get subscriptionPriceMonthly => '49 EUR/mes';
+  String get subscriptionPriceMonthly => '49.99 EUR/mes';
 
   @override
   String get subscriptionDetailCurrentPeriodLabel => 'Període actual';
@@ -5035,7 +5035,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get subscriptionSubscribePricedButton =>
-      'SUBSCRIURE\'S PER 49 EUR/MES';
+      'SUBSCRIURE\'S PER 49.99 EUR/MES';
 
   @override
   String get subscriptionUpdatePaymentButton =>

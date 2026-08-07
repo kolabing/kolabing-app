@@ -4910,7 +4910,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionDetailPriceLabel => 'Price';
 
   @override
-  String get subscriptionPriceMonthly => '49 EUR/month';
+  String get subscriptionPriceMonthly => '49.99 EUR/month';
 
   @override
   String get subscriptionDetailCurrentPeriodLabel => 'Current Period';
@@ -4954,7 +4954,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionSubscribeButton => 'SUBSCRIBE';
 
   @override
-  String get subscriptionSubscribePricedButton => 'SUBSCRIBE FOR 49 EUR/MONTH';
+  String get subscriptionSubscribePricedButton =>
+      'SUBSCRIBE FOR 49.99 EUR/MONTH';
 
   @override
   String get subscriptionUpdatePaymentButton => 'UPDATE PAYMENT METHOD';

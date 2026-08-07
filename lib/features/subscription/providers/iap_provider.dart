@@ -67,10 +67,10 @@ class IAPState {
     return product == null ? null : formatEur(product.rawPrice);
   }
 
-  /// Formatted monthly price string in euros (e.g. "€49").
+  /// Formatted monthly price string in euros (e.g. "€49.99").
   String get priceString {
     final product = monthlyProduct;
-    return product != null ? formatEur(product.rawPrice) : '€49';
+    return product != null ? formatEur(product.rawPrice) : '€49.99';
   }
 
   /// Per-month equivalent for a multi-month plan, in euros (e.g. "€33.33").
