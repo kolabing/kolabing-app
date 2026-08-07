@@ -338,7 +338,9 @@ class _ThreadTile extends ConsumerWidget {
             ),
           ),
           subtitle: Text(
-            thread.hasMessages
+            (thread.lastMessagePreview?.trim().isNotEmpty ?? false)
+                ? thread.lastMessagePreview!.trim()
+                : thread.hasMessages
                 ? l10n.chatThreadTapToOpen
                 : l10n.chatThreadNoMessagesYet,
             maxLines: 1,

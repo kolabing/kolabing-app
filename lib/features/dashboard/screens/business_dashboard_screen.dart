@@ -82,15 +82,24 @@ class _BusinessDashboardScreenState
     }
   }
 
-  /// Maps a next-action `key` to an in-app destination where one is known.
-  /// Keys without a confirmed destination (review_pending_applications,
-  /// leave_review, complete_profile) render as informational-only for now —
-  /// no CTA rather than a guessed/wrong route.
+  /// Maps a next-action `key` to an in-app destination. Keys without a known
+  /// destination render as informational-only (no CTA) rather than a guessed
+  /// route.
   VoidCallback? _onNextActionTap(NextAction action) {
     switch (action.key) {
       case 'create_first_offer':
       case 'create_second_offer':
         return _onCreateKolab;
+      case 'complete_profile':
+        // Profile is tab 4 of BusinessMainScreen (no GoRoute binds it), so
+        // switch tabs in the shell rather than navigate.
+        return widget.onSwitchTab == null
+            ? null
+            : () => widget.onSwitchTab!(4);
+      case 'review_pending_applications':
+        return () => context.go(KolabingRoutes.businessApplications);
+      case 'leave_review':
+        return () => context.go(KolabingRoutes.businessFinished);
       default:
         return null;
     }
