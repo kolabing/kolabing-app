@@ -5,8 +5,12 @@
 
 Apple flagged **two** guideline issues. **Neither is an app-code bug** — both are
 App Store Connect / account-level fixes (Account Holder / Admin). This doc pins each
-to the exact action, plus the corrected App Privacy label spec. The €49 pricing change
-ships in the same PR as this doc (all user-visible `€39.99` strings → `€49`).
+to the exact action, plus the corrected App Privacy label spec. The €49.99 pricing change
+ships alongside this doc (all user-visible `€39.99` strings → `€49.99`).
+
+> **2026-08-07 correction:** the first pass wrote **€49**; the price actually chosen is
+> **€49.99** (the standard EUR price point). Every user-visible string and the ASC tier
+> below now read €49.99.
 
 ---
 
@@ -94,7 +98,7 @@ the products aren't purchasable** for an account/config reason. **No client bug 
    don't function in sandbox. *(Apple named this directly.)*
 2. **Subscription product config.** For **Monthly**, **3 months**, and the **Kolabing
    Premium** group, ensure each has: a localized **display name + description**, a
-   **price** (set **Monthly to the €49.00 tier** now — see below), and a **review
+   **price** (set **Monthly to the €49.99 tier** now — see below), and a **review
    screenshot**; set state to **"Ready to Submit"** and attach to the 1.5 version.
 3. **Product IDs must match exactly** (confirmed from code):
    - Monthly → `com.kolabing.kolabingApp.subscription.monthly`
@@ -106,13 +110,13 @@ the products aren't purchasable** for an account/config reason. **No client bug 
 
 ---
 
-## Pricing → €49/month (ships with this PR)
+## Pricing → €49.99/month
 
-- Code: every user-visible `€39.99` / `39.99 EUR` string updated to **€49** (paywall
+- Code: every user-visible `€39.99` / `39.99 EUR` string updated to **€49.99** (paywall
   Android fallback, subscribe button, status screen; en/es/ca). On iOS the paywall shows
   **Apple's live price**, so the real number comes from ASC.
 - **The actual charged price is the ASC subscription tier.** Set the
-  `com.kolabing.kolabingApp.subscription.monthly` product to the **€49.00 tier** in ASC
+  `com.kolabing.kolabingApp.subscription.monthly` product to the **€49.99 tier** in ASC
   (Account Holder). The **3-month** tier price is **not yet defined** by Daniel — left
   unchanged; confirm it before offering the 3-month plan.
 - Backend reference config aligned in kolabing-v2 (`config/subscriptions.php`, PR #121).
@@ -123,9 +127,9 @@ the products aren't purchasable** for an account/config reason. **No client bug 
 
 1. **Business → Agreements:** Paid Applications Agreement **In Effect** + Bank/Tax complete.
 2. **App Privacy:** apply the corrected label spec above — **nothing under "Used to Track You,"** remove over-declared types.
-3. **Subscriptions:** set **Monthly → €49.00 tier**; ensure Monthly + 3-months + group each have name/description/price/review-screenshot; **Ready to Submit**.
-4. **Build:** upload the new build (this PR's €49 strings). Binaries build on Mac/CI — see `PUBLISH-1.5.0.md`.
-5. **Resubmit.** In **Review Notes** state: *"The app does not track users; App Privacy labels have been corrected accordingly (no ATT required). IAP: Paid Applications Agreement is in effect; monthly subscription is €49."*
+3. **Subscriptions:** set **Monthly → €49.99 tier** (Subscriptions → Kolabing Premium → Monthly → **Subscription Prices → +** → Euro-zone base price **49,99 €** → pick the start date → Confirm; existing subscribers need the separate **"Preserve prices for existing subscribers"** choice); ensure Monthly + 3-months + group each have name/description/price/review-screenshot; **Ready to Submit**.
+4. **Build:** upload the new build (with the €49.99 strings). Binaries build on Mac/CI — see `PUBLISH-1.5.0.md`.
+5. **Resubmit.** In **Review Notes** state: *"The app does not track users; App Privacy labels have been corrected accordingly (no ATT required). IAP: Paid Applications Agreement is in effect; monthly subscription is €49.99."*
 6. **Reply in Resolution Center** referencing submission `18720871-a906-4023-8ac0-c0054e1818f1`.
 
 _Prepared by Clark, 2026-08-05._

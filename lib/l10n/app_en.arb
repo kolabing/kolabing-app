@@ -6143,7 +6143,7 @@
   "@subscriptionDetailPriceLabel": {
     "description": "Detail row label: price"
   },
-  "subscriptionPriceMonthly": "49 EUR/month",
+  "subscriptionPriceMonthly": "49.99 EUR/month",
   "@subscriptionPriceMonthly": {
     "description": "Monthly price value shown in plan details"
   },
@@ -6197,7 +6197,7 @@
   "@subscriptionSubscribeButton": {
     "description": "Subscribe button label (iOS, no price)"
   },
-  "subscriptionSubscribePricedButton": "SUBSCRIBE FOR 49 EUR/MONTH",
+  "subscriptionSubscribePricedButton": "SUBSCRIBE FOR 49.99 EUR/MONTH",
   "@subscriptionSubscribePricedButton": {
     "description": "Subscribe button label with price (Android/Stripe)"
   },
