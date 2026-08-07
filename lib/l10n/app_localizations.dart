@@ -12463,6 +12463,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t block this user. Please try again.'**
   String get moderationBlockError;
+
+  /// Auto-renewal disclosure shown at the point of purchase on the subscription paywall (App Store Guideline 3.1.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Payment is charged to your store account at confirmation of purchase. Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in your account settings.'**
+  String get subscriptionLegalAutoRenewNotice;
+
+  /// Tappable paywall label linking to the Terms of Use / EULA.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use (EULA)'**
+  String get subscriptionLegalTermsOfUse;
+
+  /// Tappable paywall label linking to the Privacy Policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get subscriptionLegalPrivacyPolicy;
 }
 
 class _AppLocalizationsDelegate

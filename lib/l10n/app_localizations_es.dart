@@ -5009,8 +5009,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get subscriptionSubscribeButton => 'SUSCRIBIRSE';
 
   @override
-  String get subscriptionSubscribePricedButton =>
-      'SUSCRIBIRSE POR 49 EUR/MES';
+  String get subscriptionSubscribePricedButton => 'SUSCRIBIRSE POR 49 EUR/MES';
 
   @override
   String get subscriptionUpdatePaymentButton => 'ACTUALIZAR MÉTODO DE PAGO';
@@ -7104,4 +7103,14 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get moderationBlockError =>
       'No se pudo bloquear a este usuario. Inténtalo de nuevo.';
+
+  @override
+  String get subscriptionLegalAutoRenewNotice =>
+      'El pago se cargará en tu cuenta de la tienda al confirmar la compra. Las suscripciones se renuevan automáticamente salvo que se cancelen al menos 24 horas antes de que acabe el periodo en curso. Puedes gestionarlas o cancelarlas cuando quieras desde los ajustes de tu cuenta.';
+
+  @override
+  String get subscriptionLegalTermsOfUse => 'Términos de Uso (EULA)';
+
+  @override
+  String get subscriptionLegalPrivacyPolicy => 'Política de Privacidad';
 }

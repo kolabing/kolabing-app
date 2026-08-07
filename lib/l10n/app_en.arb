@@ -7612,5 +7612,11 @@
   "moderationBlockSuccess": "User blocked.",
   "@moderationBlockSuccess": { "description": "Snackbar confirming a user was blocked." },
   "moderationBlockError": "Couldn't block this user. Please try again.",
-  "@moderationBlockError": { "description": "Snackbar shown when blocking fails." }
+  "@moderationBlockError": { "description": "Snackbar shown when blocking fails." },
+  "subscriptionLegalAutoRenewNotice": "Payment is charged to your store account at confirmation of purchase. Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in your account settings.",
+  "@subscriptionLegalAutoRenewNotice": { "description": "Auto-renewal disclosure shown at the point of purchase on the subscription paywall (App Store Guideline 3.1.2)." },
+  "subscriptionLegalTermsOfUse": "Terms of Use (EULA)",
+  "@subscriptionLegalTermsOfUse": { "description": "Tappable paywall label linking to the Terms of Use / EULA." },
+  "subscriptionLegalPrivacyPolicy": "Privacy Policy",
+  "@subscriptionLegalPrivacyPolicy": { "description": "Tappable paywall label linking to the Privacy Policy." }
 }
