@@ -12,6 +12,7 @@ import '../../gamification/providers/discovery_provider.dart';
 import '../../gamification/providers/reward_provider.dart';
 import '../../gamification/providers/stats_provider.dart';
 import '../../kolab/providers/my_kolabs_provider.dart';
+import '../../moderation/providers/blocked_profiles_provider.dart';
 import '../../notification/providers/notification_provider.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../profile/providers/gallery_provider.dart';
@@ -123,4 +124,8 @@ void invalidateUserScopedProviders(Ref ref) {
   // Settings / account profile (logo, subscription, prefs)
   inv(() => ref.invalidate(profileProvider));
   inv(() => ref.invalidate(galleryProvider));
+
+  // UGC moderation — the viewer's blocked-profile set is per-account and must
+  // not leak into the next session (App Review 1.2 client-side filtering).
+  inv(() => ref.invalidate(blockedProfilesProvider));
 }

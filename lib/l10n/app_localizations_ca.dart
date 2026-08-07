@@ -573,7 +573,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get loginUserNotFoundMessage =>
-      'No existeix cap compte amb aquest correu de Google. Crea un compte primer.';
+      'Encara no existeix cap compte per a aquest inici de sessió. Crea un compte primer.';
 
   @override
   String get loginCreateAccountButton => 'Crear compte';
@@ -4989,7 +4989,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get subscriptionDetailPriceLabel => 'Preu';
 
   @override
-  String get subscriptionPriceMonthly => '39.99 EUR/mes';
+  String get subscriptionPriceMonthly => '49 EUR/mes';
 
   @override
   String get subscriptionDetailCurrentPeriodLabel => 'Període actual';
@@ -5035,7 +5035,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get subscriptionSubscribePricedButton =>
-      'SUBSCRIURE\'S PER 39.99 EUR/MES';
+      'SUBSCRIURE\'S PER 49 EUR/MES';
 
   @override
   String get subscriptionUpdatePaymentButton =>
@@ -7075,4 +7075,82 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get reconsentError =>
       'Alguna cosa ha anat malament. Torna-ho a provar.';
+
+  @override
+  String get authNoToleranceNotice =>
+      'Tenim tolerància zero amb els continguts censurables i els usuaris abusius.';
+
+  @override
+  String get moderationReport => 'Denuncia';
+
+  @override
+  String get moderationBlockUser => 'Bloqueja l\'usuari';
+
+  @override
+  String get moderationReportUser => 'Denuncia l\'usuari';
+
+  @override
+  String get moderationReportKolab => 'Denuncia aquest Kolab';
+
+  @override
+  String get moderationReportReview => 'Denuncia la ressenya';
+
+  @override
+  String get moderationReportSheetTitle => 'Denuncia contingut';
+
+  @override
+  String get moderationReportSheetSubtitle =>
+      'Digues-nos per què. La teva denúncia és confidencial.';
+
+  @override
+  String get moderationReasonSpam => 'Correu brossa';
+
+  @override
+  String get moderationReasonHarassment => 'Assetjament';
+
+  @override
+  String get moderationReasonInappropriate => 'Contingut inadequat';
+
+  @override
+  String get moderationReasonOther => 'Altres';
+
+  @override
+  String get moderationNoteHint => 'Afegeix detalls (opcional)';
+
+  @override
+  String get moderationSubmitReport => 'Envia la denúncia';
+
+  @override
+  String get moderationReportSuccess => 'Gràcies: hem rebut la teva denúncia.';
+
+  @override
+  String get moderationReportError =>
+      'No s\'ha pogut enviar la denúncia. Torna-ho a provar.';
+
+  @override
+  String get moderationBlockConfirmTitle => 'Vols bloquejar aquest usuari?';
+
+  @override
+  String get moderationBlockConfirmBody =>
+      'No veuràs el seu contingut i no et podrà contactar. El podràs desbloquejar més tard.';
+
+  @override
+  String get moderationBlockConfirmAction => 'Bloqueja';
+
+  @override
+  String get moderationBlockSuccess => 'Usuari bloquejat.';
+
+  @override
+  String get moderationBlockError =>
+      'No s\'ha pogut bloquejar aquest usuari. Torna-ho a provar.';
+
+  @override
+  String get subscriptionLegalAutoRenewNotice =>
+      'El pagament es carregarà al teu compte de la botiga en confirmar la compra. Les subscripcions es renoven automàticament tret que es cancel·lin com a mínim 24 hores abans que acabi el període en curs. Pots gestionar-les o cancel·lar-les quan vulguis des de la configuració del teu compte.';
+
+  @override
+  String get subscriptionLegalTermsOfUse => 'Termes d\'Ús (EULA)';
+
+  @override
+  String get subscriptionLegalPrivacyPolicy => 'Política de Privacitat';
 }

@@ -30,6 +30,10 @@ void main() {
 
     expect(find.text('Referral Code (optional)'), findsOneWidget);
     expect(find.text('Paste referral code'), findsOneWidget);
+
+    // Guideline 3.1.2: the paywall must expose the EULA + Privacy links.
+    expect(find.text('Terms of Use (EULA)'), findsOneWidget);
+    expect(find.text('Privacy Policy'), findsOneWidget);
   });
 }
 

@@ -163,6 +163,9 @@ abstract final class KolabingRoutes {
   /// Business applications received
   static const String businessApplications = '/business/applications';
 
+  /// Business finished collaborations (My Kolabs → Finished sub-tab)
+  static const String businessFinished = '/business/finished';
+
   /// Business my applications sent
   static const String businessMyApplications = '/business/my-applications';
 
@@ -629,8 +632,18 @@ final GoRouter kolabingRouter = GoRouter(
     GoRoute(
       path: KolabingRoutes.businessApplications,
       name: 'businessApplications',
+      // My Kolabs (tab 2) → Requests sub-tab (1). Previously pointed at
+      // initialTab: 3 (Chats) with no sub-tab, so the legacy /applications deep
+      // link landed on Chats instead of Requests.
       builder: (BuildContext context, GoRouterState state) =>
-          const BusinessMainScreen(initialTab: 3),
+          const BusinessMainScreen(initialTab: 2, initialKolabsSubTab: 1),
+    ),
+    GoRoute(
+      path: KolabingRoutes.businessFinished,
+      name: 'businessFinished',
+      // My Kolabs (tab 2) → Finished sub-tab (3).
+      builder: (BuildContext context, GoRouterState state) =>
+          const BusinessMainScreen(initialTab: 2, initialKolabsSubTab: 3),
     ),
 
     // Kolab creation flow (new unified flow)

@@ -1147,7 +1147,7 @@ abstract class AppLocalizations {
   /// Dialog body shown when Google sign-in finds no matching account.
   ///
   /// In en, this message translates to:
-  /// **'No account exists with this Google email. Please create an account first.'**
+  /// **'No account exists for this sign-in yet. Please create an account first.'**
   String get loginUserNotFoundMessage;
 
   /// Button in the user-not-found dialog to start account creation.
@@ -8777,7 +8777,7 @@ abstract class AppLocalizations {
   /// Monthly price value shown in plan details
   ///
   /// In en, this message translates to:
-  /// **'39.99 EUR/month'**
+  /// **'49 EUR/month'**
   String get subscriptionPriceMonthly;
 
   /// Detail row label: current billing period start
@@ -8843,7 +8843,7 @@ abstract class AppLocalizations {
   /// Subscribe button label with price (Android/Stripe)
   ///
   /// In en, this message translates to:
-  /// **'SUBSCRIBE FOR 39.99 EUR/MONTH'**
+  /// **'SUBSCRIBE FOR 49 EUR/MONTH'**
   String get subscriptionSubscribePricedButton;
 
   /// Button to update payment method when past due
@@ -12337,6 +12337,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong. Please try again.'**
   String get reconsentError;
+
+  /// Zero-tolerance EULA notice shown near the Terms consent checkbox on sign-up (App Review Guideline 1.2).
+  ///
+  /// In en, this message translates to:
+  /// **'We have zero tolerance for objectionable content and abusive users.'**
+  String get authNoToleranceNotice;
+
+  /// Overflow menu action to report content or a user.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get moderationReport;
+
+  /// Overflow menu action to block a user.
+  ///
+  /// In en, this message translates to:
+  /// **'Block user'**
+  String get moderationBlockUser;
+
+  /// Overflow menu action to report a user's profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Report user'**
+  String get moderationReportUser;
+
+  /// Overflow menu action to report a Kolab / opportunity.
+  ///
+  /// In en, this message translates to:
+  /// **'Report this Kolab'**
+  String get moderationReportKolab;
+
+  /// Per-row action to report a review.
+  ///
+  /// In en, this message translates to:
+  /// **'Report review'**
+  String get moderationReportReview;
+
+  /// Title of the report bottom sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Report content'**
+  String get moderationReportSheetTitle;
+
+  /// Subtitle explaining the report sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us why. Your report is confidential.'**
+  String get moderationReportSheetSubtitle;
+
+  /// Report reason: spam.
+  ///
+  /// In en, this message translates to:
+  /// **'Spam'**
+  String get moderationReasonSpam;
+
+  /// Report reason: harassment or bullying.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment'**
+  String get moderationReasonHarassment;
+
+  /// Report reason: inappropriate or objectionable content.
+  ///
+  /// In en, this message translates to:
+  /// **'Inappropriate content'**
+  String get moderationReasonInappropriate;
+
+  /// Report reason: other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get moderationReasonOther;
+
+  /// Placeholder for the optional note field in the report sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Add details (optional)'**
+  String get moderationNoteHint;
+
+  /// Primary button to submit a report.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit report'**
+  String get moderationSubmitReport;
+
+  /// Snackbar confirming a report was submitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks — your report has been sent.'**
+  String get moderationReportSuccess;
+
+  /// Snackbar shown when submitting a report fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send your report. Please try again.'**
+  String get moderationReportError;
+
+  /// Title of the block confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Block this user?'**
+  String get moderationBlockConfirmTitle;
+
+  /// Body of the block confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'You won\'t see their content and they won\'t be able to reach you. You can unblock them later.'**
+  String get moderationBlockConfirmBody;
+
+  /// Confirm button in the block dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Block'**
+  String get moderationBlockConfirmAction;
+
+  /// Snackbar confirming a user was blocked.
+  ///
+  /// In en, this message translates to:
+  /// **'User blocked.'**
+  String get moderationBlockSuccess;
+
+  /// Snackbar shown when blocking fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t block this user. Please try again.'**
+  String get moderationBlockError;
+
+  /// Auto-renewal disclosure shown at the point of purchase on the subscription paywall (App Store Guideline 3.1.2).
+  ///
+  /// In en, this message translates to:
+  /// **'Payment is charged to your store account at confirmation of purchase. Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in your account settings.'**
+  String get subscriptionLegalAutoRenewNotice;
+
+  /// Tappable paywall label linking to the Terms of Use / EULA.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use (EULA)'**
+  String get subscriptionLegalTermsOfUse;
+
+  /// Tappable paywall label linking to the Privacy Policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get subscriptionLegalPrivacyPolicy;
 }
 
 class _AppLocalizationsDelegate

@@ -14,6 +14,8 @@ import '../../auth/providers/auth_provider.dart';
 import '../../community/models/community_tier.dart';
 import '../../community/providers/community_providers.dart';
 import '../../community/services/community_service.dart';
+import '../../moderation/services/moderation_service.dart';
+import '../../moderation/widgets/moderation_menu.dart';
 import '../models/chat_message.dart';
 import '../models/chat_thread.dart';
 import '../providers/chat_providers.dart';
@@ -113,7 +115,9 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
       await _svc.markRead(widget.thread.id);
       ref.read(chatUnreadProvider.notifier).refresh();
       ref.read(chatThreadsProvider.notifier).reload();
-    } catch (_) {/* non-critical */}
+    } catch (_) {
+      /* non-critical */
+    }
   }
 
   Future<void> _send() async {
@@ -133,8 +137,9 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     } on ChatException catch (e) {
       if (!mounted) return;
       setState(() => _sending = false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message)));
     }
   }
 
@@ -169,6 +174,9 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
               icon: const Icon(LucideIcons.info),
               onPressed: _openEvent,
             ),
+          // UGC moderation (App Review 1.2): report / block the counterpart in
+          // a direct conversation.
+          _moderationMenu(l10n),
           // (1,3,4,5) Custom-chat admin: rename / members(block+profile) /
           // access(tier gating) / delete.
           _manageMenu(l10n),
@@ -177,13 +185,58 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
       body: Column(
         children: [
           Expanded(child: _body(l10n)),
-          _Composer(
-            controller: _composer,
-            sending: _sending,
-            onSend: _send,
-          ),
+          _Composer(controller: _composer, sending: _sending, onSend: _send),
         ],
       ),
+    );
+  }
+
+  // UGC moderation: report / block the direct-conversation counterpart --------
+
+  /// The other participant's profile id in a 1:1 conversation — i.e. the single
+  /// participant that is not the viewer. Null for group/community/event chats or
+  /// when the participant summary isn't available.
+  String? get _counterpartProfileId {
+    final viewer = ref.read(authProvider).user;
+    final myIds = <String>{
+      if (viewer?.id != null) viewer!.id,
+      if (viewer?.businessProfile?.id != null) viewer!.businessProfile!.id,
+      if (viewer?.communityProfile?.id != null) viewer!.communityProfile!.id,
+    };
+    final others = _thread.participants
+        .map((p) => p.profileId)
+        .whereType<String>()
+        .where((id) => id.isNotEmpty && !myIds.contains(id))
+        .toSet();
+    return others.length == 1 ? others.first : null;
+  }
+
+  Widget _moderationMenu(AppLocalizations l10n) {
+    final counterpartId = _counterpartProfileId;
+    if (counterpartId == null) return const SizedBox.shrink();
+    return PopupMenuButton<String>(
+      icon: const Icon(LucideIcons.shieldAlert),
+      tooltip: l10n.moderationReport,
+      onSelected: (value) {
+        if (value == ModerationMenu.reportAction) {
+          ModerationMenu.report(
+            context,
+            targetType: ReportTargetType.profile,
+            targetId: counterpartId,
+            reportedProfileId: counterpartId,
+          );
+        } else if (value == ModerationMenu.blockAction) {
+          ModerationMenu.confirmAndBlock(
+            context,
+            ref,
+            profileId: counterpartId,
+          );
+        }
+      },
+      itemBuilder: (_) => [
+        ModerationMenu.reportItem(context, label: l10n.moderationReportUser),
+        ModerationMenu.blockItem(context),
+      ],
     );
   }
 
@@ -195,8 +248,9 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
       return const SizedBox.shrink();
     }
     final manage = ref.watch(communityManageProvider);
-    final managed = (manage.communities.asData?.value ?? const [])
-        .any((c) => c.id == _thread.communityId);
+    final managed = (manage.communities.asData?.value ?? const []).any(
+      (c) => c.id == _thread.communityId,
+    );
     if (!managed) return const SizedBox.shrink();
     final tiers = manage.tiers.asData?.value ?? const [];
     return PopupMenuButton<String>(
@@ -208,29 +262,36 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
       },
       itemBuilder: (_) => [
         PopupMenuItem<String>(
-            value: 'rename',
-            child: _menuRow(LucideIcons.pencil, l10n.chatManageRename)),
+          value: 'rename',
+          child: _menuRow(LucideIcons.pencil, l10n.chatManageRename),
+        ),
         PopupMenuItem<String>(
-            value: 'members',
-            child: _menuRow(LucideIcons.users, l10n.chatManageMembers)),
+          value: 'members',
+          child: _menuRow(LucideIcons.users, l10n.chatManageMembers),
+        ),
         PopupMenuItem<String>(
-            value: 'access',
-            child: _menuRow(LucideIcons.lock, l10n.chatManageAccess)),
+          value: 'access',
+          child: _menuRow(LucideIcons.lock, l10n.chatManageAccess),
+        ),
         PopupMenuItem<String>(
-            value: 'delete',
-            child: _menuRow(LucideIcons.trash2, l10n.chatManageDelete,
-                color: KolabingColors.error)),
+          value: 'delete',
+          child: _menuRow(
+            LucideIcons.trash2,
+            l10n.chatManageDelete,
+            color: KolabingColors.error,
+          ),
+        ),
       ],
     );
   }
 
   Widget _menuRow(IconData icon, String label, {Color? color}) => Row(
-        children: [
-          Icon(icon, size: 18, color: color ?? KolabingColors.onSurface),
-          const SizedBox(width: KolabingSpacing.sm),
-          Text(label),
-        ],
-      );
+    children: [
+      Icon(icon, size: 18, color: color ?? KolabingColors.onSurface),
+      const SizedBox(width: KolabingSpacing.sm),
+      Text(label),
+    ],
+  );
 
   Future<void> _rename(AppLocalizations l10n) async {
     final controller = TextEditingController(text: _thread.name ?? '');
@@ -243,15 +304,19 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
           autofocus: true,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
-              labelText: l10n.chatRenameHint,
-              border: const OutlineInputBorder()),
+            labelText: l10n.chatRenameHint,
+            border: const OutlineInputBorder(),
+          ),
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(d), child: Text(l10n.commonCancel)),
+            onPressed: () => Navigator.pop(d),
+            child: Text(l10n.commonCancel),
+          ),
           TextButton(
-              onPressed: () => Navigator.pop(d, controller.text.trim()),
-              child: Text(l10n.commonSave)),
+            onPressed: () => Navigator.pop(d, controller.text.trim()),
+            child: Text(l10n.commonSave),
+          ),
         ],
       ),
     );
@@ -275,11 +340,13 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
         content: Text(l10n.chatDeleteBody(_thread.name ?? '')),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(d, false),
-              child: Text(l10n.commonCancel)),
+            onPressed: () => Navigator.pop(d, false),
+            child: Text(l10n.commonCancel),
+          ),
           TextButton(
-              onPressed: () => Navigator.pop(d, true),
-              child: Text(l10n.commonDelete)),
+            onPressed: () => Navigator.pop(d, true),
+            child: Text(l10n.commonDelete),
+          ),
         ],
       ),
     );
@@ -296,7 +363,9 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
   }
 
   Future<void> _manageAccess(
-      AppLocalizations l10n, List<CommunityTier> tiers) async {
+    AppLocalizations l10n,
+    List<CommunityTier> tiers,
+  ) async {
     final slug = _thread.slug;
     if (slug == null) return;
     if (tiers.isEmpty) {
@@ -318,9 +387,12 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-                  child: Text(l10n.communityHubAccessDialogBody,
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                          color: KolabingColors.onSurfaceVariant)),
+                  child: Text(
+                    l10n.communityHubAccessDialogBody,
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: KolabingColors.onSurfaceVariant,
+                    ),
+                  ),
                 ),
                 for (final t in tiers)
                   CheckboxListTile(
@@ -328,18 +400,21 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
                     dense: true,
                     value: selected[t.id] ?? false,
                     title: Text(t.name),
-                    onChanged: (v) => setLocal(() => selected[t.id] = v ?? false),
+                    onChanged: (v) =>
+                        setLocal(() => selected[t.id] = v ?? false),
                   ),
               ],
             ),
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(d, false),
-                child: Text(l10n.commonCancel)),
+              onPressed: () => Navigator.pop(d, false),
+              child: Text(l10n.commonCancel),
+            ),
             TextButton(
-                onPressed: () => Navigator.pop(d, true),
-                child: Text(l10n.commonSave)),
+              onPressed: () => Navigator.pop(d, true),
+              child: Text(l10n.commonSave),
+            ),
           ],
         ),
       ),
@@ -357,8 +432,10 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
         } else {
           next.remove(slug);
         }
-        await svc.updateTier(t.id,
-            permissions: t.permissions.copyWith(chatChannels: next));
+        await svc.updateTier(
+          t.id,
+          permissions: t.permissions.copyWith(chatChannels: next),
+        );
       }
       await ref.read(communityManageProvider.notifier).reloadTiers();
       ref.read(chatThreadsProvider.notifier).reload();
@@ -371,17 +448,23 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
   /// Roster of members who can access this custom chat (tier-granted + managers),
   /// with per-member block/unblock (overrides tier).
   Future<void> _manageMembers(
-      AppLocalizations l10n, List<CommunityTier> tiers) async {
+    AppLocalizations l10n,
+    List<CommunityTier> tiers,
+  ) async {
     final slug = _thread.slug;
     if (slug == null) return;
     final members =
         ref.read(communityManageProvider).members.asData?.value ?? const [];
     final roster = members
-        .where((m) =>
-            m.canManage ||
-            tiers.any((t) =>
-                t.id == m.tierId &&
-                t.permissions.chatChannels.contains(slug)))
+        .where(
+          (m) =>
+              m.canManage ||
+              tiers.any(
+                (t) =>
+                    t.id == m.tierId &&
+                    t.permissions.chatChannels.contains(slug),
+              ),
+        )
         .toList();
 
     List<String> banned;
@@ -404,23 +487,32 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
             left: KolabingSpacing.md,
             right: KolabingSpacing.md,
             top: KolabingSpacing.md,
-            bottom: MediaQuery.of(sheetCtx).viewInsets.bottom + KolabingSpacing.lg,
+            bottom:
+                MediaQuery.of(sheetCtx).viewInsets.bottom + KolabingSpacing.lg,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.chatManageMembers,
-                  style: KolabingTextStyles.bodyLarge
-                      .copyWith(fontSize: 18, fontWeight: FontWeight.w700)),
+              Text(
+                l10n.chatManageMembers,
+                style: KolabingTextStyles.bodyLarge.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
               const SizedBox(height: KolabingSpacing.md),
               if (roster.isEmpty)
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
-                  child: Text(l10n.chatMembersEmpty,
-                      style: KolabingTextStyles.bodySmall
-                          .copyWith(color: KolabingColors.onSurfaceVariant)),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: KolabingSpacing.md,
+                  ),
+                  child: Text(
+                    l10n.chatMembersEmpty,
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: KolabingColors.onSurfaceVariant,
+                    ),
+                  ),
                 )
               else
                 Flexible(
@@ -431,8 +523,9 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
                         ListTile(
                           contentPadding: EdgeInsets.zero,
                           leading: CircleAvatar(
-                            backgroundColor:
-                                KolabingColors.primary.withValues(alpha: 0.2),
+                            backgroundColor: KolabingColors.primary.withValues(
+                              alpha: 0.2,
+                            ),
                             backgroundImage: m.memberAvatarUrl != null
                                 ? NetworkImage(m.memberAvatarUrl!)
                                 : null,
@@ -440,25 +533,36 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
                                 ? const Icon(LucideIcons.user, size: 16)
                                 : null,
                           ),
-                          title: Text(m.memberName ?? l10n.chatThreadFallbackTitle,
-                              maxLines: 1, overflow: TextOverflow.ellipsis),
+                          title: Text(
+                            m.memberName ?? l10n.chatThreadFallbackTitle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           subtitle: bannedSet.contains(m.profileId)
-                              ? Text(l10n.chatBlockedTag,
-                                  style: KolabingTextStyles.bodySmall
-                                      .copyWith(color: KolabingColors.error))
+                              ? Text(
+                                  l10n.chatBlockedTag,
+                                  style: KolabingTextStyles.bodySmall.copyWith(
+                                    color: KolabingColors.error,
+                                  ),
+                                )
                               : null,
                           trailing: m.canManage
                               ? null
                               : TextButton(
                                   onPressed: () async {
                                     try {
-                                      final wasBanned =
-                                          bannedSet.contains(m.profileId);
+                                      final wasBanned = bannedSet.contains(
+                                        m.profileId,
+                                      );
                                       final updated = wasBanned
                                           ? await _svc.unblockChatMember(
-                                              _thread.id, m.profileId)
+                                              _thread.id,
+                                              m.profileId,
+                                            )
                                           : await _svc.blockChatMember(
-                                              _thread.id, m.profileId);
+                                              _thread.id,
+                                              m.profileId,
+                                            );
                                       setSheet(() {
                                         bannedSet
                                           ..clear()
@@ -468,9 +572,11 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
                                       if (mounted) _snack(e.message);
                                     }
                                   },
-                                  child: Text(bannedSet.contains(m.profileId)
-                                      ? l10n.chatUnblock
-                                      : l10n.chatBlock),
+                                  child: Text(
+                                    bannedSet.contains(m.profileId)
+                                        ? l10n.chatUnblock
+                                        : l10n.chatBlock,
+                                  ),
                                 ),
                         ),
                     ],
@@ -495,18 +601,24 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Text(_error!,
-              textAlign: TextAlign.center,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: context.colors.onSurfaceVariant)),
+          child: Text(
+            _error!,
+            textAlign: TextAlign.center,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
         ),
       );
     }
     if (_messages.isEmpty) {
       return Center(
-        child: Text(l10n.chatThreadEmptyMessage,
-            style: KolabingTextStyles.bodyMedium
-                .copyWith(color: context.colors.onSurfaceVariant)),
+        child: Text(
+          l10n.chatThreadEmptyMessage,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
       );
     }
     // (#4) Show the sender name above incoming bubbles only in multi-party
@@ -520,9 +632,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
       itemBuilder: (_, i) => _MessageBubble(
         message: _messages[i],
         showSenderName: showSenderNames,
-        senderLabel: showSenderNames
-            ? _senderLabel(_messages[i], l10n)
-            : null,
+        senderLabel: showSenderNames ? _senderLabel(_messages[i], l10n) : null,
       ),
     );
   }
@@ -568,7 +678,9 @@ class _MessageBubble extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
         padding: const EdgeInsets.symmetric(
-            horizontal: KolabingSpacing.md, vertical: KolabingSpacing.sm),
+          horizontal: KolabingSpacing.md,
+          vertical: KolabingSpacing.sm,
+        ),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
@@ -579,20 +691,27 @@ class _MessageBubble extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
-          crossAxisAlignment:
-              mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: mine
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
             if (!mine && showSenderName && senderLabel != null)
-              Text(senderLabel!,
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: context.colors.onSurfaceVariant)),
-            Text(message.body,
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                    color: mine
-                        ? context.colors.onPrimary
-                        : context.colors.onSurface)),
+              Text(
+                senderLabel!,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
+            Text(
+              message.body,
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                color: mine
+                    ? context.colors.onPrimary
+                    : context.colors.onSurface,
+              ),
+            ),
           ],
         ),
       ),
@@ -619,8 +738,7 @@ class _Composer extends StatelessWidget {
         padding: const EdgeInsets.all(KolabingSpacing.sm),
         decoration: BoxDecoration(
           color: context.colors.surface,
-          border: Border(
-              top: BorderSide(color: context.colors.outlineVariant)),
+          border: Border(top: BorderSide(color: context.colors.outlineVariant)),
         ),
         child: Row(
           children: [
@@ -635,8 +753,9 @@ class _Composer extends StatelessWidget {
                   filled: true,
                   fillColor: context.colors.surfaceContainerLow,
                   contentPadding: const EdgeInsets.symmetric(
-                      horizontal: KolabingSpacing.md,
-                      vertical: KolabingSpacing.sm),
+                    horizontal: KolabingSpacing.md,
+                    vertical: KolabingSpacing.sm,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(24),
                     borderSide: BorderSide.none,
@@ -658,10 +777,15 @@ class _Composer extends StatelessWidget {
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: context.colors.onSurface))
-                      : Icon(LucideIcons.send,
-                          size: 20, color: context.colors.onPrimary),
+                            strokeWidth: 2,
+                            color: context.colors.onSurface,
+                          ),
+                        )
+                      : Icon(
+                          LucideIcons.send,
+                          size: 20,
+                          color: context.colors.onPrimary,
+                        ),
                 ),
               ),
             ),

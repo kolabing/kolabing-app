@@ -695,7 +695,7 @@
   "@loginUserNotFoundTitle": {
     "description": "Dialog title shown when Google sign-in finds no matching account."
   },
-  "loginUserNotFoundMessage": "No account exists with this Google email. Please create an account first.",
+  "loginUserNotFoundMessage": "No account exists for this sign-in yet. Please create an account first.",
   "@loginUserNotFoundMessage": {
     "description": "Dialog body shown when Google sign-in finds no matching account."
   },
@@ -6143,7 +6143,7 @@
   "@subscriptionDetailPriceLabel": {
     "description": "Detail row label: price"
   },
-  "subscriptionPriceMonthly": "39.99 EUR/month",
+  "subscriptionPriceMonthly": "49 EUR/month",
   "@subscriptionPriceMonthly": {
     "description": "Monthly price value shown in plan details"
   },
@@ -6197,7 +6197,7 @@
   "@subscriptionSubscribeButton": {
     "description": "Subscribe button label (iOS, no price)"
   },
-  "subscriptionSubscribePricedButton": "SUBSCRIBE FOR 39.99 EUR/MONTH",
+  "subscriptionSubscribePricedButton": "SUBSCRIBE FOR 49 EUR/MONTH",
   "@subscriptionSubscribePricedButton": {
     "description": "Subscribe button label with price (Android/Stripe)"
   },
@@ -7570,5 +7570,53 @@
   "reconsentAcceptButton": "Accept and continue",
   "@reconsentAcceptButton": { "description": "Button that records consent on the re-consent screen" },
   "reconsentError": "Something went wrong. Please try again.",
-  "@reconsentError": { "description": "Error shown when recording consent fails" }
+  "@reconsentError": { "description": "Error shown when recording consent fails" },
+  "authNoToleranceNotice": "We have zero tolerance for objectionable content and abusive users.",
+  "@authNoToleranceNotice": { "description": "Zero-tolerance EULA notice shown near the Terms consent checkbox on sign-up (App Review Guideline 1.2)." },
+  "moderationReport": "Report",
+  "@moderationReport": { "description": "Overflow menu action to report content or a user." },
+  "moderationBlockUser": "Block user",
+  "@moderationBlockUser": { "description": "Overflow menu action to block a user." },
+  "moderationReportUser": "Report user",
+  "@moderationReportUser": { "description": "Overflow menu action to report a user's profile." },
+  "moderationReportKolab": "Report this Kolab",
+  "@moderationReportKolab": { "description": "Overflow menu action to report a Kolab / opportunity." },
+  "moderationReportReview": "Report review",
+  "@moderationReportReview": { "description": "Per-row action to report a review." },
+  "moderationReportSheetTitle": "Report content",
+  "@moderationReportSheetTitle": { "description": "Title of the report bottom sheet." },
+  "moderationReportSheetSubtitle": "Tell us why. Your report is confidential.",
+  "@moderationReportSheetSubtitle": { "description": "Subtitle explaining the report sheet." },
+  "moderationReasonSpam": "Spam",
+  "@moderationReasonSpam": { "description": "Report reason: spam." },
+  "moderationReasonHarassment": "Harassment",
+  "@moderationReasonHarassment": { "description": "Report reason: harassment or bullying." },
+  "moderationReasonInappropriate": "Inappropriate content",
+  "@moderationReasonInappropriate": { "description": "Report reason: inappropriate or objectionable content." },
+  "moderationReasonOther": "Other",
+  "@moderationReasonOther": { "description": "Report reason: other." },
+  "moderationNoteHint": "Add details (optional)",
+  "@moderationNoteHint": { "description": "Placeholder for the optional note field in the report sheet." },
+  "moderationSubmitReport": "Submit report",
+  "@moderationSubmitReport": { "description": "Primary button to submit a report." },
+  "moderationReportSuccess": "Thanks — your report has been sent.",
+  "@moderationReportSuccess": { "description": "Snackbar confirming a report was submitted." },
+  "moderationReportError": "Couldn't send your report. Please try again.",
+  "@moderationReportError": { "description": "Snackbar shown when submitting a report fails." },
+  "moderationBlockConfirmTitle": "Block this user?",
+  "@moderationBlockConfirmTitle": { "description": "Title of the block confirmation dialog." },
+  "moderationBlockConfirmBody": "You won't see their content and they won't be able to reach you. You can unblock them later.",
+  "@moderationBlockConfirmBody": { "description": "Body of the block confirmation dialog." },
+  "moderationBlockConfirmAction": "Block",
+  "@moderationBlockConfirmAction": { "description": "Confirm button in the block dialog." },
+  "moderationBlockSuccess": "User blocked.",
+  "@moderationBlockSuccess": { "description": "Snackbar confirming a user was blocked." },
+  "moderationBlockError": "Couldn't block this user. Please try again.",
+  "@moderationBlockError": { "description": "Snackbar shown when blocking fails." },
+  "subscriptionLegalAutoRenewNotice": "Payment is charged to your store account at confirmation of purchase. Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in your account settings.",
+  "@subscriptionLegalAutoRenewNotice": { "description": "Auto-renewal disclosure shown at the point of purchase on the subscription paywall (App Store Guideline 3.1.2)." },
+  "subscriptionLegalTermsOfUse": "Terms of Use (EULA)",
+  "@subscriptionLegalTermsOfUse": { "description": "Tappable paywall label linking to the Terms of Use / EULA." },
+  "subscriptionLegalPrivacyPolicy": "Privacy Policy",
+  "@subscriptionLegalPrivacyPolicy": { "description": "Tappable paywall label linking to the Privacy Policy." }
 }

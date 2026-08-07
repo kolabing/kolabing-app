@@ -69,6 +69,29 @@ class _TermsConsentCheckboxState extends State<TermsConsentCheckbox> {
     _termsTap.onTap = () => _open(LegalLinks.termsUrl(lang));
     _privacyTap.onTap = () => _open(LegalLinks.privacyUrl(lang));
 
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // App Review Guideline 1.2: an explicit zero-tolerance-for-objectionable-
+        // content / abusive-users notice shown at the point of consent.
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Text(
+            l10n.authNoToleranceNotice,
+            style: base.copyWith(fontWeight: FontWeight.w600),
+          ),
+        ),
+        _buildConsentRow(context, base, link),
+      ],
+    );
+  }
+
+  Widget _buildConsentRow(
+    BuildContext context,
+    TextStyle base,
+    TextStyle link,
+  ) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

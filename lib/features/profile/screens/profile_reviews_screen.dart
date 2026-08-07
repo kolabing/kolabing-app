@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
@@ -7,6 +8,9 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/cards/kolabing_cards.dart';
+import '../../moderation/providers/blocked_profiles_provider.dart';
+import '../../moderation/services/moderation_service.dart';
+import '../../moderation/widgets/moderation_menu.dart';
 import '../models/public_profile.dart';
 import '../services/public_profile_service.dart';
 
@@ -150,33 +154,46 @@ class _ProfileReviewsScreenState extends State<ProfileReviewsScreen> {
       );
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      itemCount: _reviews.length + 1,
-      separatorBuilder: (context, index) =>
-          const SizedBox(height: KolabingSpacing.sm),
-      itemBuilder: (context, index) {
-        if (index == _reviews.length) {
-          if (!_hasMore) {
-            return const SizedBox(height: KolabingSpacing.xl);
-          }
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
-            child: Center(
-              child: OutlinedButton(
-                onPressed: _isLoadingMore ? null : _loadMore,
-                child: _isLoadingMore
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(AppLocalizations.of(context).profileReviewsLoadMore),
-              ),
-            ),
-          );
-        }
-        return _ProfileReviewListCard(review: _reviews[index]);
+    // UGC moderation (App Review 1.2): hide reviews authored by a blocked user.
+    return Consumer(
+      builder: (context, ref, _) {
+        final blocked = ref.watch(blockedProfilesProvider);
+        final visible = _reviews
+            .where((r) => !blocked.contains(r.reviewer.id))
+            .toList();
+        return ListView.separated(
+          padding: const EdgeInsets.all(KolabingSpacing.md),
+          itemCount: visible.length + 1,
+          separatorBuilder: (context, index) =>
+              const SizedBox(height: KolabingSpacing.sm),
+          itemBuilder: (context, index) {
+            if (index == visible.length) {
+              if (!_hasMore) {
+                return const SizedBox(height: KolabingSpacing.xl);
+              }
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: KolabingSpacing.md,
+                ),
+                child: Center(
+                  child: OutlinedButton(
+                    onPressed: _isLoadingMore ? null : _loadMore,
+                    child: _isLoadingMore
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(
+                            AppLocalizations.of(context).profileReviewsLoadMore,
+                          ),
+                  ),
+                ),
+              );
+            }
+            return _ProfileReviewListCard(review: visible[index]);
+          },
+        );
       },
     );
   }
@@ -223,6 +240,31 @@ class _ProfileReviewListCard extends StatelessWidget {
                 ],
               ),
             ),
+            // UGC moderation (App Review 1.2): report this review.
+            if (review.id.isNotEmpty)
+              PopupMenuButton<String>(
+                icon: Icon(
+                  LucideIcons.moreHorizontal,
+                  size: 18,
+                  color: context.colors.textTertiary,
+                ),
+                onSelected: (value) {
+                  if (value == ModerationMenu.reportAction) {
+                    ModerationMenu.report(
+                      context,
+                      targetType: ReportTargetType.review,
+                      targetId: review.id,
+                      reportedProfileId: review.reviewer.id,
+                    );
+                  }
+                },
+                itemBuilder: (context) => [
+                  ModerationMenu.reportItem(
+                    context,
+                    label: AppLocalizations.of(context).moderationReportReview,
+                  ),
+                ],
+              ),
           ],
         ),
         const SizedBox(height: KolabingSpacing.sm),

@@ -535,11 +535,18 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
   /// viewer-scoped: a BUSINESS viewer keeps the existing profile-id-keyed
   /// `PublicProfileScreen` (Send-Kolab flow); an attendee / community viewer
   /// gets the community-keyed [AttendeeCommunityProfileScreen] (events + join).
-  void _openHostCommunity(String communityId) {
+  void _openHostCommunity(String communityId, String? hostProfileId) {
     final isBusiness =
         ref.read(authProvider).user?.userType == UserType.business;
-    if (isBusiness) {
-      context.push('/profile/$communityId');
+    // A business viewer opens the host's profile-id-keyed PublicProfileScreen
+    // (Send-Kolab flow) — but ONLY with a real `profiles.id`. `communityId` is a
+    // `communities.id`; pushing it into `/profile/{id}` 404s the profile,
+    // collaborations and gallery endpoints (F1). Older backends don't send
+    // `host_profile_id`, so fall back to the community-keyed screen rather than
+    // 404 — the business just doesn't get the Send-Kolab CTA until the backend
+    // exposes the id.
+    if (isBusiness && hostProfileId != null && hostProfileId.isNotEmpty) {
+      context.push('/profile/$hostProfileId');
     } else {
       context.push(KolabingRoutes.buildCommunityProfilePath(communityId));
     }
@@ -624,7 +631,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     if (!tappable) return row;
 
     return InkWell(
-      onTap: () => _openHostCommunity(communityId),
+      onTap: () => _openHostCommunity(communityId, event.hostProfileId),
       borderRadius: KolabingRadius.borderRadiusMd,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2),
