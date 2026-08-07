@@ -85,11 +85,11 @@ void main() {
       loadingState.purchaseAvailabilityMessage,
       'Loading subscription options from the App Store...',
     );
-    expect(loadingState.priceString, '€39.99');
+    expect(loadingState.priceString, '€49');
 
     expect(unavailableProductState.canPurchase, isTrue);
     expect(unavailableProductState.purchaseAvailabilityMessage, isNull);
-    expect(unavailableProductState.priceString, '€39.99');
+    expect(unavailableProductState.priceString, '€49');
 
     expect(readyState.canPurchase, isTrue);
     expect(readyState.purchaseAvailabilityMessage, isNull);
