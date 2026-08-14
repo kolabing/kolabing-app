@@ -7114,4 +7114,47 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get subscriptionLegalPrivacyPolicy => 'Política de Privacidad';
+
+  @override
+  String get permissionScreenTitle => 'Saca el máximo partido a Kolabing';
+
+  @override
+  String get permissionScreenSubtitle =>
+      'Las notificaciones te mantienen al día de mensajes y colaboraciones.';
+
+  @override
+  String get permissionScreenSubtitleWithLocation =>
+      'La ubicación nos ayuda a mostrarte kolabs cercanos.\nLas notificaciones te mantienen al día.';
+
+  @override
+  String get permissionScreenHelper =>
+      'Puedes cambiarlo más tarde en los ajustes.';
+
+  @override
+  String get permissionLocationTitle => 'Ubicación';
+
+  @override
+  String get permissionLocationSubtitle => 'Kolabs cercanos';
+
+  @override
+  String get permissionNotificationsTitle => 'Notificaciones';
+
+  @override
+  String get permissionNotificationsSubtitle => 'Mensajes y novedades';
+
+  @override
+  String permissionDeniedDialogTitle(String permission) {
+    return 'Permiso de $permission';
+  }
+
+  @override
+  String permissionDeniedDialogBody(String permission) {
+    return 'Se ha denegado el acceso a $permission. Puedes activarlo desde los ajustes del dispositivo.';
+  }
+
+  @override
+  String get permissionDeniedDialogLater => 'Más tarde';
+
+  @override
+  String get permissionDeniedDialogOpenSettings => 'Abrir ajustes';
 }

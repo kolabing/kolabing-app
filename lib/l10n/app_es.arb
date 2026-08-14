@@ -2115,5 +2115,17 @@
   "moderationBlockError": "No se pudo bloquear a este usuario. Inténtalo de nuevo.",
   "subscriptionLegalAutoRenewNotice": "El pago se cargará en tu cuenta de la tienda al confirmar la compra. Las suscripciones se renuevan automáticamente salvo que se cancelen al menos 24 horas antes de que acabe el periodo en curso. Puedes gestionarlas o cancelarlas cuando quieras desde los ajustes de tu cuenta.",
   "subscriptionLegalTermsOfUse": "Términos de Uso (EULA)",
-  "subscriptionLegalPrivacyPolicy": "Política de Privacidad"
+  "subscriptionLegalPrivacyPolicy": "Política de Privacidad",
+  "permissionScreenTitle": "Saca el máximo partido a Kolabing",
+  "permissionScreenSubtitle": "Las notificaciones te mantienen al día de mensajes y colaboraciones.",
+  "permissionScreenSubtitleWithLocation": "La ubicación nos ayuda a mostrarte kolabs cercanos.\nLas notificaciones te mantienen al día.",
+  "permissionScreenHelper": "Puedes cambiarlo más tarde en los ajustes.",
+  "permissionLocationTitle": "Ubicación",
+  "permissionLocationSubtitle": "Kolabs cercanos",
+  "permissionNotificationsTitle": "Notificaciones",
+  "permissionNotificationsSubtitle": "Mensajes y novedades",
+  "permissionDeniedDialogTitle": "Permiso de {permission}",
+  "permissionDeniedDialogBody": "Se ha denegado el acceso a {permission}. Puedes activarlo desde los ajustes del dispositivo.",
+  "permissionDeniedDialogLater": "Más tarde",
+  "permissionDeniedDialogOpenSettings": "Abrir ajustes"
 }

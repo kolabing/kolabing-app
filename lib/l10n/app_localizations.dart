@@ -12481,6 +12481,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy Policy'**
   String get subscriptionLegalPrivacyPolicy;
+
+  /// Title of the post-signup permission screen. Deliberately avoids the word 'Allow' (App Review Guideline 5.1.1(iv)).
+  ///
+  /// In en, this message translates to:
+  /// **'Get the most out of Kolabing'**
+  String get permissionScreenTitle;
+
+  /// Permission screen subtitle when only the notifications row is shown.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications keep you updated on messages and collaborations.'**
+  String get permissionScreenSubtitle;
+
+  /// Permission screen subtitle when the location row is also shown.
+  ///
+  /// In en, this message translates to:
+  /// **'Location helps us show nearby kolabs.\nNotifications keep you updated.'**
+  String get permissionScreenSubtitleWithLocation;
+
+  /// Helper text under the permission screen's dismiss button.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change this later in settings.'**
+  String get permissionScreenHelper;
+
+  /// Permission row title: device location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get permissionLocationTitle;
+
+  /// Permission row subtitle explaining why location is useful.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby kolabs'**
+  String get permissionLocationSubtitle;
+
+  /// Permission row title: push notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get permissionNotificationsTitle;
+
+  /// Permission row subtitle explaining why notifications are useful.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages & updates'**
+  String get permissionNotificationsSubtitle;
+
+  /// Title of the dialog shown after a permission request is denied.
+  ///
+  /// In en, this message translates to:
+  /// **'{permission} permission'**
+  String permissionDeniedDialogTitle(String permission);
+
+  /// Body of the dialog shown after a permission request is denied.
+  ///
+  /// In en, this message translates to:
+  /// **'{permission} access was denied. You can enable it from your device settings.'**
+  String permissionDeniedDialogBody(String permission);
+
+  /// Dismiss action on the permission-denied dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get permissionDeniedDialogLater;
+
+  /// Action that opens the system settings from the permission-denied dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get permissionDeniedDialogOpenSettings;
 }
 
 class _AppLocalizationsDelegate

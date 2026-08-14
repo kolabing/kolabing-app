@@ -5,8 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../config/feature_flags.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../services/permission_service.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -29,7 +31,6 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
   bool _isRequestingLocation = false;
   bool _isRequestingNotification = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -49,11 +50,15 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
   }
 
   Future<void> _checkExistingPermissions() async {
-    final locationStatus = await _service.checkLocationPermission();
+    // While the location row is hidden the app must not touch the location
+    // permission at all — not even to read its status.
+    final locationStatus = kLocationPermissionPromptEnabled
+        ? await _service.checkLocationPermission()
+        : null;
     final notificationStatus = await _service.checkNotificationPermission();
     if (!mounted) return;
     setState(() {
-      _locationGranted = locationStatus.isGranted;
+      _locationGranted = locationStatus?.isGranted ?? false;
       _notificationGranted = notificationStatus.isGranted;
     });
   }
@@ -67,7 +72,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
       _isRequestingLocation = false;
     });
     if (status.isPermanentlyDenied || status.isDenied) {
-      _showSettingsDialog('Location');
+      _showSettingsDialog(AppLocalizations.of(context).permissionLocationTitle);
     }
   }
 
@@ -83,31 +88,34 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
       _isRequestingNotification = false;
     });
     if (status.isPermanentlyDenied || status.isDenied) {
-      _showSettingsDialog('Notification');
+      _showSettingsDialog(
+        AppLocalizations.of(context).permissionNotificationsTitle,
+      );
     }
   }
 
   void _showSettingsDialog(String permissionName) {
+    final l10n = AppLocalizations.of(context);
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          '$permissionName Permission',
+          l10n.permissionDeniedDialogTitle(permissionName),
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
         ),
         content: Text(
-          '$permissionName access was denied. You can enable it from your device settings.',
+          l10n.permissionDeniedDialogBody(permissionName),
           style: KolabingTextStyles.bodySmall,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              'Later',
+              l10n.permissionDeniedDialogLater,
               style: KolabingTextStyles.button.copyWith(
                 color: context.colors.onSurfaceVariant,
               ),
@@ -119,7 +127,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
               _service.openSettings();
             },
             child: Text(
-              'Open Settings',
+              l10n.permissionDeniedDialogOpenSettings,
               style: KolabingTextStyles.button.copyWith(
                 color: context.colors.primary,
               ),
@@ -137,112 +145,124 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => PopScope(
-    canPop: false,
-    child: Scaffold(
-      backgroundColor: context.colors.appBackground,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Spacer(flex: 3),
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: context.colors.appBackground,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Spacer(flex: 3),
 
-              // Small icon
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: context.colors.primary.withValues(alpha: 0.18),
-                  shape: BoxShape.circle,
+                // Small icon
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: context.colors.primary.withValues(alpha: 0.18),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    LucideIcons.sparkles,
+                    size: 20,
+                    color: context.colors.amber,
+                  ),
                 ),
-                child: Icon(
-                  LucideIcons.sparkles,
-                  size: 20,
-                  color: context.colors.amber,
+                const SizedBox(height: 24),
+
+                // Title
+                Text(
+                  l10n.permissionScreenTitle,
+                  style: KolabingTextStyles.bodyLarge.copyWith(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.ink,
+                    height: 1.25,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              const SizedBox(height: 24),
+                const SizedBox(height: 10),
 
-              // Title
-              Text(
-                'Allow Kolabing to work better',
-                style: KolabingTextStyles.bodyLarge.copyWith(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: context.colors.ink,
-                  height: 1.25,
+                // Subtitle
+                Text(
+                  kLocationPermissionPromptEnabled
+                      ? l10n.permissionScreenSubtitleWithLocation
+                      : l10n.permissionScreenSubtitle,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 14,
+                    color: context.colors.muted,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
 
-              // Subtitle
-              Text(
-                'Location helps us show nearby kolabs.\nNotifications keep you updated.',
-                style: KolabingTextStyles.bodySmall.copyWith(
-                  fontSize: 14,
-                  color: context.colors.muted,
-                  height: 1.5,
+                const Spacer(flex: 2),
+
+                // Permission rows. Location stays hidden until a shipped feature
+                // actually reads it — see kLocationPermissionPromptEnabled.
+                if (kLocationPermissionPromptEnabled) ...[
+                  _buildPermissionRow(
+                    icon: LucideIcons.mapPin,
+                    title: l10n.permissionLocationTitle,
+                    subtitle: l10n.permissionLocationSubtitle,
+                    actionLabel: l10n.commonContinue,
+                    isGranted: _locationGranted,
+                    isLoading: _isRequestingLocation,
+                    onRequest: _requestLocation,
+                  ),
+                  Container(height: 1, color: context.colors.hairline),
+                ],
+                _buildPermissionRow(
+                  icon: LucideIcons.bell,
+                  title: l10n.permissionNotificationsTitle,
+                  subtitle: l10n.permissionNotificationsSubtitle,
+                  actionLabel: l10n.commonContinue,
+                  isGranted: _notificationGranted,
+                  isLoading: _isRequestingNotification,
+                  onRequest: _requestNotification,
                 ),
-                textAlign: TextAlign.center,
-              ),
 
-              const Spacer(flex: 2),
+                const Spacer(flex: 3),
 
-              // Permission rows
-              _buildPermissionRow(
-                icon: LucideIcons.mapPin,
-                title: 'Location',
-                subtitle: 'Nearby kolabs',
-                isGranted: _locationGranted,
-                isLoading: _isRequestingLocation,
-                onRequest: _requestLocation,
-              ),
-              Container(height: 1, color: context.colors.hairline),
-              _buildPermissionRow(
-                icon: LucideIcons.bell,
-                title: 'Notifications',
-                subtitle: 'Messages & updates',
-                isGranted: _notificationGranted,
-                isLoading: _isRequestingNotification,
-                onRequest: _requestNotification,
-              ),
-
-              const Spacer(flex: 3),
-
-              // Continue button
-              KolabingButton(
-                label: 'Continue',
-                onPressed: _continue,
-                variant: KolabingButtonVariant.primary,
-                size: KolabingButtonSize.compact,
-              ),
-              const SizedBox(height: 14),
-
-              // Helper text
-              Text(
-                'You can change this later in settings.',
-                style: KolabingTextStyles.bodySmall.copyWith(
-                  fontSize: 12,
-                  color: context.colors.muted,
+                // Dismisses the screen. Labelled "Done" so it never reads the
+                // same as the per-row pre-prompt action above.
+                KolabingButton(
+                  label: l10n.commonDone,
+                  onPressed: _continue,
+                  variant: KolabingButtonVariant.primary,
+                  size: KolabingButtonSize.compact,
                 ),
-                textAlign: TextAlign.center,
-              ),
+                const SizedBox(height: 14),
 
-              const Spacer(flex: 1),
-            ],
+                // Helper text
+                Text(
+                  l10n.permissionScreenHelper,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    color: context.colors.muted,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+
+                const Spacer(flex: 1),
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 
   Widget _buildPermissionRow({
     required IconData icon,
     required String title,
     required String subtitle,
+    required String actionLabel,
     required bool isGranted,
     required bool isLoading,
     required VoidCallback onRequest,
@@ -306,7 +326,9 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
               padding: const EdgeInsets.all(5),
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(context.colors.primary),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  context.colors.primary,
+                ),
               ),
             ),
           )
@@ -319,8 +341,10 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
                 color: KolabingColors.primary,
                 borderRadius: BorderRadius.circular(20),
               ),
+              // App Review 5.1.1(iv): a pre-prompt shown before the system
+              // permission dialog must not say "Allow".
               child: Text(
-                'Allow',
+                actionLabel,
                 style: KolabingTextStyles.button.copyWith(
                   fontSize: 12,
                   letterSpacing: 0.1,

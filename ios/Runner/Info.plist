@@ -55,8 +55,6 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Kolabing needs camera access to scan QR codes for event check-in.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Kolabing needs your location to show nearby collaboration opportunities and connect you with local businesses and communities.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Kolabing needs your location to show nearby collaboration opportunities and connect you with local businesses and communities.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
