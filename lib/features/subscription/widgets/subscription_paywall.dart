@@ -448,9 +448,8 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
       );
     }
 
-    // Whatever the store will actually charge, in the storefront's own
-    // currency. Apple converts the euro base price per storefront, so forcing
-    // "€" here would quote a currency the user is not billed in.
+    // The amount the store will charge, always rendered in euro — Kolabing
+    // quotes a single currency across the app, App Store and Stripe alike.
     final monthlyPrice =
         iapState.displayPriceFor(SubscriptionPlan.monthly) ??
         IAPState.kFallbackMonthlyPrice;

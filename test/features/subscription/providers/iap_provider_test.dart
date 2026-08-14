@@ -68,7 +68,7 @@ void main() {
       expect(service.purchaseCalls, 1);
       expect(result.started, isTrue);
       expect(result.validatedReferralCode, 'KOLAB-IRSC');
-      expect(container.read(iapProvider).priceString, '29,99 €');
+      expect(container.read(iapProvider).priceString, '€29.99');
     },
   );
 
@@ -93,20 +93,30 @@ void main() {
 
     expect(readyState.canPurchase, isTrue);
     expect(readyState.purchaseAvailabilityMessage, isNull);
-    expect(readyState.priceString, '29,99 €');
+    expect(readyState.priceString, '€29.99');
   });
 
-  test('prices come from the storefront, never a forced euro symbol', () {
+  test('every price is quoted in euro, whatever the storefront returns', () {
     final usState = IAPState(
       isAvailable: true,
       products: <ProductDetails>[_monthlyProductUsStorefront],
     );
 
-    // Regression: the paywall used to prepend "€" to rawPrice, so a US
-    // storefront quoted "€44.99" for a subscription Apple bills as $44.99.
-    expect(usState.priceString, r'$44.99');
-    expect(usState.displayPriceFor(SubscriptionPlan.monthly), r'$44.99');
-    expect(usState.priceString, isNot(contains('€')));
+    // Kolabing quotes a single currency app-wide, so the store's own localized
+    // string ("$44.99") is re-rendered from its numeric amount with "€".
+    expect(usState.priceString, '€44.99');
+    expect(usState.displayPriceFor(SubscriptionPlan.monthly), '€44.99');
+    expect(usState.priceString, isNot(contains(r'$')));
+  });
+
+  test('per-month equivalent of a multi-month plan is quoted in euro', () {
+    final state = IAPState(
+      isAvailable: true,
+      products: <ProductDetails>[_monthlyProduct, _threeMonthsProductUs],
+    );
+
+    expect(state.perMonthEquivalent(SubscriptionPlan.threeMonths), '€30.00');
+    expect(state.displayPriceFor(SubscriptionPlan.threeMonths), '€89.99');
   });
 }
 
@@ -128,6 +138,16 @@ final ProductDetails _monthlyProductUsStorefront = ProductDetails(
   description: 'Monthly premium subscription',
   price: r'$44.99',
   rawPrice: 44.99,
+  currencyCode: 'USD',
+  currencySymbol: r'$',
+);
+
+final ProductDetails _threeMonthsProductUs = ProductDetails(
+  id: kBundleThreeMonthsSubscriptionId,
+  title: 'Premium 3 Months',
+  description: '3-month premium subscription',
+  price: r'$89.99',
+  rawPrice: 89.99,
   currencyCode: 'USD',
   currencySymbol: r'$',
 );
