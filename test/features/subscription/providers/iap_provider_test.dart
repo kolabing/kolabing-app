@@ -95,16 +95,61 @@ void main() {
     expect(readyState.purchaseAvailabilityMessage, isNull);
     expect(readyState.priceString, '€29.99');
   });
+
+  test('every price is quoted in euro, whatever the storefront returns', () {
+    final usState = IAPState(
+      isAvailable: true,
+      products: <ProductDetails>[_monthlyProductUsStorefront],
+    );
+
+    // Kolabing quotes a single currency app-wide, so the store's own localized
+    // string ("$44.99") is re-rendered from its numeric amount with "€".
+    expect(usState.priceString, '€44.99');
+    expect(usState.displayPriceFor(SubscriptionPlan.monthly), '€44.99');
+    expect(usState.priceString, isNot(contains(r'$')));
+  });
+
+  test('per-month equivalent of a multi-month plan is quoted in euro', () {
+    final state = IAPState(
+      isAvailable: true,
+      products: <ProductDetails>[_monthlyProduct, _threeMonthsProductUs],
+    );
+
+    expect(state.perMonthEquivalent(SubscriptionPlan.threeMonths), '€30.00');
+    expect(state.displayPriceFor(SubscriptionPlan.threeMonths), '€89.99');
+  });
 }
 
 final ProductDetails _monthlyProduct = ProductDetails(
   id: kMonthlySubscriptionId,
   title: 'Premium Monthly',
   description: 'Monthly premium subscription',
-  price: '29.99 EUR',
+  price: '29,99 €',
   rawPrice: 29.99,
   currencyCode: 'EUR',
-  currencySymbol: 'EUR',
+  currencySymbol: '€',
+);
+
+/// Same product as Apple returns it on a non-euro storefront: Apple converts
+/// the euro base price, so both the number and the currency differ.
+final ProductDetails _monthlyProductUsStorefront = ProductDetails(
+  id: kMonthlySubscriptionId,
+  title: 'Premium Monthly',
+  description: 'Monthly premium subscription',
+  price: r'$44.99',
+  rawPrice: 44.99,
+  currencyCode: 'USD',
+  currencySymbol: r'$',
+);
+
+final ProductDetails _threeMonthsProductUs = ProductDetails(
+  id: kBundleThreeMonthsSubscriptionId,
+  title: 'Premium 3 Months',
+  description: '3-month premium subscription',
+  price: r'$89.99',
+  rawPrice: 89.99,
+  currencyCode: 'USD',
+  currencySymbol: r'$',
 );
 
 class _FakeIAPService extends IAPService {

@@ -55,30 +55,38 @@ class IAPState {
   ProductDetails? productFor(SubscriptionPlan plan) =>
       plan == SubscriptionPlan.monthly ? monthlyProduct : threeMonthsProduct;
 
-  /// Kolabing is EUR-priced, so prices are always shown in euros (€) regardless
-  /// of the device's App Store storefront. Using the store-localized
-  /// `ProductDetails.price`/`currencySymbol` would render e.g. "$" on a US test
-  /// storefront, which misrepresents the (euro) charge.
-  static String formatEur(double amount) => '€${amount.toStringAsFixed(2)}';
+  /// Shown when the store has not returned a product yet (and on the non-iOS /
+  /// Stripe path). Kolabing's base price is €49.99; once the store answers, the
+  /// real amount is used — still formatted in euro, see [formatEuro].
+  static const String kFallbackMonthlyPrice = '€49.99';
+  static const String kFallbackThreeMonthsPrice = '€99.99';
 
-  /// EUR-formatted price for a plan's loaded product, or null if not loaded.
-  String? eurPriceFor(SubscriptionPlan plan) {
+  /// Kolabing quotes subscriptions in euro everywhere — the Stripe path, the
+  /// marketing copy and the App Store base price all use €. StoreKit hands back
+  /// a storefront-localized string ("\$49.99" on a US storefront, "49,99 €" on a
+  /// euro one), so every price the UI shows goes through here to be rendered
+  /// with the euro symbol instead of the storefront's own.
+  static String formatEuro(double amount) => '€${amount.toStringAsFixed(2)}';
+
+  /// Store price for [plan], always rendered in euro. Null while the store has
+  /// not returned the product yet.
+  String? displayPriceFor(SubscriptionPlan plan) {
     final product = productFor(plan);
-    return product == null ? null : formatEur(product.rawPrice);
+    if (product == null) return null;
+    return formatEuro(product.rawPrice);
   }
 
-  /// Formatted monthly price string in euros (e.g. "€49.99").
-  String get priceString {
-    final product = monthlyProduct;
-    return product != null ? formatEur(product.rawPrice) : '€49.99';
-  }
+  /// Monthly price in euro, falling back to the euro base price while products
+  /// are still loading.
+  String get priceString =>
+      displayPriceFor(SubscriptionPlan.monthly) ?? kFallbackMonthlyPrice;
 
-  /// Per-month equivalent for a multi-month plan, in euros (e.g. "€33.33").
-  /// Null for the monthly plan or if not loaded.
+  /// Per-month equivalent for a multi-month plan (e.g. "€33.33"), in euro like
+  /// every other price. Null for the monthly plan or if not loaded.
   String? perMonthEquivalent(SubscriptionPlan plan) {
     final product = productFor(plan);
     if (product == null || plan.durationMonths <= 1) return null;
-    return formatEur(product.rawPrice / plan.durationMonths);
+    return formatEuro(product.rawPrice / plan.durationMonths);
   }
 
   /// Savings percent of [plan] vs paying monthly for the same duration.

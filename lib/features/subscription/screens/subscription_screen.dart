@@ -178,13 +178,32 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     });
   }
 
+  /// Opens Apple's subscription management. Surfaces a message instead of
+  /// failing silently — a dead button on the cancel path reads as "cancelling
+  /// is broken".
+  Future<void> _openAppleSubscriptions() async {
+    final l10n = AppLocalizations.of(context);
+    final uri = Uri.parse('https://apps.apple.com/account/subscriptions');
+    var opened = false;
+    try {
+      opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } on Exception {
+      opened = false;
+    }
+    if (!opened && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.subscriptionManageAppleFailed),
+          backgroundColor: context.colors.error,
+        ),
+      );
+    }
+  }
+
   Future<void> _handleManageBilling() async {
     if (Platform.isIOS) {
       // iOS: Open iOS Settings > Subscriptions (Apple-approved method)
-      await launchUrl(
-        Uri.parse('https://apps.apple.com/account/subscriptions'),
-        mode: LaunchMode.externalApplication,
-      );
+      await _openAppleSubscriptions();
     } else {
       // Android: Open Stripe billing portal
       final url = await ref
@@ -223,12 +242,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   Future<void> _handleCancel() async {
     final subscription = ref.read(profileProvider).subscription;
 
-    // iOS with Apple IAP: redirect to App Store subscriptions
-    if (Platform.isIOS && (subscription?.isAppleIAP ?? false)) {
-      await launchUrl(
-        Uri.parse('https://apps.apple.com/account/subscriptions'),
-        mode: LaunchMode.externalApplication,
-      );
+    // App Store subscriptions can only be cancelled by the user in Apple's own
+    // subscription management — our API cannot touch them, and Guideline 3.1.2
+    // expects the app to send them there. Treat an unknown `source` on iOS as
+    // Apple: the iOS purchase path is StoreKit, so guessing Stripe would fire a
+    // no-op API call and leave the user thinking they had cancelled.
+    if (Platform.isIOS && !(subscription?.isStripe ?? false)) {
+      await _openAppleSubscriptions();
       return;
     }
 
