@@ -7196,4 +7196,8 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get permissionDeniedDialogOpenSettings => 'Obre la configuració';
+
+  @override
+  String get subscriptionManageAppleFailed =>
+      'No s\'han pogut obrir les teves subscripcions de l\'App Store. Ves a Configuració › el teu nom › Subscripcions per gestionar-la o cancel·lar-la.';
 }

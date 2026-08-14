@@ -429,8 +429,9 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   /// store products are loaded; otherwise (Android/Stripe) a single monthly box.
   Widget _buildPlanPicker(AppLocalizations l10n, IAPState iapState) {
     if (!Platform.isIOS) {
+      // Android/Stripe really is euro-priced, so the euro base price is right.
       return _buildSinglePriceBox(
-        price: '€49.99',
+        price: IAPState.kFallbackMonthlyPrice,
         suffix: l10n.subscriptionPaywallPerMonth,
       );
     }
@@ -447,11 +448,15 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
       );
     }
 
-    // EUR-forced prices (Kolabing is euro-priced; never show the storefront's $).
+    // Whatever the store will actually charge, in the storefront's own
+    // currency. Apple converts the euro base price per storefront, so forcing
+    // "€" here would quote a currency the user is not billed in.
     final monthlyPrice =
-        iapState.eurPriceFor(SubscriptionPlan.monthly) ?? '€49.99';
+        iapState.displayPriceFor(SubscriptionPlan.monthly) ??
+        IAPState.kFallbackMonthlyPrice;
     final threeMonthsPrice =
-        iapState.eurPriceFor(SubscriptionPlan.threeMonths) ?? '€99.99';
+        iapState.displayPriceFor(SubscriptionPlan.threeMonths) ??
+        IAPState.kFallbackThreeMonthsPrice;
 
     // Only one plan available — single box, no choice to make.
     if (threeMonths == null) {

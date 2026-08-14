@@ -68,7 +68,7 @@ void main() {
       expect(service.purchaseCalls, 1);
       expect(result.started, isTrue);
       expect(result.validatedReferralCode, 'KOLAB-IRSC');
-      expect(container.read(iapProvider).priceString, '€29.99');
+      expect(container.read(iapProvider).priceString, '29,99 €');
     },
   );
 
@@ -93,7 +93,20 @@ void main() {
 
     expect(readyState.canPurchase, isTrue);
     expect(readyState.purchaseAvailabilityMessage, isNull);
-    expect(readyState.priceString, '€29.99');
+    expect(readyState.priceString, '29,99 €');
+  });
+
+  test('prices come from the storefront, never a forced euro symbol', () {
+    final usState = IAPState(
+      isAvailable: true,
+      products: <ProductDetails>[_monthlyProductUsStorefront],
+    );
+
+    // Regression: the paywall used to prepend "€" to rawPrice, so a US
+    // storefront quoted "€44.99" for a subscription Apple bills as $44.99.
+    expect(usState.priceString, r'$44.99');
+    expect(usState.displayPriceFor(SubscriptionPlan.monthly), r'$44.99');
+    expect(usState.priceString, isNot(contains('€')));
   });
 }
 
@@ -101,10 +114,22 @@ final ProductDetails _monthlyProduct = ProductDetails(
   id: kMonthlySubscriptionId,
   title: 'Premium Monthly',
   description: 'Monthly premium subscription',
-  price: '29.99 EUR',
+  price: '29,99 €',
   rawPrice: 29.99,
   currencyCode: 'EUR',
-  currencySymbol: 'EUR',
+  currencySymbol: '€',
+);
+
+/// Same product as Apple returns it on a non-euro storefront: Apple converts
+/// the euro base price, so both the number and the currency differ.
+final ProductDetails _monthlyProductUsStorefront = ProductDetails(
+  id: kMonthlySubscriptionId,
+  title: 'Premium Monthly',
+  description: 'Monthly premium subscription',
+  price: r'$44.99',
+  rawPrice: 44.99,
+  currencyCode: 'USD',
+  currencySymbol: r'$',
 );
 
 class _FakeIAPService extends IAPService {

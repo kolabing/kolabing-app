@@ -7088,4 +7088,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get permissionDeniedDialogOpenSettings => 'Open Settings';
+
+  @override
+  String get subscriptionManageAppleFailed =>
+      'Couldn\'t open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.';
 }

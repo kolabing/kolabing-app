@@ -2127,5 +2127,6 @@
   "permissionDeniedDialogTitle": "Permís de {permission}",
   "permissionDeniedDialogBody": "S'ha denegat l'accés a {permission}. Pots activar-ho des de la configuració del dispositiu.",
   "permissionDeniedDialogLater": "Més tard",
-  "permissionDeniedDialogOpenSettings": "Obre la configuració"
+  "permissionDeniedDialogOpenSettings": "Obre la configuració",
+  "subscriptionManageAppleFailed": "No s'han pogut obrir les teves subscripcions de l'App Store. Ves a Configuració › el teu nom › Subscripcions per gestionar-la o cancel·lar-la."
 }

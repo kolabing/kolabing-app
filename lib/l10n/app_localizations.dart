@@ -12553,6 +12553,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open Settings'**
   String get permissionDeniedDialogOpenSettings;
+
+  /// Shown when the App Store subscription management page cannot be opened from the app.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.'**
+  String get subscriptionManageAppleFailed;
 }
 
 class _AppLocalizationsDelegate
