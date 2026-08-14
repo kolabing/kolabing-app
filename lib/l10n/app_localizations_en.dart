@@ -7046,4 +7046,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionLegalPrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get permissionScreenTitle => 'Get the most out of Kolabing';
+
+  @override
+  String get permissionScreenSubtitle =>
+      'Notifications keep you updated on messages and collaborations.';
+
+  @override
+  String get permissionScreenSubtitleWithLocation =>
+      'Location helps us show nearby kolabs.\nNotifications keep you updated.';
+
+  @override
+  String get permissionScreenHelper => 'You can change this later in settings.';
+
+  @override
+  String get permissionLocationTitle => 'Location';
+
+  @override
+  String get permissionLocationSubtitle => 'Nearby kolabs';
+
+  @override
+  String get permissionNotificationsTitle => 'Notifications';
+
+  @override
+  String get permissionNotificationsSubtitle => 'Messages & updates';
+
+  @override
+  String permissionDeniedDialogTitle(String permission) {
+    return '$permission permission';
+  }
+
+  @override
+  String permissionDeniedDialogBody(String permission) {
+    return '$permission access was denied. You can enable it from your device settings.';
+  }
+
+  @override
+  String get permissionDeniedDialogLater => 'Later';
+
+  @override
+  String get permissionDeniedDialogOpenSettings => 'Open Settings';
 }

@@ -7618,5 +7618,35 @@
   "subscriptionLegalTermsOfUse": "Terms of Use (EULA)",
   "@subscriptionLegalTermsOfUse": { "description": "Tappable paywall label linking to the Terms of Use / EULA." },
   "subscriptionLegalPrivacyPolicy": "Privacy Policy",
-  "@subscriptionLegalPrivacyPolicy": { "description": "Tappable paywall label linking to the Privacy Policy." }
+  "@subscriptionLegalPrivacyPolicy": { "description": "Tappable paywall label linking to the Privacy Policy." },
+  "permissionScreenTitle": "Get the most out of Kolabing",
+  "@permissionScreenTitle": { "description": "Title of the post-signup permission screen. Deliberately avoids the word 'Allow' (App Review Guideline 5.1.1(iv))." },
+  "permissionScreenSubtitle": "Notifications keep you updated on messages and collaborations.",
+  "@permissionScreenSubtitle": { "description": "Permission screen subtitle when only the notifications row is shown." },
+  "permissionScreenSubtitleWithLocation": "Location helps us show nearby kolabs.\nNotifications keep you updated.",
+  "@permissionScreenSubtitleWithLocation": { "description": "Permission screen subtitle when the location row is also shown." },
+  "permissionScreenHelper": "You can change this later in settings.",
+  "@permissionScreenHelper": { "description": "Helper text under the permission screen's dismiss button." },
+  "permissionLocationTitle": "Location",
+  "@permissionLocationTitle": { "description": "Permission row title: device location." },
+  "permissionLocationSubtitle": "Nearby kolabs",
+  "@permissionLocationSubtitle": { "description": "Permission row subtitle explaining why location is useful." },
+  "permissionNotificationsTitle": "Notifications",
+  "@permissionNotificationsTitle": { "description": "Permission row title: push notifications." },
+  "permissionNotificationsSubtitle": "Messages & updates",
+  "@permissionNotificationsSubtitle": { "description": "Permission row subtitle explaining why notifications are useful." },
+  "permissionDeniedDialogTitle": "{permission} permission",
+  "@permissionDeniedDialogTitle": {
+    "description": "Title of the dialog shown after a permission request is denied.",
+    "placeholders": { "permission": { "type": "String", "example": "Notifications" } }
+  },
+  "permissionDeniedDialogBody": "{permission} access was denied. You can enable it from your device settings.",
+  "@permissionDeniedDialogBody": {
+    "description": "Body of the dialog shown after a permission request is denied.",
+    "placeholders": { "permission": { "type": "String", "example": "Notifications" } }
+  },
+  "permissionDeniedDialogLater": "Later",
+  "@permissionDeniedDialogLater": { "description": "Dismiss action on the permission-denied dialog." },
+  "permissionDeniedDialogOpenSettings": "Open Settings",
+  "@permissionDeniedDialogOpenSettings": { "description": "Action that opens the system settings from the permission-denied dialog." }
 }

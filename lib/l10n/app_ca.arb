@@ -2115,5 +2115,17 @@
   "moderationBlockError": "No s'ha pogut bloquejar aquest usuari. Torna-ho a provar.",
   "subscriptionLegalAutoRenewNotice": "El pagament es carregarà al teu compte de la botiga en confirmar la compra. Les subscripcions es renoven automàticament tret que es cancel·lin com a mínim 24 hores abans que acabi el període en curs. Pots gestionar-les o cancel·lar-les quan vulguis des de la configuració del teu compte.",
   "subscriptionLegalTermsOfUse": "Termes d'Ús (EULA)",
-  "subscriptionLegalPrivacyPolicy": "Política de Privacitat"
+  "subscriptionLegalPrivacyPolicy": "Política de Privacitat",
+  "permissionScreenTitle": "Treu el màxim partit a Kolabing",
+  "permissionScreenSubtitle": "Les notificacions et mantenen al dia de missatges i col·laboracions.",
+  "permissionScreenSubtitleWithLocation": "La ubicació ens ajuda a mostrar-te kolabs propers.\nLes notificacions et mantenen al dia.",
+  "permissionScreenHelper": "Pots canviar-ho més tard a la configuració.",
+  "permissionLocationTitle": "Ubicació",
+  "permissionLocationSubtitle": "Kolabs propers",
+  "permissionNotificationsTitle": "Notificacions",
+  "permissionNotificationsSubtitle": "Missatges i novetats",
+  "permissionDeniedDialogTitle": "Permís de {permission}",
+  "permissionDeniedDialogBody": "S'ha denegat l'accés a {permission}. Pots activar-ho des de la configuració del dispositiu.",
+  "permissionDeniedDialogLater": "Més tard",
+  "permissionDeniedDialogOpenSettings": "Obre la configuració"
 }

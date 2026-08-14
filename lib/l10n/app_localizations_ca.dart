@@ -7153,4 +7153,47 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get subscriptionLegalPrivacyPolicy => 'Política de Privacitat';
+
+  @override
+  String get permissionScreenTitle => 'Treu el màxim partit a Kolabing';
+
+  @override
+  String get permissionScreenSubtitle =>
+      'Les notificacions et mantenen al dia de missatges i col·laboracions.';
+
+  @override
+  String get permissionScreenSubtitleWithLocation =>
+      'La ubicació ens ajuda a mostrar-te kolabs propers.\nLes notificacions et mantenen al dia.';
+
+  @override
+  String get permissionScreenHelper =>
+      'Pots canviar-ho més tard a la configuració.';
+
+  @override
+  String get permissionLocationTitle => 'Ubicació';
+
+  @override
+  String get permissionLocationSubtitle => 'Kolabs propers';
+
+  @override
+  String get permissionNotificationsTitle => 'Notificacions';
+
+  @override
+  String get permissionNotificationsSubtitle => 'Missatges i novetats';
+
+  @override
+  String permissionDeniedDialogTitle(String permission) {
+    return 'Permís de $permission';
+  }
+
+  @override
+  String permissionDeniedDialogBody(String permission) {
+    return 'S\'ha denegat l\'accés a $permission. Pots activar-ho des de la configuració del dispositiu.';
+  }
+
+  @override
+  String get permissionDeniedDialogLater => 'Més tard';
+
+  @override
+  String get permissionDeniedDialogOpenSettings => 'Obre la configuració';
 }
