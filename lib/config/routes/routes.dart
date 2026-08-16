@@ -29,6 +29,8 @@ import '../../features/friends/screens/friends_screen.dart';
 import '../../features/gamification/gamification.dart';
 import '../../features/kolab/models/kolab.dart';
 import '../../features/missions/screens/missions_screen.dart';
+import '../../features/multi_kolab/screens/multi_kolab_event_detail_screen.dart';
+import '../../features/multi_kolab/screens/multi_kolab_explore_screen.dart';
 import '../../features/kolab/screens/intent_selection_screen.dart';
 import '../../features/kolab/screens/kolab_flow_screen.dart';
 import '../../features/notification/screens/notifications_screen.dart';
@@ -241,6 +243,12 @@ abstract final class KolabingRoutes {
 
   /// Opportunity detail screen
   static const String opportunityDetails = '/opportunity/:id';
+
+  /// Multi-Kolab Event MVP — Explore listing (recruiting events).
+  static const String multiKolabExplore = '/multi-kolab-events';
+
+  /// Multi-Kolab Event MVP — event detail + applicant flow.
+  static const String multiKolabEventDetail = '/multi-kolab-events/:id';
 
   /// Collaboration detail screen
   static const String collaborationDetails = '/collaboration/:id';
@@ -831,6 +839,20 @@ final GoRouter kolabingRouter = GoRouter(
           offer: offer,
           canApply: canApply,
         );
+      },
+    ),
+    GoRoute(
+      path: KolabingRoutes.multiKolabExplore,
+      name: 'multiKolabExplore',
+      builder: (BuildContext context, GoRouterState state) =>
+          const MultiKolabExploreScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.multiKolabEventDetail,
+      name: 'multiKolabEventDetail',
+      builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'] ?? '';
+        return MultiKolabEventDetailScreen(eventId: id);
       },
     ),
     GoRoute(

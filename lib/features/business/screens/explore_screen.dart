@@ -22,6 +22,7 @@ import '../../discovery/models/discovery_item.dart';
 import '../../discovery/providers/discovery_provider.dart';
 import '../../discovery/widgets/discovery_quick_filters.dart';
 import '../../moderation/providers/blocked_profiles_provider.dart';
+import '../../multi_kolab/widgets/multi_kolab_explore_banner.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/saved_kolabs_provider.dart';
@@ -226,6 +227,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           children: [
             _buildHeader(),
             const SizedBox(height: 6),
+            // Additive-only entry point into the separate Multi-Kolab Event
+            // MVP flow (`kolabing-v2` Task 9). Deliberately not interleaved
+            // into the swipe deck below — that deck's PageView/gesture/save
+            // logic is tightly coupled to `DiscoveryItem` and stays
+            // untouched by this feature.
+            if (!_savedSelected) const MultiKolabExploreBanner(),
             // The search/filter bar + quick filters drive the discovery feed only.
             if (!_savedSelected) ...[
               _buildTopBar(filters, listState),

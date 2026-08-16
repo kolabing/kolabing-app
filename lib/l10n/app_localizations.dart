@@ -12481,6 +12481,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy Policy'**
   String get subscriptionLegalPrivacyPolicy;
+
+  /// Entry point banner title on the main Explore screen linking to Multi-Kolab Events.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Kolab Events'**
+  String get multiKolabExploreEntryPointLabel;
+
+  /// Entry point banner subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recruit or join multi-partner events'**
+  String get multiKolabExploreEntryPointSubtitle;
+
+  /// Multi-Kolab Explore screen app bar title.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Kolab Events'**
+  String get multiKolabExploreTitle;
+
+  /// Small badge on a Multi-Kolab Explore card distinguishing it from an ordinary Kolab card.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Kolab'**
+  String get multiKolabExploreCardBadge;
+
+  /// Empty state heading on the Multi-Kolab Explore screen.
+  ///
+  /// In en, this message translates to:
+  /// **'No events open right now'**
+  String get multiKolabExploreEmptyTitle;
+
+  /// Empty state body on the Multi-Kolab Explore screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Check back soon for new multi-partner events.'**
+  String get multiKolabExploreEmptyBody;
+
+  /// Error state body shown when the Multi-Kolab Explore/detail request fails.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load Multi-Kolab Events. Please try again.'**
+  String get multiKolabExploreErrorBody;
+
+  /// Multi-Kolab event detail screen app bar title.
+  ///
+  /// In en, this message translates to:
+  /// **'Event details'**
+  String get multiKolabEventDetailTitle;
+
+  /// Section heading listing a Multi-Kolab event's partner roles.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner roles'**
+  String get multiKolabEventDetailRolesHeading;
+
+  /// Button to open the short application form for a role.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to this role'**
+  String get multiKolabEventDetailApplyButton;
+
+  /// Compact role-capacity label, e.g. '2 open · 1 filled'.
+  ///
+  /// In en, this message translates to:
+  /// **'{open} open · {filled} filled'**
+  String multiKolabRoleProgressLabel(int open, int filled);
+
+  /// Screen-reader label for the role-capacity indicator.
+  ///
+  /// In en, this message translates to:
+  /// **'{open} of {total} roles open, {filled} filled'**
+  String multiKolabRoleProgressSemanticLabel(int open, int filled, int total);
+
+  /// Chip label for a required Multi-Kolab role.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get multiKolabRoleRequiredLabel;
+
+  /// Chip label for an optional Multi-Kolab role.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get multiKolabRoleOptionalLabel;
+
+  /// Chip label describing which account type may apply to a role (type is the raw wire value business/community/either).
+  ///
+  /// In en, this message translates to:
+  /// **'Open to: {type}'**
+  String multiKolabRoleEligibilityLabel(String type);
+
+  /// Banner shown on the event detail screen when the viewer has already applied to a role.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve applied — status: {status}'**
+  String multiKolabAlreadyAppliedLabel(String status);
+
+  /// Button opening the organizer's external RSVP link (HTTPS only).
+  ///
+  /// In en, this message translates to:
+  /// **'RSVP'**
+  String get multiKolabRsvpButtonLabel;
+
+  /// Short-application sheet title.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to {role}'**
+  String multiKolabApplyFormTitle(String role);
+
+  /// Label for the required pitch field on the short application form.
+  ///
+  /// In en, this message translates to:
+  /// **'Your pitch'**
+  String get multiKolabApplyFormPitchLabel;
+
+  /// Placeholder text for the pitch field.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell the organizer why you\'d be a great fit'**
+  String get multiKolabApplyFormPitchHint;
+
+  /// Validation message when the pitch field is left empty.
+  ///
+  /// In en, this message translates to:
+  /// **'A pitch is required to apply.'**
+  String get multiKolabApplyFormPitchRequired;
+
+  /// Label for the optional availability field on the short application form.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability (optional)'**
+  String get multiKolabApplyFormAvailabilityLabel;
+
+  /// Placeholder text for the availability field.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Any Saturday in September'**
+  String get multiKolabApplyFormAvailabilityHint;
+
+  /// Submit button on the short application form.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit application'**
+  String get multiKolabApplyFormSubmit;
+
+  /// Snackbar shown after a successful application.
+  ///
+  /// In en, this message translates to:
+  /// **'Application sent!'**
+  String get multiKolabApplyFormSuccess;
+
+  /// Error shown for the role_ineligible stable error code.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account type can\'t apply to this role.'**
+  String get multiKolabApplyFormErrorIneligible;
+
+  /// Error shown for the event_not_recruiting stable error code.
+  ///
+  /// In en, this message translates to:
+  /// **'This event isn\'t accepting applications right now.'**
+  String get multiKolabApplyFormErrorEventNotRecruiting;
+
+  /// Error shown for the role_not_open stable error code.
+  ///
+  /// In en, this message translates to:
+  /// **'This role is no longer open.'**
+  String get multiKolabApplyFormErrorRoleNotOpen;
+
+  /// Error shown for the duplicate_application stable error code.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve already applied to this role.'**
+  String get multiKolabApplyFormErrorDuplicate;
+
+  /// Fallback error message for an unrecognized application-rejection code.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get multiKolabApplyFormErrorGeneric;
 }
 
 class _AppLocalizationsDelegate

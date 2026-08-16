@@ -7153,4 +7153,117 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get subscriptionLegalPrivacyPolicy => 'Política de Privacitat';
+
+  @override
+  String get multiKolabExploreEntryPointLabel => 'Esdeveniments Multi-Kolab';
+
+  @override
+  String get multiKolabExploreEntryPointSubtitle =>
+      'Recluta o uneix-te a esdeveniments amb diversos socis';
+
+  @override
+  String get multiKolabExploreTitle => 'Esdeveniments Multi-Kolab';
+
+  @override
+  String get multiKolabExploreCardBadge => 'Multi-Kolab';
+
+  @override
+  String get multiKolabExploreEmptyTitle =>
+      'Ara mateix no hi ha esdeveniments oberts';
+
+  @override
+  String get multiKolabExploreEmptyBody =>
+      'Torna aviat per veure nous esdeveniments amb diversos socis.';
+
+  @override
+  String get multiKolabExploreErrorBody =>
+      'No s\'han pogut carregar els Esdeveniments Multi-Kolab. Torna-ho a provar.';
+
+  @override
+  String get multiKolabEventDetailTitle => 'Detalls de l\'esdeveniment';
+
+  @override
+  String get multiKolabEventDetailRolesHeading => 'Rols de socis';
+
+  @override
+  String get multiKolabEventDetailApplyButton => 'Sol·licita aquest rol';
+
+  @override
+  String multiKolabRoleProgressLabel(int open, int filled) {
+    return '$open oberts · $filled coberts';
+  }
+
+  @override
+  String multiKolabRoleProgressSemanticLabel(int open, int filled, int total) {
+    return '$open de $total rols oberts, $filled coberts';
+  }
+
+  @override
+  String get multiKolabRoleRequiredLabel => 'Obligatori';
+
+  @override
+  String get multiKolabRoleOptionalLabel => 'Opcional';
+
+  @override
+  String multiKolabRoleEligibilityLabel(String type) {
+    return 'Obert a: $type';
+  }
+
+  @override
+  String multiKolabAlreadyAppliedLabel(String status) {
+    return 'Ja has sol·licitat — estat: $status';
+  }
+
+  @override
+  String get multiKolabRsvpButtonLabel => 'Confirma l\'assistència';
+
+  @override
+  String multiKolabApplyFormTitle(String role) {
+    return 'Sol·licita $role';
+  }
+
+  @override
+  String get multiKolabApplyFormPitchLabel => 'La teva proposta';
+
+  @override
+  String get multiKolabApplyFormPitchHint =>
+      'Explica a l\'organitzador per què encaixaries genial';
+
+  @override
+  String get multiKolabApplyFormPitchRequired =>
+      'Cal una proposta per sol·licitar.';
+
+  @override
+  String get multiKolabApplyFormAvailabilityLabel =>
+      'Disponibilitat (opcional)';
+
+  @override
+  String get multiKolabApplyFormAvailabilityHint =>
+      'p. ex. Qualsevol dissabte de setembre';
+
+  @override
+  String get multiKolabApplyFormSubmit => 'Envia la sol·licitud';
+
+  @override
+  String get multiKolabApplyFormSuccess => 'Sol·licitud enviada!';
+
+  @override
+  String get multiKolabApplyFormErrorIneligible =>
+      'El teu tipus de compte no pot sol·licitar aquest rol.';
+
+  @override
+  String get multiKolabApplyFormErrorEventNotRecruiting =>
+      'Aquest esdeveniment no accepta sol·licituds ara mateix.';
+
+  @override
+  String get multiKolabApplyFormErrorRoleNotOpen =>
+      'Aquest rol ja no està obert.';
+
+  @override
+  String get multiKolabApplyFormErrorDuplicate =>
+      'Ja has sol·licitat aquest rol.';
+
+  @override
+  String get multiKolabApplyFormErrorGeneric =>
+      'Alguna cosa ha fallat. Torna-ho a provar.';
 }

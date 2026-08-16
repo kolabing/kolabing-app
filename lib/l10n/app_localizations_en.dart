@@ -7046,4 +7046,115 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionLegalPrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get multiKolabExploreEntryPointLabel => 'Multi-Kolab Events';
+
+  @override
+  String get multiKolabExploreEntryPointSubtitle =>
+      'Recruit or join multi-partner events';
+
+  @override
+  String get multiKolabExploreTitle => 'Multi-Kolab Events';
+
+  @override
+  String get multiKolabExploreCardBadge => 'Multi-Kolab';
+
+  @override
+  String get multiKolabExploreEmptyTitle => 'No events open right now';
+
+  @override
+  String get multiKolabExploreEmptyBody =>
+      'Check back soon for new multi-partner events.';
+
+  @override
+  String get multiKolabExploreErrorBody =>
+      'We couldn\'t load Multi-Kolab Events. Please try again.';
+
+  @override
+  String get multiKolabEventDetailTitle => 'Event details';
+
+  @override
+  String get multiKolabEventDetailRolesHeading => 'Partner roles';
+
+  @override
+  String get multiKolabEventDetailApplyButton => 'Apply to this role';
+
+  @override
+  String multiKolabRoleProgressLabel(int open, int filled) {
+    return '$open open · $filled filled';
+  }
+
+  @override
+  String multiKolabRoleProgressSemanticLabel(int open, int filled, int total) {
+    return '$open of $total roles open, $filled filled';
+  }
+
+  @override
+  String get multiKolabRoleRequiredLabel => 'Required';
+
+  @override
+  String get multiKolabRoleOptionalLabel => 'Optional';
+
+  @override
+  String multiKolabRoleEligibilityLabel(String type) {
+    return 'Open to: $type';
+  }
+
+  @override
+  String multiKolabAlreadyAppliedLabel(String status) {
+    return 'You\'ve applied — status: $status';
+  }
+
+  @override
+  String get multiKolabRsvpButtonLabel => 'RSVP';
+
+  @override
+  String multiKolabApplyFormTitle(String role) {
+    return 'Apply to $role';
+  }
+
+  @override
+  String get multiKolabApplyFormPitchLabel => 'Your pitch';
+
+  @override
+  String get multiKolabApplyFormPitchHint =>
+      'Tell the organizer why you\'d be a great fit';
+
+  @override
+  String get multiKolabApplyFormPitchRequired =>
+      'A pitch is required to apply.';
+
+  @override
+  String get multiKolabApplyFormAvailabilityLabel => 'Availability (optional)';
+
+  @override
+  String get multiKolabApplyFormAvailabilityHint =>
+      'e.g. Any Saturday in September';
+
+  @override
+  String get multiKolabApplyFormSubmit => 'Submit application';
+
+  @override
+  String get multiKolabApplyFormSuccess => 'Application sent!';
+
+  @override
+  String get multiKolabApplyFormErrorIneligible =>
+      'Your account type can\'t apply to this role.';
+
+  @override
+  String get multiKolabApplyFormErrorEventNotRecruiting =>
+      'This event isn\'t accepting applications right now.';
+
+  @override
+  String get multiKolabApplyFormErrorRoleNotOpen =>
+      'This role is no longer open.';
+
+  @override
+  String get multiKolabApplyFormErrorDuplicate =>
+      'You\'ve already applied to this role.';
+
+  @override
+  String get multiKolabApplyFormErrorGeneric =>
+      'Something went wrong. Please try again.';
 }
