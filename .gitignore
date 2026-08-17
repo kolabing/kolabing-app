@@ -43,3 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Generated Claude Design token bundle (see .design-sync/NOTES.md).
+# Rebuild with: python3 scripts/design_tokens_to_css.py
+/ds-bundle/

@@ -1,0 +1,23 @@
+{
+  "projectId": "97e56a75-16a3-4edf-98fb-9570e659eab4",
+  "projectName": "Kolabing Design System",
+  "shape": "tokens-only",
+  "readmeHeader": ".design-sync/conventions.md",
+  "outDir": "ds-bundle",
+  "generator": "scripts/design_tokens_to_css.py",
+  "sources": {
+    "colorTokens": "lib/config/theme/color_tokens.dart",
+    "colors": "lib/config/theme/colors.dart",
+    "typography": "lib/config/theme/typography.dart",
+    "spacing": "lib/config/constants/spacing.dart",
+    "radius": "lib/config/constants/radius.dart",
+    "layout": "lib/config/constants/layout.dart"
+  },
+  "overlay": ".design-sync/overlay",
+  "emitsSyncSidecar": false,
+  "coexistingSystems": {
+    "app": { "namespace": "--kolabing-*", "entry": "styles.css", "ownedByThisRepo": true },
+    "marketing": { "namespace": "--kb-*", "entry": "styles.marketing.css", "ownedByThisRepo": false }
+  },
+  "note": "Flutter/Dart repo. The standard /design-sync converter does not apply (Claude Design renders compiled React; there is no dist/ to bundle). This is a hand-authored token-only bundle produced by the generator script above. No components are uploaded. Re-run `python3 scripts/design_tokens_to_css.py` to refresh after Dart tokens change. IMPORTANT: the project also hosts a marketing-web design system this repo does not own — always `list_files` and diff before uploading, and never delete `--kb-*` files, `guidelines/*.md` (except our 00-SCOPE.md) or `_preview/*`. See .design-sync/NOTES.md."
+}
