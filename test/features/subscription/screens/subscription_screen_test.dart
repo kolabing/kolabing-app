@@ -9,7 +9,7 @@ import 'package:kolabing_app/features/subscription/providers/iap_provider.dart';
 import 'package:kolabing_app/features/subscription/screens/subscription_screen.dart';
 
 void main() {
-  testWidgets('subscription screen shows referral code field', (
+  testWidgets('subscription screen has no referral code field (Apple 3.1.1)', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -28,8 +28,10 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Referral Code (optional)'), findsOneWidget);
-    expect(find.text('Paste referral code'), findsOneWidget);
+    // Same purchase-surface field Apple flagged on the paywall modal — it
+    // stays only on the register/signup screen.
+    expect(find.text('Referral Code (optional)'), findsNothing);
+    expect(find.text('Paste referral code'), findsNothing);
   });
 }
 

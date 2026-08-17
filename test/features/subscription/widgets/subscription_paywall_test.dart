@@ -9,7 +9,7 @@ import 'package:kolabing_app/features/subscription/providers/iap_provider.dart';
 import 'package:kolabing_app/features/subscription/widgets/subscription_paywall.dart';
 
 void main() {
-  testWidgets('subscription paywall shows referral code field', (
+  testWidgets('subscription paywall has no referral code field (Apple 3.1.1)', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -28,8 +28,11 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Referral Code (optional)'), findsOneWidget);
-    expect(find.text('Paste referral code'), findsOneWidget);
+    // The referral-code input must not appear next to the IAP purchase
+    // options — Apple rejected the build for exactly this (Guideline
+    // 3.1.1). It stays only on the register/signup screen.
+    expect(find.text('Referral Code (optional)'), findsNothing);
+    expect(find.text('Paste referral code'), findsNothing);
 
     // Guideline 3.1.2: the paywall must expose the EULA + Privacy links.
     expect(find.text('Terms of Use (EULA)'), findsOneWidget);
