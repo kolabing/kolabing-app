@@ -12,6 +12,7 @@ import '../../../widgets/navigation/navigation.dart';
 import '../../application/screens/applications_screen.dart';
 import '../../collaboration/providers/collaborations_list_provider.dart';
 import '../../collaboration/widgets/collaborations_list_tab.dart';
+import '../../multi_kolab/widgets/multi_kolab_organizer_entry_row.dart';
 
 /// Hub for the merged "My Kolabs" bottom-nav destination.
 ///
@@ -130,7 +131,23 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  widget.offersTab,
+                  // The Multi-Kolab organizer entry sits above the ordinary
+                  // offers list rather than becoming a fifth segment — see
+                  // MultiKolabOrganizerEntryRow for why.
+                  Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          KolabingSpacing.md,
+                          KolabingSpacing.sm,
+                          KolabingSpacing.md,
+                          0,
+                        ),
+                        child: MultiKolabOrganizerEntryRow(),
+                      ),
+                      Expanded(child: widget.offersTab),
+                    ],
+                  ),
                   ApplicationsScreen(
                     embedded: true,
                     onExplore: widget.onExploreTap,

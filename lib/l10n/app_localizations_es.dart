@@ -7250,4 +7250,516 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get multiKolabApplyFormErrorGeneric =>
       'Algo salió mal. Inténtalo de nuevo.';
+
+  @override
+  String get multiKolabOrganizerEntryTitle => 'Eventos Multi-Kolab';
+
+  @override
+  String get multiKolabOrganizerEntrySubtitle => 'Un evento, varios partners';
+
+  @override
+  String get multiKolabOrganizerDashboardTitle => 'Eventos Multi-Kolab';
+
+  @override
+  String get multiKolabOrganizerCreateCta => 'Crear evento Multi-Kolab';
+
+  @override
+  String get multiKolabOrganizerEmptyTitle =>
+      'Todavia no tienes eventos Multi-Kolab';
+
+  @override
+  String get multiKolabOrganizerEmptyBody =>
+      'Crea un evento e invita a varios partners para cubrir distintos roles.';
+
+  @override
+  String get multiKolabOrganizerRetry => 'Reintentar';
+
+  @override
+  String get multiKolabOrganizerFilterAll => 'Todos';
+
+  @override
+  String get multiKolabOrganizerFilterDrafts => 'Borradores';
+
+  @override
+  String get multiKolabOrganizerFilterRecruiting => 'Buscando';
+
+  @override
+  String get multiKolabOrganizerFilterConfirmed => 'Confirmados';
+
+  @override
+  String get multiKolabOrganizerFilterFinished => 'Finalizados';
+
+  @override
+  String get multiKolabOrganizerFilterEmpty => 'No hay eventos en este grupo';
+
+  @override
+  String get multiKolabOrganizerFilterClear => 'Ver todos los eventos';
+
+  @override
+  String get multiKolabOrganizerNeedsAttention => 'Necesita atencion';
+
+  @override
+  String get multiKolabOrganizerManageCta => 'Gestionar';
+
+  @override
+  String get multiKolabEventStatusDraft => 'Borrador';
+
+  @override
+  String get multiKolabEventStatusRecruiting => 'Buscando partners';
+
+  @override
+  String get multiKolabEventStatusConfirmed => 'Confirmado';
+
+  @override
+  String get multiKolabEventStatusCompleted => 'Completado';
+
+  @override
+  String get multiKolabEventStatusCancelled => 'Cancelado';
+
+  @override
+  String get multiKolabEventStatusExpired => 'Caducado';
+
+  @override
+  String get multiKolabRoleStatusOpen => 'Abierto';
+
+  @override
+  String get multiKolabRoleStatusFilled => 'Cubierto';
+
+  @override
+  String get multiKolabRoleStatusClosed => 'Cerrado';
+
+  @override
+  String get multiKolabApplicationStatusPending => 'Pendiente';
+
+  @override
+  String get multiKolabApplicationStatusShortlisted => 'Preseleccionado';
+
+  @override
+  String get multiKolabApplicationStatusAccepted => 'Aceptado';
+
+  @override
+  String get multiKolabApplicationStatusDeclined => 'Rechazado';
+
+  @override
+  String get multiKolabApplicationStatusWithdrawn => 'Retirado';
+
+  @override
+  String get multiKolabEntitlementGateTitle =>
+      'Los eventos Multi-Kolab necesitan acceso Event Creator';
+
+  @override
+  String get multiKolabEntitlementGateBody =>
+      'Event Creator te permite organizar un evento con varios roles de partner. Es independiente de tu suscripcion de Kolabing.';
+
+  @override
+  String get multiKolabEntitlementGateCta => 'Solicitar acceso';
+
+  @override
+  String get multiKolabEventFormCreateTitle => 'Nuevo evento Multi-Kolab';
+
+  @override
+  String get multiKolabEventFormEditTitle => 'Editar evento';
+
+  @override
+  String get multiKolabEventFormNameLabel => 'Nombre del evento';
+
+  @override
+  String get multiKolabEventFormNameRequired => 'Ponle un nombre a tu evento';
+
+  @override
+  String get multiKolabEventFormDescriptionLabel => 'De que va el evento?';
+
+  @override
+  String get multiKolabEventFormValueLabel => 'Que reciben los partners';
+
+  @override
+  String get multiKolabEventFormVenueNeededLabel =>
+      'Todavia necesito un espacio';
+
+  @override
+  String get multiKolabEventFormDateModeLabel => 'Cuando es?';
+
+  @override
+  String get multiKolabEventFormDateModeExact => 'Una fecha concreta';
+
+  @override
+  String get multiKolabEventFormDateModeRange => 'Un rango de fechas';
+
+  @override
+  String get multiKolabEventFormDateLabel => 'Fecha';
+
+  @override
+  String get multiKolabEventFormDateFromLabel => 'Desde';
+
+  @override
+  String get multiKolabEventFormDateToLabel => 'Hasta';
+
+  @override
+  String get multiKolabEventFormDatePick => 'Elegir fecha';
+
+  @override
+  String get multiKolabEventFormDateRangeInvalid =>
+      'La fecha final debe ser igual o posterior a la inicial';
+
+  @override
+  String get multiKolabEventFormCityLabel => 'Ciudad';
+
+  @override
+  String get multiKolabEventFormCategoryLabel => 'Categoria';
+
+  @override
+  String get multiKolabEventFormRsvpLabel => 'Enlace de inscripcion';
+
+  @override
+  String get multiKolabEventFormRsvpHelper =>
+      'Los asistentes se apuntan en tu propia pagina (Luma, Eventbrite...). Kolabing no vende entradas.';
+
+  @override
+  String get multiKolabEventFormRsvpInvalid =>
+      'Introduce un enlace https:// valido';
+
+  @override
+  String get multiKolabEventFormEligibilityLabel => 'Quien puede aplicar?';
+
+  @override
+  String get multiKolabEligibilityBusiness => 'Negocios';
+
+  @override
+  String get multiKolabEligibilityCommunity => 'Comunidades';
+
+  @override
+  String get multiKolabEligibilityEither => 'Negocios y comunidades';
+
+  @override
+  String get multiKolabEventFormSaveDraft => 'Guardar borrador';
+
+  @override
+  String get multiKolabEventFormSaved => 'Borrador guardado';
+
+  @override
+  String get multiKolabEventFormDiscardTitle => 'Descartar cambios?';
+
+  @override
+  String get multiKolabEventFormDiscardBody =>
+      'Perderas los cambios sin guardar.';
+
+  @override
+  String get multiKolabEventFormDiscardConfirm => 'Descartar';
+
+  @override
+  String get multiKolabEventFormAddRolesNudge =>
+      'Ahora anade los roles de partner que buscas.';
+
+  @override
+  String get multiKolabDismissCta => 'Ahora no';
+
+  @override
+  String get multiKolabBackCta => 'Volver';
+
+  @override
+  String get multiKolabRoleFormCreateTitle => 'Nuevo rol de partner';
+
+  @override
+  String get multiKolabRoleFormEditTitle => 'Editar rol';
+
+  @override
+  String get multiKolabRoleFormTitleLabel => 'Nombre del rol';
+
+  @override
+  String get multiKolabRoleFormTitleHint =>
+      'Club de running, espacio, patrocinador de cafe...';
+
+  @override
+  String get multiKolabRoleFormTitleRequired => 'Ponle un nombre al rol';
+
+  @override
+  String get multiKolabRoleFormVisibilityCommunity =>
+      'Las comunidades veran este rol en su feed de Explorar.';
+
+  @override
+  String get multiKolabRoleFormVisibilityBusiness =>
+      'Los negocios veran este rol en su feed de Explorar.';
+
+  @override
+  String get multiKolabRoleFormVisibilityEither =>
+      'Tanto negocios como comunidades veran este rol en su feed de Explorar.';
+
+  @override
+  String get multiKolabRoleFormPositionsLabel =>
+      'Cuantos partners para este rol?';
+
+  @override
+  String get multiKolabRoleFormPositionsHelper =>
+      'Un rol puede tener varios partners. No crees roles duplicados.';
+
+  @override
+  String multiKolabRoleFormPositionsMinConfirmed(int count) {
+    return 'No puedes bajar de los $count ya confirmados.';
+  }
+
+  @override
+  String get multiKolabRoleFormRequiredLabel =>
+      'Este rol es imprescindible para el evento';
+
+  @override
+  String get multiKolabRoleFormNeedLabel => 'Que necesitas de ellos';
+
+  @override
+  String get multiKolabRoleFormReceiveLabel => 'Que reciben a cambio';
+
+  @override
+  String get multiKolabRoleFormCompensationLabel => 'Tipo de intercambio';
+
+  @override
+  String get multiKolabRoleFormRequirementsLabel => 'Requisitos';
+
+  @override
+  String get multiKolabRoleFormDetailsLabel => 'Detalles extra';
+
+  @override
+  String get multiKolabRoleFormSave => 'Guardar rol';
+
+  @override
+  String get multiKolabRoleFormAddCta => 'Anadir rol';
+
+  @override
+  String get multiKolabRoleFormEmptyTitle => 'Todavia no hay roles de partner';
+
+  @override
+  String get multiKolabRoleFormEmptyBody =>
+      'Cada rol que anades se convierte en su propia oferta en Explorar.';
+
+  @override
+  String get multiKolabRoleCloseCta => 'Dejar de buscar';
+
+  @override
+  String get multiKolabRoleReopenCta => 'Reabrir rol';
+
+  @override
+  String get multiKolabRoleCloseConfirmTitle =>
+      'Dejar de buscar para este rol?';
+
+  @override
+  String get multiKolabRoleCloseConfirmBody =>
+      'Desaparecera de Explorar. Las solicitudes que ya recibiste se conservan y puedes reabrirlo mas tarde.';
+
+  @override
+  String multiKolabRolePartnersConfirmed(int filled, int needed) {
+    return '$filled de $needed partners confirmados';
+  }
+
+  @override
+  String get multiKolabReviewTitle => 'Revisar y publicar';
+
+  @override
+  String get multiKolabReviewEventSection => 'Evento';
+
+  @override
+  String get multiKolabReviewRolesSection => 'Roles de partner';
+
+  @override
+  String get multiKolabReviewMissingTitle => 'Todavia falta';
+
+  @override
+  String get multiKolabReviewMissingRoles => 'Anade al menos un rol de partner';
+
+  @override
+  String get multiKolabReviewMissingDate => 'Anade una fecha';
+
+  @override
+  String get multiKolabReviewMissingCity => 'Anade una ciudad';
+
+  @override
+  String get multiKolabReviewVenueNeeded => 'Todavia falta el espacio';
+
+  @override
+  String get multiKolabReviewVenueSecured => 'Espacio resuelto';
+
+  @override
+  String get multiKolabPublishCta => 'Publicar evento';
+
+  @override
+  String get multiKolabPublishSuccessTitle => 'Ya estas buscando partners!';
+
+  @override
+  String get multiKolabPublishSuccessBody =>
+      'Cada rol abierto es ahora una oferta en el feed de Explorar de los perfiles que pueden aplicar.';
+
+  @override
+  String get multiKolabPublishSuccessCta => 'Volver al evento';
+
+  @override
+  String get multiKolabPublishFailedTitle =>
+      'Este evento todavia no se puede publicar';
+
+  @override
+  String get multiKolabManageTitle => 'Gestionar evento';
+
+  @override
+  String get multiKolabManageTabOverview => 'Resumen';
+
+  @override
+  String get multiKolabManageTabRoles => 'Roles';
+
+  @override
+  String get multiKolabManageTabApplicants => 'Solicitudes';
+
+  @override
+  String multiKolabManageRolesProgress(int filled, int total) {
+    return '$filled de $total roles cubiertos';
+  }
+
+  @override
+  String get multiKolabManageChildKolabsTitle => 'Kolabs creados';
+
+  @override
+  String get multiKolabManageChildKolabsEmpty =>
+      'Todavia no hay partners confirmados.';
+
+  @override
+  String get multiKolabManageEditCta => 'Editar evento';
+
+  @override
+  String get multiKolabManageReviewCta => 'Revisar y publicar';
+
+  @override
+  String get multiKolabConfirmEventCta => 'Confirmar evento';
+
+  @override
+  String get multiKolabConfirmEventTitle => 'Confirmar este evento?';
+
+  @override
+  String get multiKolabConfirmEventBody =>
+      'Se avisara a tus partners de que sigue adelante y dejaras de buscar.';
+
+  @override
+  String get multiKolabCompleteEventCta => 'Marcar como completado';
+
+  @override
+  String get multiKolabCompleteEventTitle =>
+      'Marcar este evento como completado?';
+
+  @override
+  String get multiKolabCompleteEventBody => 'Esto no se puede deshacer.';
+
+  @override
+  String get multiKolabCancelEventCta => 'Cancelar evento';
+
+  @override
+  String get multiKolabCancelEventTitle => 'Cancelar este evento?';
+
+  @override
+  String get multiKolabCancelEventBody =>
+      'Se avisara a tus partners. El evento y sus roles se conservan, no se borran.';
+
+  @override
+  String get multiKolabCancelEventReasonLabel => 'Por que lo cancelas?';
+
+  @override
+  String get multiKolabCancelEventReasonRequired => 'Indica un motivo';
+
+  @override
+  String get multiKolabConfirmGenericCta => 'Confirmar';
+
+  @override
+  String get multiKolabApplicantsTitle => 'Solicitudes';
+
+  @override
+  String multiKolabApplicantsForRole(String role) {
+    return 'Para $role';
+  }
+
+  @override
+  String get multiKolabApplicantsEmptyTitle => 'Todavia no hay solicitudes';
+
+  @override
+  String get multiKolabApplicantsEmptyBody =>
+      'En cuanto alguien aplique a este rol lo veras aqui.';
+
+  @override
+  String multiKolabApplicantsSectionLabel(String label, int count) {
+    return '$label ($count)';
+  }
+
+  @override
+  String get multiKolabApplicantPitchLabel => 'Su propuesta';
+
+  @override
+  String get multiKolabApplicantAvailabilityLabel => 'Disponibilidad';
+
+  @override
+  String get multiKolabApplicantViewProfileCta => 'Ver perfil';
+
+  @override
+  String get multiKolabApplicantBusinessLabel => 'Negocio';
+
+  @override
+  String get multiKolabApplicantCommunityLabel => 'Comunidad';
+
+  @override
+  String get multiKolabShortlistCta => 'Preseleccionar';
+
+  @override
+  String get multiKolabDeclineCta => 'Rechazar';
+
+  @override
+  String get multiKolabAcceptCta => 'Aceptar';
+
+  @override
+  String get multiKolabDeclineConfirmTitle => 'Rechazar esta solicitud?';
+
+  @override
+  String multiKolabDeclineConfirmBody(String role) {
+    return 'Se le avisara de que no ha sido seleccionado para $role.';
+  }
+
+  @override
+  String get multiKolabAcceptConfirmTitle => 'Confirmar este partner?';
+
+  @override
+  String multiKolabAcceptConfirmRole(String role) {
+    return 'Rol: $role';
+  }
+
+  @override
+  String multiKolabAcceptConfirmCapacity(int remaining, int needed) {
+    return 'Quedaran $remaining de $needed plazas';
+  }
+
+  @override
+  String get multiKolabAcceptConfirmExchange => 'El intercambio';
+
+  @override
+  String get multiKolabAcceptConfirmCreatesKolab =>
+      'Se creara un Kolab y una colaboracion entre tu y este partner.';
+
+  @override
+  String get multiKolabAcceptSuccessTitle => 'Partner confirmado';
+
+  @override
+  String get multiKolabAcceptSuccessBody =>
+      'Se ha creado un Kolab. Acordad los detalles en la colaboracion.';
+
+  @override
+  String get multiKolabOpenCollaborationCta => 'Abrir colaboracion';
+
+  @override
+  String get multiKolabOpenKolabCta => 'Abrir Kolab';
+
+  @override
+  String get multiKolabApplicantChildKolabLabel => 'Kolab creado';
+
+  @override
+  String get multiKolabErrorNotOwner => 'Solo el organizador puede hacer esto.';
+
+  @override
+  String get multiKolabErrorInvalidTransition =>
+      'Esto ya no es posible para este evento.';
+
+  @override
+  String get multiKolabErrorRoleCapacity => 'Este rol ya esta completo.';
+
+  @override
+  String get multiKolabErrorGeneric =>
+      'Algo ha salido mal. Intentalo de nuevo.';
 }
