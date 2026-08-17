@@ -17,7 +17,6 @@ import 'package:kolabing_app/features/multi_kolab/models/multi_kolab_role_applic
 import 'package:kolabing_app/features/multi_kolab/providers/multi_kolab_repository_provider.dart';
 import 'package:kolabing_app/features/multi_kolab/repositories/api_multi_kolab_repository.dart';
 import 'package:kolabing_app/features/multi_kolab/widgets/multi_kolab_application_form.dart';
-import 'package:kolabing_app/features/multi_kolab/widgets/multi_kolab_explore_card.dart';
 import 'package:kolabing_app/features/multi_kolab/widgets/multi_kolab_role_progress.dart';
 
 void main() {
@@ -304,63 +303,6 @@ void main() {
       );
 
       expect(find.text('2 open · 2 filled'), findsOneWidget);
-    });
-  });
-
-  group('MultiKolabExploreCard widget', () {
-    testWidgets('renders title, city, and role progress', (tester) async {
-      const event = MultiKolabEventSummary(
-        id: 'event-1',
-        status: MultiKolabEventStatus.recruiting,
-        title: 'Kolabing Launch Weekend',
-        roleCounts: MultiKolabRoleCounts(total: 4, open: 2, filled: 2),
-        eligibleAccountType: MultiKolabEligibleAccountType.either,
-        city: 'Barcelona',
-        creatorProfile: MultiKolabCreatorSummary(
-          id: 'organizer-1',
-          displayName: 'Kolabing',
-        ),
-      );
-
-      await tester.pumpWidget(
-        const MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(body: MultiKolabExploreCard(event: event)),
-        ),
-      );
-
-      expect(find.text('Kolabing Launch Weekend'), findsOneWidget);
-      expect(find.text('Barcelona'), findsOneWidget);
-      expect(find.text('2 open · 2 filled'), findsOneWidget);
-      expect(find.text('Kolabing'), findsOneWidget);
-    });
-
-    testWidgets('tapping the card invokes onTap', (tester) async {
-      const event = MultiKolabEventSummary(
-        id: 'event-1',
-        status: MultiKolabEventStatus.recruiting,
-        title: 'Kolabing Launch Weekend',
-        roleCounts: MultiKolabRoleCounts(),
-        eligibleAccountType: MultiKolabEligibleAccountType.either,
-      );
-      var tapped = false;
-
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: MultiKolabExploreCard(
-              event: event,
-              onTap: () => tapped = true,
-            ),
-          ),
-        ),
-      );
-
-      await tester.tap(find.byType(MultiKolabExploreCard));
-      expect(tapped, true);
     });
   });
 

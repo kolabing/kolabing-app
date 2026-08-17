@@ -7,6 +7,7 @@ import 'package:http/testing.dart';
 import 'package:kolabing_app/features/auth/services/auth_service.dart';
 import 'package:kolabing_app/features/discovery/models/discovery_filters.dart';
 import 'package:kolabing_app/features/discovery/models/discovery_item.dart';
+import 'package:kolabing_app/features/discovery/models/explore_feed_item.dart';
 import 'package:kolabing_app/features/discovery/services/discovery_service.dart';
 
 void main() {
@@ -230,8 +231,11 @@ void main() {
       );
 
       expect(result.total, 1);
-      expect(result.data.single.id, 'kolab-business-1');
-      expect(result.data.single.match?.score, 92);
+      final parsed = result.data.single;
+      expect(parsed, isA<ExploreOfferItem>());
+      final offer = (parsed as ExploreOfferItem).offer;
+      expect(offer.id, 'kolab-business-1');
+      expect(offer.match?.score, 92);
     },
   );
 }
