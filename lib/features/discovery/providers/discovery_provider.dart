@@ -6,7 +6,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../../auth/utils/auth_scope_guard.dart';
 import '../models/discovery_filters.dart';
-import '../models/discovery_item.dart';
+import '../models/explore_feed_item.dart';
 import '../services/discovery_service.dart';
 
 final discoveryServiceProvider = Provider<DiscoveryService>(
@@ -128,7 +128,7 @@ final discoveryFiltersProvider =
 @immutable
 class DiscoveryListState {
   const DiscoveryListState({
-    this.items = const <DiscoveryItem>[],
+    this.items = const <ExploreFeedItem>[],
     this.currentPage = 0,
     this.lastPage = 1,
     this.total = 0,
@@ -137,7 +137,7 @@ class DiscoveryListState {
     this.error,
   });
 
-  final List<DiscoveryItem> items;
+  final List<ExploreFeedItem> items;
   final int currentPage;
   final int lastPage;
   final int total;
@@ -149,7 +149,7 @@ class DiscoveryListState {
   bool get isEmpty => items.isEmpty && !isLoading;
 
   DiscoveryListState copyWith({
-    List<DiscoveryItem>? items,
+    List<ExploreFeedItem>? items,
     int? currentPage,
     int? lastPage,
     int? total,
@@ -284,7 +284,7 @@ class DiscoveryListNotifier extends Notifier<DiscoveryListState>
       }
 
       state = state.copyWith(
-        items: <DiscoveryItem>[...state.items, ...result.data],
+        items: <ExploreFeedItem>[...state.items, ...result.data],
         currentPage: result.currentPage,
         lastPage: result.lastPage,
         total: result.total,

@@ -7048,24 +7048,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscriptionLegalPrivacyPolicy => 'Privacy Policy';
 
   @override
-  String get multiKolabExploreEntryPointLabel => 'Multi-Kolab Events';
+  String multiKolabRoleLookingFor(String partnerType) {
+    return 'Looking for $partnerType';
+  }
 
   @override
-  String get multiKolabExploreEntryPointSubtitle =>
-      'Recruit or join multi-partner events';
+  String get multiKolabRoleOpenToAnyBusiness => 'Open to any business';
 
   @override
-  String get multiKolabExploreTitle => 'Multi-Kolab Events';
+  String get multiKolabRoleOpenToAnyCommunity => 'Open to any community';
+
+  @override
+  String get multiKolabRoleOpenToAnyPartner => 'Open to any partner';
+
+  @override
+  String multiKolabRoleSpotsOpen(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count spots open',
+      one: '1 spot open',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get multiKolabRoleAppliedChip => 'Applied';
+
+  @override
+  String get multiKolabCompensationPaid => 'Paid';
+
+  @override
+  String get multiKolabCompensationSponsoredInKind => 'Sponsored in kind';
+
+  @override
+  String get multiKolabCompensationValueExchange => 'Value exchange';
+
+  @override
+  String get multiKolabCompensationNegotiable => 'Negotiable';
 
   @override
   String get multiKolabExploreCardBadge => 'Multi-Kolab';
-
-  @override
-  String get multiKolabExploreEmptyTitle => 'No events open right now';
-
-  @override
-  String get multiKolabExploreEmptyBody =>
-      'Check back soon for new multi-partner events.';
 
   @override
   String get multiKolabExploreErrorBody =>

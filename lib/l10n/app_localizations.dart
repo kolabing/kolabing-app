@@ -12482,41 +12482,71 @@ abstract class AppLocalizations {
   /// **'Privacy Policy'**
   String get subscriptionLegalPrivacyPolicy;
 
-  /// Entry point banner title on the main Explore screen linking to Multi-Kolab Events.
+  /// Explore offer-card line naming the specific partner type a Multi-Kolab role wants.
   ///
   /// In en, this message translates to:
-  /// **'Multi-Kolab Events'**
-  String get multiKolabExploreEntryPointLabel;
+  /// **'Looking for {partnerType}'**
+  String multiKolabRoleLookingFor(String partnerType);
 
-  /// Entry point banner subtitle.
+  /// Explore offer-card line for a business-eligible Multi-Kolab role with no specific partner type requested.
   ///
   /// In en, this message translates to:
-  /// **'Recruit or join multi-partner events'**
-  String get multiKolabExploreEntryPointSubtitle;
+  /// **'Open to any business'**
+  String get multiKolabRoleOpenToAnyBusiness;
 
-  /// Multi-Kolab Explore screen app bar title.
+  /// Explore offer-card line for a community-eligible Multi-Kolab role with no specific partner type requested.
   ///
   /// In en, this message translates to:
-  /// **'Multi-Kolab Events'**
-  String get multiKolabExploreTitle;
+  /// **'Open to any community'**
+  String get multiKolabRoleOpenToAnyCommunity;
+
+  /// Explore offer-card line for an either-eligible Multi-Kolab role with no specific partner type requested.
+  ///
+  /// In en, this message translates to:
+  /// **'Open to any partner'**
+  String get multiKolabRoleOpenToAnyPartner;
+
+  /// Chip showing how many positions of a Multi-Kolab role are still unfilled.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 spot open} other{{count} spots open}}'**
+  String multiKolabRoleSpotsOpen(int count);
+
+  /// Chip on a Multi-Kolab role card when the viewer has already applied to that role.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied'**
+  String get multiKolabRoleAppliedChip;
+
+  /// Compensation label for a paid Multi-Kolab role.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get multiKolabCompensationPaid;
+
+  /// Compensation label for a sponsored-in-kind Multi-Kolab role.
+  ///
+  /// In en, this message translates to:
+  /// **'Sponsored in kind'**
+  String get multiKolabCompensationSponsoredInKind;
+
+  /// Compensation label for a value-exchange Multi-Kolab role.
+  ///
+  /// In en, this message translates to:
+  /// **'Value exchange'**
+  String get multiKolabCompensationValueExchange;
+
+  /// Compensation label for a negotiable Multi-Kolab role.
+  ///
+  /// In en, this message translates to:
+  /// **'Negotiable'**
+  String get multiKolabCompensationNegotiable;
 
   /// Small badge on a Multi-Kolab Explore card distinguishing it from an ordinary Kolab card.
   ///
   /// In en, this message translates to:
   /// **'Multi-Kolab'**
   String get multiKolabExploreCardBadge;
-
-  /// Empty state heading on the Multi-Kolab Explore screen.
-  ///
-  /// In en, this message translates to:
-  /// **'No events open right now'**
-  String get multiKolabExploreEmptyTitle;
-
-  /// Empty state body on the Multi-Kolab Explore screen.
-  ///
-  /// In en, this message translates to:
-  /// **'Check back soon for new multi-partner events.'**
-  String get multiKolabExploreEmptyBody;
 
   /// Error state body shown when the Multi-Kolab Explore/detail request fails.
   ///

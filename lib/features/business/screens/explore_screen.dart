@@ -19,10 +19,10 @@ import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../discovery/models/discovery_filters.dart';
 import '../../discovery/models/discovery_item.dart';
+import '../../discovery/models/explore_feed_item.dart';
 import '../../discovery/providers/discovery_provider.dart';
 import '../../discovery/widgets/discovery_quick_filters.dart';
 import '../../moderation/providers/blocked_profiles_provider.dart';
-import '../../multi_kolab/widgets/multi_kolab_explore_banner.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/saved_kolabs_provider.dart';
@@ -35,17 +35,25 @@ const double _fabClearance = 88;
 
 /// The Explore deck's item filter, extracted so it can be unit-tested.
 ///
-/// Drops, in order: the viewer's own posts (can't collaborate with yourself),
-/// posts by a blocked creator ([blockedProfileIds] — App Review 1.2 instant
-/// client-side hide), and date-exhausted Kolabs (no longer open for applying).
-List<DiscoveryItem> filterExploreDeckItems(
-  List<DiscoveryItem> items, {
+/// Applies to EVERY feed item type. Drops, in order: the viewer's own posts
+/// (can't collaborate with yourself), posts by a blocked creator
+/// ([blockedProfileIds] — App Review 1.2 instant client-side hide), and then
+/// a per-type availability rule:
+///
+///  * ordinary Kolab offer — must still be open for applications by date;
+///  * Multi-Kolab role — must be open, have a remaining position, and match
+///    the viewer's feed (a Community role only reaches Community Explore, a
+///    Business role only Business Explore, an `either` role both). This is
+///    the single place that eligibility routing happens.
+List<ExploreFeedItem> filterExploreDeckItems(
+  List<ExploreFeedItem> items, {
   required Set<String> blockedProfileIds,
   required String? myProfileId,
   required DateTime today,
+  required bool isCommunityViewer,
 }) {
-  return items.where((DiscoveryItem item) {
-    final creatorId = item.creatorProfile.id;
+  return items.where((ExploreFeedItem item) {
+    final creatorId = item.creatorProfileId;
     if (myProfileId != null &&
         myProfileId.isNotEmpty &&
         creatorId.isNotEmpty &&
@@ -55,7 +63,17 @@ List<DiscoveryItem> filterExploreDeckItems(
     if (creatorId.isNotEmpty && blockedProfileIds.contains(creatorId)) {
       return false;
     }
-    return opportunityApplicationsOpen(item.toOpportunity(), today: today);
+
+    return switch (item) {
+      ExploreOfferItem(:final offer) => opportunityApplicationsOpen(
+        offer.toOpportunity(),
+        today: today,
+      ),
+      ExploreMultiKolabRoleItem(:final role) => role.isVisibleInExplore(
+        isCommunityViewer: isCommunityViewer,
+        viewerProfileId: myProfileId,
+      ),
+    };
   }).toList();
 }
 
@@ -111,18 +129,39 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   /// ownership signal the detail screen's preview-mode already trusts. Used to
   /// keep your own kolab out of Explore and block self-application.
   bool _isOwnItem(DiscoveryItem item) {
-    final user = ref.read(authProvider).user;
-    if (user == null) return false;
-    final myProfileId = user.communityProfile?.id ?? user.businessProfile?.id;
+    final myProfileId = _viewerProfileId;
     if (myProfileId == null || myProfileId.isEmpty) return false;
     final creatorId = item.creatorProfile.id;
     return creatorId.isNotEmpty && creatorId == myProfileId;
+  }
+
+  String? get _viewerProfileId {
+    final user = ref.read(authProvider).user;
+    return user?.communityProfile?.id ?? user?.businessProfile?.id;
   }
 
   void _onPageChanged(int index) {
     final listState = ref.read(discoveryListProvider);
     if (index >= listState.items.length - 2) {
       ref.read(discoveryListProvider.notifier).loadMore();
+    }
+  }
+
+  /// Routes a tap to the right destination for the item's type. A
+  /// Multi-Kolab role opens the shared event-detail screen focused on that
+  /// role (parent-event context and the event's other roles stay visible
+  /// below it); an ordinary offer opens the existing detail sheet.
+  void _onFeedItemTap(ExploreFeedItem item, {required bool hasSubscription}) {
+    switch (item) {
+      case ExploreOfferItem(:final offer):
+        _onCardTap(offer, hasSubscription: hasSubscription);
+      case ExploreMultiKolabRoleItem(:final role):
+        context.push(
+          multiKolabRoleDetailLocation(
+            eventId: role.eventId,
+            roleId: role.roleId,
+          ),
+        );
     }
   }
 
@@ -227,12 +266,6 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           children: [
             _buildHeader(),
             const SizedBox(height: 6),
-            // Additive-only entry point into the separate Multi-Kolab Event
-            // MVP flow (`kolabing-v2` Task 9). Deliberately not interleaved
-            // into the swipe deck below — that deck's PageView/gesture/save
-            // logic is tightly coupled to `DiscoveryItem` and stays
-            // untouched by this feature.
-            if (!_savedSelected) const MultiKolabExploreBanner(),
             // The search/filter bar + quick filters drive the discovery feed only.
             if (!_savedSelected) ...[
               _buildTopBar(filters, listState),
@@ -568,6 +601,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       blockedProfileIds: blocked,
       myProfileId: myProfileId,
       today: today,
+      isCommunityViewer: _isCommunityViewer,
     );
 
     final itemCount = activeItems.length + (listState.isLoadingMore ? 1 : 0);
@@ -577,6 +611,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: _fabClearance),
       child: PageView.builder(
+        key: const Key('explore-deck'),
         controller: _pageController,
         scrollDirection: Axis.vertical,
         onPageChanged: _onPageChanged,
@@ -593,27 +628,45 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
           final item = activeItems[index];
           // Blur the community identity only for a FREE business; subscribing
-          // reveals it (§2.6).
+          // reveals it (§2.6). Only ordinary community offers carry a
+          // creator identity to hide.
+          final isCommunityRequest =
+              item is ExploreOfferItem && item.offer.isCommunityRequest;
           final hideCreatorIdentity =
               !_isCommunityViewer &&
-              item.isCommunityRequest &&
+              isCommunityRequest &&
               !hasBusinessSubscription;
+
+          // Saving is backed by `GET/POST /kolabs?saved=1`, which is keyed by
+          // a concrete Kolab id. A Multi-Kolab ROLE has no Kolab id, and
+          // reusing the role id here would silently save the wrong record —
+          // so the bookmark control is offered only where it has a real
+          // target. See the Task 9 follow-up note about a typed save target.
+          final saveableKolabId = switch (item) {
+            ExploreOfferItem(:final offer) =>
+              offer.id.isNotEmpty ? offer.id : null,
+            ExploreMultiKolabRoleItem() => null,
+          };
+
           return Stack(
+            key: Key('explore-feed-item-${item.feedKey}'),
             children: [
               ExploreSwipeCard(
                 item: item,
-                showKolabFirst: !_isCommunityViewer && item.isCommunityRequest,
+                showKolabFirst: !_isCommunityViewer && isCommunityRequest,
                 hideCreatorIdentity: hideCreatorIdentity,
-                onTap: () =>
-                    _onCardTap(item, hasSubscription: hasBusinessSubscription),
+                onTap: () => _onFeedItemTap(
+                  item,
+                  hasSubscription: hasBusinessSubscription,
+                ),
               ),
-              if (item.id.isNotEmpty)
+              if (saveableKolabId != null)
                 Positioned(
                   top: KolabingSpacing.md,
                   right: KolabingSpacing.md,
                   child: _SaveBookmarkButton(
-                    isSaved: savedIds.contains(item.id),
-                    onTap: () => _toggleSaved(item.id),
+                    isSaved: savedIds.contains(saveableKolabId),
+                    onTap: () => _toggleSaved(saveableKolabId),
                   ),
                 ),
             ],

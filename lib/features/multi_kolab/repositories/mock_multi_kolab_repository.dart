@@ -17,6 +17,10 @@ import 'multi_kolab_repository.dart';
 class MockMultiKolabRepository implements MultiKolabRepository {
   MockMultiKolabRepository({this.simulatedDelay = Duration.zero});
 
+  /// The profile id the mock treats as the signed-in viewer, so fixtures can
+  /// exercise "this is my own event" exclusion.
+  static const String mockViewerProfileId = 'me';
+
   final Duration simulatedDelay;
 
   final Map<String, MultiKolabEvent> _events = {
@@ -36,6 +40,7 @@ class MockMultiKolabRepository implements MultiKolabRepository {
       rsvpUrl: 'https://lu.ma/kolabing-launch',
       eligibleAccountType: MultiKolabEligibleAccountType.either,
       roles: [
+        // Community-only, single position, specific partner type requested.
         MultiKolabRole(
           id: 'role-1',
           multiKolabEventId: 'event-1',
@@ -49,6 +54,7 @@ class MockMultiKolabRepository implements MultiKolabRepository {
           receive: 'Free venue, post-run brunch, social tagging',
           compensationType: MultiKolabCompensationType.valueExchange,
         ),
+        // FILLED — must never appear as an Explore card.
         MultiKolabRole(
           id: 'role-2',
           multiKolabEventId: 'event-1',
@@ -59,10 +65,70 @@ class MockMultiKolabRepository implements MultiKolabRepository {
           positionsFilled: 1,
           required_: true,
         ),
+        // Business-only, open-ended (no specific partner type requested).
+        MultiKolabRole(
+          id: 'role-3',
+          multiKolabEventId: 'event-1',
+          status: MultiKolabRoleStatus.open,
+          title: 'Coffee Sponsor',
+          eligibleAccountType: MultiKolabEligibleAccountType.business,
+          positionsNeeded: 1,
+          positionsFilled: 0,
+          required_: false,
+          need: 'Coffee for 60 runners',
+          receive: 'Logo on the start banner + social tagging',
+          compensationType: MultiKolabCompensationType.sponsoredInKind,
+        ),
+        // `either` + MULTI-POSITION — one card, "2 spots open".
+        MultiKolabRole(
+          id: 'role-4',
+          multiKolabEventId: 'event-1',
+          status: MultiKolabRoleStatus.open,
+          title: 'Content Creator',
+          eligibleAccountType: MultiKolabEligibleAccountType.either,
+          positionsNeeded: 3,
+          positionsFilled: 1,
+          required_: false,
+          need: 'Reels + photo coverage on the day',
+          receive: 'Paid day rate',
+          compensationType: MultiKolabCompensationType.paid,
+        ),
       ],
-      roleCounts: (total: 2, open: 1, filled: 1),
+      roleCounts: (total: 4, open: 3, filled: 1),
       createdAt: DateTime(2026, 8, 12, 9),
       publishedAt: DateTime(2026, 8, 12, 9, 5),
+    ),
+    // A SECOND recruiting event owned by the mock viewer ("me"). Its role is
+    // open and eligible, but must never appear in that viewer's own feed.
+    'event-2': MultiKolabEvent(
+      id: 'event-2',
+      status: MultiKolabEventStatus.recruiting,
+      creatorProfileId: mockViewerProfileId,
+      creatorProfileType: 'community',
+      title: 'My Own Rooftop Session',
+      description: 'An event the mock viewer organizes themselves.',
+      valueSummary: 'Looking for a venue and a DJ',
+      venueNeeded: true,
+      dateMode: MultiKolabDateMode.exact,
+      eventDate: DateTime(2026, 10, 3),
+      city: 'Barcelona',
+      category: 'Music',
+      eligibleAccountType: MultiKolabEligibleAccountType.either,
+      roles: [
+        MultiKolabRole(
+          id: 'role-5',
+          multiKolabEventId: 'event-2',
+          status: MultiKolabRoleStatus.open,
+          title: 'DJ Partner',
+          eligibleAccountType: MultiKolabEligibleAccountType.either,
+          positionsNeeded: 1,
+          positionsFilled: 0,
+          required_: true,
+        ),
+      ],
+      roleCounts: (total: 1, open: 1, filled: 0),
+      createdAt: DateTime(2026, 8, 13, 9),
+      publishedAt: DateTime(2026, 8, 13, 9, 5),
     ),
   };
 
