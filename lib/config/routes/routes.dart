@@ -30,7 +30,6 @@ import '../../features/gamification/gamification.dart';
 import '../../features/kolab/models/kolab.dart';
 import '../../features/missions/screens/missions_screen.dart';
 import '../../features/multi_kolab/screens/multi_kolab_event_detail_screen.dart';
-import '../../features/multi_kolab/screens/multi_kolab_explore_screen.dart';
 import '../../features/kolab/screens/intent_selection_screen.dart';
 import '../../features/kolab/screens/kolab_flow_screen.dart';
 import '../../features/notification/screens/notifications_screen.dart';
@@ -244,11 +243,16 @@ abstract final class KolabingRoutes {
   /// Opportunity detail screen
   static const String opportunityDetails = '/opportunity/:id';
 
-  /// Multi-Kolab Event MVP — Explore listing (recruiting events).
-  static const String multiKolabExplore = '/multi-kolab-events';
-
   /// Multi-Kolab Event MVP — event detail + applicant flow.
+  ///
+  /// There is deliberately NO standalone Multi-Kolab browse route: open
+  /// roles are ordinary cards in the main Explore feed, and this screen is
+  /// reached by tapping one (see [multiKolabRoleDetailLocation]).
   static const String multiKolabEventDetail = '/multi-kolab-events/:id';
+
+  /// Query parameter naming which role the detail screen should open
+  /// focused on.
+  static const String multiKolabFocusedRoleQueryParam = 'role';
 
   /// Collaboration detail screen
   static const String collaborationDetails = '/collaboration/:id';
@@ -842,17 +846,19 @@ final GoRouter kolabingRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: KolabingRoutes.multiKolabExplore,
-      name: 'multiKolabExplore',
-      builder: (BuildContext context, GoRouterState state) =>
-          const MultiKolabExploreScreen(),
-    ),
-    GoRoute(
       path: KolabingRoutes.multiKolabEventDetail,
       name: 'multiKolabEventDetail',
       builder: (BuildContext context, GoRouterState state) {
         final id = state.pathParameters['id'] ?? '';
-        return MultiKolabEventDetailScreen(eventId: id);
+        final focusedRoleId = state
+            .uri
+            .queryParameters[KolabingRoutes.multiKolabFocusedRoleQueryParam];
+        return MultiKolabEventDetailScreen(
+          eventId: id,
+          focusedRoleId: (focusedRoleId != null && focusedRoleId.isNotEmpty)
+              ? focusedRoleId
+              : null,
+        );
       },
     ),
     GoRoute(
@@ -1115,4 +1121,19 @@ class _RouteNotFoundScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Builds the location for the Multi-Kolab event detail screen, focused on
+/// [roleId]. Used when a role card is tapped in the Explore feed.
+String multiKolabRoleDetailLocation({
+  required String eventId,
+  required String roleId,
+}) {
+  final path = KolabingRoutes.multiKolabEventDetail.replaceFirst(
+    ':id',
+    Uri.encodeComponent(eventId),
+  );
+  if (roleId.isEmpty) return path;
+  return '$path?${KolabingRoutes.multiKolabFocusedRoleQueryParam}='
+      '${Uri.encodeQueryComponent(roleId)}';
 }

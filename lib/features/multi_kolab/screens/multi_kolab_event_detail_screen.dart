@@ -24,13 +24,53 @@ import '../widgets/multi_kolab_role_progress.dart';
 /// link. On acceptance elsewhere, the existing child-Kolab/Collaboration
 /// detail and chat screens are what the applicant lands in — this screen
 /// never re-implements them.
-class MultiKolabEventDetailScreen extends ConsumerWidget {
-  const MultiKolabEventDetailScreen({required this.eventId, super.key});
+class MultiKolabEventDetailScreen extends ConsumerStatefulWidget {
+  const MultiKolabEventDetailScreen({
+    required this.eventId,
+    super.key,
+    this.focusedRoleId,
+  });
 
   final String eventId;
 
+  /// The role the viewer tapped in Explore. It is highlighted and scrolled
+  /// to on first load; the parent event's context and its OTHER roles stay
+  /// rendered below so the viewer sees the whole event, not just one role.
+  final String? focusedRoleId;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MultiKolabEventDetailScreen> createState() =>
+      _MultiKolabEventDetailScreenState();
+}
+
+class _MultiKolabEventDetailScreenState
+    extends ConsumerState<MultiKolabEventDetailScreen> {
+  bool _hasScrolledToFocusedRole = false;
+
+  /// Stable key for the focused role card, so the first build after the
+  /// event loads can bring it into view.
+  final GlobalKey _focusedRoleKey = GlobalKey();
+
+  String get eventId => widget.eventId;
+  String? get focusedRoleId => widget.focusedRoleId;
+
+  void _scrollToFocusedRoleOnce() {
+    if (_hasScrolledToFocusedRole || focusedRoleId == null) return;
+    _hasScrolledToFocusedRole = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final target = _focusedRoleKey.currentContext;
+      if (target == null) return;
+      Scrollable.ensureVisible(
+        target,
+        duration: const Duration(milliseconds: 300),
+        alignment: 0.1,
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ref = this.ref;
     final l10n = AppLocalizations.of(context);
     final colors = context.colors;
     final asyncEvent = ref.watch(multiKolabEventDetailProvider(eventId));
@@ -45,6 +85,7 @@ class MultiKolabEventDetailScreen extends ConsumerWidget {
           onRetry: () => ref.invalidate(multiKolabEventDetailProvider(eventId)),
         ),
         data: (event) {
+          _scrollToFocusedRoleOnce();
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(multiKolabEventDetailProvider(eventId));
@@ -111,16 +152,21 @@ class MultiKolabEventDetailScreen extends ConsumerWidget {
                   _ViewerApplicationBanner(
                     application: event.viewerApplication!,
                   ),
-                ...event.roles.map(
-                  (role) => Padding(
+                ...event.roles.map((role) {
+                  final isFocused =
+                      focusedRoleId != null && role.id == focusedRoleId;
+                  return Padding(
+                    key: Key('multi-kolab-role-card-${role.id}'),
                     padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
                     child: _RoleCard(
+                      key: isFocused ? _focusedRoleKey : null,
                       role: role,
                       eventId: eventId,
                       hasViewerApplied: event.hasViewerApplied,
+                      isFocused: isFocused,
                     ),
-                  ),
-                ),
+                  );
+                }),
               ],
             ),
           );
@@ -172,23 +218,35 @@ class _RoleCard extends ConsumerWidget {
     required this.role,
     required this.eventId,
     required this.hasViewerApplied,
+    super.key,
+    this.isFocused = false,
   });
 
   final MultiKolabRole role;
   final String eventId;
   final bool hasViewerApplied;
 
+  /// The role the viewer arrived from in Explore — emphasised, but the
+  /// event's other roles remain fully visible.
+  final bool isFocused;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final colors = context.colors;
-    final canApply = role.isOpen && !hasViewerApplied;
+    // A filled/closed role, or one the viewer already applied to, can never
+    // be applied to again.
+    final canApply =
+        role.isOpen && role.positionsRemaining > 0 && !hasViewerApplied;
 
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
         color: colors.surface,
-        border: Border.all(color: colors.hairline),
+        border: Border.all(
+          color: isFocused ? colors.primary : colors.hairline,
+          width: isFocused ? 2 : 1,
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -249,6 +307,7 @@ class _RoleCard extends ConsumerWidget {
           if (canApply) ...[
             const SizedBox(height: KolabingSpacing.sm),
             KolabingButton(
+              key: Key('multi-kolab-role-apply-${role.id}'),
               label: l10n.multiKolabEventDetailApplyButton,
               size: KolabingButtonSize.compact,
               onPressed: () => _openApplySheet(context, ref),

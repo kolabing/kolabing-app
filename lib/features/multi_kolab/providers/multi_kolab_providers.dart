@@ -6,13 +6,9 @@ import '../models/multi_kolab_event.dart';
 import '../models/multi_kolab_event_summary.dart';
 import 'multi_kolab_repository_provider.dart';
 
-/// Explore listing for a given filter. `autoDispose` + `family` — each
-/// distinct filter gets its own cached request, and it's released once no
-/// screen is watching it.
-final multiKolabExploreProvider = FutureProvider.autoDispose
-    .family<List<MultiKolabEventSummary>, MultiKolabExploreFilter>(
-      (ref, filter) => ref.watch(multiKolabRepositoryProvider).explore(filter),
-    );
+// NOTE: there is no Multi-Kolab "explore" provider. Open roles reach the
+// user through the ORDINARY Explore feed (`discoveryListProvider`) as
+// regular offer cards, not through a separate Multi-Kolab listing.
 
 /// The signed-in profile's own events (any status) — organizer's "my events"
 /// list.
