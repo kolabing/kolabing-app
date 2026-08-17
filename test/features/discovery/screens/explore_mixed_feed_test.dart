@@ -411,6 +411,59 @@ void main() {
       expect(find.byKey(const Key('explore-deck')), findsNothing);
     });
   });
+
+  group('the obsolete standalone Multi-Kolab entry point is gone', () {
+    testWidgets('Explore shows no Multi-Kolab banner or separate entry point', (
+      tester,
+    ) async {
+      await _pumpExplore(
+        tester,
+        viewerType: UserType.community,
+        feedItems: [
+          _offer(),
+          _role(id: 'role-1'),
+        ],
+      );
+
+      // The withdrawn Task 9 UX: a yellow promo banner above the feed that
+      // pushed users into a separate Multi-Kolab Explore screen.
+      expect(find.text('Multi-Kolab Events'), findsNothing);
+      expect(find.text('Recruit or join multi-partner events'), findsNothing);
+      expect(
+        find.byKey(const Key('multi-kolab-explore-banner')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('a role card carries the small Multi-Kolab indicator that '
+        'replaced the banner', (tester) async {
+      await _pumpExplore(
+        tester,
+        viewerType: UserType.community,
+        feedItems: [_role(id: 'role-1')],
+      );
+
+      expect(
+        find.byKey(const Key('explore-card-multi-kolab-badge')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('an ordinary offer card carries no Multi-Kolab indicator', (
+      tester,
+    ) async {
+      await _pumpExplore(
+        tester,
+        viewerType: UserType.community,
+        feedItems: [_offer()],
+      );
+
+      expect(
+        find.byKey(const Key('explore-card-multi-kolab-badge')),
+        findsNothing,
+      );
+    });
+  });
 }
 
 // ---------------------------------------------------------------------------
