@@ -67,6 +67,10 @@ class _MultiKolabEventEditorScreenState
   @override
   void initState() {
     super.initState();
+    // When creating there is nothing to seed, so the form is "settled"
+    // immediately and any keystroke counts as an unsaved change. Without
+    // this the guard only ever armed itself on the edit path.
+    _seeded = !widget.isEditing;
     for (final c in [
       _title,
       _description,
@@ -196,7 +200,7 @@ class _MultiKolabEventEditorScreenState
       );
 
       if (widget.isEditing) {
-        context.pop();
+        if (context.canPop()) context.pop();
       } else {
         // A new draft has no roles yet; land the organizer straight on the
         // Roles tab of the management screen rather than an empty overview.
@@ -295,7 +299,9 @@ class _MultiKolabEventEditorScreenState
       canPop: !_dirty,
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
-        if (await _confirmDiscard() && mounted) context.pop();
+        if (await _confirmDiscard() && mounted && context.canPop()) {
+          context.pop();
+        }
       },
       child: Scaffold(
         backgroundColor: colors.background,

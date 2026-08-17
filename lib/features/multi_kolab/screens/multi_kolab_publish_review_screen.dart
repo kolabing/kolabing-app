@@ -110,7 +110,7 @@ class _MultiKolabPublishReviewScreenState
     }
 
     await _showSuccess(l10n);
-    if (mounted) context.pop();
+    if (mounted && context.canPop()) context.pop();
   }
 
   Future<void> _showSuccess(AppLocalizations l10n) {

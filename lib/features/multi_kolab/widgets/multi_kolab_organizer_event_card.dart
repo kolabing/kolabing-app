@@ -151,7 +151,15 @@ class MultiKolabOrganizerEventCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: KolabingSpacing.sm),
-              Row(
+              // Wrap, not Row: at 320dp with a long localized
+              // "Needs attention" label plus the Manage action, a Row
+              // overflows. Wrapping keeps both readable at any width and
+              // under large text scales.
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: KolabingSpacing.xs,
+                runSpacing: KolabingSpacing.xxs,
                 children: [
                   if (needsAttention)
                     Container(
@@ -183,7 +191,6 @@ class MultiKolabOrganizerEventCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                  const Spacer(),
                   TextButton(
                     key: Key('multiKolabManageCta_${event.id}'),
                     onPressed: onManage,

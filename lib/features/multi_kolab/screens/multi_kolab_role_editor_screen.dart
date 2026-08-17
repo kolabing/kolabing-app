@@ -143,7 +143,7 @@ class _MultiKolabRoleEditorScreenState
       return;
     }
 
-    context.pop();
+    if (context.canPop()) context.pop();
   }
 
   @override

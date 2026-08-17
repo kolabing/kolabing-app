@@ -12,6 +12,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/kolabing_segmented_control.dart';
 import '../../../widgets/kolabing_top_bar.dart';
+import '../../../widgets/navigation/kolabing_fab.dart';
 import '../models/multi_kolab_enums.dart';
 import '../models/multi_kolab_event_summary.dart';
 import '../providers/multi_kolab_providers.dart';
@@ -95,14 +96,15 @@ class _MultiKolabOrganizerDashboardScreenState
     return Scaffold(
       backgroundColor: colors.background,
       appBar: KolabingTopBar(title: l10n.multiKolabOrganizerDashboardTitle),
+      // The app's circular FAB, not an extended one: the localized
+      // "Create Multi-Kolab event" label makes an extended FAB wider than a
+      // 320dp phone, and es/ca are longer still.
       floatingActionButton: canCreate
-          ? FloatingActionButton.extended(
+          ? KolabingFAB(
               key: const Key('multiKolabOrganizerCreateFab'),
               onPressed: _createEvent,
-              backgroundColor: colors.primary,
-              foregroundColor: colors.ink,
-              icon: const Icon(LucideIcons.plus),
-              label: Text(l10n.multiKolabOrganizerCreateCta),
+              tooltip: l10n.multiKolabOrganizerCreateCta,
+              heroTag: 'multi_kolab_organizer_fab',
             )
           : null,
       body: SafeArea(
