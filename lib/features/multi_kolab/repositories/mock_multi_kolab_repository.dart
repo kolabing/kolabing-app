@@ -132,7 +132,42 @@ class MockMultiKolabRepository implements MultiKolabRepository {
     ),
   };
 
-  final Map<String, MultiKolabRoleApplication> _applications = {};
+  /// Seeded so the organizer applicant-review screens have deterministic
+  /// content in every status bucket without the test first having to apply.
+  /// They all sit on `role-5`, which belongs to `event-2` — the event the
+  /// mock viewer organizes. `role-1` is deliberately left empty so unit
+  /// tests can assert on exactly what they filed.
+  final Map<String, MultiKolabRoleApplication> _applications = {
+    'seed-application-1': MultiKolabRoleApplication(
+      id: 'seed-application-1',
+      multiKolabRoleId: 'role-5',
+      applicantProfileId: 'applicant-1',
+      applicantProfileType: 'business',
+      status: MultiKolabRoleApplicationStatus.pending,
+      pitch: 'We DJ three rooftop nights a month and can bring our own rig.',
+      availability: 'Any Friday in October',
+      createdAt: DateTime(2026, 8, 14, 10),
+    ),
+    'seed-application-2': MultiKolabRoleApplication(
+      id: 'seed-application-2',
+      multiKolabRoleId: 'role-5',
+      applicantProfileId: 'applicant-2',
+      applicantProfileType: 'community',
+      status: MultiKolabRoleApplicationStatus.shortlisted,
+      pitch: 'Our collective runs a 200-person monthly session.',
+      availability: 'First two weekends of October',
+      createdAt: DateTime(2026, 8, 14, 11),
+    ),
+    'seed-application-3': MultiKolabRoleApplication(
+      id: 'seed-application-3',
+      multiKolabRoleId: 'role-5',
+      applicantProfileId: 'applicant-3',
+      applicantProfileType: 'business',
+      status: MultiKolabRoleApplicationStatus.declined,
+      pitch: 'We do wedding sets.',
+      createdAt: DateTime(2026, 8, 14, 12),
+    ),
+  };
   int _applicationSeq = 0;
 
   Future<void> _delay() => simulatedDelay == Duration.zero
@@ -295,10 +330,118 @@ class MockMultiKolabRepository implements MultiKolabRepository {
   @override
   Future<List<MultiKolabEventSummary>> myEvents() async {
     await _delay();
-    return explore(
-      const MultiKolabExploreFilter(status: MultiKolabEventStatus.draft),
-    );
+    // Mirrors `GET /multi-kolab-events/me`: every event the viewer created,
+    // in ANY status (drafts included) — not the status-filtered Explore
+    // listing, which is a different endpoint with different semantics.
+    return _events.values
+        .where((e) => e.creatorProfileId == mockViewerProfileId)
+        .map(_summaryOf)
+        .toList(growable: false);
   }
+
+  @override
+  Future<MultiKolabRole> updateRole(
+    String roleId,
+    UpdateMultiKolabRoleInput input,
+  ) async {
+    await _delay();
+    final entry = _findRole(roleId);
+    final event = entry.$1;
+    final existing = entry.$2;
+
+    if (input.status == MultiKolabRoleStatus.open &&
+        existing.positionsFilled >=
+            (input.positionsNeeded ?? existing.positionsNeeded)) {
+      throw StateError('role_capacity_exceeded');
+    }
+
+    final updated = existing.copyWith(
+      title: input.title,
+      eligibleAccountType: input.eligibleAccountType,
+      positionsNeeded: input.positionsNeeded,
+      required_: input.required_,
+      need: input.need,
+      receive: input.receive,
+      compensationType: input.compensationType,
+      requirements: input.requirements,
+      details: input.details,
+      status: input.status,
+    );
+
+    _events[event.id] = _withRoles(event, [
+      for (final role in event.roles) role.id == roleId ? updated : role,
+    ]);
+
+    return updated;
+  }
+
+  @override
+  Future<MultiKolabRole> setRoleStatus(
+    String roleId,
+    MultiKolabRoleStatus status,
+  ) {
+    return updateRole(roleId, UpdateMultiKolabRoleInput(status: status));
+  }
+
+  @override
+  Future<List<MultiKolabRoleApplication>> roleApplications(
+    String roleId,
+  ) async {
+    await _delay();
+    return _applications.values
+        .where((a) => a.multiKolabRoleId == roleId)
+        .toList(growable: false);
+  }
+
+  @override
+  Future<MultiKolabEvent> confirmEvent(String eventId) async {
+    await _delay();
+    final updated = _mustGet(
+      eventId,
+    ).copyWith(status: MultiKolabEventStatus.confirmed);
+    _events[eventId] = updated;
+    return updated;
+  }
+
+  @override
+  Future<MultiKolabEvent> completeEvent(String eventId) async {
+    await _delay();
+    final updated = _mustGet(
+      eventId,
+    ).copyWith(status: MultiKolabEventStatus.completed);
+    _events[eventId] = updated;
+    return updated;
+  }
+
+  (MultiKolabEvent, MultiKolabRole) _findRole(String roleId) {
+    for (final event in _events.values) {
+      for (final role in event.roles) {
+        if (role.id == roleId) return (event, role);
+      }
+    }
+    throw StateError('MockMultiKolabRepository: no role "$roleId"');
+  }
+
+  MultiKolabEventSummary _summaryOf(MultiKolabEvent e) => MultiKolabEventSummary(
+    id: e.id,
+    status: e.status,
+    title: e.title,
+    valueSummary: e.valueSummary,
+    city: e.city,
+    category: e.category,
+    eventDate: e.eventDate,
+    dateMode: e.dateMode,
+    roleCounts: MultiKolabRoleCounts(
+      total: e.roleCounts.total,
+      open: e.roleCounts.open,
+      filled: e.roleCounts.filled,
+    ),
+    eligibleAccountType: e.eligibleAccountType,
+    creatorProfile: const MultiKolabCreatorSummary(
+      id: mockViewerProfileId,
+      displayName: 'Kolabing',
+    ),
+  );
 
   @override
   Future<MultiKolabEvent> getEvent(String eventId) async {
@@ -370,6 +513,7 @@ class MockMultiKolabRepository implements MultiKolabRepository {
       applicationId,
       MultiKolabRoleApplicationStatus.accepted,
     );
+    _fillOnePosition(application.multiKolabRoleId);
     return ChildKolabResult(
       applicationId: application.id,
       applicationStatus: 'accepted',
@@ -395,17 +539,11 @@ class MockMultiKolabRepository implements MultiKolabRepository {
   @override
   Future<void> cancelEvent(String eventId, String reason) async {
     await _delay();
-    final existing = _mustGet(eventId);
-    _events[eventId] = MultiKolabEvent(
-      id: existing.id,
-      status: MultiKolabEventStatus.cancelled,
-      creatorProfileId: existing.creatorProfileId,
-      title: existing.title,
-      description: existing.description,
-      eligibleAccountType: existing.eligibleAccountType,
-      roles: existing.roles,
-      roleCounts: existing.roleCounts,
-    );
+    // Cancellation never destroys the event or its roles (contract §5) —
+    // only the status changes.
+    _events[eventId] = _mustGet(
+      eventId,
+    ).copyWith(status: MultiKolabEventStatus.cancelled);
   }
 
   @override
@@ -458,6 +596,23 @@ class MockMultiKolabRepository implements MultiKolabRepository {
       updatedAt: DateTime.now(),
       publishedAt: event.publishedAt,
     );
+  }
+
+  /// Acceptance is a server-side transaction; the mock mirrors its only
+  /// externally visible side effect so the organizer UI's capacity refresh
+  /// is exercised end to end.
+  void _fillOnePosition(String roleId) {
+    final (event, role) = _findRole(roleId);
+    final filled = role.positionsFilled + 1;
+    final updated = role.copyWith(
+      positionsFilled: filled,
+      status: filled >= role.positionsNeeded
+          ? MultiKolabRoleStatus.filled
+          : role.status,
+    );
+    _events[event.id] = _withRoles(event, [
+      for (final r in event.roles) r.id == roleId ? updated : r,
+    ]);
   }
 
   MultiKolabRoleApplication _transition(

@@ -10,6 +10,7 @@ import '../models/child_kolab_result.dart';
 import '../models/event_creator_entitlement.dart';
 import '../models/multi_kolab_dashboard.dart';
 import '../models/multi_kolab_event.dart';
+import '../models/multi_kolab_enums.dart';
 import '../models/multi_kolab_event_summary.dart';
 import '../models/multi_kolab_role.dart';
 import '../models/multi_kolab_role_application.dart';
@@ -120,6 +121,64 @@ class ApiMultiKolabRepository implements MultiKolabRepository {
         body: jsonEncode(input.toJson()),
       ),
       (json) => MultiKolabRole.fromJson(_data(json)),
+    );
+  }
+
+  @override
+  Future<MultiKolabRole> updateRole(
+    String roleId,
+    UpdateMultiKolabRoleInput input,
+  ) {
+    return _request(
+      () async => _httpClient.patch(
+        Uri.parse('$_baseUrl/multi-kolab-roles/$roleId'),
+        headers: await _headers(),
+        body: jsonEncode(input.toJson()),
+      ),
+      (json) => MultiKolabRole.fromJson(_data(json)),
+    );
+  }
+
+  @override
+  Future<MultiKolabRole> setRoleStatus(
+    String roleId,
+    MultiKolabRoleStatus status,
+  ) {
+    return updateRole(roleId, UpdateMultiKolabRoleInput(status: status));
+  }
+
+  @override
+  Future<List<MultiKolabRoleApplication>> roleApplications(String roleId) {
+    return _request(
+      () async => _httpClient.get(
+        Uri.parse('$_baseUrl/multi-kolab-roles/$roleId/applications'),
+        headers: await _headers(),
+      ),
+      (json) => _dataList(
+        json,
+      ).map(MultiKolabRoleApplication.fromJson).toList(growable: false),
+    );
+  }
+
+  @override
+  Future<MultiKolabEvent> confirmEvent(String eventId) {
+    return _request(
+      () async => _httpClient.post(
+        Uri.parse('$_baseUrl/multi-kolab-events/$eventId/confirm'),
+        headers: await _headers(),
+      ),
+      (json) => MultiKolabEvent.fromJson(_data(json)),
+    );
+  }
+
+  @override
+  Future<MultiKolabEvent> completeEvent(String eventId) {
+    return _request(
+      () async => _httpClient.post(
+        Uri.parse('$_baseUrl/multi-kolab-events/$eventId/complete'),
+        headers: await _headers(),
+      ),
+      (json) => MultiKolabEvent.fromJson(_data(json)),
     );
   }
 

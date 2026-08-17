@@ -4,6 +4,7 @@ import '../models/event_creator_entitlement.dart';
 import '../models/multi_kolab_dashboard.dart';
 import '../models/multi_kolab_event.dart';
 import '../models/multi_kolab_event_summary.dart';
+import '../models/multi_kolab_role_application.dart';
 import 'multi_kolab_repository_provider.dart';
 
 // NOTE: there is no Multi-Kolab "explore" provider. Open roles reach the
@@ -35,4 +36,14 @@ final multiKolabDashboardProvider = FutureProvider.autoDispose
 final multiKolabEntitlementProvider =
     FutureProvider.autoDispose<EventCreatorEntitlement>(
       (ref) => ref.watch(multiKolabRepositoryProvider).getEntitlement(),
+    );
+
+/// One role's applications, for the organizer's applicant-review screen
+/// (contract §7 `GET /multi-kolab-roles/{role}/applications`). Keyed by role
+/// id because the API has no cross-role listing — grouping by role IS the
+/// data model, not a UI choice.
+final multiKolabRoleApplicationsProvider = FutureProvider.autoDispose
+    .family<List<MultiKolabRoleApplication>, String>(
+      (ref, roleId) =>
+          ref.watch(multiKolabRepositoryProvider).roleApplications(roleId),
     );

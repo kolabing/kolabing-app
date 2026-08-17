@@ -98,6 +98,56 @@ class MultiKolabEvent {
   final DateTime? updatedAt;
   final DateTime? publishedAt;
 
+  /// Field-wise copy. Needed by the organizer flows (and the deterministic
+  /// mock repository) which repeatedly derive a new immutable event from an
+  /// existing one after a mutation — previously each call site had to
+  /// re-list all 20 constructor arguments by hand.
+  MultiKolabEvent copyWith({
+    MultiKolabEventStatus? status,
+    String? title,
+    String? description,
+    String? valueSummary,
+    bool? venueNeeded,
+    MultiKolabDateMode? dateMode,
+    DateTime? eventDate,
+    DateTime? dateRangeStart,
+    DateTime? dateRangeEnd,
+    String? city,
+    String? category,
+    String? rsvpUrl,
+    MultiKolabEligibleAccountType? eligibleAccountType,
+    List<MultiKolabRole>? roles,
+    ({int total, int open, int filled})? roleCounts,
+    MultiKolabRoleApplication? viewerApplication,
+    DateTime? updatedAt,
+    DateTime? publishedAt,
+  }) {
+    return MultiKolabEvent(
+      id: id,
+      status: status ?? this.status,
+      creatorProfileId: creatorProfileId,
+      creatorProfileType: creatorProfileType,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      valueSummary: valueSummary ?? this.valueSummary,
+      venueNeeded: venueNeeded ?? this.venueNeeded,
+      dateMode: dateMode ?? this.dateMode,
+      eventDate: eventDate ?? this.eventDate,
+      dateRangeStart: dateRangeStart ?? this.dateRangeStart,
+      dateRangeEnd: dateRangeEnd ?? this.dateRangeEnd,
+      city: city ?? this.city,
+      category: category ?? this.category,
+      rsvpUrl: rsvpUrl ?? this.rsvpUrl,
+      eligibleAccountType: eligibleAccountType ?? this.eligibleAccountType,
+      roles: roles ?? this.roles,
+      roleCounts: roleCounts ?? this.roleCounts,
+      viewerApplication: viewerApplication ?? this.viewerApplication,
+      createdAt: createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      publishedAt: publishedAt ?? this.publishedAt,
+    );
+  }
+
   bool get isRecruiting => status == MultiKolabEventStatus.recruiting;
   bool get isDraft => status == MultiKolabEventStatus.draft;
   bool get hasViewerApplied => viewerApplication != null;
@@ -213,6 +263,53 @@ class CreateMultiKolabRoleInput {
       'compensation_type': compensationType!.toApiValue(),
     if (requirements != null) 'requirements': requirements,
     if (details != null) 'details': details,
+  };
+}
+
+/// `PATCH /multi-kolab-roles/{role}` request body — every field optional
+/// (the backend rules are all `sometimes`), so only what the organizer
+/// actually changed is sent. `status` is limited to `open`/`closed`:
+/// `filled` is derived by the acceptance service and is rejected by the
+/// backend Form Request (contract §4, Task 10 addition).
+@immutable
+class UpdateMultiKolabRoleInput {
+  const UpdateMultiKolabRoleInput({
+    this.title,
+    this.eligibleAccountType,
+    this.positionsNeeded,
+    this.required_,
+    this.need,
+    this.receive,
+    this.compensationType,
+    this.requirements,
+    this.details,
+    this.status,
+  });
+
+  final String? title;
+  final MultiKolabEligibleAccountType? eligibleAccountType;
+  final int? positionsNeeded;
+  final bool? required_;
+  final String? need;
+  final String? receive;
+  final MultiKolabCompensationType? compensationType;
+  final String? requirements;
+  final String? details;
+  final MultiKolabRoleStatus? status;
+
+  Map<String, dynamic> toJson() => {
+    if (title != null) 'title': title,
+    if (eligibleAccountType != null)
+      'eligible_account_type': eligibleAccountType!.toApiValue(),
+    if (positionsNeeded != null) 'positions_needed': positionsNeeded,
+    if (required_ != null) 'required': required_,
+    if (need != null) 'need': need,
+    if (receive != null) 'receive': receive,
+    if (compensationType != null)
+      'compensation_type': compensationType!.toApiValue(),
+    if (requirements != null) 'requirements': requirements,
+    if (details != null) 'details': details,
+    if (status != null) 'status': status!.toApiValue(),
   };
 }
 

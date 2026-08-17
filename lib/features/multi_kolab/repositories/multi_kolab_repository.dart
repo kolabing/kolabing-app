@@ -3,6 +3,7 @@ import '../models/event_creator_entitlement.dart';
 import '../models/multi_kolab_dashboard.dart';
 import '../models/multi_kolab_event.dart';
 import '../models/multi_kolab_event_summary.dart';
+import '../models/multi_kolab_enums.dart';
 import '../models/multi_kolab_role.dart';
 import '../models/multi_kolab_role_application.dart';
 
@@ -23,7 +24,30 @@ abstract interface class MultiKolabRepository {
     CreateMultiKolabRoleInput input,
   );
 
+  /// Partial update of an existing role — contract §4
+  /// `PATCH /multi-kolab-roles/{role}`.
+  Future<MultiKolabRole> updateRole(
+    String roleId,
+    UpdateMultiKolabRoleInput input,
+  );
+
+  /// Stop (`closed`) or resume (`open`) recruiting for one role. Shares the
+  /// `PATCH /multi-kolab-roles/{role}` endpoint with [updateRole]; kept as a
+  /// separate method so call sites express intent and can never accidentally
+  /// send other fields alongside a lifecycle change.
+  Future<MultiKolabRole> setRoleStatus(String roleId, MultiKolabRoleStatus status);
+
+  /// Organizer-only list of one role's applications — contract §7
+  /// `GET /multi-kolab-roles/{role}/applications`.
+  Future<List<MultiKolabRoleApplication>> roleApplications(String roleId);
+
   Future<MultiKolabEvent> publish(String eventId);
+
+  /// `recruiting → confirmed` (contract §5).
+  Future<MultiKolabEvent> confirmEvent(String eventId);
+
+  /// `confirmed → completed` (contract §5).
+  Future<MultiKolabEvent> completeEvent(String eventId);
 
   Future<List<MultiKolabEventSummary>> explore(MultiKolabExploreFilter filter);
 

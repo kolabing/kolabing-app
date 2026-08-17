@@ -65,6 +65,40 @@ class MultiKolabRole {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
+  MultiKolabRole copyWith({
+    MultiKolabRoleStatus? status,
+    String? title,
+    MultiKolabEligibleAccountType? eligibleAccountType,
+    int? positionsNeeded,
+    int? positionsFilled,
+    bool? required_,
+    String? need,
+    String? receive,
+    MultiKolabCompensationType? compensationType,
+    String? requirements,
+    String? details,
+  }) {
+    return MultiKolabRole(
+      id: id,
+      multiKolabEventId: multiKolabEventId,
+      status: status ?? this.status,
+      title: title ?? this.title,
+      eligibleAccountType: eligibleAccountType ?? this.eligibleAccountType,
+      positionsNeeded: positionsNeeded ?? this.positionsNeeded,
+      positionsFilled: positionsFilled ?? this.positionsFilled,
+      required_: required_ ?? this.required_,
+      need: need ?? this.need,
+      receive: receive ?? this.receive,
+      compensationType: compensationType ?? this.compensationType,
+      requirements: requirements ?? this.requirements,
+      details: details ?? this.details,
+      createdAt: createdAt,
+      updatedAt: DateTime.now(),
+    );
+  }
+
+  bool get isClosed => status == MultiKolabRoleStatus.closed;
+
   bool get isOpen => status == MultiKolabRoleStatus.open;
   bool get isFilled => status == MultiKolabRoleStatus.filled;
   int get positionsRemaining =>
