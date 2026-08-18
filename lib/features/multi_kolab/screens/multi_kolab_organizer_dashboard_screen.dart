@@ -130,8 +130,7 @@ class _MultiKolabOrganizerDashboardScreenState
             final filtered = all.where(_filter.matches).toList(growable: false);
 
             return RefreshIndicator(
-              onRefresh: () async =>
-                  ref.invalidate(multiKolabMyEventsProvider),
+              onRefresh: () async => ref.invalidate(multiKolabMyEventsProvider),
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(
                   KolabingSpacing.md,
@@ -141,8 +140,12 @@ class _MultiKolabOrganizerDashboardScreenState
                   KolabingSpacing.xxxl + KolabingSpacing.md,
                 ),
                 children: [
+                  // Scrollable rather than five equal shares of the row: at
+                  // 320dp "RECRUITING"/"RECLUTANT"/"FINALITZATS" have to
+                  // shrink below legibility to fit an equal-width segment.
                   KolabingSegmentedControl<MultiKolabOrganizerFilter>(
                     key: const Key('multiKolabOrganizerFilter'),
+                    scrollable: true,
                     segments: [
                       for (final f in MultiKolabOrganizerFilter.values)
                         (f, f.label(l10n).toUpperCase()),

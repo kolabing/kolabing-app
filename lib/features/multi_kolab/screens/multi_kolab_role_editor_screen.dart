@@ -151,7 +151,8 @@ class _MultiKolabRoleEditorScreenState
     final l10n = AppLocalizations.of(context);
     final colors = context.colors;
     final actionState = ref.watch(multiKolabOrganizerActionsProvider);
-    final busy = actionState.isBusy('addRole', widget.eventId) ||
+    final busy =
+        actionState.isBusy('addRole', widget.eventId) ||
         actionState.isBusy('updateRole', widget.roleId ?? '');
 
     if (widget.isEditing && !_seeded) {
@@ -204,11 +205,19 @@ class _MultiKolabRoleEditorScreenState
               ),
               const SizedBox(height: KolabingSpacing.md),
               _SectionLabel(l10n.multiKolabEventFormEligibilityLabel),
+              // Three options, one of which is a phrase ("Businesses and
+              // communities"). Uppercasing it and squeezing it into a third
+              // of a 320dp row forced the shrink-to-fit path down to an
+              // unreadable size, and the selected segment — the one the
+              // organizer most needs to read — was the worst affected.
+              // Sentence case + up to three wrapped lines keeps every option
+              // at the full 12.5pt at any supported width.
               KolabingSegmentedControl<MultiKolabEligibleAccountType>(
                 key: const Key('multiKolabRoleEligibilityControl'),
+                maxLines: 3,
                 segments: [
                   for (final e in MultiKolabEligibleAccountType.values)
-                    (e, e.label(l10n).toUpperCase()),
+                    (e, e.label(l10n)),
                 ],
                 selectedValue: _eligibility,
                 onChanged: (e) => setState(() => _eligibility = e),
