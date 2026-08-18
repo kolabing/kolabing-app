@@ -18,7 +18,6 @@ import '../models/multi_kolab_event.dart';
 import '../providers/multi_kolab_providers.dart';
 import '../providers/multi_kolab_repository_provider.dart';
 import '../repositories/api_multi_kolab_repository.dart';
-import '../widgets/multi_kolab_labels.dart';
 
 /// Create or edit a Multi-Kolab event draft.
 ///
@@ -56,8 +55,6 @@ class _MultiKolabEventEditorScreenState
   DateTime? _eventDate;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
-  MultiKolabEligibleAccountType _eligibility =
-      MultiKolabEligibleAccountType.either;
 
   bool _seeded = false;
   bool _dirty = false;
@@ -120,7 +117,6 @@ class _MultiKolabEventEditorScreenState
     _eventDate = event.eventDate;
     _rangeStart = event.dateRangeStart;
     _rangeEnd = event.dateRangeEnd;
-    _eligibility = event.eligibleAccountType;
     _dirty = false;
   }
 
@@ -170,7 +166,14 @@ class _MultiKolabEventEditorScreenState
       city: _nullIfBlank(_city),
       category: _nullIfBlank(_category),
       rsvpUrl: _nullIfBlank(_rsvpUrl),
-      eligibleAccountType: _eligibility,
+      // `eligible_account_type` is deliberately NOT sent. Eligibility is a
+      // property of a ROLE, not of an event: one event can carry a
+      // community-only role, a business-only role and an open-to-either role
+      // at the same time, so a single event-level answer to "who can apply?"
+      // can only ever contradict them. The field is optional on
+      // `POST/PATCH /multi-kolab-events`, so omitting it leaves the backend
+      // default in place and the per-role `eligible_account_type` — which is
+      // what Explore actually filters on — remains the only source of truth.
     );
   }
 
@@ -195,9 +198,9 @@ class _MultiKolabEventEditorScreenState
 
       if (!mounted) return;
       _dirty = false;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.multiKolabEventFormSaved)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.multiKolabEventFormSaved)));
 
       if (widget.isEditing) {
         if (context.canPop()) context.pop();
@@ -210,9 +213,9 @@ class _MultiKolabEventEditorScreenState
       }
     } on ApiException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_messageFor(e, l10n))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(_messageFor(e, l10n))));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -387,16 +390,14 @@ class _MultiKolabEventEditorScreenState
                     fieldKey: const Key('multiKolabEventDateField'),
                     label: l10n.multiKolabEventFormDateLabel,
                     value: _eventDate,
-                    onTap: () =>
-                        _pickDate(_eventDate, (d) => _eventDate = d),
+                    onTap: () => _pickDate(_eventDate, (d) => _eventDate = d),
                   )
                 else ...[
                   _DateField(
                     fieldKey: const Key('multiKolabEventRangeStartField'),
                     label: l10n.multiKolabEventFormDateFromLabel,
                     value: _rangeStart,
-                    onTap: () =>
-                        _pickDate(_rangeStart, (d) => _rangeStart = d),
+                    onTap: () => _pickDate(_rangeStart, (d) => _rangeStart = d),
                   ),
                   const SizedBox(height: KolabingSpacing.sm),
                   _DateField(
@@ -430,20 +431,6 @@ class _MultiKolabEventEditorScreenState
                   keyboardType: TextInputType.url,
                   autocorrect: false,
                   validator: (v) => _validateRsvp(v, l10n),
-                ),
-                const SizedBox(height: KolabingSpacing.md),
-                _SectionLabel(l10n.multiKolabEventFormEligibilityLabel),
-                KolabingSegmentedControl<MultiKolabEligibleAccountType>(
-                  key: const Key('multiKolabEventEligibilityControl'),
-                  segments: [
-                    for (final e in MultiKolabEligibleAccountType.values)
-                      (e, e.label(l10n).toUpperCase()),
-                  ],
-                  selectedValue: _eligibility,
-                  onChanged: (e) => setState(() {
-                    _eligibility = e;
-                    _dirty = true;
-                  }),
                 ),
                 const SizedBox(height: KolabingSpacing.lg),
                 KolabingButton(
@@ -512,7 +499,8 @@ class _DateField extends StatelessWidget {
     final colors = context.colors;
     return Semantics(
       button: true,
-      label: '$label. ${value == null ? l10n.multiKolabEventFormDatePick : DateFormat.yMMMd().format(value!)}',
+      label:
+          '$label. ${value == null ? l10n.multiKolabEventFormDatePick : DateFormat.yMMMd().format(value!)}',
       excludeSemantics: true,
       child: InkWell(
         key: fieldKey,

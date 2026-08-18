@@ -144,8 +144,7 @@ class _MultiKolabPublishReviewScreenState
       body: SafeArea(
         child: asyncEvent.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, _) =>
-              Center(child: Text(l10n.multiKolabExploreErrorBody)),
+          error: (_, _) => Center(child: Text(l10n.multiKolabExploreErrorBody)),
           data: (event) {
             final missing = _stillNeeded(event, l10n);
             final canPublish = event.roles.isNotEmpty && !publishing;
@@ -279,9 +278,7 @@ class _EventSummary extends StatelessWidget {
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             event.description!,
-            style: KolabingTextStyles.bodySmall.copyWith(
-              color: colors.inkBody,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: colors.inkBody),
           ),
         ],
         const SizedBox(height: KolabingSpacing.xs),
@@ -298,10 +295,10 @@ class _EventSummary extends StatelessWidget {
                   ? l10n.multiKolabReviewVenueNeeded
                   : l10n.multiKolabReviewVenueSecured,
             ),
-            _Pill(
-              icon: LucideIcons.users,
-              text: event.eligibleAccountType.label(l10n),
-            ),
+            // No event-level "who can apply" pill: eligibility is per role,
+            // and each role below states its own. Echoing the event's
+            // (now unset, backend-default) `eligible_account_type` here would
+            // contradict the role list directly underneath it.
             if (event.rsvpUrl != null && event.rsvpUrl!.isNotEmpty)
               _Pill(icon: LucideIcons.link, text: event.rsvpUrl!),
           ],
