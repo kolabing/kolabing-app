@@ -261,10 +261,12 @@ void main() {
         find.byKey(const Key('multiKolabOrganizerEmptyCreateCta')),
         findsNothing,
       );
-      // The gate must never route at the Business subscription paywall.
+      // The gate offers a request-access CTA, which is a client-only
+      // mailto: to Kolabing support — it must never route at the Business
+      // subscription paywall, and it grants nothing on its own.
       expect(
         find.byKey(const Key('multiKolabEntitlementGateCta')),
-        findsNothing,
+        findsOneWidget,
       );
     });
 
