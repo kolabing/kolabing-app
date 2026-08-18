@@ -70,7 +70,7 @@ class MockMultiKolabRepository implements MultiKolabRepository {
           id: 'role-3',
           multiKolabEventId: 'event-1',
           status: MultiKolabRoleStatus.open,
-          title: 'Coffee Sponsor',
+          title: 'Coffee Partner',
           eligibleAccountType: MultiKolabEligibleAccountType.business,
           positionsNeeded: 1,
           positionsFilled: 0,

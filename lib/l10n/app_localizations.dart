@@ -13103,7 +13103,7 @@ abstract class AppLocalizations {
   /// Role title placeholder giving concrete examples.
   ///
   /// In en, this message translates to:
-  /// **'Run club partner, venue partner, coffee sponsor...'**
+  /// **'Run club partner, venue partner, coffee partner...'**
   String get multiKolabRoleFormTitleHint;
 
   /// Validation error when the role title is empty.
@@ -13351,6 +13351,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{filled} of {total} roles filled'**
   String multiKolabManageRolesProgress(int filled, int total);
+
+  /// Event-level capacity: partner positions filled across every role (summed positions_filled of summed positions_needed) — NOT a count of role records.
+  ///
+  /// In en, this message translates to:
+  /// **'{filled} of {total} partner spots filled'**
+  String multiKolabPartnerSpotsFilled(int filled, int total);
+
+  /// How many roles are still recruiting (status open with capacity left). A role needing several partners counts once.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No open roles} one{{count} open role} other{{count} open roles}}'**
+  String multiKolabOpenRolesCount(int count);
 
   /// Overview section listing the Kolabs created by acceptances.
   ///

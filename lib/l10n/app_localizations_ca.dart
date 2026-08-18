@@ -7508,7 +7508,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get multiKolabRoleFormTitleHint =>
-      'Club de running, espai, patrocinador de cafe...';
+      'Club de running, espai, partner de cafe...';
 
   @override
   String get multiKolabRoleFormTitleRequired => 'Posa un nom al rol';
@@ -7649,6 +7649,23 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String multiKolabManageRolesProgress(int filled, int total) {
     return '$filled de $total rols coberts';
+  }
+
+  @override
+  String multiKolabPartnerSpotsFilled(int filled, int total) {
+    return '$filled de $total places de partner cobertes';
+  }
+
+  @override
+  String multiKolabOpenRolesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rols oberts',
+      one: '$count rol obert',
+      zero: 'Cap rol obert',
+    );
+    return '$_temp0';
   }
 
   @override
