@@ -17,14 +17,13 @@ import '../../../widgets/kolabing_top_bar.dart';
 import '../models/multi_kolab_dashboard.dart';
 import '../models/multi_kolab_enums.dart';
 import '../models/multi_kolab_event.dart';
-import '../models/multi_kolab_creator_summary.dart';
 import '../models/multi_kolab_role.dart';
 import '../models/multi_kolab_role_application.dart';
+import '../models/multi_kolab_spot_counts.dart';
 import '../providers/multi_kolab_organizer_actions.dart';
 import '../providers/multi_kolab_providers.dart';
 import '../widgets/multi_kolab_error_copy.dart';
 import '../widgets/multi_kolab_labels.dart';
-import '../widgets/multi_kolab_role_progress.dart';
 
 enum _ManagementTab {
   overview,
@@ -260,7 +259,11 @@ class _MultiKolabEventManagementScreenState
                     l10n,
                     colors,
                   ),
-                  _ManagementTab.roles => _roles(event, asyncDashboard.value, l10n),
+                  _ManagementTab.roles => _roles(
+                    event,
+                    asyncDashboard.value,
+                    l10n,
+                  ),
                   _ManagementTab.applicants => _applicants(
                     event,
                     asyncDashboard.value,
@@ -284,24 +287,22 @@ class _MultiKolabEventManagementScreenState
     KolabingColorTokens colors,
   ) {
     final counts = _aggregate(dashboard);
+    // Derived from the roles, not from `role_counts`: the latter counts role
+    // rows, so a single role recruiting three partners used to render as
+    // "0 of 1 roles filled".
+    final spots = MultiKolabSpotCounts.fromRoles(event.roles);
 
     return [
-      MultiKolabRoleProgress(
-        counts: MultiKolabRoleCounts(
-          total: event.roleCounts.total,
-          open: event.roleCounts.open,
-          filled: event.roleCounts.filled,
-        ),
-      ),
-      const SizedBox(height: KolabingSpacing.xs),
       Text(
-        l10n.multiKolabManageRolesProgress(
-          event.roleCounts.filled,
-          event.roleCounts.total,
-        ),
-        style: KolabingTextStyles.bodySmall.copyWith(
-          color: colors.inkBody,
-        ),
+        key: const Key('multiKolabManagePartnerSpots'),
+        l10n.multiKolabPartnerSpotsFilled(spots.filled, spots.total),
+        style: KolabingTextStyles.bodyMedium.copyWith(color: colors.ink),
+      ),
+      const SizedBox(height: KolabingSpacing.xxs),
+      Text(
+        key: const Key('multiKolabManageOpenRoles'),
+        l10n.multiKolabOpenRolesCount(spots.openRoles),
+        style: KolabingTextStyles.bodySmall.copyWith(color: colors.inkBody),
       ),
       if (dashboard != null) ...[
         const SizedBox(height: KolabingSpacing.sm),
@@ -360,9 +361,8 @@ class _MultiKolabEventManagementScreenState
           KolabingButton(
             key: const Key('multiKolabAddRoleCta'),
             label: l10n.multiKolabRoleFormAddCta,
-            onPressed: () => context.push(
-              multiKolabOrganizerRoleLocation(widget.eventId),
-            ),
+            onPressed: () =>
+                context.push(multiKolabOrganizerRoleLocation(widget.eventId)),
           ),
       ];
     }
@@ -431,7 +431,8 @@ class _MultiKolabEventManagementScreenState
             ),
           ),
           trailing: _PendingBadge(
-            count: dashboard?.roles
+            count:
+                dashboard?.roles
                     .where((r) => r.roleId == role.id)
                     .firstOrNull
                     ?.applicationCounts
@@ -470,18 +471,16 @@ class _MultiKolabEventManagementScreenState
             key: const Key('multiKolabManageEditCta'),
             label: l10n.multiKolabManageEditCta,
             variant: KolabingButtonVariant.secondary,
-            onPressed: () => context.push(
-              multiKolabOrganizerEventEditLocation(event.id),
-            ),
+            onPressed: () =>
+                context.push(multiKolabOrganizerEventEditLocation(event.id)),
           ),
         );
         add(
           KolabingButton(
             key: const Key('multiKolabManageReviewCta'),
             label: l10n.multiKolabManageReviewCta,
-            onPressed: () => context.push(
-              multiKolabOrganizerEventReviewLocation(event.id),
-            ),
+            onPressed: () =>
+                context.push(multiKolabOrganizerEventReviewLocation(event.id)),
           ),
         );
       case MultiKolabEventStatus.recruiting:
@@ -490,9 +489,8 @@ class _MultiKolabEventManagementScreenState
             key: const Key('multiKolabManageEditCta'),
             label: l10n.multiKolabManageEditCta,
             variant: KolabingButtonVariant.secondary,
-            onPressed: () => context.push(
-              multiKolabOrganizerEventEditLocation(event.id),
-            ),
+            onPressed: () =>
+                context.push(multiKolabOrganizerEventEditLocation(event.id)),
           ),
         );
         add(
@@ -606,9 +604,7 @@ class _RoleCard extends StatelessWidget {
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             role.eligibleAccountType.label(l10n),
-            style: KolabingTextStyles.bodySmall.copyWith(
-              color: colors.inkBody,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: colors.inkBody),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Semantics(
@@ -710,9 +706,7 @@ class _ChildKolabsSection extends ConsumerWidget {
         if (accepted.isEmpty)
           Text(
             l10n.multiKolabManageChildKolabsEmpty,
-            style: KolabingTextStyles.bodySmall.copyWith(
-              color: colors.inkBody,
-            ),
+            style: KolabingTextStyles.bodySmall.copyWith(color: colors.inkBody),
           )
         else
           for (final kolabId in accepted)
@@ -783,9 +777,7 @@ class _EmptyBlock extends StatelessWidget {
         Text(
           body,
           textAlign: TextAlign.center,
-          style: KolabingTextStyles.bodyMedium.copyWith(
-            color: colors.inkBody,
-          ),
+          style: KolabingTextStyles.bodyMedium.copyWith(color: colors.inkBody),
         ),
         const SizedBox(height: KolabingSpacing.lg),
       ],
@@ -842,9 +834,7 @@ class _CancelReasonDialogState extends State<_CancelReasonDialog> {
           onPressed: () {
             final reason = _controller.text.trim();
             if (reason.isEmpty) {
-              setState(
-                () => _error = l10n.multiKolabCancelEventReasonRequired,
-              );
+              setState(() => _error = l10n.multiKolabCancelEventReasonRequired);
               return;
             }
             Navigator.of(context).pop(reason);

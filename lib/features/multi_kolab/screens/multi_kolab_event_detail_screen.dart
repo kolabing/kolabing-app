@@ -10,14 +10,13 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolab_status_badge.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../auth/models/auth_response.dart';
-import '../models/multi_kolab_creator_summary.dart';
 import '../models/multi_kolab_role.dart';
 import '../models/multi_kolab_role_application.dart';
 import '../providers/multi_kolab_providers.dart';
 import '../providers/multi_kolab_repository_provider.dart';
 import '../repositories/api_multi_kolab_repository.dart';
 import '../widgets/multi_kolab_application_form.dart';
-import '../widgets/multi_kolab_role_progress.dart';
+import '../widgets/multi_kolab_labels.dart';
 
 /// Event detail + applicant flow: view roles, apply to an open + eligible
 /// one via a short pitch form, then RSVP (HTTPS-only) if the organizer set a
@@ -230,6 +229,16 @@ class _RoleCard extends ConsumerWidget {
   /// event's other roles remain fully visible.
   final bool isFocused;
 
+  /// "2 spots open · Businesses and communities" while there is room; once a
+  /// role is full the spot count says nothing useful (the status badge
+  /// already reads FILLED), so only the eligibility remains.
+  String _metaLine(AppLocalizations l10n) {
+    final eligibility = role.eligibleAccountType.label(l10n);
+    final remaining = role.isOpen ? role.positionsRemaining : 0;
+    if (remaining <= 0) return eligibility;
+    return '${l10n.multiKolabRoleSpotsOpen(remaining)} · $eligibility';
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
@@ -266,34 +275,32 @@ class _RoleCard extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: KolabingSpacing.xxxs),
-          Wrap(
-            spacing: KolabingSpacing.xs,
-            runSpacing: KolabingSpacing.xxxs,
-            children: [
-              MultiKolabRoleProgress(
-                counts: MultiKolabRoleCounts(
-                  total: role.positionsNeeded,
-                  open: role.positionsRemaining,
-                  filled: role.positionsFilled,
-                ),
-              ),
-              Text(
-                role.required_
-                    ? l10n.multiKolabRoleRequiredLabel
-                    : l10n.multiKolabRoleOptionalLabel,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: colors.onSurfaceVariant,
-                ),
-              ),
-              Text(
-                l10n.multiKolabRoleEligibilityLabel(
-                  role.eligibleAccountType.toApiValue(),
-                ),
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: colors.onSurfaceVariant,
-                ),
-              ),
-            ],
+          // Hierarchy, in order of what an applicant actually decides on:
+          // (1) is there room for me and am I the right kind of account,
+          // (2) how much this role matters to the organizer. The raw
+          // "N open · M filled" split and the wire value in "Open to:
+          // community" are both gone — remaining availability answers the
+          // first question on its own, and the eligibility copy is the same
+          // product wording the role editor offers.
+          Semantics(
+            key: Key('multi-kolab-role-meta-${role.id}'),
+            label: _metaLine(l10n),
+            excludeSemantics: true,
+            child: Text(
+              _metaLine(l10n),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: colors.onSurfaceVariant),
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.xxxs),
+          Text(
+            role.required_
+                ? l10n.multiKolabRoleRequiredLabel
+                : l10n.multiKolabRoleOptionalLabel,
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall?.copyWith(color: colors.muted),
           ),
           if (role.need != null && role.need!.isNotEmpty) ...[
             const SizedBox(height: KolabingSpacing.xs),

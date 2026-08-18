@@ -121,10 +121,7 @@ class MultiKolabOrganizerEventCard extends StatelessWidget {
                                 text: event.city!,
                               ),
                             if (date != null)
-                              _MetaText(
-                                icon: LucideIcons.calendar,
-                                text: date,
-                              ),
+                              _MetaText(icon: LucideIcons.calendar, text: date),
                           ],
                         ),
                       ],
@@ -133,21 +130,23 @@ class MultiKolabOrganizerEventCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: KolabingSpacing.sm),
-              Semantics(
-                label: l10n.multiKolabRoleProgressSemanticLabel(
-                  event.roleCounts.open,
-                  event.roleCounts.total,
-                  event.roleCounts.filled,
-                ),
-                excludeSemantics: true,
-                child: Text(
-                  l10n.multiKolabManageRolesProgress(
-                    event.roleCounts.filled,
-                    event.roleCounts.total,
-                  ),
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    color: colors.inkBody,
-                  ),
+              // Only the open-ROLE count, never a partner-spot count.
+              //
+              // `GET /multi-kolab-events/me` returns `role_counts`
+              // ({total, open, filled}) computed with `withCount` over the
+              // roles TABLE — it carries no `positions_needed` /
+              // `positions_filled` aggregate. Rendering those role-row
+              // numbers as "{filled} of {total} roles filled" is precisely
+              // the misleading conflation this pass removes: one role can
+              // recruit several partners. Since partner spots cannot be
+              // derived from this payload, the card states the one thing it
+              // genuinely knows; the partner-spot line lives on Manage event,
+              // which loads the roles. (Backend gap noted for follow-up.)
+              Text(
+                key: Key('multiKolabOpenRoles_${event.id}'),
+                l10n.multiKolabOpenRolesCount(event.roleCounts.open),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: colors.inkBody,
                 ),
               ),
               const SizedBox(height: KolabingSpacing.sm),
@@ -222,9 +221,7 @@ class _MetaText extends StatelessWidget {
         const SizedBox(width: KolabingSpacing.xxs),
         Text(
           text,
-          style: KolabingTextStyles.bodySmall.copyWith(
-            color: colors.inkBody,
-          ),
+          style: KolabingTextStyles.bodySmall.copyWith(color: colors.inkBody),
         ),
       ],
     );
