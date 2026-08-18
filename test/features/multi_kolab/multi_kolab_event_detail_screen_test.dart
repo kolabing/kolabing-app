@@ -51,7 +51,7 @@ MultiKolabEvent _event({
       [
         _role(id: 'role-1', title: 'Run Club Partner'),
         _role(id: 'role-2', title: 'Yoga Partner'),
-        _role(id: 'role-3', title: 'Coffee Sponsor'),
+        _role(id: 'role-3', title: 'Coffee Partner'),
       ];
   return MultiKolabEvent(
     id: 'event-1',
@@ -187,6 +187,73 @@ void main() {
         ),
       );
 
+      expect(
+        find.byKey(const Key('multi-kolab-role-apply-role-1')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('the metadata line leads with availability + eligibility', (
+      tester,
+    ) async {
+      await _pumpDetail(
+        tester,
+        event: _event(
+          roles: [
+            _role(
+              id: 'role-1',
+              title: 'Run Club Partner',
+              eligible: MultiKolabEligibleAccountType.community,
+            ),
+            _role(
+              id: 'role-4',
+              title: 'Content Creator',
+              needed: 3,
+              filled: 1,
+              eligible: MultiKolabEligibleAccountType.either,
+            ),
+          ],
+        ),
+      );
+
+      // Remaining availability first, then who may apply — in product
+      // language, singular/plural correct.
+      expect(find.text('1 spot open \u00b7 Communities'), findsOneWidget);
+      expect(
+        find.text('2 spots open \u00b7 Businesses and communities'),
+        findsOneWidget,
+      );
+
+      // The raw open/filled split and the wire value are gone.
+      expect(find.textContaining('0 filled'), findsNothing);
+      expect(find.textContaining('Open to:'), findsNothing);
+      expect(find.textContaining('community'), findsNothing);
+
+      // "Required" survives as a quieter secondary label.
+      expect(find.text('Required'), findsNWidgets(2));
+    });
+
+    testWidgets('a filled role shows eligibility only, never a spot count', (
+      tester,
+    ) async {
+      await _pumpDetail(
+        tester,
+        event: _event(
+          roles: [
+            _role(
+              id: 'role-1',
+              title: 'Venue Partner',
+              status: MultiKolabRoleStatus.filled,
+              needed: 1,
+              filled: 1,
+              eligible: MultiKolabEligibleAccountType.business,
+            ),
+          ],
+        ),
+      );
+
+      expect(find.text('Businesses'), findsOneWidget);
+      expect(find.textContaining('spot'), findsNothing);
       expect(
         find.byKey(const Key('multi-kolab-role-apply-role-1')),
         findsNothing,

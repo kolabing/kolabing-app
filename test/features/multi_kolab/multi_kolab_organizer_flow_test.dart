@@ -166,7 +166,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('multiKolabOrganizerLoading')), findsOneWidget);
+      expect(
+        find.byKey(const Key('multiKolabOrganizerLoading')),
+        findsOneWidget,
+      );
       await tester.pumpAndSettle();
     });
 
@@ -293,9 +296,7 @@ void main() {
             multiKolabRepositoryProvider.overrideWithValue(
               MockMultiKolabRepository(),
             ),
-            multiKolabEntitlementProvider.overrideWith(
-              (ref) async => entitled,
-            ),
+            multiKolabEntitlementProvider.overrideWith((ref) async => entitled),
             multiKolabMyEventsProvider.overrideWith(
               (ref) => Future<List<MultiKolabEventSummary>>.error(
                 Exception('simulated dashboard failure'),
@@ -389,10 +390,9 @@ void main() {
       expect(find.text('recruiting'), findsNothing);
     });
 
-    testWidgets('the role progress carries a screen-reader label', (
+    testWidgets('the card counts OPEN ROLES, never partner spots', (
       tester,
     ) async {
-      final handle = tester.ensureSemantics();
       tallSurface(tester);
       await tester.pumpWidget(
         host(
@@ -404,11 +404,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(MultiKolabOrganizerEventCard), findsOneWidget);
-      expect(
-        find.bySemanticsLabel(RegExp('roles open')),
-        findsOneWidget,
-      );
-      handle.dispose();
+      // `GET /multi-kolab-events/me` carries no positions aggregate, so the
+      // card must not claim a partner-spot figure it cannot derive — and the
+      // old role-row phrasing ("0 of 1 roles filled") must be gone.
+      expect(find.text('1 open role'), findsOneWidget);
+      expect(find.textContaining('roles filled'), findsNothing);
+      expect(find.textContaining('partner spots'), findsNothing);
     });
   });
 
@@ -461,9 +462,7 @@ void main() {
       expect(repository.createdInputs, isEmpty);
     });
 
-    testWidgets('venue-needed and eligibility reach the request payload', (
-      tester,
-    ) async {
+    testWidgets('venue-needed reaches the request payload', (tester) async {
       final repository = _RecordingRepository();
       tallSurface(tester);
       await tester.pumpWidget(
@@ -483,8 +482,14 @@ void main() {
         find.byKey(const Key('multiKolabEventVenueNeededSwitch')),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.text('COMMUNITIES'));
-      await tester.pumpAndSettle();
+
+      // Eligibility is a ROLE property: the event form must not offer a
+      // global "who can apply?" answer, and must not send the field.
+      expect(
+        find.byKey(const Key('multiKolabEventEligibilityControl')),
+        findsNothing,
+      );
+      expect(find.text('Who can apply?'), findsNothing);
 
       await tester.tap(find.byKey(const Key('multiKolabEventSaveDraftCta')));
       await tester.pumpAndSettle();
@@ -492,7 +497,7 @@ void main() {
       final payload = repository.createdInputs.single.toJson();
       expect(payload['title'], 'Rooftop Session');
       expect(payload['venue_needed'], isTrue);
-      expect(payload['eligible_account_type'], 'community');
+      expect(payload.containsKey('eligible_account_type'), isFalse);
     });
 
     testWidgets('switching to a date range hides the single-date field', (
@@ -508,10 +513,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(
-        find.byKey(const Key('multiKolabEventDateField')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('multiKolabEventDateField')), findsOneWidget);
 
       await tester.tap(find.text('A RANGE OF DATES'));
       await tester.pumpAndSettle();
@@ -599,14 +601,14 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.tap(find.text('COMMUNITIES'));
+      await tester.tap(find.text('Communities'));
       await tester.pumpAndSettle();
       expect(
         find.text('Communities will see this role in their Explore feed.'),
         findsOneWidget,
       );
 
-      await tester.tap(find.text('BUSINESSES'));
+      await tester.tap(find.text('Businesses'));
       await tester.pumpAndSettle();
       expect(
         find.text('Businesses will see this role in their Explore feed.'),
@@ -705,7 +707,7 @@ void main() {
 
       await tester.enterText(
         find.byKey(const Key('multiKolabRoleTitleField')),
-        'Coffee sponsor',
+        'Coffee partner',
       );
       await tester.enterText(
         find.byKey(const Key('multiKolabRoleNeedField')),
@@ -756,7 +758,10 @@ void main() {
       await tester.tap(find.byKey(const Key('multiKolabPublishCta')));
       await tester.pumpAndSettle();
       // Nothing was published: the draft is still on screen.
-      expect(find.byKey(const Key('multiKolabReviewMissingBlock')), findsOneWidget);
+      expect(
+        find.byKey(const Key('multiKolabReviewMissingBlock')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows every role with its eligibility and capacity', (
@@ -870,7 +875,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('multiKolabManageReviewCta')), findsOneWidget);
+      expect(
+        find.byKey(const Key('multiKolabManageReviewCta')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('multiKolabConfirmEventCta')), findsNothing);
     });
 
@@ -932,7 +940,9 @@ void main() {
 
       await tester.tap(find.byKey(const Key('multiKolabCancelEventCta')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('multiKolabCancelEventConfirmCta')));
+      await tester.tap(
+        find.byKey(const Key('multiKolabCancelEventConfirmCta')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Please give a reason'), findsOneWidget);
@@ -942,7 +952,9 @@ void main() {
         find.byKey(const Key('multiKolabCancelReasonField')),
         'Venue fell through',
       );
-      await tester.tap(find.byKey(const Key('multiKolabCancelEventConfirmCta')));
+      await tester.tap(
+        find.byKey(const Key('multiKolabCancelEventConfirmCta')),
+      );
       await tester.pumpAndSettle();
 
       expect(repository.cancelled, [('recruiting-1', 'Venue fell through')]);
@@ -1149,7 +1161,7 @@ void main() {
       (tester) async {
         final repository = MockMultiKolabRepository();
         tallSurface(tester);
-      await tester.pumpWidget(
+        await tester.pumpWidget(
           host(
             const MultiKolabApplicantReviewScreen(
               eventId: 'event-2',
@@ -1263,7 +1275,7 @@ void main() {
     ]) {
       testWidgets('the dashboard renders in $locale', (tester) async {
         tallSurface(tester);
-      await tester.pumpWidget(
+        await tester.pumpWidget(
           host(
             const MultiKolabOrganizerDashboardScreen(),
             repository: MockMultiKolabRepository(),
@@ -1425,14 +1437,15 @@ void main() {
         // Landed on the management screen's Roles tab.
         expect(find.byKey(const Key('multiKolabAddRoleCta')), findsOneWidget);
 
-        final draft = (await repository.myEvents())
-            .firstWhere((e) => e.title == 'Launch Weekend');
+        final draft = (await repository.myEvents()).firstWhere(
+          (e) => e.title == 'Launch Weekend',
+        );
 
         // 2. Add three roles: community, business and open-ended.
         for (final (title, segment) in const [
-          ('Run club partner', 'COMMUNITIES'),
-          ('Venue partner', 'BUSINESSES'),
-          ('Open to any partner', 'BUSINESSES AND COMMUNITIES'),
+          ('Run club partner', 'Communities'),
+          ('Venue partner', 'Businesses'),
+          ('Open to any partner', 'Businesses and communities'),
         ]) {
           await tester.tap(find.byKey(const Key('multiKolabAddRoleCta')));
           await tester.pumpAndSettle();
@@ -1645,8 +1658,9 @@ class _RecordingRepository extends MockMultiKolabRepository {
   }
 
   @override
-  Future<List<MultiKolabRoleApplication>> roleApplications(String roleId) async =>
-      const [];
+  Future<List<MultiKolabRoleApplication>> roleApplications(
+    String roleId,
+  ) async => const [];
 }
 
 class _SingleDraftRepository extends MockMultiKolabRepository {

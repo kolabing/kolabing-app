@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,6 +16,7 @@ import 'package:kolabing_app/features/multi_kolab/providers/multi_kolab_provider
 import 'package:kolabing_app/features/multi_kolab/providers/multi_kolab_repository_provider.dart';
 import 'package:kolabing_app/features/multi_kolab/repositories/mock_multi_kolab_repository.dart';
 import 'package:kolabing_app/features/multi_kolab/screens/multi_kolab_applicant_review_screen.dart';
+import 'package:kolabing_app/features/multi_kolab/screens/multi_kolab_event_detail_screen.dart';
 import 'package:kolabing_app/features/multi_kolab/screens/multi_kolab_event_editor_screen.dart';
 import 'package:kolabing_app/features/multi_kolab/screens/multi_kolab_event_management_screen.dart';
 import 'package:kolabing_app/features/multi_kolab/screens/multi_kolab_organizer_dashboard_screen.dart';
@@ -46,6 +51,48 @@ import 'package:kolabing_app/l10n/app_localizations.dart';
 /// `multi_kolab_organizer_flow_test.dart`, which is what actually gates
 /// the build.
 void main() {
+  // Renders the captures in a REAL typeface instead of the test binding's
+  // block-glyph fallback. `google_fonts` fetches Inter/Anton over the
+  // network, which the test binding has none of, so the PNGs used to be
+  // unreadable rectangles. Registering a local TrueType file under the same
+  // family names makes the copy legible; the shapes are Arial's, not
+  // Inter's, so treat the captures as proof of LAYOUT and COPY, not of
+  // typeface.
+  setUpAll(() async {
+    const candidates = [
+      '/System/Library/Fonts/Supplemental/Arial.ttf',
+      '/Library/Fonts/Arial.ttf',
+    ];
+    final path = candidates.firstWhere(
+      (p) => File(p).existsSync(),
+      orElse: () => '',
+    );
+    if (path.isEmpty) return;
+
+    final bytes = await File(path).readAsBytes();
+    final data = ByteData.view(Uint8List.fromList(bytes).buffer);
+
+    // `google_fonts` keys its loaded fonts by "Family_variant"
+    // (`Inter_regular`, `Inter_700`, `Anton_regular`, ...), so registering
+    // the bare family name is not enough — every variant the theme asks for
+    // has to resolve, or that run of text falls back to block glyphs.
+    final families = <String>[];
+    for (final family in const ['Inter', 'Anton', 'Roboto']) {
+      families
+        ..add(family)
+        ..add('${family}_regular')
+        ..add('${family}_italic');
+      for (final weight in const [100, 200, 300, 500, 600, 700, 800, 900]) {
+        families..add('${family}_$weight')..add('${family}_${weight}italic');
+      }
+    }
+
+    for (final family in families) {
+      final loader = FontLoader(family)..addFont(Future.value(data));
+      await loader.load();
+    }
+  });
+
   Widget host(
     Widget child, {
     Locale locale = const Locale('en'),
@@ -154,6 +201,9 @@ void main() {
       tester,
       const MultiKolabEventEditorScreen(),
       'event_editor_create',
+      // Tall enough to show the WHOLE form, so the capture is proof that no
+      // event-level "Who can apply?" control survives below the fold.
+      size: const Size(390, 1200),
     );
   });
 
@@ -162,6 +212,71 @@ void main() {
       tester,
       const MultiKolabRoleEditorScreen(eventId: 'event-2'),
       'role_editor',
+    );
+  });
+
+  // Applicant-facing, not organizer-facing, but it belongs to the same
+  // capture harness: mock `event-1` carries exactly the three role states the
+  // detail screen has to distinguish — a one-spot open role, a FILLED role,
+  // and a multi-capacity role with one of three partners confirmed.
+  testWidgets('event detail — open, filled and multi-capacity roles', (
+    tester,
+  ) async {
+    await capture(
+      tester,
+      const MultiKolabEventDetailScreen(eventId: 'event-1'),
+      'event_detail_role_states',
+      size: const Size(390, 1500),
+    );
+  });
+
+  testWidgets('event detail — small phone', (tester) async {
+    await capture(
+      tester,
+      const MultiKolabEventDetailScreen(eventId: 'event-1'),
+      'event_detail_role_states_small_phone',
+      size: const Size(320, 1500),
+    );
+  });
+
+  testWidgets('role editor — small phone, "Businesses and communities"', (
+    tester,
+  ) async {
+    await capture(
+      tester,
+      const MultiKolabRoleEditorScreen(eventId: 'event-2'),
+      'role_editor_small_phone',
+      size: const Size(320, 1600),
+    );
+  });
+
+  testWidgets('role editor — Catalan, small phone', (tester) async {
+    await capture(
+      tester,
+      const MultiKolabRoleEditorScreen(eventId: 'event-2'),
+      'role_editor_ca_small_phone',
+      locale: const Locale('ca'),
+      size: const Size(320, 1600),
+    );
+  });
+
+  testWidgets('organizer dashboard — small phone, es', (tester) async {
+    await capture(
+      tester,
+      const MultiKolabOrganizerDashboardScreen(),
+      'organizer_dashboard_es_small_phone',
+      locale: const Locale('es'),
+      size: const Size(320, 640),
+    );
+  });
+
+  testWidgets('organizer dashboard — small phone, ca', (tester) async {
+    await capture(
+      tester,
+      const MultiKolabOrganizerDashboardScreen(),
+      'organizer_dashboard_ca_small_phone',
+      locale: const Locale('ca'),
+      size: const Size(320, 640),
     );
   });
 
