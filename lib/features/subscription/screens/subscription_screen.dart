@@ -13,12 +13,11 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../../../widgets/kolabing_button.dart';
-import '../../../widgets/referral_code_field.dart';
-import '../widgets/subscription_legal_footer.dart';
 import '../../auth/models/auth_response.dart';
 import '../../business/models/subscription.dart';
 import '../../business/providers/profile_provider.dart';
 import '../providers/iap_provider.dart';
+import '../widgets/subscription_legal_footer.dart';
 
 /// Subscription management screen for business users.
 ///
@@ -38,9 +37,6 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   bool _isCancelling = false;
   bool _isReactivating = false;
   bool _isSubscribing = false;
-  final _referralCodeController = TextEditingController();
-  String? _referralCodeApiError;
-  String? _referralCodeHelperText;
 
   @override
   void initState() {
@@ -53,41 +49,18 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     });
   }
 
-  @override
-  void dispose() {
-    _referralCodeController.dispose();
-    super.dispose();
-  }
-
   Future<void> _handleSubscribe() async {
-    setState(() {
-      _referralCodeApiError = null;
-      _referralCodeHelperText = null;
-    });
     if (Platform.isIOS) {
       try {
-        final result = await ref
-            .read(iapProvider.notifier)
-            .purchase(referralCode: _referralCodeController.text);
-        if (!mounted) return;
-        if (result.validatedReferralCode != null) {
-          _setValidatedReferralCode(result.validatedReferralCode!);
-        }
+        await ref.read(iapProvider.notifier).purchase();
       } on ApiException catch (e) {
         if (!mounted) return;
-        setState(() {
-          _referralCodeApiError = e.error.getFriendlyFieldError(
-            'referral_code',
-          );
-        });
-        if (_referralCodeApiError == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(e.error.message),
-              backgroundColor: context.colors.error,
-            ),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.error.message),
+            backgroundColor: context.colors.error,
+          ),
+        );
       } on NetworkException catch (e) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -116,7 +89,6 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             .createCheckoutSession(
               successUrl: 'kolabing://subscription/success',
               cancelUrl: 'kolabing://subscription/cancel',
-              referralCode: _referralCodeController.text,
             );
 
         await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -127,20 +99,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         }
       } on ApiException catch (e) {
         if (!mounted) return;
-        setState(() {
-          _isSubscribing = false;
-          _referralCodeApiError = e.error.getFriendlyFieldError(
-            'referral_code',
-          );
-        });
-        if (_referralCodeApiError == null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(e.error.message),
-              backgroundColor: context.colors.error,
-            ),
-          );
-        }
+        setState(() => _isSubscribing = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.error.message),
+            backgroundColor: context.colors.error,
+          ),
+        );
       } on NetworkException catch (e) {
         if (!mounted) return;
         setState(() => _isSubscribing = false);
@@ -163,19 +128,6 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         );
       }
     }
-  }
-
-  void _setValidatedReferralCode(String validatedReferralCode) {
-    _referralCodeController.value = TextEditingValue(
-      text: validatedReferralCode,
-      selection: TextSelection.collapsed(offset: validatedReferralCode.length),
-    );
-    setState(() {
-      _referralCodeApiError = null;
-      _referralCodeHelperText = AppLocalizations.of(
-        context,
-      ).subscriptionReferralCodeApplied;
-    });
   }
 
   /// Opens Apple's subscription management. Surfaces a message instead of
@@ -785,22 +737,6 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
         // Subscribe button (no active subscription)
         if (!isActive) ...[
-          ReferralCodeField(
-            controller: _referralCodeController,
-            enabled: !isSubscribeBusy,
-            errorText: _referralCodeApiError,
-            helperText: _referralCodeHelperText,
-            onChanged: (_) {
-              if (_referralCodeApiError != null ||
-                  _referralCodeHelperText != null) {
-                setState(() {
-                  _referralCodeApiError = null;
-                  _referralCodeHelperText = null;
-                });
-              }
-            },
-          ),
-          const SizedBox(height: KolabingSpacing.md),
           KolabingButton(
             label: Platform.isIOS
                 ? l10n.subscriptionSubscribeButton

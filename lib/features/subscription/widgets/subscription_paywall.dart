@@ -11,7 +11,6 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolabing_button.dart';
-import '../../../widgets/referral_code_field.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/models/user_model.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -63,9 +62,6 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   bool _isLoading = false;
   // 3-month plan is preselected (best value).
   SubscriptionPlan _selectedPlan = SubscriptionPlan.threeMonths;
-  final _referralCodeController = TextEditingController();
-  String? _referralCodeApiError;
-  String? _referralCodeHelperText;
 
   @override
   void initState() {
@@ -77,17 +73,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
     }
   }
 
-  @override
-  void dispose() {
-    _referralCodeController.dispose();
-    super.dispose();
-  }
-
   Future<void> _handleSubscribe() async {
-    setState(() {
-      _referralCodeApiError = null;
-      _referralCodeHelperText = null;
-    });
     if (Platform.isIOS) {
       await _handleAppleSubscribe();
     } else {
@@ -104,28 +90,16 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
         ? _selectedPlan
         : SubscriptionPlan.monthly;
     try {
-      final result = await iapNotifier.purchase(
-        plan: plan,
-        referralCode: _referralCodeController.text,
-      );
-      if (!mounted) return;
-      if (result.validatedReferralCode != null) {
-        _setValidatedReferralCode(result.validatedReferralCode!);
-      }
+      await iapNotifier.purchase(plan: plan);
       // Purchase result handled by listener in build method
     } on ApiException catch (e) {
       if (!mounted) return;
-      setState(() {
-        _referralCodeApiError = e.error.getFriendlyFieldError('referral_code');
-      });
-      if (_referralCodeApiError == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.error.message),
-            backgroundColor: KolabingColors.error,
-          ),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.error.message),
+          backgroundColor: KolabingColors.error,
+        ),
+      );
     } on NetworkException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -157,7 +131,6 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
           .createCheckoutSession(
             successUrl: 'kolabing://subscription/success',
             cancelUrl: 'kolabing://subscription/cancel',
-            referralCode: _referralCodeController.text,
           );
 
       if (mounted) {
@@ -175,18 +148,13 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
       }
     } on ApiException catch (e) {
       if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-        _referralCodeApiError = e.error.getFriendlyFieldError('referral_code');
-      });
-      if (_referralCodeApiError == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.error.message),
-            backgroundColor: KolabingColors.error,
-          ),
-        );
-      }
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.error.message),
+          backgroundColor: KolabingColors.error,
+        ),
+      );
     } on NetworkException catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
@@ -208,19 +176,6 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
         ),
       );
     }
-  }
-
-  void _setValidatedReferralCode(String validatedReferralCode) {
-    _referralCodeController.value = TextEditingValue(
-      text: validatedReferralCode,
-      selection: TextSelection.collapsed(offset: validatedReferralCode.length),
-    );
-    setState(() {
-      _referralCodeApiError = null;
-      _referralCodeHelperText = AppLocalizations.of(
-        context,
-      ).subscriptionReferralCodeApplied;
-    });
   }
 
   @override
@@ -327,23 +282,6 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
               // Plan picker (iOS: selectable cards; other: single monthly box)
               _buildPlanPicker(l10n, iapState),
-              const SizedBox(height: KolabingSpacing.lg),
-
-              ReferralCodeField(
-                controller: _referralCodeController,
-                enabled: !isLoading,
-                errorText: _referralCodeApiError,
-                helperText: _referralCodeHelperText,
-                onChanged: (_) {
-                  if (_referralCodeApiError != null ||
-                      _referralCodeHelperText != null) {
-                    setState(() {
-                      _referralCodeApiError = null;
-                      _referralCodeHelperText = null;
-                    });
-                  }
-                },
-              ),
               const SizedBox(height: KolabingSpacing.lg),
 
               // Subscribe button
