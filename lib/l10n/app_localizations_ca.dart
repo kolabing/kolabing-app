@@ -7396,6 +7396,23 @@ class AppLocalizationsCa extends AppLocalizations {
   String get multiKolabEntitlementGateCta => 'Demanar acces';
 
   @override
+  String get multiKolabEntitlementGateCtaHint =>
+      'Revisarem la teva peticio i et respondrem.';
+
+  @override
+  String get multiKolabEntitlementGateEmailSubject =>
+      'Peticio d\'acces Event Creator';
+
+  @override
+  String get multiKolabEntitlementGateEmailBody =>
+      'Hola Kolabing,\n\nM\'agradaria demanar acces Event Creator per al meu compte.\n\nGracies!';
+
+  @override
+  String multiKolabEntitlementGateLaunchError(String email) {
+    return 'No s\'ha pogut obrir la teva app de correu. Escriu-nos a $email.';
+  }
+
+  @override
   String get multiKolabEventFormCreateTitle => 'Nou esdeveniment Multi-Kolab';
 
   @override

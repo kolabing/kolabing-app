@@ -12890,6 +12890,30 @@ abstract class AppLocalizations {
   /// **'Request access'**
   String get multiKolabEntitlementGateCta;
 
+  /// Quiet supporting copy under the Event Creator request-access CTA.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll review your request and get back to you.'**
+  String get multiKolabEntitlementGateCtaHint;
+
+  /// Subject line of the mailto: request sent to Kolabing support.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Creator access request'**
+  String get multiKolabEntitlementGateEmailSubject;
+
+  /// Body of the mailto: request. Non-sensitive account context is appended separately.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi Kolabing,\n\nI\'d like to request Event Creator access for my account.\n\nThanks!'**
+  String get multiKolabEntitlementGateEmailBody;
+
+  /// Shown when the mailto: link cannot be opened. Includes the public support address so the user can write to us manually.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open your email app. Contact us at {email} instead.'**
+  String multiKolabEntitlementGateLaunchError(String email);
+
   /// App bar title when creating a Multi-Kolab event.
   ///
   /// In en, this message translates to:
