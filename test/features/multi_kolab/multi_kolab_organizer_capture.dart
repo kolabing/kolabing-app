@@ -8,6 +8,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:kolabing_app/features/business/providers/profile_provider.dart';
+import 'package:kolabing_app/features/business/screens/my_kollabs_screen.dart';
+import 'package:kolabing_app/features/collaboration/models/collaboration.dart';
+import 'package:kolabing_app/features/collaboration/providers/collaborations_list_provider.dart';
+import 'package:kolabing_app/features/collaboration/widgets/collaborations_list_tab.dart';
+import 'package:kolabing_app/features/kolab/enums/intent_type.dart';
+import 'package:kolabing_app/features/kolab/models/kolab.dart';
+import 'package:kolabing_app/features/kolab/providers/my_kolabs_provider.dart';
+import 'package:kolabing_app/features/kolab/screens/my_kolabs_hub_screen.dart';
 import 'package:kolabing_app/features/multi_kolab/models/event_creator_entitlement.dart';
 import 'package:kolabing_app/features/multi_kolab/models/multi_kolab_enums.dart';
 import 'package:kolabing_app/features/multi_kolab/models/multi_kolab_creator_summary.dart';
@@ -385,6 +394,185 @@ void main() {
     );
   });
 
+  // ── My Kolabs with Multi-Kolab events folded in ────────────────────────
+  //
+  // Proof that a Multi-Kolab event reads as an ordinary Kolab card in the
+  // ordinary list — no promo banner, no separate section.
+
+  Future<void> captureMyKolabs(
+    WidgetTester tester,
+    String name, {
+    Size size = const Size(390, 844),
+    String status = 'published',
+    bool hub = false,
+    List<Kolab> kolabs = const [_captureKolab],
+  }) async {
+    tester.view.physicalSize = size;
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    final router = GoRouter(
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (_, _) => hub
+              ? const MyKolabsHubScreen(
+                  offersTab: MyKollabsScreen(embedded: true),
+                )
+              : const Scaffold(body: MyKollabsScreen(embedded: true)),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          multiKolabRepositoryProvider.overrideWithValue(
+            MockMultiKolabRepository(),
+          ),
+          multiKolabEntitlementProvider.overrideWith(
+            (ref) async =>
+                const EventCreatorEntitlement(hasEventCreatorEntitlement: true),
+          ),
+          multiKolabMyEventsProvider.overrideWith(
+            (ref) async => _captureEvents,
+          ),
+          collaborationsListProvider.overrideWith(
+            (ref) async => const <Collaboration>[],
+          ),
+          myKolabsStatusProvider.overrideWith(
+            () => _CaptureStatusNotifier(status),
+          ),
+          myKolabsProvider.overrideWith(
+            () => _CaptureMyKolabsNotifier(
+              MyKolabsState(kolabs: kolabs, total: kolabs.length),
+            ),
+          ),
+          profileProvider.overrideWith(
+            () => _CaptureProfileNotifier(
+              const ProfileState(isLoading: false, isInitialized: true),
+            ),
+          ),
+        ],
+        child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('goldens/$name.png'),
+    );
+  }
+
+  testWidgets('my kolabs — ordinary and Multi-Kolab cards mixed', (
+    tester,
+  ) async {
+    await captureMyKolabs(tester, 'my_kolabs_multi_kolab_mixed', hub: true);
+  });
+
+  testWidgets('my kolabs — draft filter', (tester) async {
+    await captureMyKolabs(
+      tester,
+      'my_kolabs_multi_kolab_draft',
+      status: 'draft',
+      kolabs: const [_captureDraftKolab],
+    );
+  });
+
+  testWidgets('my kolabs — small phone', (tester) async {
+    await captureMyKolabs(
+      tester,
+      'my_kolabs_multi_kolab_small_phone',
+      size: const Size(320, 640),
+    );
+  });
+
+  // Community organizers use the very same hub and Offers list as business
+  // organizers (see CommunityMainScreen), so this is that variant with a
+  // community-authored ordinary kolab beside the event.
+  // Active tab: a CONFIRMED event sits beside ordinary active kolabs in the
+  // same bucket, using the same card shell.
+  testWidgets('my kolabs — active tab', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          multiKolabRepositoryProvider.overrideWithValue(
+            MockMultiKolabRepository(),
+          ),
+          multiKolabMyEventsProvider.overrideWith(
+            (ref) async => [
+              MultiKolabEventSummary(
+                id: 'event-9',
+                status: MultiKolabEventStatus.confirmed,
+                title: 'Kolabing Launch Weekend',
+                city: 'Barcelona',
+                eventDate: DateTime(2026, 9, 12),
+                dateMode: MultiKolabDateMode.exact,
+                roleCounts: const MultiKolabRoleCounts(
+                  total: 4,
+                  open: 0,
+                  filled: 4,
+                ),
+                eligibleAccountType: MultiKolabEligibleAccountType.either,
+              ),
+            ],
+          ),
+          collaborationsListProvider.overrideWith(
+            (ref) async => const <Collaboration>[],
+          ),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const Scaffold(
+            body: CollaborationsListTab(
+              bucket: CollaborationBucket.active,
+              emptyTitle: 'Nothing active',
+              emptyMessage: 'Nothing active yet',
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('goldens/my_kolabs_multi_kolab_active.png'),
+    );
+  });
+
+  testWidgets('my kolabs — community organizer', (tester) async {
+    await captureMyKolabs(
+      tester,
+      'my_kolabs_multi_kolab_community',
+      hub: true,
+      kolabs: const [_captureCommunityKolab],
+    );
+  });
+
   testWidgets('create event form — venue needed selected', (tester) async {
     tester.view.physicalSize = const Size(390, 1400);
     tester.view.devicePixelRatio = 1.0;
@@ -429,4 +617,93 @@ void main() {
       matchesGoldenFile('goldens/role_editor_open_ended.png'),
     );
   });
+}
+
+const _captureKolab = Kolab(
+  id: 'kolab-1',
+  intentType: IntentType.venuePromotion,
+  status: 'published',
+  title: 'Spring Rooftop Launch',
+  description: 'Looking for a community partner for our rooftop opening.',
+  preferredCity: 'Madrid',
+  venueName: 'Sky Bar',
+  venueAddress: 'Madrid',
+);
+
+const _captureDraftKolab = Kolab(
+  id: 'kolab-2',
+  intentType: IntentType.venuePromotion,
+  status: 'draft',
+  title: 'Autumn Tasting Night',
+  description: 'Draft kolab.',
+  preferredCity: 'Valencia',
+  venueName: 'Bodega',
+  venueAddress: 'Valencia',
+);
+
+const _captureCommunityKolab = Kolab(
+  id: 'kolab-3',
+  intentType: IntentType.communitySeeking,
+  status: 'published',
+  title: 'Sunday Run Club Meetup',
+  description: 'Our run club is looking for a venue partner.',
+  preferredCity: 'Barcelona',
+);
+
+final _captureEvents = [
+  MultiKolabEventSummary(
+    id: 'event-2',
+    status: MultiKolabEventStatus.recruiting,
+    title: 'Kolabing Launch Weekend',
+    city: 'Barcelona',
+    eventDate: DateTime(2026, 9, 12),
+    dateMode: MultiKolabDateMode.exact,
+    roleCounts: const MultiKolabRoleCounts(total: 4, open: 3, filled: 1),
+    eligibleAccountType: MultiKolabEligibleAccountType.either,
+  ),
+  MultiKolabEventSummary(
+    id: 'event-3',
+    status: MultiKolabEventStatus.draft,
+    title: 'Winter Market Takeover',
+    city: 'Madrid',
+    dateMode: MultiKolabDateMode.range,
+    roleCounts: const MultiKolabRoleCounts(total: 2, open: 2),
+    eligibleAccountType: MultiKolabEligibleAccountType.either,
+  ),
+];
+
+class _CaptureStatusNotifier extends MyKolabsStatusNotifier {
+  _CaptureStatusNotifier(this._status);
+
+  final String _status;
+
+  @override
+  String? build() => _status;
+}
+
+class _CaptureMyKolabsNotifier extends MyKolabsNotifier {
+  _CaptureMyKolabsNotifier(this._state);
+
+  final MyKolabsState _state;
+
+  @override
+  MyKolabsState build() {
+    ref.watch(myKolabsStatusProvider);
+    return _state;
+  }
+
+  @override
+  Future<void> refresh() async {}
+
+  @override
+  Future<void> loadMore() async {}
+}
+
+class _CaptureProfileNotifier extends ProfileNotifier {
+  _CaptureProfileNotifier(this._state);
+
+  final ProfileState _state;
+
+  @override
+  ProfileState build() => _state;
 }
