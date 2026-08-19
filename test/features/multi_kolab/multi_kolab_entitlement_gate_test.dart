@@ -102,7 +102,7 @@ void main() {
     expect(launched, isNotNull);
     expect(launched!.scheme, 'mailto');
     expect(launched!.path, KolabingSupport.email);
-    expect(launched!.path, 'support@kolabing.com');
+    expect(launched!.path, 'info@kolabing.com');
 
     final params = _decodeMailtoQuery(launched!);
     expect(params['subject'], 'Event Creator access request');
@@ -187,6 +187,13 @@ void main() {
       find.text(
         "Couldn't open your email app. Contact us at "
         '${KolabingSupport.email} instead.',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.text(
+        "Couldn't open your email app. Contact us at "
+        'info@kolabing.com instead.',
       ),
       findsOneWidget,
     );
