@@ -12692,17 +12692,41 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Please try again.'**
   String get multiKolabApplyFormErrorGeneric;
 
-  /// My Kolabs row opening the Multi-Kolab organizer area.
+  /// Small chip marking a My Kolabs card as a Multi-Kolab event.
   ///
   /// In en, this message translates to:
-  /// **'Multi-Kolab events'**
-  String get multiKolabOrganizerEntryTitle;
+  /// **'Multi-Kolab'**
+  String get multiKolabCardBadge;
 
-  /// Subtitle of the My Kolabs entry row.
+  /// Title of the sheet shown by the My Kolabs create action.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you want to create?'**
+  String get createKolabChoiceTitle;
+
+  /// Option that starts the ordinary kolab creation flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Kolab'**
+  String get createKolabChoiceKolabTitle;
+
+  /// Subtitle of the ordinary kolab creation option.
+  ///
+  /// In en, this message translates to:
+  /// **'One collaboration with one partner'**
+  String get createKolabChoiceKolabSubtitle;
+
+  /// Option that starts the Multi-Kolab event creation flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Multi-Kolab event'**
+  String get createKolabChoiceMultiKolabTitle;
+
+  /// Subtitle of the Multi-Kolab creation option.
   ///
   /// In en, this message translates to:
   /// **'One event, several partners'**
-  String get multiKolabOrganizerEntrySubtitle;
+  String get createKolabChoiceMultiKolabSubtitle;
 
   /// Organizer Multi-Kolab events overview title.
   ///

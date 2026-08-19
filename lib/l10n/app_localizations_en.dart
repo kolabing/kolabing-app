@@ -7182,10 +7182,24 @@ class AppLocalizationsEn extends AppLocalizations {
       'Something went wrong. Please try again.';
 
   @override
-  String get multiKolabOrganizerEntryTitle => 'Multi-Kolab events';
+  String get multiKolabCardBadge => 'Multi-Kolab';
 
   @override
-  String get multiKolabOrganizerEntrySubtitle => 'One event, several partners';
+  String get createKolabChoiceTitle => 'What do you want to create?';
+
+  @override
+  String get createKolabChoiceKolabTitle => 'Create a Kolab';
+
+  @override
+  String get createKolabChoiceKolabSubtitle =>
+      'One collaboration with one partner';
+
+  @override
+  String get createKolabChoiceMultiKolabTitle => 'Create a Multi-Kolab event';
+
+  @override
+  String get createKolabChoiceMultiKolabSubtitle =>
+      'One event, several partners';
 
   @override
   String get multiKolabOrganizerDashboardTitle => 'Multi-Kolab events';

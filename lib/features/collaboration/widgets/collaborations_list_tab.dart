@@ -11,6 +11,8 @@ import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_status_badge.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../kolab/providers/my_kolabs_multi_kolab_provider.dart';
+import '../../kolab/widgets/my_multi_kolab_card.dart';
 import '../models/collaboration.dart';
 import '../providers/collaborations_list_provider.dart';
 
@@ -42,6 +44,16 @@ class CollaborationsListTab extends ConsumerWidget {
     final async = bucket == CollaborationBucket.active
         ? ref.watch(activeCollaborationsProvider)
         : ref.watch(finishedCollaborationsProvider);
+    // Organizer-owned Multi-Kolab events belong in the same buckets as
+    // ordinary kolabs at the same point in their life — confirmed events are
+    // Active, terminal ones are Finished — and use the same card shell.
+    final multiKolabEvents = ref.watch(
+      myKolabsMultiKolabEventsProvider(
+        bucket == CollaborationBucket.active
+            ? MyKolabsSection.active
+            : MyKolabsSection.finished,
+      ),
+    );
 
     return RefreshIndicator(
       color: context.colors.primary,
@@ -66,7 +78,7 @@ class CollaborationsListTab extends ConsumerWidget {
           ),
         ),
         data: (items) {
-          if (items.isEmpty) {
+          if (items.isEmpty && multiKolabEvents.isEmpty) {
             return _ScrollableCenter(
               child: _Message(
                 icon: bucket == CollaborationBucket.active
@@ -94,11 +106,15 @@ class CollaborationsListTab extends ConsumerWidget {
               KolabingSpacing.md,
               KolabingSpacing.xxl,
             ),
-            itemCount: items.length,
+            itemCount: multiKolabEvents.length + items.length,
             separatorBuilder: (_, _) =>
                 const SizedBox(height: KolabingSpacing.sm),
-            itemBuilder: (context, index) =>
-                _CollaborationCard(collaboration: items[index], isDark: isDark),
+            itemBuilder: (context, index) => index < multiKolabEvents.length
+                ? MyMultiKolabCard(event: multiKolabEvents[index])
+                : _CollaborationCard(
+                    collaboration: items[index - multiKolabEvents.length],
+                    isDark: isDark,
+                  ),
           );
         },
       ),

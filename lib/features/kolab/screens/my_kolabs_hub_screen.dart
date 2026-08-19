@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../config/constants/spacing.dart';
-import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -12,7 +10,7 @@ import '../../../widgets/navigation/navigation.dart';
 import '../../application/screens/applications_screen.dart';
 import '../../collaboration/providers/collaborations_list_provider.dart';
 import '../../collaboration/widgets/collaborations_list_tab.dart';
-import '../../multi_kolab/widgets/multi_kolab_organizer_entry_row.dart';
+import '../widgets/create_kolab_choice_sheet.dart';
 
 /// Hub for the merged "My Kolabs" bottom-nav destination.
 ///
@@ -131,23 +129,11 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  // The Multi-Kolab organizer entry sits above the ordinary
-                  // offers list rather than becoming a fifth segment — see
-                  // MultiKolabOrganizerEntryRow for why.
-                  Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          KolabingSpacing.md,
-                          KolabingSpacing.sm,
-                          KolabingSpacing.md,
-                          0,
-                        ),
-                        child: MultiKolabOrganizerEntryRow(),
-                      ),
-                      Expanded(child: widget.offersTab),
-                    ],
-                  ),
+                  // Multi-Kolab has no entry point of its own here: organizer
+                  // events are ordinary cards inside these lists (see
+                  // MyMultiKolabCard), and creation lives on the same "+"
+                  // action as an ordinary Kolab.
+                  widget.offersTab,
                   ApplicationsScreen(
                     embedded: true,
                     onExplore: widget.onExploreTap,
@@ -171,7 +157,7 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
       ),
       floatingActionButton: _tabController.index == 0
           ? KolabingFAB(
-              onPressed: () => context.push(KolabingRoutes.kolabNew),
+              onPressed: () => showCreateKolabChoiceSheet(context),
               tooltip: l10n.myKolabsHubCreateTooltip,
               heroTag: 'my_kolabs_hub_fab',
             )
