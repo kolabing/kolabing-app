@@ -87,6 +87,7 @@ class MyMultiKolabCard extends StatelessWidget {
               KolabChip(
                 key: Key('myKolabsMultiKolabBadge_${event.id}'),
                 label: l10n.multiKolabCardBadge,
+                variant: KolabChipVariant.purple,
                 icon: LucideIcons.users,
               ),
             ],

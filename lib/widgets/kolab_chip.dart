@@ -13,6 +13,7 @@ enum KolabChipVariant {
   lavender, // orange accent — role badges (Business, Community), status labels
   blueGrey, // collapses to neutral — no more sky-blue pastel
   peach, // orange accent — categories, food & drink, sports, offers
+  purple, // real lavender accent — Multi-Kolab identifier badge
 }
 
 /// Shared pastel tag chip used in Explore cards and all My Kolabs cards.
@@ -74,6 +75,13 @@ class KolabChip extends StatelessWidget {
         KolabChipVariant.blueGrey => (c.surfaceVariant, c.onSurfaceVariant),
         // Peach → clean orange accent (replaces old apricot peach tint)
         KolabChipVariant.peach => (c.categoryOrangeBg, c.categoryOrangeText),
+        // Real lavender accent — light purple fill, darker purple ink. Kept
+        // separate from [KolabChipVariant.lavender], which is deliberately
+        // remapped to orange for role badges.
+        KolabChipVariant.purple => (
+          c.categoryLavenderBg,
+          c.categoryLavenderText,
+        ),
         // Neutral — default unselected state
         KolabChipVariant.neutral => (c.surfaceVariant, c.onSurfaceVariant),
       };
