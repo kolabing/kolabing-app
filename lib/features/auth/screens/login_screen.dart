@@ -9,7 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../services/permission_service.dart';
 import '../providers/auth_provider.dart';
 import '../utils/auth_navigation.dart';
 import '../widgets/apple_sign_in_button.dart';
@@ -31,9 +30,6 @@ const Color _kDivider = Color(0xFFE1D9C8);
 const String _kWelcomeRoute = '/auth/welcome';
 const String _kUserTypeSelectionRoute = '/auth/user-type';
 const String _kForgotPasswordRoute = '/auth/forgot-password';
-const String _kBusinessDashboardRoute = '/business';
-const String _kCommunityDashboardRoute = '/community';
-const String _kPermissionsRoute = '/permissions';
 
 // ---------------------------------------------------------------------------
 // LoginScreen
@@ -294,22 +290,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final user = result.user;
     if (user == null) return _kWelcomeRoute;
 
-    final destination = resolveAuthDestination(
-      user,
-      isNewUser: result.isNewUser,
+    return gateDestinationOnPermissions(
+      resolveAuthDestination(user, isNewUser: result.isNewUser),
     );
-    if (destination != _kBusinessDashboardRoute &&
-        destination != _kCommunityDashboardRoute) {
-      return destination;
-    }
-
-    final hasShownPermissions = await PermissionService.instance
-        .hasShownPermissionScreen();
-    if (!hasShownPermissions) {
-      return '$_kPermissionsRoute?destination='
-          '${Uri.encodeComponent(destination)}';
-    }
-    return destination;
   }
 
   void _showUserNotFoundDialog() {

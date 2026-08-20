@@ -61,6 +61,16 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
       _locationGranted = locationStatus?.isGranted ?? false;
       _notificationGranted = notificationStatus.isGranted;
     });
+
+    // Apple guideline 4.5.4 asks that consent be obtained before any push is
+    // delivered — an explainer screen the user can walk past with "Continue"
+    // never raises the system prompt at all. On iOS a not-yet-requested
+    // permission reports as `denied` (an actual refusal becomes
+    // `permanentlyDenied`), so this fires exactly once per install.
+    if (notificationStatus.isDenied &&
+        !notificationStatus.isPermanentlyDenied) {
+      await _requestNotification(promptedAutomatically: true);
+    }
   }
 
   Future<void> _requestLocation() async {
@@ -76,7 +86,9 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
     }
   }
 
-  Future<void> _requestNotification() async {
+  Future<void> _requestNotification({
+    bool promptedAutomatically = false,
+  }) async {
     setState(() => _isRequestingNotification = true);
     final status = await _service.requestNotificationPermission();
     if (status.isGranted) {
@@ -87,6 +99,9 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> {
       _notificationGranted = status.isGranted;
       _isRequestingNotification = false;
     });
+    // Declining the prompt the app raised on the user's behalf is a valid
+    // answer — only nudge towards Settings when they asked for notifications.
+    if (promptedAutomatically) return;
     if (status.isPermanentlyDenied || status.isDenied) {
       _showSettingsDialog(
         AppLocalizations.of(context).permissionNotificationsTitle,

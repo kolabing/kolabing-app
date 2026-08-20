@@ -7,7 +7,7 @@ import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../../services/permission_service.dart';
+import '../../../auth/utils/auth_navigation.dart';
 import '../../../auth/widgets/terms_consent_checkbox.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../utils/onboarding_field_label.dart';
@@ -153,19 +153,13 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       await Future<void>.delayed(const Duration(milliseconds: 500));
       if (!mounted) return;
 
-      // Show permission screen on first registration
-      final hasShownPermissions = await PermissionService.instance
-          .hasShownPermissionScreen();
+      // Show the permission screen on first registration.
+      final route = await gateDestinationOnPermissions(
+        KolabingRoutes.communityDashboard,
+      );
       if (!mounted) return;
 
-      if (!hasShownPermissions) {
-        context.go(
-          '${KolabingRoutes.permissions}?destination='
-          '${Uri.encodeComponent(KolabingRoutes.communityDashboard)}',
-        );
-      } else {
-        context.go(KolabingRoutes.communityDashboard);
-      }
+      context.go(route);
     } else if (result.isNetworkError) {
       setState(() => _isLoading = false);
       _showNetworkErrorSnackBar();

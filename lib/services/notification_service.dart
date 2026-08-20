@@ -112,8 +112,29 @@ class NotificationService {
   // Token Management
   // ---------------------------------------------------------------------------
 
+  /// Whether the OS notification permission is currently granted.
+  Future<bool> hasPermission() async {
+    try {
+      final settings = await _messaging.getNotificationSettings();
+      return settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional;
+    } on Exception catch (e) {
+      debugPrint('[FCM] Could not read notification settings: $e');
+      return false;
+    }
+  }
+
   /// Get the current FCM token. Returns null if not available.
+  ///
+  /// Withheld while the notification permission is not granted: the caller
+  /// registers this token with the backend, which would make the device
+  /// addressable before the user ever consented (Apple guideline 4.5.4).
   Future<String?> getToken() async {
+    if (!await hasPermission()) {
+      debugPrint('[FCM] Token withheld — notification permission not granted');
+      return null;
+    }
+
     try {
       final token = await _messaging.getToken();
       debugPrint('[FCM] Token: $token');

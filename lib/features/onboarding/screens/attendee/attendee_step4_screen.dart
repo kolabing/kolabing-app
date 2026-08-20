@@ -5,10 +5,11 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../config/constants/radius.dart';
 import '../../../../config/constants/spacing.dart';
+import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../../services/permission_service.dart';
+import '../../../auth/utils/auth_navigation.dart';
 import '../../../community/models/community.dart';
 import '../../../community/providers/community_providers.dart';
 import '../../providers/attendee_onboarding_provider.dart';
@@ -72,14 +73,11 @@ class _AttendeeStep4ScreenState extends ConsumerState<AttendeeStep4Screen> {
   }
 
   Future<void> _goHome() async {
-    final hasShownPermissions =
-        await PermissionService.instance.hasShownPermissionScreen();
+    final route = await gateDestinationOnPermissions(
+      KolabingRoutes.attendeeDashboard,
+    );
     if (!mounted) return;
-    if (!hasShownPermissions) {
-      context.go('/permissions?destination=${Uri.encodeComponent('/attendee')}');
-    } else {
-      context.go('/attendee');
-    }
+    context.go(route);
   }
 
   @override

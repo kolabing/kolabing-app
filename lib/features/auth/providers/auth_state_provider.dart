@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../config/routes/routes.dart';
 import '../../../services/one_signal_service.dart';
-import '../../../services/permission_service.dart';
+import '../utils/auth_navigation.dart';
 import 'auth_provider.dart';
 
 /// Represents the navigation destination after splash screen
@@ -105,18 +105,12 @@ class SplashStateNotifier extends Notifier<SplashState> {
         navTarget = SplashNavigationTarget.communityDashboard;
       }
 
-      // Check if the permission screen needs to be shown
-      final hasShownPermissions = await PermissionService.instance
-          .hasShownPermissionScreen();
-
-      if (!hasShownPermissions) {
-        state = state.copyWith(isLoading: false, navigationTarget: navTarget);
-        return '${KolabingRoutes.permissions}?destination='
-            '${Uri.encodeComponent(dashboard)}';
-      }
+      // The consent prompt must precede any push registration, so every
+      // dashboard entry runs through the permission gate.
+      final route = await gateDestinationOnPermissions(dashboard);
 
       state = state.copyWith(isLoading: false, navigationTarget: navTarget);
-      return dashboard;
+      return route;
     } on Exception catch (e) {
       // On error, default to the safe welcome chooser.
       await OneSignalService.instance.logout();
