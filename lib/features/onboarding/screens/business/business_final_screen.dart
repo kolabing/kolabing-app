@@ -7,10 +7,10 @@ import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../../services/permission_service.dart';
 import '../../../../widgets/referral_code_field.dart';
 import '../../../auth/models/auth_response.dart';
 import '../../../auth/providers/auth_provider.dart';
+import '../../../auth/utils/auth_navigation.dart';
 import '../../../auth/widgets/terms_consent_checkbox.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../utils/onboarding_field_label.dart';
@@ -158,18 +158,12 @@ class _BusinessFinalScreenState extends ConsumerState<BusinessFinalScreen> {
     await Future<void>.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
 
-    final hasShownPermissions = await PermissionService.instance
-        .hasShownPermissionScreen();
+    final route = await gateDestinationOnPermissions(
+      KolabingRoutes.businessDashboard,
+    );
     if (!mounted) return;
 
-    if (!hasShownPermissions) {
-      context.go(
-        '${KolabingRoutes.permissions}?destination='
-        '${Uri.encodeComponent(KolabingRoutes.businessDashboard)}',
-      );
-    } else {
-      context.go(KolabingRoutes.businessDashboard);
-    }
+    context.go(route);
   }
 
   Future<void> _handleSubmit({required bool authenticatedFlow}) async {

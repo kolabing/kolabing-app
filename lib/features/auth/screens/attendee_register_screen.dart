@@ -228,8 +228,11 @@ class _AttendeeRegisterScreenState
           _showSuccess = true;
         });
         await Future<void>.delayed(const Duration(milliseconds: 400));
+        final route = await gateDestinationOnPermissions(
+          resolveAuthDestination(user, isNewUser: result.isNewUser),
+        );
         if (!mounted) return;
-        context.go(resolveAuthDestination(user, isNewUser: result.isNewUser));
+        context.go(route);
         return;
       }
 

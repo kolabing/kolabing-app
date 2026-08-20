@@ -14,6 +14,7 @@ class OneSignalService {
   static const String _appId = '5fe7283d-a93e-46c7-b12a-f5d88b7c6571';
 
   bool _initialized = false;
+  bool _consentGiven = false;
   bool _clickListenerRegistered = false;
   bool _foregroundListenerRegistered = false;
   String? _currentExternalId;
@@ -21,6 +22,12 @@ class OneSignalService {
   void Function(OSNotification notification)? _onForegroundNotification;
 
   /// Initialize the OneSignal SDK once during app startup.
+  ///
+  /// Consent is declared as required *before* `initialize`, so the SDK creates
+  /// no push subscription and collects nothing until the user has granted the
+  /// system notification permission (Apple guideline 4.5.4). When the
+  /// permission is already granted from an earlier session the consent is
+  /// re-asserted here so the subscription reattaches on this launch.
   Future<void> initialize() async {
     if (_initialized) return;
 
@@ -28,14 +35,38 @@ class OneSignalService {
       await OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
     }
 
+    await OneSignal.consentRequired(true);
     await OneSignal.initialize(_appId);
     _initialized = true;
+
+    if (OneSignal.Notifications.permission) {
+      await _giveConsent();
+    }
   }
 
+  /// Whether the user has granted notification permission on this install.
+  bool get hasConsent => _consentGiven;
+
   /// Request native notification permission through OneSignal.
+  ///
+  /// Consent is handed to the SDK only once the user actually accepts the
+  /// system prompt, so a declined prompt leaves the device unsubscribed.
   Future<bool> requestPermission({bool fallbackToSettings = true}) async {
     await initialize();
-    return OneSignal.Notifications.requestPermission(fallbackToSettings);
+    final granted = await OneSignal.Notifications.requestPermission(
+      fallbackToSettings,
+    );
+    if (granted) {
+      await _giveConsent();
+    }
+    return granted;
+  }
+
+  Future<void> _giveConsent() async {
+    if (_consentGiven) return;
+    await OneSignal.consentGiven(true);
+    await OneSignal.User.pushSubscription.optIn();
+    _consentGiven = true;
   }
 
   /// Attach push click events to app navigation.
@@ -67,8 +98,13 @@ class OneSignalService {
   }
 
   /// Identify the signed-in user for transactional and targeted messages.
+  ///
+  /// No-op until consent exists — identifying (and therefore making
+  /// addressable) a device the user never opted in to is what got the app
+  /// rejected under guideline 4.5.4.
   Future<void> loginUser(UserModel user, {bool force = false}) async {
     await initialize();
+    if (!_consentGiven) return;
 
     final externalId = user.id.trim();
     if (externalId.isEmpty) return;
@@ -88,7 +124,7 @@ class OneSignalService {
   /// becomes available so the push subscription is opted-in and attached.
   Future<void> syncUserAfterPermissionGrant(UserModel user) async {
     await initialize();
-    await OneSignal.User.pushSubscription.optIn();
+    await _giveConsent();
     await loginUser(user, force: true);
   }
 

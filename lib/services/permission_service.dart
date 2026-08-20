@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../config/feature_flags.dart';
 import 'notification_service.dart';
 import 'one_signal_service.dart';
 
@@ -17,13 +18,24 @@ class PermissionService {
 
   /// Whether the permission screen should be skipped.
   ///
-  /// Returns true only when both location and notification permissions are
-  /// already granted — i.e. there is nothing left to request.
+  /// Returns true only when there is nothing left to request. Location is only
+  /// part of that answer while the location row is actually shown — otherwise
+  /// the app never requests it, so folding it in here would keep the screen
+  /// pinned open forever (and would read a permission the screen deliberately
+  /// leaves alone).
   Future<bool> hasShownPermissionScreen() async {
     try {
-      final locationStatus = await Permission.locationWhenInUse.status;
       final notificationStatus = await Permission.notification.status;
-      return locationStatus.isGranted && notificationStatus.isGranted;
+      if (!notificationStatus.isGranted) {
+        return false;
+      }
+
+      if (!kLocationPermissionPromptEnabled) {
+        return true;
+      }
+
+      final locationStatus = await Permission.locationWhenInUse.status;
+      return locationStatus.isGranted;
     } on Exception {
       return false;
     }
