@@ -5535,6 +5535,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not save your preference. Try again.';
 
   @override
+  String get notifSettingsPushOffTitle => 'Notifications are off';
+
+  @override
+  String get notifSettingsPushOffBody =>
+      'Turn on notifications to hear about new messages, applications and collaboration updates.';
+
+  @override
+  String get notifSettingsPushOffCta => 'Turn on notifications';
+
+  @override
   String get chatsTitle => 'Chats';
 
   @override

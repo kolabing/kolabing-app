@@ -1641,6 +1641,9 @@
   "notifSettingsMarketing": "Consells i novetats",
   "notifSettingsMarketingSubtitle": "Consells de producte i notícies ocasionals",
   "notifSettingsSaveError": "No s'ha pogut desar la teva preferència. Torna-ho a provar.",
+  "notifSettingsPushOffTitle": "Les notificacions estan desactivades",
+  "notifSettingsPushOffBody": "Activa les notificacions per assabentar-te de missatges nous, sol·licituds i novetats de les teves col·laboracions.",
+  "notifSettingsPushOffCta": "Activa les notificacions",
 
   "chatsTitle": "Xats",
   "chatInboxTooltip": "Xats",

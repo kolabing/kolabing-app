@@ -5598,6 +5598,17 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudo guardar tu preferencia. Inténtalo de nuevo.';
 
   @override
+  String get notifSettingsPushOffTitle =>
+      'Las notificaciones están desactivadas';
+
+  @override
+  String get notifSettingsPushOffBody =>
+      'Activa las notificaciones para enterarte de mensajes nuevos, solicitudes y novedades de tus colaboraciones.';
+
+  @override
+  String get notifSettingsPushOffCta => 'Activar notificaciones';
+
+  @override
   String get chatsTitle => 'Chats';
 
   @override

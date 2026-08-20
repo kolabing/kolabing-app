@@ -5625,6 +5625,17 @@ class AppLocalizationsCa extends AppLocalizations {
       'No s\'ha pogut desar la teva preferència. Torna-ho a provar.';
 
   @override
+  String get notifSettingsPushOffTitle =>
+      'Les notificacions estan desactivades';
+
+  @override
+  String get notifSettingsPushOffBody =>
+      'Activa les notificacions per assabentar-te de missatges nous, sol·licituds i novetats de les teves col·laboracions.';
+
+  @override
+  String get notifSettingsPushOffCta => 'Activa les notificacions';
+
+  @override
   String get chatsTitle => 'Xats';
 
   @override

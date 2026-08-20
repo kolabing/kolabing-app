@@ -9866,6 +9866,24 @@ abstract class AppLocalizations {
   /// **'Could not save your preference. Try again.'**
   String get notifSettingsSaveError;
 
+  /// Notification settings: banner title shown while the OS notification permission is not granted.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off'**
+  String get notifSettingsPushOffTitle;
+
+  /// Notification settings: banner body shown while the OS notification permission is not granted.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on notifications to hear about new messages, applications and collaboration updates.'**
+  String get notifSettingsPushOffBody;
+
+  /// Notification settings: action that raises the system notification permission prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on notifications'**
+  String get notifSettingsPushOffCta;
+
   /// Chat inbox screen app-bar title.
   ///
   /// In en, this message translates to:

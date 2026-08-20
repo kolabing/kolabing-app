@@ -1641,6 +1641,9 @@
   "notifSettingsMarketing": "Consejos y novedades",
   "notifSettingsMarketingSubtitle": "Consejos de producto y noticias ocasionales",
   "notifSettingsSaveError": "No se pudo guardar tu preferencia. Inténtalo de nuevo.",
+  "notifSettingsPushOffTitle": "Las notificaciones están desactivadas",
+  "notifSettingsPushOffBody": "Activa las notificaciones para enterarte de mensajes nuevos, solicitudes y novedades de tus colaboraciones.",
+  "notifSettingsPushOffCta": "Activar notificaciones",
 
   "chatsTitle": "Chats",
   "chatInboxTooltip": "Chats",

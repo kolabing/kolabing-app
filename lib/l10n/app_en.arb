@@ -6588,6 +6588,12 @@
   "@notifSettingsMarketingSubtitle": { "description": "Notification settings: marketing subtitle" },
   "notifSettingsSaveError": "Could not save your preference. Try again.",
   "@notifSettingsSaveError": { "description": "Notification settings: save failure message" },
+  "notifSettingsPushOffTitle": "Notifications are off",
+  "@notifSettingsPushOffTitle": { "description": "Notification settings: banner title shown while the OS notification permission is not granted." },
+  "notifSettingsPushOffBody": "Turn on notifications to hear about new messages, applications and collaboration updates.",
+  "@notifSettingsPushOffBody": { "description": "Notification settings: banner body shown while the OS notification permission is not granted." },
+  "notifSettingsPushOffCta": "Turn on notifications",
+  "@notifSettingsPushOffCta": { "description": "Notification settings: action that raises the system notification permission prompt." },
 
   "chatsTitle": "Chats",
   "@chatsTitle": { "description": "Chat inbox screen app-bar title." },
