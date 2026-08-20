@@ -9,12 +9,13 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/category_chip.dart';
 import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_chip.dart';
 import '../../../widgets/kolab_status_badge.dart';
-import '../../auth/providers/auth_provider.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/kolabing_card_action_bar.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../enums/intent_type.dart';
 import '../models/kolab.dart';
 import '../providers/my_kolabs_provider.dart';
@@ -62,9 +63,7 @@ class MyKolabCard extends ConsumerWidget {
 
   String get _initials {
     // Strip leading non-letters so "[TEST] ..." yields "T", not "[".
-    final cleaned = kolab.title
-        .replaceAll(RegExp(r'^[^A-Za-z0-9]+'), '')
-        .trim();
+    final cleaned = kolab.title.replaceAll(RegExp('^[^A-Za-z0-9]+'), '').trim();
     return cleaned.isNotEmpty ? cleaned[0].toUpperCase() : 'K';
   }
 
@@ -78,9 +77,16 @@ class MyKolabCard extends ConsumerWidget {
         : fmt.format(start);
   }
 
+  /// Community-type labels are a taxonomy, so they render as [CategoryChip]s.
+  /// Venue/product names are plain metadata and keep the neutral [KolabChip].
+  List<String> get _communityTypeLabels =>
+      kolab.intentType == IntentType.communitySeeking
+      ? kolab.communityTypeLabels.take(2).toList()
+      : const <String>[];
+
   String get _secondaryLabel {
     if (kolab.intentType == IntentType.communitySeeking) {
-      return kolab.communityTypeLabels.take(2).join(', ');
+      return '';
     }
     if (kolab.intentType == IntentType.venuePromotion) {
       return kolab.venueName ?? '';
@@ -129,6 +135,7 @@ class MyKolabCard extends ConsumerWidget {
                   variant: KolabChipVariant.amber,
                   icon: LucideIcons.mapPin,
                 ),
+              ..._communityTypeLabels.map((c) => CategoryChip(label: c)),
               if (_secondaryLabel.isNotEmpty)
                 KolabChip(
                   label: _secondaryLabel,

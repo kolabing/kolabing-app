@@ -9,6 +9,7 @@ import '../config/theme/typography.dart';
 import '../features/discovery/models/discovery_item.dart';
 import '../l10n/app_localizations.dart';
 import 'blurred_identity.dart';
+import 'category_chip.dart';
 
 class ExploreSwipeCard extends StatefulWidget {
   const ExploreSwipeCard({
@@ -168,9 +169,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     builder: (BuildContext context) {
       final colors = context.colors;
       return DecoratedBox(
-        decoration: BoxDecoration(
-          color: colors.surfaceVariant,
-        ),
+        decoration: BoxDecoration(color: colors.surfaceVariant),
         child: Center(
           child: Container(
             width: 64,
@@ -178,10 +177,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.white.withValues(alpha: 0.7),
-              border: Border.all(
-                color: colors.hairline,
-                width: 1.5,
-              ),
+              border: Border.all(color: colors.hairline, width: 1.5),
             ),
             alignment: Alignment.center,
             child: Text(
@@ -300,7 +296,11 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
             _buildTagChips(chips),
           ],
           const SizedBox(height: 10),
-          const Divider(height: 1, thickness: 1, color: KolabingColors.hairline),
+          const Divider(
+            height: 1,
+            thickness: 1,
+            color: KolabingColors.hairline,
+          ),
           const SizedBox(height: 10),
           _buildViewDetailsRow(),
         ],
@@ -346,7 +346,11 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         ),
         if (city.isNotEmpty) ...[
           Text(' · ', style: _secondaryStyle),
-          const Icon(Icons.location_on_outlined, size: 12, color: KolabingColors.textTertiary),
+          const Icon(
+            Icons.location_on_outlined,
+            size: 12,
+            color: KolabingColors.textTertiary,
+          ),
           const SizedBox(width: 2),
           Flexible(
             child: Text(
@@ -366,7 +370,11 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     children: [
       const Padding(
         padding: EdgeInsets.only(top: 1),
-        child: Icon(Icons.local_offer_outlined, size: 13, color: KolabingColors.onSurface),
+        child: Icon(
+          Icons.local_offer_outlined,
+          size: 13,
+          color: KolabingColors.onSurface,
+        ),
       ),
       const SizedBox(width: 5),
       Expanded(
@@ -388,51 +396,8 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   Widget _buildTagChips(List<String> chips) => Wrap(
     spacing: 6,
     runSpacing: 6,
-    children: [for (final chip in chips) _buildChip(chip)],
+    children: [for (final chip in chips) CategoryChip(label: chip)],
   );
-
-  (Color fill, Color text) _chipColors(String label) {
-    final l = label.toLowerCase();
-    // Category/offer/type chips → clean orange accent (soft warm fill + dark orange text)
-    if (_matchesAny(l, [
-      'run', 'sport', 'fit', 'yoga', 'paddle', 'gym', 'bike',
-      'food', 'coffee', 'drink', 'restaurant', 'bar', 'gastro', 'cook', 'cafe',
-      'discount', 'promo', 'wellness', 'health', 'organic', 'mindful', 'spa',
-      'nature', 'eco', 'garden', 'outdoor', 'green',
-      'music', 'art', 'culture', 'film', 'photo', 'design', 'theatre', 'dance',
-      'venue', 'technology', 'fashion', 'retail', 'coworking', 'startup',
-    ])) {
-      return (KolabingColors.categoryOrangeBg, KolabingColors.accentOrangeText);
-    }
-    // Everything else → warm neutral
-    return (KolabingColors.surfaceContainerHigh, KolabingColors.onSurfaceVariant);
-  }
-
-  bool _matchesAny(String label, List<String> keywords) =>
-      keywords.any((kw) => label.contains(kw));
-
-  Widget _buildChip(String label) {
-    final (fill, textColor) = _chipColors(label);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-      decoration: BoxDecoration(
-        color: fill,
-        borderRadius: BorderRadius.circular(KolabingRadius.round),
-        border: Border.all(color: KolabingColors.hairline),
-      ),
-      child: Text(
-        label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: GoogleFonts.inter(
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-          color: textColor,
-          letterSpacing: 0.1,
-        ),
-      ),
-    );
-  }
 
   Widget _buildViewDetailsRow() => Row(
     children: [
@@ -445,7 +410,11 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         ),
       ),
       const Spacer(),
-      const Icon(Icons.chevron_right_rounded, size: 18, color: KolabingColors.onSurface),
+      const Icon(
+        Icons.chevron_right_rounded,
+        size: 18,
+        color: KolabingColors.onSurface,
+      ),
     ],
   );
 

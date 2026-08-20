@@ -79,51 +79,7 @@ class KolabChip extends StatelessWidget {
       };
 }
 
-/// Pick a [KolabChipVariant] from a raw category/tag string.
-KolabChipVariant kolabChipVariantFor(String category) {
-  final c = category.toLowerCase();
-  // Role / status labels → orange accent
-  if (c == 'business' || c == 'community') {
-    return KolabChipVariant.lavender;
-  }
-  // Date / time / recurrence → green
-  if (c.contains('recurring') ||
-      c.contains('daily') ||
-      c.contains('weekly') ||
-      c.contains('monthly')) {
-    return KolabChipVariant.sage;
-  }
-  // Location / venue → yellow (warm sand)
-  if (c.contains('venue') || c.contains('location')) {
-    return KolabChipVariant.amber;
-  }
-  // Category / offer type → red (peach/apricot)
-  if (c.contains('food') ||
-      c.contains('drink') ||
-      c.contains('bar') ||
-      c.contains('restaurant') ||
-      c.contains('cafe') ||
-      c.contains('sport') ||
-      c.contains('fitness') ||
-      c.contains('yoga') ||
-      c.contains('gym') ||
-      c.contains('wellness') ||
-      c.contains('health') ||
-      c.contains('discount') ||
-      c.contains('promo') ||
-      c.contains('offer')) {
-    return KolabChipVariant.peach;
-  }
-  // Creative / cultural → blue (sky blue)
-  if (c.contains('music') ||
-      c.contains('art') ||
-      c.contains('film') ||
-      c.contains('culture') ||
-      c.contains('photo') ||
-      c.contains('community') ||
-      c.contains('social') ||
-      c.contains('event')) {
-    return KolabChipVariant.blueGrey;
-  }
-  return KolabChipVariant.neutral;
-}
+/// NOTE: category/community-type labels no longer go through [KolabChip].
+/// Use `CategoryChip` (`lib/widgets/category_chip.dart`), which resolves colours
+/// via `CategoryStyleResolver`. [KolabChip] remains for city/date/secondary
+/// metadata chips only.
