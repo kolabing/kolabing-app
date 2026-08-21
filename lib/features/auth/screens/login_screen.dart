@@ -510,7 +510,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               children: [
                                 // Heading
                                 Text(
-                                  'WELCOME BACK.',
+                                  AppLocalizations.of(context).signInTitle,
                                   style: KolabingTextStyles.displayMedium
                                       .copyWith(
                                         color: _kInk,

@@ -19,6 +19,7 @@ import '../../kolab/widgets/my_kolabs_sub_tabs.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/opportunity_provider.dart';
 import '../../../widgets/kolabing_button.dart';
+import '../../../widgets/page_title.dart';
 import '../../opportunity/utils/opportunity_share.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../widgets/my_opportunity_card.dart';
@@ -70,10 +71,7 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen>
   final _scrollController = ScrollController();
   late final TabController _statusTabController;
 
-  static const _statusTabs = [
-    (value: 'published'),
-    (value: 'draft'),
-  ];
+  static const _statusTabs = [(value: 'published'), (value: 'draft')];
 
   String _statusTabLabel(AppLocalizations l10n, String value) {
     switch (value) {
@@ -249,8 +247,9 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen>
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              style:
-                  TextButton.styleFrom(foregroundColor: context.colors.error),
+              style: TextButton.styleFrom(
+                foregroundColor: context.colors.error,
+              ),
               child: Text(dialogL10n.myOpportunitiesDeleteConfirm),
             ),
           ],
@@ -344,34 +343,33 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen>
   Widget _buildHeader() {
     final l10n = AppLocalizations.of(context);
     return Padding(
-    padding: const EdgeInsets.fromLTRB(
-      KolabingSpacing.md,
-      KolabingSpacing.md,
-      KolabingSpacing.md,
-      KolabingSpacing.xs,
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.myOpportunitiesHeaderTitle,
-          style: KolabingTextStyles.pageTitle.copyWith(
-            color: context.colors.onSurface,
+      padding: const EdgeInsets.fromLTRB(
+        KolabingSpacing.md,
+        KolabingSpacing.md,
+        KolabingSpacing.md,
+        KolabingSpacing.xs,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PageTitle(l10n.myOpportunitiesHeaderTitle),
+          const SizedBox(height: KolabingSpacing.xxs),
+          Text(
+            l10n.myOpportunitiesHeaderSubtitle,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
-        ),
-        const SizedBox(height: KolabingSpacing.xxs),
-        Text(
-          l10n.myOpportunitiesHeaderSubtitle,
-          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
   }
 
   Widget _buildStatusTabs(String? currentStatus) {
     final l10n = AppLocalizations.of(context);
-    final selectedIndex = _statusTabs.indexWhere((t) => t.value == currentStatus);
+    final selectedIndex = _statusTabs.indexWhere(
+      (t) => t.value == currentStatus,
+    );
     if (selectedIndex >= 0 &&
         _statusTabController.index != selectedIndex &&
         !_statusTabController.indexIsChanging) {
@@ -402,7 +400,10 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen>
         ),
         child: Text(
           AppLocalizations.of(context).myOpportunitiesCount(listState.total),
-          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w500, color: context.colors.textTertiary),
+          style: KolabingTextStyles.captionSecondary.copyWith(
+            fontWeight: FontWeight.w500,
+            color: context.colors.textTertiary,
+          ),
         ),
       ),
       Expanded(
@@ -490,97 +491,109 @@ class _MyOpportunitiesScreenState extends ConsumerState<MyOpportunitiesScreen>
   Widget _buildEmptyState() {
     final l10n = AppLocalizations.of(context);
     return Center(
-    child: Padding(
-      padding: const EdgeInsets.all(KolabingSpacing.xl),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: context.colors.surfaceVariant,
-              shape: BoxShape.circle,
-            ),
-            child: SizedBox(
-              width: 80,
-              height: 80,
-              child: Icon(
-                LucideIcons.star,
-                size: 36,
-                color: context.colors.textTertiary,
+      child: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: context.colors.surfaceVariant,
+                shape: BoxShape.circle,
+              ),
+              child: SizedBox(
+                width: 80,
+                height: 80,
+                child: Icon(
+                  LucideIcons.star,
+                  size: 36,
+                  color: context.colors.textTertiary,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: KolabingSpacing.lg),
-          Text(
-            l10n.myOpportunitiesEmptyTitle,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
-          ),
-          const SizedBox(height: KolabingSpacing.xs),
-          Text(
-            l10n.myOpportunitiesEmptyBody,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: KolabingSpacing.lg),
-          KolabingButton(
-            label: l10n.myOpportunitiesEmptyCreateButton,
-            onPressed: _onCreateNew,
-            variant: KolabingButtonVariant.primary,
-            size: KolabingButtonSize.compact,
-            icon: const Icon(LucideIcons.plus, size: 18),
-          ),
-        ],
+            const SizedBox(height: KolabingSpacing.lg),
+            Text(
+              l10n.myOpportunitiesEmptyTitle,
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.xs),
+            Text(
+              l10n.myOpportunitiesEmptyBody,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: KolabingSpacing.lg),
+            KolabingButton(
+              label: l10n.myOpportunitiesEmptyCreateButton,
+              onPressed: _onCreateNew,
+              variant: KolabingButtonVariant.primary,
+              size: KolabingButtonSize.compact,
+              icon: const Icon(LucideIcons.plus, size: 18),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
   }
 
   Widget _buildErrorState(String error) {
     final l10n = AppLocalizations.of(context);
     return Center(
-    child: Padding(
-      padding: const EdgeInsets.all(KolabingSpacing.xl),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: context.colors.errorBg,
-              shape: BoxShape.circle,
-            ),
-            child: SizedBox(
-              width: 80,
-              height: 80,
-              child: Icon(
-                LucideIcons.alertCircle,
-                size: 36,
-                color: context.colors.error,
+      child: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: context.colors.errorBg,
+                shape: BoxShape.circle,
+              ),
+              child: SizedBox(
+                width: 80,
+                height: 80,
+                child: Icon(
+                  LucideIcons.alertCircle,
+                  size: 36,
+                  color: context.colors.error,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: KolabingSpacing.lg),
-          Text(
-            l10n.myOpportunitiesErrorTitle,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
-          ),
-          const SizedBox(height: KolabingSpacing.xs),
-          Text(
-            error,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: KolabingSpacing.lg),
-          KolabingButton(
-            label: l10n.commonRetry,
-            onPressed: () {
-              ref.read(myOpportunitiesProvider.notifier).refresh();
-            },
-            variant: KolabingButtonVariant.primary,
-            size: KolabingButtonSize.compact,
-          ),
-        ],
+            const SizedBox(height: KolabingSpacing.lg),
+            Text(
+              l10n.myOpportunitiesErrorTitle,
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
+              ),
+            ),
+            const SizedBox(height: KolabingSpacing.xs),
+            Text(
+              error,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: KolabingSpacing.lg),
+            KolabingButton(
+              label: l10n.commonRetry,
+              onPressed: () {
+                ref.read(myOpportunitiesProvider.notifier).refresh();
+              },
+              variant: KolabingButtonVariant.primary,
+              size: KolabingButtonSize.compact,
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
   }
 }

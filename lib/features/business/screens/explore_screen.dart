@@ -13,6 +13,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/explore_detail_sheet.dart';
 import '../../../widgets/explore_filter_sheet.dart';
 import '../../../widgets/explore_swipe_card.dart';
+import '../../../widgets/page_title.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../application/widgets/apply_success_sheet.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -291,15 +292,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(
-            child: Text(
-              'EXPLORE',
-              style: KolabingTextStyles.headlineLarge.copyWith(
-                color: context.colors.onSurface,
-                letterSpacing: 1.0,
-              ),
-            ),
-          ),
+          const Expanded(child: PageTitle('Explore')),
           const NotificationBell(),
           const SizedBox(width: KolabingSpacing.xs),
           Container(

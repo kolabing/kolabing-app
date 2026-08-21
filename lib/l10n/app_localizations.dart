@@ -1207,7 +1207,7 @@ abstract class AppLocalizations {
   /// Forgot-password hero headline, line 1 (initial state).
   ///
   /// In en, this message translates to:
-  /// **'RESET ACCESS.'**
+  /// **'Reset access.'**
   String get forgotPasswordHeroLine1;
 
   /// Forgot-password hero headline, line 2 (initial state).
@@ -1303,7 +1303,7 @@ abstract class AppLocalizations {
   /// Sign-in (Google) screen title.
   ///
   /// In en, this message translates to:
-  /// **'WELCOME BACK'**
+  /// **'Welcome back.'**
   String get signInTitle;
 
   /// Sign-in (Google) screen subtitle.
@@ -3919,7 +3919,7 @@ abstract class AppLocalizations {
   /// My opportunities screen: page header title (uppercase)
   ///
   /// In en, this message translates to:
-  /// **'MY OPPORTUNITIES'**
+  /// **'My opportunities'**
   String get myOpportunitiesHeaderTitle;
 
   /// My opportunities screen: page header subtitle
@@ -6181,7 +6181,7 @@ abstract class AppLocalizations {
   /// AppBar title on the new-kolab intent selection screen
   ///
   /// In en, this message translates to:
-  /// **'NEW KOLAB'**
+  /// **'New Kolab'**
   String get intentSelectionAppBarTitle;
 
   /// Headline for community users on the intent selection screen
@@ -6289,19 +6289,19 @@ abstract class AppLocalizations {
   /// AppBar title for the community-seeking kolab flow
   ///
   /// In en, this message translates to:
-  /// **'FIND A PARTNER'**
+  /// **'Find a Partner'**
   String get kolabFlowTitleFindPartner;
 
   /// AppBar title for the venue promotion kolab flow
   ///
   /// In en, this message translates to:
-  /// **'PROMOTE VENUE'**
+  /// **'Promote Venue'**
   String get kolabFlowTitlePromoteVenue;
 
   /// AppBar title for the product promotion kolab flow
   ///
   /// In en, this message translates to:
-  /// **'PROMOTE PRODUCT'**
+  /// **'Promote Product'**
   String get kolabFlowTitlePromoteProduct;
 
   /// Success dialog title after publishing a kolab
@@ -6331,7 +6331,7 @@ abstract class AppLocalizations {
   /// Title of the My Kolabs hub screen
   ///
   /// In en, this message translates to:
-  /// **'MY KOLABS'**
+  /// **'My Kolabs'**
   String get myKolabsHubTitle;
 
   /// My Kolabs hub tab: offers
@@ -8993,13 +8993,13 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardBusinessTitle.
   ///
   /// In en, this message translates to:
-  /// **'BUSINESS DASHBOARD'**
+  /// **'Business dashboard'**
   String get dashboardBusinessTitle;
 
   /// No description provided for @dashboardCommunityTitle.
   ///
   /// In en, this message translates to:
-  /// **'COMMUNITY DASHBOARD'**
+  /// **'Community dashboard'**
   String get dashboardCommunityTitle;
 
   /// Dashboard greeting. {name} is the user's display name.

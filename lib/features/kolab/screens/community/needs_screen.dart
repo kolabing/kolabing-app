@@ -46,15 +46,21 @@ class NeedsScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section header — Anton uppercase
+          // Section header — bold uppercase Inter eyebrow label
           Text(
             l10n.needsScreenTitle,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurfaceVariant,
+              letterSpacing: 1.0,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             l10n.offeringSelectAllThatApply,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
 
           // Validation error
@@ -111,9 +117,14 @@ class NeedsScreen extends ConsumerWidget {
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
                         label,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          color: isSelected
                               ? context.colors.onSurface
-                              : context.colors.onSurfaceVariant),
+                              : context.colors.onSurfaceVariant,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -134,32 +145,28 @@ class NeedsScreen extends ConsumerWidget {
   }
 
   Widget _buildFieldError(BuildContext context, String error) => Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xs,
-        ),
-        decoration: BoxDecoration(
-          color: context.colors.errorBg,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 14,
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.sm,
+      vertical: KolabingSpacing.xs,
+    ),
+    decoration: BoxDecoration(
+      color: context.colors.errorBg,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Row(
+      children: [
+        Icon(Icons.error_outline, size: 14, color: context.colors.error),
+        const SizedBox(width: KolabingSpacing.xs),
+        Expanded(
+          child: Text(
+            error,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
               color: context.colors.error,
             ),
-            const SizedBox(width: KolabingSpacing.xs),
-            Expanded(
-              child: Text(
-                error,
-                style: KolabingTextStyles.bodySmall.copyWith(
-                  fontSize: 12,
-                  color: context.colors.error,
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
 }

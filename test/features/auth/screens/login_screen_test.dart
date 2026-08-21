@@ -56,7 +56,7 @@ void main() {
     // asserted.
     expect(find.byType(SingleChildScrollView), findsOneWidget);
     // Current minimal hero copy (localized) + social buttons.
-    expect(find.text('WELCOME BACK.'), findsOneWidget);
+    expect(find.text('Welcome back.'), findsOneWidget);
     expect(find.text('Pick up where you left off.'), findsOneWidget);
     expect(find.text('Sign in'), findsOneWidget);
     expect(find.text('Google'), findsOneWidget);
@@ -76,7 +76,7 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.text('WELCOME BACK.'), findsOneWidget);
+    expect(find.text('Welcome back.'), findsOneWidget);
     expect(find.text('Apple'), findsOneWidget);
   });
 

@@ -286,7 +286,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                               children: [
                                 // Heading
                                 Text(
-                                  'RESET ACCESS.',
+                                  AppLocalizations.of(
+                                    context,
+                                  ).forgotPasswordHeroLine1,
                                   style: KolabingTextStyles.displayMedium
                                       .copyWith(
                                         color: _kInk,

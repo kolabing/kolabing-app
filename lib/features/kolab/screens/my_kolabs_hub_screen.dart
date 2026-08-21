@@ -5,10 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
-import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolabing_segmented_control.dart';
 import '../../../widgets/navigation/navigation.dart';
+import '../../../widgets/page_title.dart';
 import '../../application/screens/applications_screen.dart';
 import '../../collaboration/providers/collaborations_list_provider.dart';
 import '../../collaboration/widgets/collaborations_list_tab.dart';
@@ -100,12 +100,7 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
                 KolabingSpacing.md,
                 KolabingSpacing.xs,
               ),
-              child: Text(
-                l10n.myKolabsHubTitle.toUpperCase(),
-                style: KolabingTextStyles.displayTitle.copyWith(
-                  color: context.colors.titleInk,
-                ),
-              ),
+              child: PageTitle(l10n.myKolabsHubTitle),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(
