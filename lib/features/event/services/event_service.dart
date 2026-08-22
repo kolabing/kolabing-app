@@ -67,6 +67,7 @@ class EventService {
     String? profileId,
     String? communityId,
     String? time, // 'upcoming' | 'past' (Phase-3 filter)
+    bool mine = false,
     int page = 1,
     int limit = 10,
   }) async {
@@ -74,6 +75,7 @@ class EventService {
       profileId: profileId,
       communityId: communityId,
       time: time,
+      mine: mine,
       page: page,
       limit: limit,
       allowRetry: true,
@@ -84,6 +86,7 @@ class EventService {
     String? profileId,
     String? communityId,
     String? time,
+    bool mine = false,
     required int page,
     required int limit,
     required bool allowRetry,
@@ -93,6 +96,10 @@ class EventService {
       'limit': limit.toString(),
       if (profileId != null) 'profile_id': profileId,
       if (communityId != null) 'community_id': communityId,
+      // `attendee=me` scopes to events the viewer has a check-in OR a
+      // non-cancelled signup for (EventService::list). Not the same as "checked
+      // in", but the right candidate set when the server says you already are.
+      if (mine) 'attendee': 'me',
       if (time != null) 'time': time,
     };
 
@@ -240,7 +247,10 @@ class EventService {
   Future<Event> cancelSignup(String eventId) =>
       _cancelSignup(eventId, allowRetry: true);
 
-  Future<Event> _cancelSignup(String eventId, {required bool allowRetry}) async {
+  Future<Event> _cancelSignup(
+    String eventId, {
+    required bool allowRetry,
+  }) async {
     final response = await _sendWithRefresh(
       () async => _httpClient.delete(
         Uri.parse('$_baseUrl/events/$eventId/signup'),
@@ -329,8 +339,7 @@ class EventService {
   Future<Event> addEventPhotosFromGallery(
     String eventId,
     List<String> photoIds,
-  ) =>
-      _addEventPhotosFromGallery(eventId, photoIds, allowRetry: true);
+  ) => _addEventPhotosFromGallery(eventId, photoIds, allowRetry: true);
 
   Future<Event> _addEventPhotosFromGallery(
     String eventId,
@@ -437,9 +446,9 @@ class EventService {
       // Present only when converting a one-off into a recurring series.
       if (recurrence != null) 'recurrence': recurrence,
     };
-    final uri = Uri.parse('$_baseUrl/events/$eventId').replace(
-      queryParameters: scope == 'this' ? null : {'scope': scope},
-    );
+    final uri = Uri.parse(
+      '$_baseUrl/events/$eventId',
+    ).replace(queryParameters: scope == 'this' ? null : {'scope': scope});
     final response = await _sendWithRefresh(
       () async => _httpClient.put(
         uri,
@@ -572,7 +581,9 @@ class EventService {
     }
     if (response.statusCode == 403) {
       throw const ApiException(
-        error: ApiError(message: 'You are not authorized to manage this series.'),
+        error: ApiError(
+          message: 'You are not authorized to manage this series.',
+        ),
       );
     }
     throw _parseApiError(response);
@@ -749,9 +760,9 @@ class EventService {
     required String scope,
     required bool allowRetry,
   }) async {
-    final uri = Uri.parse('$_baseUrl/events/$eventId').replace(
-      queryParameters: scope == 'this' ? null : {'scope': scope},
-    );
+    final uri = Uri.parse(
+      '$_baseUrl/events/$eventId',
+    ).replace(queryParameters: scope == 'this' ? null : {'scope': scope});
     debugPrint('EventService: DELETE $uri');
 
     try {

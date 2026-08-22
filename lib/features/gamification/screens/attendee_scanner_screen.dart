@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/permission_service.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../event/providers/event_provider.dart';
 import '../models/event_checkin.dart';
 import '../models/qr_payload.dart';
 import '../providers/active_event_session_provider.dart';
@@ -217,9 +219,20 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
     await _afterOutcome(action);
   }
 
-  /// Opens a session after a duplicate check-in, from whatever the app knows:
-  /// the event on the 409 body if the backend sent one, otherwise the event
-  /// this scanner was opened from.
+  /// Opens a session after a duplicate check-in.
+  ///
+  /// A 409 means the server has us checked in but will not say to what — the
+  /// response body is `{success, message}` with no `data` (verified against the
+  /// dev API). Without recovering the event here, the member is checked in
+  /// server-side yet cannot pair up, and the only thing the app can suggest is
+  /// rescanning the code that just 409'd.
+  ///
+  /// Three sources, best first:
+  ///  1. the check-in on the 409 body, if a future backend starts sending one;
+  ///  2. the event this scanner was opened from (the event-hub path);
+  ///  3. `GET /events?attendee=me&time=upcoming` — events the viewer has a
+  ///     check-in or live signup for. Used only when it names exactly one, so a
+  ///     guess is never presented as fact.
   Future<void> _recoverSession(EventCheckin? fromResponse) async {
     final notifier = ref.read(activeEventSessionProvider.notifier);
 
@@ -227,12 +240,30 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
       await notifier.start(fromResponse);
       return;
     }
+
     final eventId = widget.eventId;
     if (eventId != null && eventId.isNotEmpty) {
       await notifier.startForEvent(
         eventId: eventId,
         eventName: widget.eventName,
       );
+      return;
+    }
+
+    try {
+      final result = await ref
+          .read(eventServiceProvider)
+          .getEvents(mine: true, time: 'upcoming', limit: 5);
+
+      if (result.events.length == 1) {
+        final only = result.events.first;
+        await notifier.startForEvent(eventId: only.id, eventName: only.name);
+      }
+      // More than one live event, or none: do not guess. The member still gets
+      // the "you're already checked in" sheet, and pairing will ask them to
+      // scan the event code.
+    } on Object catch (e) {
+      debugPrint('scanner: could not recover the active event: $e');
     }
   }
 
