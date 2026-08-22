@@ -28,10 +28,25 @@ const bool kGamificationSetupEnabled = false;
 /// loop into `point_ledger`.
 const bool kEventCheckinQrEnabled = true;
 
-/// Hides the **Members** tab on the community detail screen (leaving Rewards +
-/// Events) while the member-roster surface is on hold. Set to `true` to bring
-/// the Members tab back.
-const bool kCommunityMembersTabEnabled = false;
+/// The **Members** tab on the community detail screen (alongside Rewards +
+/// Events).
+///
+/// On for QA of the community-member surfaces (#136). The roster reads
+/// `community_members`, which `kolabing:seed-qa-gamification` populates.
+const bool kCommunityMembersTabEnabled = true;
+
+/// Whether a new attendee (Community Member) can sign themselves up.
+///
+/// Closed in `820e3b7` when the attendee track was pulled from launch scope,
+/// which also removed the only way to *create* a test attendee — hence this
+/// flag rather than another hard-coded `false` (#136).
+///
+/// ⚠️ **Release decision.** With this on, attendee sign-up is publicly
+/// reachable from the user-type selection screen. It was closed deliberately;
+/// whether it reopens is a product call, and this flag must be reviewed before
+/// any store build. The account type itself has always worked — existing
+/// attendees can sign in either way.
+const bool kAttendeeSignupEnabled = true;
 
 /// Hides the **Location** row on the post-signup permission screen.
 ///
