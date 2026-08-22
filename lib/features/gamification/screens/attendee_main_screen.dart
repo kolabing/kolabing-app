@@ -77,6 +77,11 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
     if (!mounted) return;
     await showModalBottomSheet<void>(
       context: context,
+      // Scroll-controlled so the sheet sizes to its content. A default sheet is
+      // capped near half the screen, which the QR plus two lines of copy
+      // overflows — and would again at a larger text scale.
+      isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: KolabingColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -279,7 +284,11 @@ class _MyProfileQrSheet extends ConsumerWidget {
         : '';
 
     return SafeArea(
-      child: Padding(
+      // Scrolls rather than overflows: the QR has a fixed size, so anything
+      // that grows around it — translated copy wrapping to another line, a
+      // long display name, a large accessibility text scale — has to give
+      // somewhere.
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(KolabingSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
