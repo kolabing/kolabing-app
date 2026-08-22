@@ -51,6 +51,24 @@ class ActiveEventSessionNotifier extends Notifier<ActiveEventSession?> {
     }
   }
 
+  /// Opens a session for an event we already know, with no check-in payload.
+  /// See [ActiveEventSession.forEvent].
+  Future<void> startForEvent({
+    required String eventId,
+    String? eventName,
+  }) async {
+    final session = ActiveEventSession.forEvent(
+      eventId: eventId,
+      eventName: eventName,
+    );
+    state = session;
+    try {
+      await _store.save(session);
+    } on Object catch (e) {
+      debugPrint('active_event_session: save failed: $e');
+    }
+  }
+
   /// Ends the session (left the event, logged out, or it expired).
   Future<void> clear() async {
     state = null;

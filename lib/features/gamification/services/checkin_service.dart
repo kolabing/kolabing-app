@@ -14,11 +14,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for handling event check-in operations
 class CheckinService {
-  CheckinService({
-    required AuthService authService,
-    http.Client? httpClient,
-  })  : _authService = authService,
-        _httpClient = httpClient ?? http.Client();
+  CheckinService({required AuthService authService, http.Client? httpClient})
+    : _authService = authService,
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -116,9 +114,10 @@ class CheckinService {
             kind: CheckinFailure.invalidToken,
           );
         } else if (response.statusCode == 409) {
-          throw const CheckinException(
+          throw CheckinException(
             'Already checked in to this event.',
             kind: CheckinFailure.alreadyCheckedIn,
+            checkin: _tryParseCheckin(json['data']),
           );
         } else if (response.statusCode == 422) {
           throw CheckinException(
@@ -141,6 +140,19 @@ class CheckinService {
         'Failed to connect to server: $e',
         kind: CheckinFailure.network,
       );
+    }
+  }
+
+  /// Reads an [EventCheckin] out of a payload that may or may not carry one.
+  ///
+  /// Used for the 409 body, whose shape is not guaranteed — a miss is fine, it
+  /// just means the session cannot be recovered from the response.
+  static EventCheckin? _tryParseCheckin(Object? data) {
+    if (data is! Map<String, dynamic>) return null;
+    try {
+      return EventCheckin.fromJson(data);
+    } on Object {
+      return null;
     }
   }
 
@@ -243,9 +255,19 @@ enum CheckinFailure {
 
 /// Exception for check-in operations
 class CheckinException implements Exception {
-  const CheckinException(this.message, {this.kind = CheckinFailure.unknown});
+  const CheckinException(
+    this.message, {
+    this.kind = CheckinFailure.unknown,
+    this.checkin,
+  });
 
   final String message;
+
+  /// The existing check-in, when the backend returns one alongside a 409.
+  ///
+  /// Without it a duplicate scan leaves the member checked in server-side but
+  /// with no local event session, and nothing in the app can recover it.
+  final EventCheckin? checkin;
 
   /// Classified reason, so callers can localize and branch without string
   /// matching on [message].

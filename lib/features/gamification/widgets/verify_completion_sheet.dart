@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -12,49 +13,47 @@ import '../models/challenge_completion.dart';
 import '../providers/challenge_provider.dart';
 import '../services/challenge_service.dart';
 
-/// Outcome handed back to the scanner so it can show the right result sheet.
+/// What came of showing the verify sheet.
+///
+/// An explicit case per outcome. This used to be four booleans with
+/// `isConfirmed => !rejected && !notForYou && !failed`, which reported a
+/// *dismissal* as a successful confirmation — dragging the sheet down or
+/// pressing back showed "Confirmed, +0 XP" without any call having been made.
+enum VerifyResult {
+  /// The verifier confirmed; XP is in `point_ledger`.
+  confirmed,
+
+  /// The verifier turned it down.
+  rejected,
+
+  /// The completion is not pending for this viewer — a stale or foreign code.
+  notForYou,
+
+  /// The lookup or the call could not reach the server. Worth retrying, and
+  /// deliberately distinct from [notForYou]: telling someone their valid code
+  /// is not addressed to them because the venue wifi dropped sends them off
+  /// chasing the wrong problem.
+  unreachable,
+
+  /// The call was made and refused.
+  failed,
+
+  /// Closed without deciding.
+  dismissed,
+}
+
 @immutable
 class VerifyOutcome {
-  const VerifyOutcome.confirmed({required this.challengerName, this.points})
-    : rejected = false,
-      notForYou = false,
-      failed = false;
+  const VerifyOutcome(this.result, {this.challengerName, this.points});
 
-  const VerifyOutcome.rejected()
-    : challengerName = null,
-      points = null,
-      rejected = true,
-      notForYou = false,
-      failed = false;
+  final VerifyResult result;
 
-  const VerifyOutcome.notForYou()
-    : challengerName = null,
-      points = null,
-      rejected = false,
-      notForYou = true,
-      failed = false;
-
-  const VerifyOutcome.failed()
-    : challengerName = null,
-      points = null,
-      rejected = false,
-      notForYou = false,
-      failed = true;
-
-  const VerifyOutcome.dismissed()
-    : challengerName = null,
-      points = null,
-      rejected = false,
-      notForYou = false,
-      failed = false;
-
+  /// Set only on [VerifyResult.confirmed].
   final String? challengerName;
-  final int? points;
-  final bool rejected;
-  final bool notForYou;
-  final bool failed;
 
-  bool get isConfirmed => !rejected && !notForYou && !failed;
+  /// Points the server awarded the challenger. Set only on
+  /// [VerifyResult.confirmed].
+  final int? points;
 }
 
 /// Step 4 of the loop: the verifier scanned the challenger's QR and confirms
@@ -75,11 +74,15 @@ class VerifyCompletionSheet extends ConsumerStatefulWidget {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
+      // A decision sheet: confirm or reject, not swiped away by accident.
+      // `isDismissible` alone leaves drag-to-dismiss and the back button, both
+      // of which return null — handled as `dismissed` either way.
       isDismissible: false,
+      enableDrag: false,
       backgroundColor: Colors.transparent,
       builder: (_) => VerifyCompletionSheet(completionId: completionId),
     );
-    return result ?? const VerifyOutcome.dismissed();
+    return result ?? const VerifyOutcome(VerifyResult.dismissed);
   }
 
   @override
@@ -124,14 +127,19 @@ class _VerifyCompletionSheetState extends ConsumerState<VerifyCompletionSheet> {
                 c.verifierProfileId == myProfileId,
           )
           .firstOrNull;
-    } on ChallengeException {
-      match = null;
+    } on ChallengeException catch (e) {
+      if (!mounted) return;
+      // Flaky venue wifi is the expected environment here, so a transport
+      // failure must not be reported as "this code isn't yours".
+      Navigator.of(context).pop(const VerifyOutcome(VerifyResult.unreachable));
+      debugPrint('verify sheet: lookup failed (${e.kind})');
+      return;
     }
 
     if (!mounted) return;
 
     if (match == null) {
-      Navigator.of(context).pop(const VerifyOutcome.notForYou());
+      Navigator.of(context).pop(const VerifyOutcome(VerifyResult.notForYou));
       return;
     }
 
@@ -158,16 +166,23 @@ class _VerifyCompletionSheetState extends ConsumerState<VerifyCompletionSheet> {
 
       Navigator.of(context).pop(
         confirm
-            ? VerifyOutcome.confirmed(
+            ? VerifyOutcome(
+                VerifyResult.confirmed,
                 challengerName: updated.challengerName,
                 points: updated.pointsEarned,
               )
-            : const VerifyOutcome.rejected(),
+            : const VerifyOutcome(VerifyResult.rejected),
       );
-    } on ChallengeException {
+    } on ChallengeException catch (e) {
       if (!mounted) return;
       setState(() => _submitting = false);
-      Navigator.of(context).pop(const VerifyOutcome.failed());
+      Navigator.of(context).pop(
+        VerifyOutcome(
+          e.kind == ChallengeFailure.network
+              ? VerifyResult.unreachable
+              : VerifyResult.failed,
+        ),
+      );
     }
   }
 

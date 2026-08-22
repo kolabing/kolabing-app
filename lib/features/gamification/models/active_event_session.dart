@@ -47,6 +47,28 @@ class ActiveEventSession {
     );
   }
 
+  /// Opens a session for a known event, without a check-in payload.
+  ///
+  /// The recovery path for a duplicate check-in: `POST /checkin` answers 409
+  /// with no usable body, but the scanner was opened from that event's hub, so
+  /// the event is known anyway. Without this the member is checked in
+  /// server-side yet cannot pair up — and the app's only suggestion is to
+  /// rescan the code that 409s.
+  factory ActiveEventSession.forEvent({
+    required String eventId,
+    String? eventName,
+    DateTime? now,
+    Duration ttl = kActiveEventSessionTtl,
+  }) {
+    final start = now ?? DateTime.now();
+    return ActiveEventSession(
+      eventId: eventId,
+      eventName: eventName,
+      checkedInAt: start,
+      expiresAt: start.add(ttl),
+    );
+  }
+
   /// Rebuilds a session from persisted JSON. Returns `null` for anything
   /// malformed — a corrupt value must not crash the scanner on open.
   static ActiveEventSession? fromJson(Map<String, dynamic> json) {

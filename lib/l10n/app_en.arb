@@ -7687,7 +7687,7 @@
   "@peerNoSessionBody": {"description": "Explains why pairing needs a check-in first."},
   "peerNoSessionAction": "SCAN EVENT CODE",
   "@peerNoSessionAction": {"description": "Action that reopens the scanner for an event check-in code."},
-  "peerInitiateBothCheckedIn": "You both need to be checked in to this event.",
+  "peerInitiateBothCheckedIn": "Couldn't start this challenge. Make sure you're both checked in to this event.",
   "@peerInitiateBothCheckedIn": {"description": "Backend 422 on /challenges/initiate — the pair are not both checked in."},
   "peerInitiateFailed": "Couldn't start the challenge.",
   "@peerInitiateFailed": {"description": "Generic failure when starting a challenge."},
@@ -7744,5 +7744,11 @@
   "peerChallengesLoadFailed": "Couldn't load this event's challenges.",
   "@peerChallengesLoadFailed": {"description": "Error state on the pairing sheet's challenge list."},
   "eventQrNotAuthorized": "Only this event's organizer can show its check-in code.",
-  "@eventQrNotAuthorized": {"description": "Shown when POST /events/{id}/generate-qr returns 403."}
+  "@eventQrNotAuthorized": {"description": "Shown when POST /events/{id}/generate-qr returns 403."},
+  "verifyScanErrorTitle": "Couldn't confirm",
+  "@verifyScanErrorTitle": {"description": "Title for a failed challenge verification. Distinct from the check-in error title."},
+  "checkinAlreadyTitle": "You're checked in",
+  "@checkinAlreadyTitle": {"description": "Title shown when POST /checkin returns 409 — informational, not a failure."},
+  "verifyScanUnreachable": "Couldn't reach the server. Check your connection and scan again.",
+  "@verifyScanUnreachable": {"description": "Shown when confirming a challenge fails for network reasons rather than because the code is foreign."}
 }

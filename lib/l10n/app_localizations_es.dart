@@ -7234,7 +7234,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get peerInitiateBothCheckedIn =>
-      'Los dos tenéis que haber hecho check-in en este evento.';
+      'No se pudo iniciar este reto. Aseguraos de que los dos habéis hecho check-in en este evento.';
 
   @override
   String get peerInitiateFailed => 'No se pudo iniciar el reto.';
@@ -7336,4 +7336,14 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get eventQrNotAuthorized =>
       'Solo el organizador de este evento puede mostrar su código de check-in.';
+
+  @override
+  String get verifyScanErrorTitle => 'No se pudo confirmar';
+
+  @override
+  String get checkinAlreadyTitle => 'Ya tienes el check-in hecho';
+
+  @override
+  String get verifyScanUnreachable =>
+      'No se pudo conectar con el servidor. Comprueba tu conexión y vuelve a escanear.';
 }

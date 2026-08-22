@@ -21,12 +21,22 @@ const String _peerSegment = 'u';
 const String _verifyFirstSegment = 'qr';
 const String _verifySecondSegment = 'verify';
 
-/// A check-in token is opaque base64url-ish text. The bounds keep obviously
-/// unrelated QR codes (a URL, a phone number, a wifi payload) from being POSTed
-/// to `/checkin`, while staying permissive enough that a backend token-format
-/// change does not break check-in. The server is still the authority — an
-/// accepted-here-but-invalid token just comes back as a 404.
-final RegExp _checkinTokenPattern = RegExp(r'^[A-Za-z0-9_\-=]{12,256}$');
+/// A check-in token is opaque, and its exact format is not documented anywhere
+/// in this repo — so it is recognised by what it is *not*, rather than by a
+/// guessed charset. Guessing risks the worst failure mode available: a real
+/// token quietly reading as "unrecognised code", making check-in impossible
+/// with nothing to diagnose.
+///
+/// Rejected: anything containing whitespace (free text), and anything carrying
+/// a URI scheme prefix — which is exactly what the non-http QR payloads in the
+/// wild are (`WIFI:…`, `mailto:…`, `tel:…`, `BEGIN:VCARD`). Everything else of
+/// plausible length is handed to the server, which is the real authority: a
+/// wrong token simply comes back as a 404.
+final RegExp _tokenShape = RegExp(r'^\S{8,512}$');
+
+/// `scheme:` at the head of the value, per RFC 3986. http(s) is handled earlier
+/// as a URL, so anything still matching here is some other scheme entirely.
+final RegExp _uriSchemePrefix = RegExp(r'^[A-Za-z][A-Za-z0-9+.\-]*:');
 
 /// A scanned QR code, resolved to the action it should trigger.
 sealed class QrPayload {
@@ -63,7 +73,7 @@ sealed class QrPayload {
       return QrUnknown(raw);
     }
 
-    if (_checkinTokenPattern.hasMatch(value)) {
+    if (_tokenShape.hasMatch(value) && !_uriSchemePrefix.hasMatch(value)) {
       return QrCheckinToken(value);
     }
 

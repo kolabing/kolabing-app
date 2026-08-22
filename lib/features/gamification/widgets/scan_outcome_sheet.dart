@@ -10,6 +10,14 @@ import '../../../widgets/kolabing_button.dart';
 /// How a scan outcome reads: sets the icon and accent colour.
 enum ScanOutcomeTone { success, info, failure }
 
+/// Which button closed the sheet.
+///
+/// The sheet reports this instead of taking `onPressed` callbacks: callers used
+/// to pop the *scanner* from inside a sheet callback, which left the scanner's
+/// `await` to resume and restart a camera controller that `dispose()` was
+/// already tearing down.
+enum ScanOutcomeAction { primary, secondary, dismissed }
+
 /// The one sheet every scan outcome uses — check-in confirmed, already checked
 /// in, challenge confirmed, rejected, or any failure.
 ///
@@ -25,9 +33,7 @@ class ScanOutcomeSheet extends StatelessWidget {
     this.body,
     this.xpEarned,
     this.primaryLabel,
-    this.onPrimary,
     this.secondaryLabel,
-    this.onSecondary,
   });
 
   final ScanOutcomeTone tone;
@@ -39,23 +45,19 @@ class ScanOutcomeSheet extends StatelessWidget {
   final int? xpEarned;
 
   final String? primaryLabel;
-  final VoidCallback? onPrimary;
   final String? secondaryLabel;
-  final VoidCallback? onSecondary;
 
-  /// Shows the sheet. Resolves when it closes.
-  static Future<void> show(
+  /// Shows the sheet and resolves with the button that closed it.
+  static Future<ScanOutcomeAction> show(
     BuildContext context, {
     required ScanOutcomeTone tone,
     required String title,
     String? body,
     int? xpEarned,
     String? primaryLabel,
-    VoidCallback? onPrimary,
     String? secondaryLabel,
-    VoidCallback? onSecondary,
-  }) {
-    return showModalBottomSheet<void>(
+  }) async {
+    final action = await showModalBottomSheet<ScanOutcomeAction>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -66,11 +68,10 @@ class ScanOutcomeSheet extends StatelessWidget {
         body: body,
         xpEarned: xpEarned,
         primaryLabel: primaryLabel,
-        onPrimary: onPrimary,
         secondaryLabel: secondaryLabel,
-        onSecondary: onSecondary,
       ),
     );
+    return action ?? ScanOutcomeAction.dismissed;
   }
 
   IconData get _icon => switch (tone) {
@@ -144,7 +145,8 @@ class ScanOutcomeSheet extends StatelessWidget {
             width: double.infinity,
             child: KolabingButton(
               label: primaryLabel ?? l10n.commonGotIt,
-              onPressed: onPrimary ?? () => Navigator.of(context).pop(),
+              onPressed: () =>
+                  Navigator.of(context).pop(ScanOutcomeAction.primary),
               variant: KolabingButtonVariant.primary,
             ),
           ),
@@ -153,7 +155,8 @@ class ScanOutcomeSheet extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: TextButton(
-                onPressed: onSecondary ?? () => Navigator.of(context).pop(),
+                onPressed: () =>
+                    Navigator.of(context).pop(ScanOutcomeAction.secondary),
                 child: Text(
                   secondaryLabel!,
                   style: KolabingTextStyles.button.copyWith(

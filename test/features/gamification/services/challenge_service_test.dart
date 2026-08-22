@@ -55,29 +55,32 @@ void main() {
   });
 
   group('initiateChallenge', () {
-    test('sends the challenge, event and the scanned peer as verifier',
-        () async {
-      Map<String, dynamic>? sent;
-      final service = _service((request) {
-        sent =
-            jsonDecode((request as http.Request).body) as Map<String, dynamic>;
-        return http.Response(_completionBody, 201);
-      });
+    test(
+      'sends the challenge, event and the scanned peer as verifier',
+      () async {
+        Map<String, dynamic>? sent;
+        final service = _service((request) {
+          sent =
+              jsonDecode((request as http.Request).body)
+                  as Map<String, dynamic>;
+          return http.Response(_completionBody, 201);
+        });
 
-      final completion = await service.initiateChallenge(
-        challengeId: 'ch-1',
-        eventId: 'evt-1',
-        verifierProfileId: 'them',
-      );
+        final completion = await service.initiateChallenge(
+          challengeId: 'ch-1',
+          eventId: 'evt-1',
+          verifierProfileId: 'them',
+        );
 
-      expect(sent, {
-        'challenge_id': 'ch-1',
-        'event_id': 'evt-1',
-        'verifier_profile_id': 'them',
-      });
-      expect(completion.id, 'cmp-1');
-      expect(completion.isPending, isTrue);
-    });
+        expect(sent, {
+          'challenge_id': 'ch-1',
+          'event_id': 'evt-1',
+          'verifier_profile_id': 'them',
+        });
+        expect(completion.id, 'cmp-1');
+        expect(completion.isPending, isTrue);
+      },
+    );
 
     // This is the failure the peer flow hits most: the pair scanned each other
     // without both checking in. It needs its own message, so its own kind.
@@ -123,32 +126,36 @@ void main() {
   });
 
   group('verifyChallenge', () {
-    test('returns the settled completion with the points the server awarded',
-        () async {
-      final service = _service((_) => http.Response(_verifiedBody, 200));
+    test(
+      'returns the settled completion with the points the server awarded',
+      () async {
+        final service = _service((_) => http.Response(_verifiedBody, 200));
 
-      final completion = await service.verifyChallenge('cmp-1');
+        final completion = await service.verifyChallenge('cmp-1');
 
-      expect(completion.isVerified, isTrue);
-      expect(completion.pointsEarned, 15);
-      expect(completion.challengerName, 'Ana');
-    });
+        expect(completion.isVerified, isTrue);
+        expect(completion.pointsEarned, 15);
+        expect(completion.challengerName, 'Ana');
+      },
+    );
 
-    test('maps 403 to forbidden — the scanner is not the designated verifier',
-        () async {
-      final service = _service((_) => http.Response('{}', 403));
+    test(
+      'maps 403 to forbidden — the scanner is not the designated verifier',
+      () async {
+        final service = _service((_) => http.Response('{}', 403));
 
-      await expectLater(
-        service.verifyChallenge('cmp-1'),
-        throwsA(
-          isA<ChallengeException>().having(
-            (e) => e.kind,
-            'kind',
-            ChallengeFailure.forbidden,
+        await expectLater(
+          service.verifyChallenge('cmp-1'),
+          throwsA(
+            isA<ChallengeException>().having(
+              (e) => e.kind,
+              'kind',
+              ChallengeFailure.forbidden,
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
     test('maps 409 to conflict — already settled', () async {
       final service = _service((_) => http.Response('{}', 409));

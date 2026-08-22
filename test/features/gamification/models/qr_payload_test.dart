@@ -89,6 +89,26 @@ void main() {
       expect(QrPayload.parse('abc-DEF_123456789xyz'), isA<QrCheckinToken>());
     });
 
+    // The real token format is undocumented, so these shapes must not be
+    // rejected: a token the parser refuses is a check-in that cannot happen.
+    test('accepts a JWT-shaped token (dots)', () {
+      const token =
+          'eyJhbGciOiJIUzI1NiJ9.eyJldmVudCI6IjEyMyJ9.abcDEF-_123456789';
+
+      expect(QrPayload.parse(token), isA<QrCheckinToken>());
+    });
+
+    test('accepts standard base64 padding and slashes', () {
+      expect(QrPayload.parse('ab+cd/ef12345678=='), isA<QrCheckinToken>());
+    });
+
+    test('accepts a token containing a dot but no scheme', () {
+      expect(
+        QrPayload.parse('kolabing.checkin.abc12345'),
+        isA<QrCheckinToken>(),
+      );
+    });
+
     test('trims surrounding whitespace', () {
       final result = QrPayload.parse('  7f3ac91be4d2408fa1c65b0e9d7a2f31  ');
 
@@ -127,6 +147,26 @@ void main() {
 
     test('rejects a wifi-style QR payload', () {
       expect(QrPayload.parse('WIFI:S:Cafe;T:WPA;P:secret;;'), isA<QrUnknown>());
+    });
+
+    // Non-http payloads in the wild are all scheme-prefixed, which is how they
+    // are told apart from an opaque token now that the charset is permissive.
+    test('rejects other real-world QR schemes', () {
+      for (final raw in [
+        'tel:+34600123456',
+        'geo:41.3874,2.1686',
+        'bitcoin:1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+        'otpauth://totp/Kolabing:me?secret=ABC123',
+      ]) {
+        expect(QrPayload.parse(raw), isA<QrUnknown>(), reason: raw);
+      }
+    });
+
+    test('rejects a multi-line vcard payload', () {
+      expect(
+        QrPayload.parse('BEGIN:VCARD\nFN:Ana\nEND:VCARD'),
+        isA<QrUnknown>(),
+      );
     });
   });
 }

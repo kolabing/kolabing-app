@@ -58,6 +58,28 @@ void main() {
       );
     });
 
+    test('forEvent opens a live session from a known event alone', () {
+      final now = DateTime.utc(2026, 8, 22, 18);
+
+      final session = ActiveEventSession.forEvent(
+        eventId: 'evt-9',
+        eventName: 'Padel Night',
+        now: now,
+      );
+
+      expect(session.eventId, 'evt-9');
+      expect(session.eventName, 'Padel Night');
+      expect(session.isExpiredAt(now), isFalse);
+      expect(session.isExpiredAt(now.add(const Duration(hours: 13))), isTrue);
+    });
+
+    test('forEvent works without an event name', () {
+      final session = ActiveEventSession.forEvent(eventId: 'evt-9');
+
+      expect(session.eventName, isNull);
+      expect(ActiveEventSession.fromJson(session.toJson())?.eventId, 'evt-9');
+    });
+
     test('tolerates a check-in with no event name', () {
       final session = ActiveEventSession.fromCheckin(_checkin(eventName: null));
 

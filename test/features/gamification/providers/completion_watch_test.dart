@@ -80,28 +80,30 @@ void main() {
     });
   });
 
-  test('reports verified once the verifier confirms, with the awarded XP',
-      () async {
-    final container = _container([
-      _listBody('pending'),
-      _listBody('pending'),
-      _listBody('verified', points: 15),
-    ]);
-    addTearDown(container.dispose);
+  test(
+    'reports verified once the verifier confirms, with the awarded XP',
+    () async {
+      final container = _container([
+        _listBody('pending'),
+        _listBody('pending'),
+        _listBody('verified', points: 15),
+      ]);
+      addTearDown(container.dispose);
 
-    // Subscribe so the notifier stays alive across polls.
-    container.listen(
-      completionWatchProvider('cmp-1'),
-      (_, _) {},
-      fireImmediately: true,
-    );
+      // Subscribe so the notifier stays alive across polls.
+      container.listen(
+        completionWatchProvider('cmp-1'),
+        (_, _) {},
+        fireImmediately: true,
+      );
 
-    final state = await _settle(container, 'cmp-1', (s) => s.isVerified);
+      final state = await _settle(container, 'cmp-1', (s) => s.isVerified);
 
-    expect(state.isVerified, isTrue);
-    expect(state.completion?.pointsEarned, 15);
-    expect(state.isSettled, isTrue);
-  });
+      expect(state.isVerified, isTrue);
+      expect(state.completion?.pointsEarned, 15);
+      expect(state.isSettled, isTrue);
+    },
+  );
 
   test('reports rejected when the verifier turns it down', () async {
     final container = _container([_listBody('pending'), _listBody('rejected')]);

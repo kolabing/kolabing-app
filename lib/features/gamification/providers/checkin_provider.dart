@@ -15,8 +15,10 @@ final checkinServiceProvider = Provider<CheckinService>((ref) {
 // =============================================================================
 
 /// Provider for generating QR tokens (organizer)
-final qrTokenProvider =
-    FutureProvider.family<String, String>((ref, eventId) async {
+final qrTokenProvider = FutureProvider.family<String, String>((
+  ref,
+  eventId,
+) async {
   final service = ref.watch(checkinServiceProvider);
   return service.generateQRToken(eventId);
 });
@@ -53,14 +55,13 @@ class CheckinState {
     String? error,
     CheckinFailure? failure,
     bool? isSuccess,
-  }) =>
-      CheckinState(
-        checkin: checkin ?? this.checkin,
-        isLoading: isLoading ?? this.isLoading,
-        error: error,
-        failure: failure,
-        isSuccess: isSuccess ?? this.isSuccess,
-      );
+  }) => CheckinState(
+    checkin: checkin ?? this.checkin,
+    isLoading: isLoading ?? this.isLoading,
+    error: error,
+    failure: failure,
+    isSuccess: isSuccess ?? this.isSuccess,
+  );
 }
 
 /// Notifier for check-in operation (attendee)
@@ -82,6 +83,8 @@ class CheckinNotifier extends Notifier<CheckinState> {
         isLoading: false,
         error: e.message,
         failure: e.kind,
+        // A 409 may still tell us which event they are at.
+        checkin: e.checkin,
       );
       return false;
     } catch (e) {
@@ -109,8 +112,10 @@ final checkinProvider = NotifierProvider<CheckinNotifier, CheckinState>(
 // =============================================================================
 
 /// Provider for event check-ins list
-final eventCheckinsProvider =
-    FutureProvider.family<CheckinsResponse, String>((ref, eventId) async {
+final eventCheckinsProvider = FutureProvider.family<CheckinsResponse, String>((
+  ref,
+  eventId,
+) async {
   final service = ref.watch(checkinServiceProvider);
   return service.getEventCheckins(eventId);
 });

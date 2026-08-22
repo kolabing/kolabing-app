@@ -2148,7 +2148,7 @@
   "peerNoSessionTitle": "Primero haz check-in",
   "peerNoSessionBody": "Escanea el código QR del evento para hacer check-in y luego emparejaos para jugar sus retos.",
   "peerNoSessionAction": "ESCANEAR CÓDIGO DEL EVENTO",
-  "peerInitiateBothCheckedIn": "Los dos tenéis que haber hecho check-in en este evento.",
+  "peerInitiateBothCheckedIn": "No se pudo iniciar este reto. Aseguraos de que los dos habéis hecho check-in en este evento.",
   "peerInitiateFailed": "No se pudo iniciar el reto.",
   "verifyQrTitle": "Que te lo confirmen",
   "verifyQrBody": "Pide a {name} que escanee este código para confirmar que lo has hecho.",
@@ -2176,5 +2176,8 @@
   "peerPairedTitleFallback": "Emparejados",
   "verifyQrBodyFallback": "Pídele que escanee este código para confirmar que lo has hecho.",
   "peerChallengesLoadFailed": "No se pudieron cargar los retos de este evento.",
-  "eventQrNotAuthorized": "Solo el organizador de este evento puede mostrar su código de check-in."
+  "eventQrNotAuthorized": "Solo el organizador de este evento puede mostrar su código de check-in.",
+  "verifyScanErrorTitle": "No se pudo confirmar",
+  "checkinAlreadyTitle": "Ya tienes el check-in hecho",
+  "verifyScanUnreachable": "No se pudo conectar con el servidor. Comprueba tu conexión y vuelve a escanear."
 }

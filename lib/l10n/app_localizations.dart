@@ -12677,7 +12677,7 @@ abstract class AppLocalizations {
   /// Backend 422 on /challenges/initiate — the pair are not both checked in.
   ///
   /// In en, this message translates to:
-  /// **'You both need to be checked in to this event.'**
+  /// **'Couldn\'t start this challenge. Make sure you\'re both checked in to this event.'**
   String get peerInitiateBothCheckedIn;
 
   /// Generic failure when starting a challenge.
@@ -12847,6 +12847,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only this event\'s organizer can show its check-in code.'**
   String get eventQrNotAuthorized;
+
+  /// Title for a failed challenge verification. Distinct from the check-in error title.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t confirm'**
+  String get verifyScanErrorTitle;
+
+  /// Title shown when POST /checkin returns 409 — informational, not a failure.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re checked in'**
+  String get checkinAlreadyTitle;
+
+  /// Shown when confirming a challenge fails for network reasons rather than because the code is foreign.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t reach the server. Check your connection and scan again.'**
+  String get verifyScanUnreachable;
 }
 
 class _AppLocalizationsDelegate

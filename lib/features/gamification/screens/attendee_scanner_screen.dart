@@ -10,6 +10,7 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../services/permission_service.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../models/event_checkin.dart';
 import '../models/qr_payload.dart';
 import '../providers/active_event_session_provider.dart';
 import '../providers/checkin_provider.dart';
@@ -31,11 +32,27 @@ import 'challenge_verify_qr_screen.dart';
 /// Members do not have to know which is which — that classification is
 /// [QrPayload.parse]'s job, which is why there is one scanner and not three.
 class AttendeeScannerScreen extends ConsumerStatefulWidget {
-  const AttendeeScannerScreen({super.key});
+  const AttendeeScannerScreen({super.key, this.eventId, this.eventName});
 
-  static Future<void> open(BuildContext context) {
+  /// The event the scanner was opened from, when it was opened from one.
+  ///
+  /// This is the recovery path for a duplicate check-in: `POST /checkin`
+  /// answers 409 without saying which event, so without this the member ends up
+  /// checked in server-side with no local session — and the only thing the app
+  /// can suggest is rescanning the code that 409s.
+  final String? eventId;
+  final String? eventName;
+
+  static Future<void> open(
+    BuildContext context, {
+    String? eventId,
+    String? eventName,
+  }) {
     return Navigator.of(context).push<void>(
-      MaterialPageRoute<void>(builder: (_) => const AttendeeScannerScreen()),
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            AttendeeScannerScreen(eventId: eventId, eventName: eventName),
+      ),
     );
   }
 
@@ -135,7 +152,7 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
     final state = ref.read(checkinProvider);
 
     if (!ok) {
-      await _showCheckinFailure(state.failure, l10n);
+      await _showCheckinFailure(state, l10n);
       return;
     }
 
@@ -145,8 +162,8 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
     }
     if (!mounted) return;
 
-    final eventName = checkin?.eventName;
-    await ScanOutcomeSheet.show(
+    final eventName = checkin?.eventName ?? widget.eventName;
+    final action = await ScanOutcomeSheet.show(
       context,
       tone: ScanOutcomeTone.success,
       title: l10n.qrScannerSuccessTitle,
@@ -156,37 +173,81 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
       xpEarned: checkin?.pointsEarned,
       // The natural next move is pairing up, so that is the primary action.
       primaryLabel: l10n.checkinScanPeer,
-      onPrimary: () => Navigator.of(context).pop(),
       secondaryLabel: l10n.commonDone,
-      onSecondary: () {
-        Navigator.of(context).pop();
-        Navigator.of(context).maybePop();
-      },
     );
-    await _resume();
+    await _afterOutcome(action);
   }
 
   Future<void> _showCheckinFailure(
-    CheckinFailure? failure,
+    CheckinState state,
     AppLocalizations l10n,
   ) async {
-    // `alreadyCheckedIn` is not a failure the member caused — they are where
-    // they wanted to be, so it reads as information, not an error.
-    final isInfo = failure == CheckinFailure.alreadyCheckedIn;
+    final failure = state.failure;
 
-    await ScanOutcomeSheet.show(
+    // `alreadyCheckedIn` is not a failure the member caused — they are where
+    // they wanted to be. It also has to leave them with a usable session, or
+    // pairing sends them back to rescan the very code that just 409'd.
+    if (failure == CheckinFailure.alreadyCheckedIn) {
+      await _recoverSession(state.checkin);
+      if (!mounted) return;
+
+      final action = await ScanOutcomeSheet.show(
+        context,
+        tone: ScanOutcomeTone.info,
+        title: l10n.checkinAlreadyTitle,
+        body: '${l10n.scannerAlreadyCheckedIn}\n\n${l10n.checkinNextStep}',
+        primaryLabel: l10n.checkinScanPeer,
+        secondaryLabel: l10n.commonDone,
+      );
+      await _afterOutcome(action);
+      return;
+    }
+
+    final action = await ScanOutcomeSheet.show(
       context,
-      tone: isInfo ? ScanOutcomeTone.info : ScanOutcomeTone.failure,
-      title: isInfo ? l10n.qrScannerSuccessTitle : l10n.qrScannerErrorTitle,
+      tone: ScanOutcomeTone.failure,
+      title: l10n.qrScannerErrorTitle,
       body: switch (failure) {
-        CheckinFailure.alreadyCheckedIn => l10n.scannerAlreadyCheckedIn,
         CheckinFailure.invalidToken => l10n.checkinInvalidToken,
         CheckinFailure.notAcceptingCheckins => l10n.checkinNotAccepting,
         _ => l10n.commonErrorGeneric,
       },
       primaryLabel: l10n.commonTryAgain,
-      onPrimary: () => Navigator.of(context).pop(),
     );
+    await _afterOutcome(action);
+  }
+
+  /// Opens a session after a duplicate check-in, from whatever the app knows:
+  /// the event on the 409 body if the backend sent one, otherwise the event
+  /// this scanner was opened from.
+  Future<void> _recoverSession(EventCheckin? fromResponse) async {
+    final notifier = ref.read(activeEventSessionProvider.notifier);
+
+    if (fromResponse != null) {
+      await notifier.start(fromResponse);
+      return;
+    }
+    final eventId = widget.eventId;
+    if (eventId != null && eventId.isNotEmpty) {
+      await notifier.startForEvent(
+        eventId: eventId,
+        eventName: widget.eventName,
+      );
+    }
+  }
+
+  /// Closes the scanner when the member chose the "done" action; otherwise
+  /// hands the camera back.
+  ///
+  /// Navigation happens here rather than inside a sheet callback: popping the
+  /// scanner from a callback left this method's `await` to resume and restart a
+  /// camera controller that `dispose()` was already tearing down.
+  Future<void> _afterOutcome(ScanOutcomeAction action) async {
+    if (!mounted) return;
+    if (action == ScanOutcomeAction.secondary) {
+      Navigator.of(context).maybePop();
+      return;
+    }
     await _resume();
   }
 
@@ -239,42 +300,43 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
     );
     if (!mounted) return;
 
-    if (outcome.notForYou) {
-      await _showVerifyResult(
-        ScanOutcomeTone.failure,
-        l10n.qrScannerErrorTitle,
-        l10n.verifyScanNotForYou,
-      );
-      return;
+    switch (outcome.result) {
+      case VerifyResult.confirmed:
+        final name =
+            outcome.challengerName ?? l10n.challengeCompletionDefaultChallenger;
+        await _showVerifyResult(
+          ScanOutcomeTone.success,
+          l10n.verifyScanConfirmedTitle,
+          l10n.verifyScanConfirmedBody(name, outcome.points ?? 0),
+        );
+      case VerifyResult.rejected:
+        await _showVerifyResult(
+          ScanOutcomeTone.info,
+          l10n.verifyScanRejectedTitle,
+          null,
+        );
+      case VerifyResult.notForYou:
+        await _showVerifyResult(
+          ScanOutcomeTone.failure,
+          l10n.verifyScanErrorTitle,
+          l10n.verifyScanNotForYou,
+        );
+      case VerifyResult.unreachable:
+        await _showVerifyResult(
+          ScanOutcomeTone.failure,
+          l10n.verifyScanErrorTitle,
+          l10n.verifyScanUnreachable,
+        );
+      case VerifyResult.failed:
+        await _showVerifyResult(
+          ScanOutcomeTone.failure,
+          l10n.verifyScanErrorTitle,
+          l10n.verifyScanFailed,
+        );
+      case VerifyResult.dismissed:
+        // Nothing was decided; the completion is still pending server-side.
+        await _resume();
     }
-    if (outcome.failed) {
-      await _showVerifyResult(
-        ScanOutcomeTone.failure,
-        l10n.qrScannerErrorTitle,
-        l10n.verifyScanFailed,
-      );
-      return;
-    }
-    if (outcome.rejected) {
-      await _showVerifyResult(
-        ScanOutcomeTone.info,
-        l10n.verifyScanRejectedTitle,
-        null,
-      );
-      return;
-    }
-    if (outcome.isConfirmed) {
-      final name =
-          outcome.challengerName ?? l10n.challengeCompletionDefaultChallenger;
-      await _showVerifyResult(
-        ScanOutcomeTone.success,
-        l10n.verifyScanConfirmedTitle,
-        l10n.verifyScanConfirmedBody(name, outcome.points ?? 0),
-      );
-      return;
-    }
-
-    await _resume();
   }
 
   Future<void> _showVerifyResult(
@@ -282,8 +344,13 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
     String title,
     String? body,
   ) async {
-    await ScanOutcomeSheet.show(context, tone: tone, title: title, body: body);
-    await _resume();
+    final action = await ScanOutcomeSheet.show(
+      context,
+      tone: tone,
+      title: title,
+      body: body,
+    );
+    await _afterOutcome(action);
   }
 
   // ---------------------------------------------------------------------------

@@ -31,6 +31,9 @@ void main() {
   });
 
   test('a verify link is never mistaken for a peer profile link', () {
-    expect(QrPayload.parse(buildVerifyQrData('cmp-1')), isNot(isA<QrPeerProfile>()));
+    expect(
+      QrPayload.parse(buildVerifyQrData('cmp-1')),
+      isNot(isA<QrPeerProfile>()),
+    );
   });
 }
