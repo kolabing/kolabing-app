@@ -3556,10 +3556,6 @@
   "@eventQrInstructions": {
     "description": "Instructions under the QR code"
   },
-  "eventQrViewCheckins": "View Check-ins",
-  "@eventQrViewCheckins": {
-    "description": "Button to view event check-ins"
-  },
   "eventQrGenerating": "Generating QR Code...",
   "@eventQrGenerating": {
     "description": "Loading message while the QR code is generated"
@@ -7746,5 +7742,7 @@
   "verifyQrBodyFallback": "Ask them to scan this code to confirm you did it.",
   "@verifyQrBodyFallback": {"description": "Verification-QR instruction when the verifier's name is unavailable."},
   "peerChallengesLoadFailed": "Couldn't load this event's challenges.",
-  "@peerChallengesLoadFailed": {"description": "Error state on the pairing sheet's challenge list."}
+  "@peerChallengesLoadFailed": {"description": "Error state on the pairing sheet's challenge list."},
+  "eventQrNotAuthorized": "Only this event's organizer can show its check-in code.",
+  "@eventQrNotAuthorized": {"description": "Shown when POST /events/{id}/generate-qr returns 403."}
 }

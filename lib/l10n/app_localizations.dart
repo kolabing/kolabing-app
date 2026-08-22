@@ -5164,12 +5164,6 @@ abstract class AppLocalizations {
   /// **'Attendees can scan this QR code to check in to your event'**
   String get eventQrInstructions;
 
-  /// Button to view event check-ins
-  ///
-  /// In en, this message translates to:
-  /// **'View Check-ins'**
-  String get eventQrViewCheckins;
-
   /// Loading message while the QR code is generated
   ///
   /// In en, this message translates to:
@@ -12847,6 +12841,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t load this event\'s challenges.'**
   String get peerChallengesLoadFailed;
+
+  /// Shown when POST /events/{id}/generate-qr returns 403.
+  ///
+  /// In en, this message translates to:
+  /// **'Only this event\'s organizer can show its check-in code.'**
+  String get eventQrNotAuthorized;
 }
 
 class _AppLocalizationsDelegate

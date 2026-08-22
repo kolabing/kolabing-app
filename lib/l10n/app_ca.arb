@@ -844,7 +844,6 @@
   "eventDiscoveryApply": "Aplica",
   "eventQrTitle": "Registre de l'esdeveniment",
   "eventQrInstructions": "Els assistents poden escanejar aquest codi QR per registrar-se al teu esdeveniment",
-  "eventQrViewCheckins": "Mostra els registres",
   "eventQrGenerating": "Generant el codi QR...",
   "eventQrErrorTitle": "No s'ha pogut generar el codi QR",
   "eventQrCopyToken": "Copia el testimoni",
@@ -2176,5 +2175,6 @@
   "scannerAlreadyCheckedIn": "Ja havies fet check-in: tot a punt.",
   "peerPairedTitleFallback": "Emparellats",
   "verifyQrBodyFallback": "Demana-li que escanegi aquest codi per confirmar que ho has fet.",
-  "peerChallengesLoadFailed": "No s'han pogut carregar els reptes d'aquest esdeveniment."
+  "peerChallengesLoadFailed": "No s'han pogut carregar els reptes d'aquest esdeveniment.",
+  "eventQrNotAuthorized": "Només l'organitzador d'aquest esdeveniment pot mostrar el seu codi de check-in."
 }

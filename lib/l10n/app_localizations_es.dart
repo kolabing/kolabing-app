@@ -2859,9 +2859,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'Los asistentes pueden escanear este código QR para registrarse en tu evento';
 
   @override
-  String get eventQrViewCheckins => 'Ver registros';
-
-  @override
   String get eventQrGenerating => 'Generando código QR...';
 
   @override
@@ -7335,4 +7332,8 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get peerChallengesLoadFailed =>
       'No se pudieron cargar los retos de este evento.';
+
+  @override
+  String get eventQrNotAuthorized =>
+      'Solo el organizador de este evento puede mostrar su código de check-in.';
 }

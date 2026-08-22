@@ -844,7 +844,6 @@
   "eventDiscoveryApply": "Aplicar",
   "eventQrTitle": "Registro del evento",
   "eventQrInstructions": "Los asistentes pueden escanear este código QR para registrarse en tu evento",
-  "eventQrViewCheckins": "Ver registros",
   "eventQrGenerating": "Generando código QR...",
   "eventQrErrorTitle": "No se pudo generar el código QR",
   "eventQrCopyToken": "Copiar token",
@@ -2176,5 +2175,6 @@
   "scannerAlreadyCheckedIn": "Ya habías hecho check-in: todo listo.",
   "peerPairedTitleFallback": "Emparejados",
   "verifyQrBodyFallback": "Pídele que escanee este código para confirmar que lo has hecho.",
-  "peerChallengesLoadFailed": "No se pudieron cargar los retos de este evento."
+  "peerChallengesLoadFailed": "No se pudieron cargar los retos de este evento.",
+  "eventQrNotAuthorized": "Solo el organizador de este evento puede mostrar su código de check-in."
 }

@@ -2873,9 +2873,6 @@ class AppLocalizationsCa extends AppLocalizations {
       'Els assistents poden escanejar aquest codi QR per registrar-se al teu esdeveniment';
 
   @override
-  String get eventQrViewCheckins => 'Mostra els registres';
-
-  @override
   String get eventQrGenerating => 'Generant el codi QR...';
 
   @override
@@ -7374,4 +7371,8 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get peerChallengesLoadFailed =>
       'No s\'han pogut carregar els reptes d\'aquest esdeveniment.';
+
+  @override
+  String get eventQrNotAuthorized =>
+      'Només l\'organitzador d\'aquest esdeveniment pot mostrar el seu codi de check-in.';
 }
