@@ -2138,7 +2138,6 @@
   "scannerOwnCode": "Ese es tu propio código: pide a la otra persona que muestre el suyo.",
   "scannerTorchTooltip": "Activar o desactivar el flash",
   "checkinSuccessBody": "Has hecho check-in en {eventName}.",
-  "checkinAlreadyBody": "Ya habías hecho check-in en {eventName}: todo listo.",
   "checkinXpEarned": "+{points} XP",
   "checkinNextStep": "Ahora escanea el QR de perfil de alguien para jugar un reto juntos.",
   "checkinScanPeer": "ESCANEAR A ALGUIEN",
@@ -2170,5 +2169,12 @@
   "verifyScanRejectedTitle": "Rechazado",
   "verifyScanFailed": "No se pudo confirmar el reto.",
   "eventHubShowCheckinQr": "Mostrar QR de check-in",
-  "eventHubCheckIn": "Hacer check-in"
+  "eventHubCheckIn": "Hacer check-in",
+  "checkinInvalidToken": "Ese código de check-in ya no es válido. Pide al organizador que lo muestre de nuevo.",
+  "checkinNotAccepting": "Este evento no acepta check-ins ahora mismo.",
+  "scannerCameraBlocked": "Kolabing necesita acceso a la cámara para escanear códigos QR.",
+  "scannerAlreadyCheckedIn": "Ya habías hecho check-in: todo listo.",
+  "peerPairedTitleFallback": "Emparejados",
+  "verifyQrBodyFallback": "Pídele que escanee este código para confirmar que lo has hecho.",
+  "peerChallengesLoadFailed": "No se pudieron cargar los retos de este evento."
 }

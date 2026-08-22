@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/feature_flags.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
 import '../../chat/services/chat_service.dart';
-import '../../gamification/screens/qr_scanner_screen.dart';
+import '../../gamification/screens/attendee_scanner_screen.dart';
 import '../models/event.dart';
 import '../models/event_signup.dart';
 import '../providers/event_provider.dart';
@@ -113,19 +115,25 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
     }
   }
 
-  // Leader: scan attendee check-in QR codes ---------------------------------
+  // Check-in ------------------------------------------------------------------
 
-  /// Open the QR scanner so the leader can scan attendee check-in codes.
-  /// (The scanner left the attendee bottom nav; it stays reachable here.)
-  Future<void> _scanCheckIns() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const QRScannerScreen(),
+  /// Leader: display this event's check-in QR for members to scan.
+  ///
+  /// This is the entry point `EventQRCodeScreen` never had — its route existed
+  /// but nothing pushed it, so no organizer could ever show a check-in code and
+  /// step 1 of the gamification loop was unreachable.
+  void _showCheckinQr() {
+    context.push(
+      KolabingRoutes.buildEventQRCodePath(_event.id, name: _event.name),
     );
   }
+
+  /// Member: open the scanner to read the organizer's check-in QR.
+  ///
+  /// `POST /checkin` checks in **the caller**, so the member has to be the one
+  /// scanning — the previous wiring had the leader scanning members, which
+  /// would have recorded the leader's own check-in.
+  Future<void> _checkIn() => AttendeeScannerScreen.open(context);
 
   // Leader: edit + add photos ------------------------------------------------
 
@@ -296,11 +304,9 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
               onSelected: (v) {
                 if (v == 'delete') _delete();
                 if (v == 'extend') _extend();
-                if (v == 'scan') _scanCheckIns();
+                if (v == 'scan') _showCheckinQr();
               },
               itemBuilder: (context) => [
-                // QR check-in scanning is hidden for now
-                // (see kGamificationSetupEnabled) until the attendee flow ships.
                 if (kGamificationSetupEnabled)
                   PopupMenuItem<String>(
                     value: 'scan',
@@ -309,7 +315,7 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
                         const Icon(LucideIcons.qrCode,
                             size: 18, color: KolabingColors.onSurface),
                         const SizedBox(width: KolabingSpacing.sm),
-                        Text(_l10n.eventHubScanCheckIns),
+                        Text(_l10n.eventHubShowCheckinQr),
                       ],
                     ),
                   ),
@@ -393,6 +399,12 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
               ),
             ],
             const SizedBox(height: KolabingSpacing.sm),
+            // Checking in is only meaningful once they have said they are
+            // coming, and it is what unlocks the event's challenges.
+            if (kGamificationSetupEnabled && e.isGoing) ...[
+              _checkInButton(),
+              const SizedBox(height: KolabingSpacing.sm),
+            ],
           ],
           // Open event chat: always for the leader; for members once going.
           if (widget.isLeader || e.isGoing) _chatButton(),
@@ -414,6 +426,16 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
     return '${_l10n.eventHubGoingCount(e.goingCount)} · '
         '${_l10n.eventHubCapacity(e.capacity!)} · ${_l10n.eventHubSpotsLeft(left)}';
   }
+
+  Widget _checkInButton() => SizedBox(
+        width: double.infinity,
+        height: 52,
+        child: OutlinedButton.icon(
+          onPressed: _checkIn,
+          icon: const Icon(LucideIcons.qrCode, size: 18),
+          label: Text(_l10n.eventHubCheckIn),
+        ),
+      );
 
   Widget _chatButton() => SizedBox(
         width: double.infinity,

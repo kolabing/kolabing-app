@@ -52,8 +52,9 @@ class CheckinService {
         final data = json['data'] as Map<String, dynamic>;
         return data['checkin_token'] as String;
       } else if (response.statusCode == 403) {
-        throw CheckinException(
+        throw const CheckinException(
           'You are not authorized to generate a QR token for this event.',
+          kind: CheckinFailure.unauthorized,
         );
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -66,7 +67,10 @@ class CheckinService {
         rethrow;
       }
       debugPrint('🎫 Generate QR error: $e');
-      throw CheckinException('Failed to connect to server: $e');
+      throw CheckinException(
+        'Failed to connect to server: $e',
+        kind: CheckinFailure.network,
+      );
     }
   }
 
@@ -107,15 +111,25 @@ class CheckinService {
         final message = json['message'] as String?;
 
         if (response.statusCode == 404) {
-          throw CheckinException('Invalid check-in token.');
+          throw const CheckinException(
+            'Invalid check-in token.',
+            kind: CheckinFailure.invalidToken,
+          );
         } else if (response.statusCode == 409) {
-          throw CheckinException('You have already checked in to this event.');
+          throw const CheckinException(
+            'Already checked in to this event.',
+            kind: CheckinFailure.alreadyCheckedIn,
+          );
         } else if (response.statusCode == 422) {
           throw CheckinException(
             message ?? 'This event is not currently accepting check-ins.',
+            kind: CheckinFailure.notAcceptingCheckins,
           );
         } else {
-          throw CheckinException(message ?? 'Failed to check in');
+          throw CheckinException(
+            message ?? 'Failed to check in',
+            kind: CheckinFailure.unknown,
+          );
         }
       }
     } catch (e) {
@@ -123,7 +137,10 @@ class CheckinService {
         rethrow;
       }
       debugPrint('🎫 Check In error: $e');
-      throw CheckinException('Failed to connect to server: $e');
+      throw CheckinException(
+        'Failed to connect to server: $e',
+        kind: CheckinFailure.network,
+      );
     }
   }
 
@@ -168,7 +185,10 @@ class CheckinService {
         rethrow;
       }
       debugPrint('🎫 Get Checkins error: $e');
-      throw CheckinException('Failed to connect to server: $e');
+      throw CheckinException(
+        'Failed to connect to server: $e',
+        kind: CheckinFailure.network,
+      );
     }
   }
 }
@@ -207,12 +227,30 @@ class CheckinsResponse {
   bool get hasMore => currentPage < totalPages;
 }
 
+/// Why a check-in failed.
+///
+/// The UI localizes off this instead of showing [CheckinException.message],
+/// which may be raw backend English. [alreadyCheckedIn] is deliberately not an
+/// error state in the scanner: the user is where they wanted to be.
+enum CheckinFailure {
+  invalidToken,
+  alreadyCheckedIn,
+  notAcceptingCheckins,
+  unauthorized,
+  network,
+  unknown,
+}
+
 /// Exception for check-in operations
 class CheckinException implements Exception {
-  const CheckinException(this.message);
+  const CheckinException(this.message, {this.kind = CheckinFailure.unknown});
 
   final String message;
 
+  /// Classified reason, so callers can localize and branch without string
+  /// matching on [message].
+  final CheckinFailure kind;
+
   @override
-  String toString() => 'CheckinException: $message';
+  String toString() => 'CheckinException($kind): $message';
 }

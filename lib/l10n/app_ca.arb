@@ -2138,7 +2138,6 @@
   "scannerOwnCode": "Aquest és el teu propi codi: demana a l'altra persona que mostri el seu.",
   "scannerTorchTooltip": "Activa o desactiva el flaix",
   "checkinSuccessBody": "Has fet check-in a {eventName}.",
-  "checkinAlreadyBody": "Ja havies fet check-in a {eventName}: tot a punt.",
   "checkinXpEarned": "+{points} XP",
   "checkinNextStep": "Ara escaneja el QR de perfil d'algú per jugar un repte junts.",
   "checkinScanPeer": "ESCANEJA ALGÚ",
@@ -2170,5 +2169,12 @@
   "verifyScanRejectedTitle": "Rebutjat",
   "verifyScanFailed": "No s'ha pogut confirmar el repte.",
   "eventHubShowCheckinQr": "Mostra el QR de check-in",
-  "eventHubCheckIn": "Fes check-in"
+  "eventHubCheckIn": "Fes check-in",
+  "checkinInvalidToken": "Aquest codi de check-in ja no és vàlid. Demana a l'organitzador que el mostri de nou.",
+  "checkinNotAccepting": "Aquest esdeveniment no accepta check-ins ara mateix.",
+  "scannerCameraBlocked": "Kolabing necessita accés a la càmera per escanejar codis QR.",
+  "scannerAlreadyCheckedIn": "Ja havies fet check-in: tot a punt.",
+  "peerPairedTitleFallback": "Emparellats",
+  "verifyQrBodyFallback": "Demana-li que escanegi aquest codi per confirmar que ho has fet.",
+  "peerChallengesLoadFailed": "No s'han pogut carregar els reptes d'aquest esdeveniment."
 }

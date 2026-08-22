@@ -7195,11 +7195,6 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String checkinAlreadyBody(String eventName) {
-    return 'Ya habías hecho check-in en $eventName: todo listo.';
-  }
-
-  @override
   String checkinXpEarned(int points) {
     return '+$points XP';
   }
@@ -7314,4 +7309,30 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get eventHubCheckIn => 'Hacer check-in';
+
+  @override
+  String get checkinInvalidToken =>
+      'Ese código de check-in ya no es válido. Pide al organizador que lo muestre de nuevo.';
+
+  @override
+  String get checkinNotAccepting =>
+      'Este evento no acepta check-ins ahora mismo.';
+
+  @override
+  String get scannerCameraBlocked =>
+      'Kolabing necesita acceso a la cámara para escanear códigos QR.';
+
+  @override
+  String get scannerAlreadyCheckedIn => 'Ya habías hecho check-in: todo listo.';
+
+  @override
+  String get peerPairedTitleFallback => 'Emparejados';
+
+  @override
+  String get verifyQrBodyFallback =>
+      'Pídele que escanee este código para confirmar que lo has hecho.';
+
+  @override
+  String get peerChallengesLoadFailed =>
+      'No se pudieron cargar los retos de este evento.';
 }

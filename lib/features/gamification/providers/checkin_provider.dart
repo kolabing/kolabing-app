@@ -31,24 +31,34 @@ class CheckinState {
     this.checkin,
     this.isLoading = false,
     this.error,
+    this.failure,
     this.isSuccess = false,
   });
 
   final EventCheckin? checkin;
   final bool isLoading;
+
+  /// Raw message from the service. May be backend English — prefer [failure]
+  /// for anything shown to the user.
   final String? error;
+
+  /// Classified reason the check-in failed, for localized messaging.
+  final CheckinFailure? failure;
+
   final bool isSuccess;
 
   CheckinState copyWith({
     EventCheckin? checkin,
     bool? isLoading,
     String? error,
+    CheckinFailure? failure,
     bool? isSuccess,
   }) =>
       CheckinState(
         checkin: checkin ?? this.checkin,
         isLoading: isLoading ?? this.isLoading,
         error: error,
+        failure: failure,
         isSuccess: isSuccess ?? this.isSuccess,
       );
 }
@@ -68,10 +78,18 @@ class CheckinNotifier extends Notifier<CheckinState> {
       state = CheckinState(checkin: checkin, isSuccess: true);
       return true;
     } on CheckinException catch (e) {
-      state = state.copyWith(isLoading: false, error: e.message);
+      state = state.copyWith(
+        isLoading: false,
+        error: e.message,
+        failure: e.kind,
+      );
       return false;
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: 'Failed to check in');
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to check in',
+        failure: CheckinFailure.unknown,
+      );
       return false;
     }
   }

@@ -12614,12 +12614,6 @@ abstract class AppLocalizations {
   /// **'You\'re checked in to {eventName}.'**
   String checkinSuccessBody(String eventName);
 
-  /// Shown when check-in returns 409 because the member already checked in.
-  ///
-  /// In en, this message translates to:
-  /// **'You were already checked in to {eventName} — you\'re all set.'**
-  String checkinAlreadyBody(String eventName);
-
   /// XP earned badge. Points come from the server, never guessed locally.
   ///
   /// In en, this message translates to:
@@ -12811,6 +12805,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check in'**
   String get eventHubCheckIn;
+
+  /// Shown when POST /checkin returns 404 for an unknown or rotated token.
+  ///
+  /// In en, this message translates to:
+  /// **'That check-in code isn\'t valid any more. Ask the organizer to show it again.'**
+  String get checkinInvalidToken;
+
+  /// Shown when POST /checkin returns 422 because the event is closed to check-ins.
+  ///
+  /// In en, this message translates to:
+  /// **'This event isn\'t taking check-ins right now.'**
+  String get checkinNotAccepting;
+
+  /// Shown in place of the camera preview when camera permission is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Kolabing needs camera access to scan QR codes.'**
+  String get scannerCameraBlocked;
+
+  /// Shown when POST /checkin returns 409. The response carries no event, so the message names none.
+  ///
+  /// In en, this message translates to:
+  /// **'You were already checked in — you\'re all set.'**
+  String get scannerAlreadyCheckedIn;
+
+  /// Pairing header when the other member's name is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Paired up'**
+  String get peerPairedTitleFallback;
+
+  /// Verification-QR instruction when the verifier's name is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask them to scan this code to confirm you did it.'**
+  String get verifyQrBodyFallback;
+
+  /// Error state on the pairing sheet's challenge list.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this event\'s challenges.'**
+  String get peerChallengesLoadFailed;
 }
 
 class _AppLocalizationsDelegate

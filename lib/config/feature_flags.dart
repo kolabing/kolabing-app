@@ -5,11 +5,15 @@
 /// flag) once the feature is ready to ship.
 library;
 
-/// Hides the in-app gamification surface that is not ready for users yet:
-/// the challenge-selection setup + QR check-in card on the collaboration detail
-/// screen, and the "Scan Check-Ins" action on the event hub. Set to `true` to
-/// bring the attendee-facing check-in / challenge flow back.
-const bool kGamificationSetupEnabled = false;
+/// Enables the event gamification surfaces: the challenge-selection setup on
+/// the collaboration detail screen, the organizer's "Show check-in QR" action
+/// and the member's "Check in" button on the event hub.
+///
+/// Turned on with the QR challenge loop (#132), which made the flow reachable
+/// end to end for the first time: the organizer can display a check-in code,
+/// the member scans it, scanning another member lists that event's challenges,
+/// and the verification QR closes the loop into `point_ledger`.
+const bool kGamificationSetupEnabled = true;
 
 /// Hides the **Members** tab on the community detail screen (leaving Rewards +
 /// Events) while the member-roster surface is on hold. Set to `true` to bring
