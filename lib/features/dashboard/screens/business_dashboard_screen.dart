@@ -11,6 +11,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolabing_button.dart';
+import '../../../widgets/page_title.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../../widgets/navigation/profile_avatar_button.dart';
@@ -93,9 +94,7 @@ class _BusinessDashboardScreenState
       case 'complete_profile':
         // Profile is tab 4 of BusinessMainScreen (no GoRoute binds it), so
         // switch tabs in the shell rather than navigate.
-        return widget.onSwitchTab == null
-            ? null
-            : () => widget.onSwitchTab!(4);
+        return widget.onSwitchTab == null ? null : () => widget.onSwitchTab!(4);
       case 'review_pending_applications':
         return () => context.go(KolabingRoutes.businessApplications);
       case 'leave_review':
@@ -208,13 +207,7 @@ class _BusinessDashboardScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              AppLocalizations.of(context).dashboardBusinessTitle,
-              style: KolabingTextStyles.headlineLarge.copyWith(
-                color: context.colors.titleInk,
-                letterSpacing: 1.0,
-              ),
-            ),
+            PageTitle(AppLocalizations.of(context).dashboardBusinessTitle),
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
               AppLocalizations.of(context).dashboardWelcomeBack(userName),
@@ -295,7 +288,11 @@ class _BusinessDashboardScreenState
         // Main number: live/published offers
         Text(
           '${data.opportunities.published}',
-          style: GoogleFonts.anton(fontSize: 40, color: _inkDark, height: 0.9),
+          style: KolabingTextStyles.statNumber.copyWith(
+            fontSize: 40,
+            color: _inkDark,
+            height: 0.9,
+          ),
         ),
         Text(
           AppLocalizations.of(context).dashboardLiveOffersLabel,
@@ -532,7 +529,7 @@ class _HeroMiniStat extends StatelessWidget {
         children: [
           Text(
             '$count',
-            style: GoogleFonts.anton(
+            style: KolabingTextStyles.statNumber.copyWith(
               fontSize: 17,
               color: _inkDark,
               height: 1.0,

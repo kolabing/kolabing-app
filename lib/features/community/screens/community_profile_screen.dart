@@ -16,6 +16,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/gallery/profile_gallery_section.dart';
 import '../../../widgets/glass_button.dart';
 import '../../../widgets/kolabing_button.dart';
+import '../../../widgets/page_title.dart';
 import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
@@ -563,12 +564,7 @@ class _CommunityProfileScreenState
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: Text(
-            'PROFILE',
-            style: KolabingTextStyles.displayTitle.copyWith(
-              color: context.colors.ink,
-            ),
-          ),
+          child: PageTitle(AppLocalizations.of(context).profileMenuTitle),
         ),
         Icon(
           LucideIcons.pencil,

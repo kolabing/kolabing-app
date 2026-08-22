@@ -7,12 +7,13 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/category_chip.dart';
 import '../../../widgets/glass_button.dart';
 import '../../../widgets/glass_icon_button.dart';
-import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/kolab_card_shell.dart';
 import '../../../widgets/kolab_chip.dart';
 import '../../../widgets/kolab_status_badge.dart';
+import '../../../widgets/kolabing_button.dart';
 import '../../opportunity/models/opportunity.dart';
 
 class MyOpportunityCard extends StatelessWidget {
@@ -122,9 +123,7 @@ class MyOpportunityCard extends StatelessWidget {
                 ),
               ...opportunity.categories
                   .take(2)
-                  .map(
-                    (c) => KolabChip(label: c, variant: kolabChipVariantFor(c)),
-                  ),
+                  .map((c) => CategoryChip(label: c)),
             ],
           ),
         ],

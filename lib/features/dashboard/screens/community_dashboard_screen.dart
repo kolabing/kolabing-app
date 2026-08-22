@@ -9,6 +9,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolabing_button.dart';
+import '../../../widgets/page_title.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../../widgets/navigation/profile_avatar_button.dart';
@@ -136,14 +137,7 @@ class _CommunityDashboardScreenState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                AppLocalizations.of(context).dashboardCommunityTitle,
-                style: KolabingTextStyles.headlineLarge.copyWith(
-                  // titleInk = 80% white in night, ink in light (spec rule #2).
-                  color: context.colors.titleInk,
-                  letterSpacing: 1.0,
-                ),
-              ),
+              PageTitle(AppLocalizations.of(context).dashboardCommunityTitle),
               const SizedBox(height: KolabingSpacing.xxs),
               Text(
                 AppLocalizations.of(context).dashboardWelcomeBack(userName),

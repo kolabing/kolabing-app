@@ -601,7 +601,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get forgotPasswordUseAnotherEmail => 'Usar otro correo';
 
   @override
-  String get forgotPasswordHeroLine1 => 'RECUPERA EL ACCESO.';
+  String get forgotPasswordHeroLine1 => 'Recupera el acceso.';
 
   @override
   String get forgotPasswordHeroLine2 => 'VUELVE A ENTRAR.';
@@ -652,7 +652,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get resetPasswordGoToSignIn => 'IR A INICIAR SESIÓN';
 
   @override
-  String get signInTitle => 'BIENVENIDO DE NUEVO';
+  String get signInTitle => 'Bienvenido de nuevo.';
 
   @override
   String get signInSubtitle => 'Inicia sesión para continuar';
@@ -2160,7 +2160,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get myOpportunitiesCreateNewTooltip => 'Crear nueva oportunidad';
 
   @override
-  String get myOpportunitiesHeaderTitle => 'MIS OPORTUNIDADES';
+  String get myOpportunitiesHeaderTitle => 'Mis oportunidades';
 
   @override
   String get myOpportunitiesHeaderSubtitle =>
@@ -3451,7 +3451,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get photoReplacePhotoButton => 'Reemplazar foto';
 
   @override
-  String get intentSelectionAppBarTitle => 'NUEVO KOLAB';
+  String get intentSelectionAppBarTitle => 'Nuevo Kolab';
 
   @override
   String get intentSelectionCommunityTitle => '¿Qué te gustaría hacer?';
@@ -3515,13 +3515,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se ha seleccionado ninguna intención';
 
   @override
-  String get kolabFlowTitleFindPartner => 'ENCUENTRA UN SOCIO';
+  String get kolabFlowTitleFindPartner => 'Encuentra un socio';
 
   @override
-  String get kolabFlowTitlePromoteVenue => 'PROMOCIONA LOCAL';
+  String get kolabFlowTitlePromoteVenue => 'Promociona local';
 
   @override
-  String get kolabFlowTitlePromoteProduct => 'PROMOCIONA PRODUCTO';
+  String get kolabFlowTitlePromoteProduct => 'Promociona producto';
 
   @override
   String get kolabFlowPublishedTitle => '¡Kolab publicado!';
@@ -3536,7 +3536,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get kolabFlowDraftSavedMessage => 'Puedes seguir editando más tarde.';
 
   @override
-  String get myKolabsHubTitle => 'MIS KOLABS';
+  String get myKolabsHubTitle => 'Mis Kolabs';
 
   @override
   String get myKolabsHubTabOffers => 'OFERTAS';
@@ -5100,10 +5100,10 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get dashboardBusinessTitle => 'PANEL DE NEGOCIO';
+  String get dashboardBusinessTitle => 'Panel de negocio';
 
   @override
-  String get dashboardCommunityTitle => 'PANEL DE COMUNIDAD';
+  String get dashboardCommunityTitle => 'Panel de comunidad';
 
   @override
   String dashboardWelcomeBack(String name) {

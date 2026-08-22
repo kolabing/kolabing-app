@@ -735,7 +735,7 @@
   "@forgotPasswordUseAnotherEmail": {
     "description": "Forgot-password success panel link to retry with a different email."
   },
-  "forgotPasswordHeroLine1": "RESET ACCESS.",
+  "forgotPasswordHeroLine1": "Reset access.",
   "@forgotPasswordHeroLine1": {
     "description": "Forgot-password hero headline, line 1 (initial state)."
   },
@@ -799,7 +799,7 @@
   "@resetPasswordGoToSignIn": {
     "description": "Reset-password success button to go to login manually."
   },
-  "signInTitle": "WELCOME BACK",
+  "signInTitle": "Welcome back.",
   "@signInTitle": {
     "description": "Sign-in (Google) screen title."
   },
@@ -2694,7 +2694,7 @@
   "@myOpportunitiesCreateNewTooltip": {
     "description": "My opportunities screen: tooltip on the create floating action button"
   },
-  "myOpportunitiesHeaderTitle": "MY OPPORTUNITIES",
+  "myOpportunitiesHeaderTitle": "My opportunities",
   "@myOpportunitiesHeaderTitle": {
     "description": "My opportunities screen: page header title (uppercase)"
   },
@@ -4295,7 +4295,7 @@
   "@photoReplacePhotoButton": {
     "description": "Photo step: button to replace the uploaded photo"
   },
-  "intentSelectionAppBarTitle": "NEW KOLAB",
+  "intentSelectionAppBarTitle": "New Kolab",
   "@intentSelectionAppBarTitle": {
     "description": "AppBar title on the new-kolab intent selection screen"
   },
@@ -4367,15 +4367,15 @@
   "@kolabFlowNoIntentSelected": {
     "description": "Fallback message when the kolab flow opens without a selected intent"
   },
-  "kolabFlowTitleFindPartner": "FIND A PARTNER",
+  "kolabFlowTitleFindPartner": "Find a Partner",
   "@kolabFlowTitleFindPartner": {
     "description": "AppBar title for the community-seeking kolab flow"
   },
-  "kolabFlowTitlePromoteVenue": "PROMOTE VENUE",
+  "kolabFlowTitlePromoteVenue": "Promote Venue",
   "@kolabFlowTitlePromoteVenue": {
     "description": "AppBar title for the venue promotion kolab flow"
   },
-  "kolabFlowTitlePromoteProduct": "PROMOTE PRODUCT",
+  "kolabFlowTitlePromoteProduct": "Promote Product",
   "@kolabFlowTitlePromoteProduct": {
     "description": "AppBar title for the product promotion kolab flow"
   },
@@ -4395,7 +4395,7 @@
   "@kolabFlowDraftSavedMessage": {
     "description": "Success dialog message after saving a kolab draft"
   },
-  "myKolabsHubTitle": "MY KOLABS",
+  "myKolabsHubTitle": "My Kolabs",
   "@myKolabsHubTitle": {
     "description": "Title of the My Kolabs hub screen"
   },
@@ -6297,8 +6297,8 @@
       }
     }
   },
-  "dashboardBusinessTitle": "BUSINESS DASHBOARD",
-  "dashboardCommunityTitle": "COMMUNITY DASHBOARD",
+  "dashboardBusinessTitle": "Business dashboard",
+  "dashboardCommunityTitle": "Community dashboard",
   "dashboardWelcomeBack": "Welcome back, {name}",
   "@dashboardWelcomeBack": {
     "description": "Dashboard greeting. {name} is the user's display name.",

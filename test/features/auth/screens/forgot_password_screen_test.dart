@@ -54,7 +54,7 @@ void main() {
     final logo = tester.widget<KolabingLogo>(find.byType(KolabingLogo));
     expect(logo.variant, KolabingLogoVariant.onYellow);
 
-    expect(find.text('RESET ACCESS.'), findsOneWidget);
+    expect(find.text('Reset access.'), findsOneWidget);
     expect(
       find.text("Enter your account email and we'll send a secure reset link."),
       findsOneWidget,
@@ -73,7 +73,7 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.text('RESET ACCESS.'), findsOneWidget);
+    expect(find.text('Reset access.'), findsOneWidget);
     expect(find.text('Send reset link'), findsOneWidget);
     expect(
       tester.getBottomLeft(find.text('Send reset link')).dy,

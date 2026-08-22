@@ -8,6 +8,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/category_chip.dart';
 import '../../../widgets/category_icon.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../opportunity/models/opportunity.dart';
@@ -85,7 +86,7 @@ class OpportunityCard extends StatelessWidget {
 
             // Category chips
             if (opportunity.categories.isNotEmpty) ...[
-              _buildCategoryChips(context, isDark),
+              _buildCategoryChips(),
               const SizedBox(height: KolabingSpacing.sm),
             ],
 
@@ -172,37 +173,16 @@ class OpportunityCard extends StatelessWidget {
     ],
   );
 
-  Widget _buildCategoryChips(BuildContext context, bool isDark) => Wrap(
+  Widget _buildCategoryChips() => Wrap(
     spacing: KolabingSpacing.xxs,
     runSpacing: KolabingSpacing.xxs,
     children: opportunity.categories
         .take(3)
         .map(
-          (cat) => Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.xs,
-              vertical: 2,
-            ),
-            decoration: BoxDecoration(
-              color: context.colors.primary.withValues(alpha: 0.1),
-              borderRadius: KolabingRadius.borderRadiusRound,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CategoryIcon(name: cat, size: 14),
-                const SizedBox(width: 4),
-                Text(
-                  cat,
-                  style: KolabingTextStyles.labelSmall.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: isDark
-                        ? context.colors.textOnDark
-                        : context.colors.onSurface,
-                  ),
-                ),
-              ],
-            ),
+          (cat) => CategoryChip(
+            label: cat,
+            dense: true,
+            leading: CategoryIcon(name: cat, size: 14),
           ),
         )
         .toList(),

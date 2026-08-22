@@ -29,7 +29,7 @@ class KolabingTopBar extends StatelessWidget implements PreferredSizeWidget {
       return const SizedBox.shrink();
     }
     return Text(
-      t.toUpperCase(),
+      t,
       style: KolabingTextStyles.sectionHeader.copyWith(color: colors.ink),
       textAlign: TextAlign.center,
       maxLines: 1,
@@ -78,26 +78,23 @@ class KolabingTopBar extends StatelessWidget implements PreferredSizeWidget {
 }
 
 class _CircularBackButton extends StatelessWidget {
-  const _CircularBackButton({
-    required this.onTap,
-    required this.colors,
-  });
+  const _CircularBackButton({required this.onTap, required this.colors});
 
   final VoidCallback onTap;
   final KolabingColorTokens colors;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: colors.surface,
-            shape: BoxShape.circle,
-            border: Border.all(color: colors.hairline),
-          ),
-          child: Icon(Icons.arrow_back_rounded, color: colors.ink, size: 20),
-        ),
-      );
+    onTap: onTap,
+    child: Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: colors.surface,
+        shape: BoxShape.circle,
+        border: Border.all(color: colors.hairline),
+      ),
+      child: Icon(Icons.arrow_back_rounded, color: colors.ink, size: 20),
+    ),
+  );
 }

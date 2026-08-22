@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/theme/typography.dart';
 import '../../rewards/providers/wallet_provider.dart';
 
 // Design tokens for the yellow XP card
@@ -16,7 +17,7 @@ const _orangeFill = Color(0xFFFF6114); // progress bar fill
 /// Yellow XP summary card for the Community Dashboard.
 ///
 /// Matches the referral card visual language: solid yellow, black pill badge,
-/// Anton numerics, orange progress fill. Styling only — all data wiring is unchanged.
+/// bold numerics, orange progress fill. Styling only — all data wiring is unchanged.
 class CommunityXpSummaryCard extends ConsumerWidget {
   const CommunityXpSummaryCard({super.key});
 
@@ -60,7 +61,7 @@ class CommunityXpSummaryCard extends ConsumerWidget {
                     const SizedBox(height: 1),
                     Text(
                       '$xpToNext',
-                      style: GoogleFonts.anton(
+                      style: KolabingTextStyles.statNumber.copyWith(
                         fontSize: 34,
                         color: _inkDark,
                         height: 1.05,
@@ -85,7 +86,7 @@ class CommunityXpSummaryCard extends ConsumerWidget {
           // Big XP number
           Text(
             '${wallet.totalXp}',
-            style: GoogleFonts.anton(
+            style: KolabingTextStyles.statNumber.copyWith(
               fontSize: 56,
               color: _inkDark,
               height: 0.92,
@@ -114,7 +115,9 @@ class CommunityXpSummaryCard extends ConsumerWidget {
               builder: (_, value, _) => LinearProgressIndicator(
                 value: value,
                 minHeight: 8,
-                backgroundColor: const Color(0xFF19150F).withValues(alpha: 0.14),
+                backgroundColor: const Color(
+                  0xFF19150F,
+                ).withValues(alpha: 0.14),
                 valueColor: const AlwaysStoppedAnimation<Color>(_orangeFill),
               ),
             ),
