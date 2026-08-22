@@ -302,7 +302,8 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final session = ref.watch(activeEventSessionProvider);
+    final stored = ref.watch(activeEventSessionProvider);
+    final session = stored == null || stored.isExpired ? null : stored;
 
     return Scaffold(
       backgroundColor: Colors.black,

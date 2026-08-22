@@ -98,22 +98,37 @@ class _VerifyCompletionSheetState extends ConsumerState<VerifyCompletionSheet> {
     Future.microtask(_load);
   }
 
+  /// How many recent completions to search for the scanned id.
+  ///
+  /// Read directly rather than through `myChallengeCompletionsProvider`, whose
+  /// `load()` takes the endpoint's default page of 10: at a busy event that
+  /// could push a just-created completion off page one and make a perfectly
+  /// valid code report "not waiting for your confirmation".
+  static const int _searchLimit = 50;
+
   /// `GET /me/challenge-completions` returns completions where the viewer is
   /// either side, so the verifier's own list is where the scanned id resolves.
   Future<void> _load() async {
     final myProfileId = ref.read(authProvider).user?.id;
-    await ref.read(myChallengeCompletionsProvider.notifier).load();
-    if (!mounted) return;
 
-    final completions = ref.read(myChallengeCompletionsProvider).completions;
-    final match = completions
-        .where(
-          (c) =>
-              c.id == widget.completionId &&
-              c.isPending &&
-              c.verifierProfileId == myProfileId,
-        )
-        .firstOrNull;
+    ChallengeCompletion? match;
+    try {
+      final response = await ref
+          .read(challengeServiceProvider)
+          .getMyChallengeCompletions(limit: _searchLimit);
+      match = response.completions
+          .where(
+            (c) =>
+                c.id == widget.completionId &&
+                c.isPending &&
+                c.verifierProfileId == myProfileId,
+          )
+          .firstOrNull;
+    } on ChallengeException {
+      match = null;
+    }
+
+    if (!mounted) return;
 
     if (match == null) {
       Navigator.of(context).pop(const VerifyOutcome.notForYou());

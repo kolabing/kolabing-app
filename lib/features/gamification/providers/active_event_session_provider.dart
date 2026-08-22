@@ -60,17 +60,6 @@ class ActiveEventSessionNotifier extends Notifier<ActiveEventSession?> {
       debugPrint('active_event_session: clear failed: $e');
     }
   }
-
-  /// The live session, dropping (and clearing) an expired one.
-  ActiveEventSession? get live {
-    final session = state;
-    if (session == null) return null;
-    if (session.isExpired) {
-      clear();
-      return null;
-    }
-    return session;
-  }
 }
 
 final activeEventSessionProvider =

@@ -75,7 +75,9 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
 
   Future<void> _start(Challenge challenge, ScannedPeer peer) async {
     final session = ref.read(activeEventSessionProvider);
-    if (session == null || _startingChallengeId != null) return;
+    if (session == null || session.isExpired || _startingChallengeId != null) {
+      return;
+    }
 
     setState(() => _startingChallengeId = challenge.id);
     final l10n = AppLocalizations.of(context);
@@ -122,7 +124,10 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final session = ref.watch(activeEventSessionProvider);
+    // A session that expired while the app sat open is no session: pairing must
+    // not scope challenges to yesterday's event.
+    final stored = ref.watch(activeEventSessionProvider);
+    final session = stored == null || stored.isExpired ? null : stored;
     final peerAsync = ref.watch(scannedPeerProvider(widget.peerProfileRef));
     final peer =
         peerAsync.asData?.value ??
