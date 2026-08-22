@@ -49,8 +49,7 @@ sealed class QrPayload {
           .where((s) => s.isNotEmpty)
           .toList(growable: false);
 
-      if (segments.length == 2 &&
-          segments[0].toLowerCase() == _peerSegment) {
+      if (segments.length == 2 && segments[0].toLowerCase() == _peerSegment) {
         return QrPeerProfile(segments[1]);
       }
 

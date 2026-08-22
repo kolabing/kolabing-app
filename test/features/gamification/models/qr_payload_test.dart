@@ -73,7 +73,10 @@ void main() {
       final result = QrPayload.parse('7f3ac91be4d2408fa1c65b0e9d7a2f31');
 
       expect(result, isA<QrCheckinToken>());
-      expect((result as QrCheckinToken).token, '7f3ac91be4d2408fa1c65b0e9d7a2f31');
+      expect(
+        (result as QrCheckinToken).token,
+        '7f3ac91be4d2408fa1c65b0e9d7a2f31',
+      );
     });
 
     test('recognises a 64-char token', () {
@@ -89,7 +92,10 @@ void main() {
     test('trims surrounding whitespace', () {
       final result = QrPayload.parse('  7f3ac91be4d2408fa1c65b0e9d7a2f31  ');
 
-      expect((result as QrCheckinToken).token, '7f3ac91be4d2408fa1c65b0e9d7a2f31');
+      expect(
+        (result as QrCheckinToken).token,
+        '7f3ac91be4d2408fa1c65b0e9d7a2f31',
+      );
     });
   });
 
