@@ -68,6 +68,57 @@ void main() {
     });
   });
 
+  group('QrPayload.parse — canonical check-in link', () {
+    // `App\Support\CheckinLink` is the backend's single source of truth for
+    // what a check-in QR points at: a web URL carrying the SHORT code, chosen
+    // so the QR stays version 3 and scans across a room. The web panel and
+    // printed sheets emit this shape, so the app has to read it — otherwise a
+    // code shown anywhere but the app itself is unreadable in the app.
+    test('reads the short code out of a /checkin/{code} link', () {
+      final result = QrPayload.parse('https://app.kolabing.com/checkin/K7Q2MX');
+
+      expect(result, isA<QrCheckinToken>());
+      expect((result as QrCheckinToken).token, 'K7Q2MX');
+    });
+
+    test('reads a long token off the same route', () {
+      final token = 'a' * 64;
+
+      final result = QrPayload.parse('https://app.kolabing.com/checkin/$token');
+
+      expect((result as QrCheckinToken).token, token);
+    });
+
+    test('matches the path on any host (dev webapp, prod webapp)', () {
+      for (final host in [
+        'app.kolabing.com',
+        'kolabing-v2-development-uhzrzd.laravel.cloud',
+        'localhost:8000',
+      ]) {
+        expect(
+          QrPayload.parse('https://$host/checkin/K7Q2MX'),
+          isA<QrCheckinToken>(),
+          reason: host,
+        );
+      }
+    });
+
+    test('tolerates a trailing slash', () {
+      final result = QrPayload.parse(
+        'https://app.kolabing.com/checkin/K7Q2MX/',
+      );
+
+      expect((result as QrCheckinToken).token, 'K7Q2MX');
+    });
+
+    test('a bare /checkin with no code is not a check-in', () {
+      expect(
+        QrPayload.parse('https://app.kolabing.com/checkin'),
+        isA<QrUnknown>(),
+      );
+    });
+  });
+
   group('QrPayload.parse — check-in token', () {
     test('recognises an opaque token', () {
       final result = QrPayload.parse('7f3ac91be4d2408fa1c65b0e9d7a2f31');

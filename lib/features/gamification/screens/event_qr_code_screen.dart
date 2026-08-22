@@ -54,7 +54,7 @@ class EventQRCodeScreen extends ConsumerWidget {
             icon: Icon(LucideIcons.refreshCw, color: textColor),
             onPressed: qrTokenAsync.isLoading
                 ? null
-                : () => ref.invalidate(qrTokenProvider(eventId)),
+                : () => rotateEventCheckinCode(ref, eventId),
           ),
         ],
       ),
@@ -227,7 +227,15 @@ class EventQRCodeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildQRCode(BuildContext context, WidgetRef ref, String token) {
+  /// Renders the code.
+  ///
+  /// The QR carries [EventCheckinQr.qrData] — the backend's `checkin_url`, not
+  /// the long token. `App\Support\CheckinLink` is the one place that decides
+  /// what a check-in QR points at, and it picks a URL with the short code
+  /// because that keeps the QR at version 3 (29×29) rather than version 6
+  /// (41×41): the difference between scanning across a room and having to walk
+  /// up to the screen. It also means a plain phone camera can open it.
+  Widget _buildQRCode(BuildContext context, WidgetRef ref, EventCheckinQr qr) {
     return Column(
       children: [
         // QR Code
@@ -238,7 +246,7 @@ class EventQRCodeScreen extends ConsumerWidget {
             borderRadius: BorderRadius.circular(16),
           ),
           child: QrImageView(
-            data: token,
+            data: qr.qrData,
             version: QrVersions.auto,
             size: 250,
             backgroundColor: Colors.white,
@@ -255,9 +263,20 @@ class EventQRCodeScreen extends ConsumerWidget {
 
         const SizedBox(height: KolabingSpacing.md),
 
-        // Copy token button
+        // The typable twin, for when scanning will not cooperate — a member can
+        // read this out or type it into the web panel.
+        Text(
+          qr.displayCode,
+          style: KolabingTextStyles.titleMedium.copyWith(
+            color: context.colors.onSurface,
+            letterSpacing: 2,
+          ),
+        ),
+
+        const SizedBox(height: KolabingSpacing.xs),
+
         TextButton.icon(
-          onPressed: () => _copyToken(context, token),
+          onPressed: () => _copyToken(context, qr.displayCode),
           icon: const Icon(LucideIcons.copy, size: 16),
           label: Text(AppLocalizations.of(context).eventQrCopyToken),
         ),

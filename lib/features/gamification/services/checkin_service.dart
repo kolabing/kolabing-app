@@ -21,10 +21,18 @@ class CheckinService {
   final AuthService _authService;
   final http.Client _httpClient;
 
-  /// Generate QR check-in token for an event (organizer only)
+  /// Generate the check-in credentials for an event (organizer only).
   ///
   /// POST /api/v1/events/{event_id}/generate-qr
-  Future<String> generateQRToken(String eventId) async {
+  ///
+  /// [rotate] retires the current code and mints a new one. Without it the
+  /// endpoint is idempotent — `CheckinService::openDoor` returns the existing
+  /// code while it is still valid, deliberately, so a host pressing this on a
+  /// phone does not kill a QR a laptop is still showing to a queue.
+  Future<EventCheckinQr> generateQr(
+    String eventId, {
+    bool rotate = false,
+  }) async {
     final token = await _authService.getToken();
     if (token == null) {
       throw const AuthException('Not authenticated');
@@ -41,6 +49,7 @@ class CheckinService {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
+        body: jsonEncode({'rotate': rotate}),
       );
 
       debugPrint('🎫 Generate QR response status: ${response.statusCode}');
@@ -48,7 +57,7 @@ class CheckinService {
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         final data = json['data'] as Map<String, dynamic>;
-        return data['checkin_token'] as String;
+        return EventCheckinQr.fromJson(data);
       } else if (response.statusCode == 403) {
         throw const CheckinException(
           'You are not authorized to generate a QR token for this event.',
@@ -203,6 +212,55 @@ class CheckinService {
       );
     }
   }
+}
+
+/// What the organizer's check-in QR screen needs.
+///
+/// The backend returns three related things and the QR must encode [url], not
+/// [token]: `App\Support\CheckinLink` is the one place that decides what a
+/// check-in QR points at, and it picks a web URL carrying the short [code]
+/// because that keeps the QR at version 3 (29×29) instead of version 6 (41×41)
+/// — the difference between scanning across a room and walking up to the
+/// screen. It is also openable by a plain phone camera.
+///
+/// [code] is the typable twin, for when scanning will not cooperate.
+@immutable
+class EventCheckinQr {
+  const EventCheckinQr({
+    required this.token,
+    this.code,
+    this.url,
+    this.expiresAt,
+  });
+
+  factory EventCheckinQr.fromJson(Map<String, dynamic> json) => EventCheckinQr(
+    token: json['checkin_token'] as String,
+    code: json['checkin_code'] as String?,
+    url: json['checkin_url'] as String?,
+    expiresAt: json['checkin_expires_at'] != null
+        ? DateTime.tryParse(json['checkin_expires_at'] as String)
+        : null,
+  );
+
+  /// The long opaque token. Accepted by `POST /checkin`, but too large to make
+  /// a comfortably scannable QR.
+  final String token;
+
+  /// Short, typable code. Also accepted by `POST /checkin`
+  /// (`CheckinService::checkin` matches `checkin_token` OR `checkin_code`).
+  final String? code;
+
+  /// The URL the QR should carry. Falls back to [token] only on an older
+  /// backend that does not return it.
+  final String? url;
+
+  final DateTime? expiresAt;
+
+  /// What to render in the QR.
+  String get qrData => (url != null && url!.isNotEmpty) ? url! : token;
+
+  /// What to show as the typable fallback under the QR.
+  String get displayCode => (code != null && code!.isNotEmpty) ? code! : token;
 }
 
 /// Response wrapper for check-ins list with pagination

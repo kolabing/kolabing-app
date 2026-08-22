@@ -179,23 +179,72 @@ void main() {
     });
   });
 
-  group('CheckinService.generateQRToken', () {
-    test('returns the organizer token', () async {
+  group('CheckinService.generateQr', () {
+    const fullBody = '''
+{"success":true,"data":{
+  "checkin_token":"tok-64-chars-long-enough",
+  "checkin_code":"K7Q2MX",
+  "checkin_url":"https://app.kolabing.com/checkin/K7Q2MX",
+  "checkin_expires_at":"2026-08-22T23:00:00Z"
+}}''';
+
+    test('returns the token, the short code and the canonical link', () async {
+      final service = _service((_) => http.Response(fullBody, 200));
+
+      final qr = await service.generateQr('evt-1');
+
+      expect(qr.token, 'tok-64-chars-long-enough');
+      expect(qr.code, 'K7Q2MX');
+      expect(qr.url, 'https://app.kolabing.com/checkin/K7Q2MX');
+      expect(qr.expiresAt, isNotNull);
+    });
+
+    // The QR must carry the URL, not the long token: CheckinLink picks the URL
+    // with the short code so the code stays version 3 and scans across a room.
+    test('the QR renders the canonical URL, not the token', () async {
+      final service = _service((_) => http.Response(fullBody, 200));
+
+      final qr = await service.generateQr('evt-1');
+
+      expect(qr.qrData, 'https://app.kolabing.com/checkin/K7Q2MX');
+      expect(qr.displayCode, 'K7Q2MX');
+    });
+
+    test('falls back to the token on a backend without the URL', () async {
       final service = _service(
         (_) => http.Response(
-          '{"success":true,"data":{"checkin_token":"tok-64-chars"}}',
+          '{"success":true,"data":{"checkin_token":"tok-64-chars-long-enough"}}',
           200,
         ),
       );
 
-      expect(await service.generateQRToken('evt-1'), 'tok-64-chars');
+      final qr = await service.generateQr('evt-1');
+
+      expect(qr.qrData, 'tok-64-chars-long-enough');
+      expect(qr.displayCode, 'tok-64-chars-long-enough');
+    });
+
+    // openDoor() is idempotent unless asked to rotate, so a plain read must not
+    // retire a code people may be queuing in front of.
+    test('does not rotate unless asked', () async {
+      String? body;
+      final service = _service((request) {
+        body = (request as http.Request).body;
+        return http.Response(fullBody, 200);
+      });
+
+      await service.generateQr('evt-1');
+      expect(body, contains('"rotate":false'));
+
+      await service.generateQr('evt-1', rotate: true);
+      expect(body, contains('"rotate":true'));
     });
 
     test('maps 403 to unauthorized', () async {
       final service = _service((_) => http.Response('{}', 403));
 
       await expectLater(
-        service.generateQRToken('evt-1'),
+        service.generateQr('evt-1'),
         throwsA(
           isA<CheckinException>().having(
             (e) => e.kind,

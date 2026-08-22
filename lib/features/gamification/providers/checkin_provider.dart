@@ -14,14 +14,25 @@ final checkinServiceProvider = Provider<CheckinService>((ref) {
 // QR Token Provider
 // =============================================================================
 
-/// Provider for generating QR tokens (organizer)
-final qrTokenProvider = FutureProvider.family<String, String>((
+/// Provider for the organizer's check-in QR (token + short code + link).
+final qrTokenProvider = FutureProvider.family<EventCheckinQr, String>((
   ref,
   eventId,
 ) async {
   final service = ref.watch(checkinServiceProvider);
-  return service.generateQRToken(eventId);
+  return service.generateQr(eventId);
 });
+
+/// Rotates the event's check-in code, retiring the current one.
+///
+/// Kept separate from [qrTokenProvider] because a plain re-read must NOT
+/// rotate: `CheckinService::openDoor` is idempotent by design, so reopening the
+/// screen does not invalidate a QR people are queuing in front of. Rotating is
+/// the deliberate act of retiring a leaked code.
+Future<void> rotateEventCheckinCode(WidgetRef ref, String eventId) async {
+  await ref.read(checkinServiceProvider).generateQr(eventId, rotate: true);
+  ref.invalidate(qrTokenProvider(eventId));
+}
 
 // =============================================================================
 // Check-in Provider
