@@ -2410,7 +2410,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get attendeeMyQrSubtitle =>
-      'Muéstralo a un organizador para registrarte o conectar.';
+      'Deja que alguien lo escanee para hacerte check-in o emparejaros en un reto.';
 
   @override
   String get attendeeMyQrTooltip => 'Mi código QR';
@@ -2953,11 +2953,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get qrScannerInstructionTitle =>
-      'Apunta la cámara al código QR del evento';
+      'Apunta la cámara a un código QR de Kolabing';
 
   @override
   String get qrScannerInstructionSubtitle =>
-      'El organizador del evento mostrará el código QR';
+      'El código de check-in de un evento o el QR de perfil de otro miembro';
 
   @override
   String get rewardWalletTitle => 'Mis recompensas';
@@ -7161,4 +7161,157 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get subscriptionManageAppleFailed =>
       'No se han podido abrir tus suscripciones de la App Store. Ve a Ajustes › tu nombre › Suscripciones para gestionarla o cancelarla.';
+
+  @override
+  String get qrHubTitle => 'Escanear o compartir';
+
+  @override
+  String get qrHubScanTitle => 'Escanear un código';
+
+  @override
+  String get qrHubScanSubtitle =>
+      'Haz check-in en un evento o empareja para jugar un reto';
+
+  @override
+  String get qrHubMyQrTitle => 'Mi código QR';
+
+  @override
+  String get qrHubMyQrSubtitle =>
+      'Deja que alguien te escanee para emparejaros';
+
+  @override
+  String get scannerUnknownCode => 'Ese no es un código QR de Kolabing.';
+
+  @override
+  String get scannerOwnCode =>
+      'Ese es tu propio código: pide a la otra persona que muestre el suyo.';
+
+  @override
+  String get scannerTorchTooltip => 'Activar o desactivar el flash';
+
+  @override
+  String checkinSuccessBody(String eventName) {
+    return 'Has hecho check-in en $eventName.';
+  }
+
+  @override
+  String checkinAlreadyBody(String eventName) {
+    return 'Ya habías hecho check-in en $eventName: todo listo.';
+  }
+
+  @override
+  String checkinXpEarned(int points) {
+    return '+$points XP';
+  }
+
+  @override
+  String get checkinNextStep =>
+      'Ahora escanea el QR de perfil de alguien para jugar un reto juntos.';
+
+  @override
+  String get checkinScanPeer => 'ESCANEAR A ALGUIEN';
+
+  @override
+  String peerPairedTitle(String name) {
+    return 'Emparejado con $name';
+  }
+
+  @override
+  String get peerPairedSubtitle => 'Elige un reto para jugar juntos.';
+
+  @override
+  String peerPairedAtEvent(String eventName) {
+    return 'En $eventName';
+  }
+
+  @override
+  String get peerChallengesEmpty => 'Este evento aún no tiene retos.';
+
+  @override
+  String get peerChallengePlay => 'JUGAR';
+
+  @override
+  String get peerNoSessionTitle => 'Primero haz check-in';
+
+  @override
+  String get peerNoSessionBody =>
+      'Escanea el código QR del evento para hacer check-in y luego emparejaos para jugar sus retos.';
+
+  @override
+  String get peerNoSessionAction => 'ESCANEAR CÓDIGO DEL EVENTO';
+
+  @override
+  String get peerInitiateBothCheckedIn =>
+      'Los dos tenéis que haber hecho check-in en este evento.';
+
+  @override
+  String get peerInitiateFailed => 'No se pudo iniciar el reto.';
+
+  @override
+  String get verifyQrTitle => 'Que te lo confirmen';
+
+  @override
+  String verifyQrBody(String name) {
+    return 'Pide a $name que escanee este código para confirmar que lo has hecho.';
+  }
+
+  @override
+  String get verifyQrWaiting => 'Esperando la confirmación…';
+
+  @override
+  String get verifyQrVerifiedTitle => '¡Reto completado!';
+
+  @override
+  String get verifyQrRejectedTitle => 'No confirmado';
+
+  @override
+  String get verifyQrRejectedBody =>
+      'Este no se ha confirmado. Puedes probar otro reto.';
+
+  @override
+  String get verifyQrTimeoutTitle => 'Seguimos esperando';
+
+  @override
+  String get verifyQrTimeoutBody =>
+      'Aún no hay confirmación. Mantén este código abierto o vuelve a mostrarlo más tarde desde tu historial de retos.';
+
+  @override
+  String get verifyQrKeepWaiting => 'SEGUIR ESPERANDO';
+
+  @override
+  String get verifyScanTitle => 'Confirmar un reto';
+
+  @override
+  String verifyScanQuestion(String name, String challenge) {
+    return '¿$name ha completado «$challenge»?';
+  }
+
+  @override
+  String verifyScanQuestionFallback(String name) {
+    return '¿$name ha completado su reto?';
+  }
+
+  @override
+  String get verifyScanNotForYou =>
+      'Ese reto no está esperando tu confirmación.';
+
+  @override
+  String get verifyScanConfirmedTitle => 'Confirmado';
+
+  @override
+  String verifyScanConfirmedBody(String name, int points) {
+    return '$name ha ganado $points XP.';
+  }
+
+  @override
+  String get verifyScanRejectedTitle => 'Rechazado';
+
+  @override
+  String get verifyScanFailed => 'No se pudo confirmar el reto.';
+
+  @override
+  String get eventHubShowCheckinQr => 'Mostrar QR de check-in';
+
+  @override
+  String get eventHubCheckIn => 'Hacer check-in';
 }
