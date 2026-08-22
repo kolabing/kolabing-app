@@ -145,11 +145,20 @@ public function test_new_tables_exist_and_existing_ones_are_untouched(): void
 ## Task 6: Surfacing follower state
 
 **Files:**
-- Modify: `app/Http/Resources/CommunityResource.php` (add `followers_count`, `is_following`)
-- Modify: the `/me/memberships` payload — **add** a `following` section, leave `memberships` byte-identical
+- Create: `GET /me/community-follows` on `CommunityFollowController`
 - Test: `tests/Feature/Api/V1/CommunityFollowTest.php` (extend)
 
-**Step 1: Write the failing test.** Assert `memberships` still has exactly the keys it has today (rule 2), and that `following` is a new sibling. Assert `is_following` is false for a member who never followed — the two axes are independent.
+**Do NOT touch `/me/memberships`, and do not add follower fields to
+`CommunityResource`.** `/me/memberships` returns `data` as a bare list which the
+shipped app casts straight to `List<dynamic>`, so adding a sibling key throws in
+every installed build. `CommunityResource` is serialized in lists, so
+`is_following` / `follower_count` put a query on every row —
+`MeRewardsOverviewNPlusOneTest` catches it (12 queries → 21). Follower state
+comes from this endpoint and the follow/unfollow responses instead.
+
+**Step 1: Write the failing test.** The follows list contains only what the
+viewer follows; a member who never followed gets an empty list. Assert
+`/me/memberships` is still a list with its original keys.
 
 **Steps 2–5** as usual. **Commit.** `feat(community): expose follower state without changing the membership payload`
 
@@ -171,7 +180,8 @@ This is the test that proves the split did not leak or revoke anything.
 ## Task 8: Docs and finish
 
 **Files:**
-- Modify: `BACKLOG.md`, `docs/BACKEND-SCHEMA.md` (three new tables), `docs/ROLES-BACKEND-DB-MAP.md` (the follower/member distinction and which gate each surface uses)
+- Modify (in **`kolabing-v2`**): `docs/ROLES-BACKEND-DB-MAP.md` — the three tables and the follower/member distinction
+- Modify (in **`kolabing-app`**): `BACKLOG.md`. `kolabing-app/docs/BACKEND-SCHEMA.md` documents no `community_*` table today, so there is no section to extend — leave it rather than starting one here
 - Run: `php artisan test` (full suite) and `vendor/bin/pint`
 
 The repo rules require these three docs to stay in sync with any schema or role change; this is both.

@@ -121,8 +121,14 @@ unchanged**.
   existing follower row is left alone on approval — harmless, and deleting it
   would lose the `followed_at` history.
 - **Questions are versioned by retirement, not deletion.** `is_active: false`
-  retires a question while its past answers stay readable, so a leader reviewing
-  an old application still sees what was asked.
+  retires a question while its past answers stay readable.
+- **And the wording is snapshotted onto the answer.** Retirement alone is not
+  enough: a leader can *reword* a live question, which would silently re-render
+  an old application under wording its author never saw.
+  `community_join_answers.prompt_snapshot` records what was asked.
+- **Position is not unique, so ordering is `(position, created_at)`.** A retired
+  question keeps its number, and a replacement goes past the highest **live**
+  position rather than to `count + 1`, so it cannot land on top of one.
 - **Max 5 active questions per community**, enforced in the service, not just
   the UI.
 - **`join_policy` keeps its two values and gains a clearer meaning**, with one
@@ -141,7 +147,10 @@ unchanged**.
 
 ## 5. Endpoints
 
-All new. No existing endpoint changes shape.
+Mostly new. The last four **already exist** — `CommunityJoinRequestController`
+has carried `store`/`index`/`approve`/`decline` since the invite-only work — and
+`store`/`index` are *extended* here, additively: `store` accepts an `answers`
+key, `index` gains an `answers` array. Nothing is removed or retyped.
 
 | Method | Path | Who | Does |
 |---|---|---|---|
@@ -156,9 +165,12 @@ All new. No existing endpoint changes shape.
 | `POST` | `/join-requests/{id}/approve` | leader | → `CommunityMemberService` (default tier) |
 | `POST` | `/join-requests/{id}/decline` | leader | decline |
 
-`GET /me/memberships` grows a **follower** section rather than changing its
-member payload, so an app already in the wild keeps reading exactly what it
-reads today.
+**`GET /me/memberships` is not touched at all.** It returns `data` as a bare
+list and the shipped app casts it straight to `List<dynamic>`
+(`community_service.dart` `_asList`), so turning `data` into
+`{memberships: […], following: […]}` would throw in every installed build and
+break My Communities. The follows list is therefore its **own endpoint**,
+`GET /me/community-follows`.
 
 ## 6. Flows
 
@@ -170,7 +182,10 @@ follow is not a request).
 2. Applicant answers the required ones.
 3. `POST /communities/{id}/join-requests` with the answers → a
    `CommunityJoinRequest` (`pending`) plus its `community_join_answers`.
-4. `join_policy: open` → approved immediately in the same transaction.
+4. `join_policy: open` **and the community has active questions** → approved
+   immediately in the same transaction. An open community with **no** questions
+   still refuses the request path, exactly as today (see §4) — the guard that
+   makes this deployable, so do not implement step 4 without it.
    `invite_only` → stays pending, the leader is notified.
 
 **Decide** — the leader lists pending requests with their answers and approves
@@ -191,8 +206,15 @@ row, default tier and main-chat access come out exactly as they do today.
    reinterpretation of `join_policy` only affects *new* applications.
 5. **Deploy order:** backend first, app after. Until the app ships, the new
    endpoints are simply unused — nothing regresses.
-6. The app must **self-gate** on a 404 from the new endpoints, so a build can
-   ship before the backend deploy without breaking.
+6. **Self-gating cannot use the join-request endpoints** — they already exist,
+   so a pre-deploy backend answers 200/422 there, never 404. The app should
+   probe a genuinely new route: `GET /me/community-follows` 404s until this
+   deploys, and that is the capability signal. (`GET .../join-questions` will
+   not do: it also 404s for a community the viewer cannot see.)
+7. **Required answers are enforced only when the client sends an `answers`
+   key.** The shipped app posts an empty body, so enforcing unconditionally
+   would 422 every installed build the moment a leader added a required
+   question.
 
 ## 8. Testing
 
@@ -224,3 +246,37 @@ row, default tier and main-chat access come out exactly as they do today.
 - Reworking tiers, points or badges.
 - Follower-only content or feeds.
 - Migrating any existing member down to follower.
+
+---
+
+## 11. Two things the code review surfaced that are still open
+
+Both are product decisions, and neither is answered by what has been built.
+
+### 11.1 A follower can sign up to a **member-only** event
+
+§2 claims a follower cannot attend member- or tier-gated events. That is not
+what the backend does. `EventSignupService::signup` checks `visibility` only for
+events with **no** community; for a community's event it does not check at all,
+so anyone signed in who has the event id can sign up to a `members`-visibility
+event. The app only hides those client-side via `can_access`.
+
+This predates the split — not a regression — but the design should not claim a
+gate that does not exist. Either add a membership check to `EventSignupService`
+(a behaviour change with real blast radius: it would start refusing sign-ups
+that succeed today), or narrow §2 to say the gate is client-side only.
+**Not decided.**
+
+### 11.2 For `open` communities, `/join` bypasses the questions entirely
+
+`open` is the default the app creates, and every current join CTA calls
+`POST /communities/{id}/join` whenever `join_policy` allows self-join. That
+endpoint is deliberately untouched here — so an open community can define five
+required questions and still receive one-tap members through `/join`.
+
+As shipped, the questions gate is effective for `invite_only` communities and
+cosmetic for open ones. Closing it means making `/join` refuse when active
+questions exist: a real contract change with an app-side dependency, which would
+break one-tap join for any community that adopts questions. **Not decided** —
+worth settling before the app work, because it decides whether the Follow/Apply
+UI applies to open communities at all.
