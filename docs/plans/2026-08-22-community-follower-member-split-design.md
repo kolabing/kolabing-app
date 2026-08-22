@@ -125,10 +125,19 @@ unchanged**.
   an old application still sees what was asked.
 - **Max 5 active questions per community**, enforced in the service, not just
   the UI.
-- **`join_policy` keeps its two values and gains a clearer meaning**: `open` →
-  an application is auto-approved on submit; `invite_only` → a leader must
-  decide. Same column, same values, now applied to *membership* rather than to a
-  one-tap join.
+- **`join_policy` keeps its two values and gains a clearer meaning**, with one
+  correction found while planning: today
+  `CommunityJoinRequestController::store` **refuses** a request to an `open`
+  community outright (`DomainException` → "This community is open. You can join
+  directly."), so open communities do not use the request path at all. The rule
+  becomes: an `open` community accepts a request **only when it has active
+  questions**, and auto-approves it in the same transaction; with no questions it
+  keeps refusing exactly as today, so the existing `/communities/{id}/join` path
+  is untouched. `invite_only` → a leader decides, as now.
+
+  This is what keeps the change production-safe: no community has questions
+  until a leader creates one, so on the day of deploy every community behaves
+  precisely as it does today.
 
 ## 5. Endpoints
 
