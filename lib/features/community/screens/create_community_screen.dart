@@ -39,7 +39,9 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _submitting = true);
     try {
-      await ref.read(communityServiceProvider).createCommunity(
+      await ref
+          .read(communityServiceProvider)
+          .createCommunity(
             name: _nameController.text.trim(),
             type: _type,
             joinPolicy: _joinPolicy,
@@ -50,8 +52,9 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
       if (e.isCommunityLimitReached) {
         _showPremiumUpsell();
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -86,9 +89,12 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
         child: ListView(
           padding: const EdgeInsets.all(KolabingSpacing.md),
           children: [
-            Text(l10n.createCommunityNameLabel,
-                style: KolabingTextStyles.bodySmall
-                    .copyWith(fontWeight: FontWeight.w700)),
+            Text(
+              l10n.createCommunityNameLabel,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             const SizedBox(height: KolabingSpacing.xs),
             TextFormField(
               controller: _nameController,
@@ -102,25 +108,31 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
                   : null,
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            Text(l10n.createCommunityTypeLabel,
-                style: KolabingTextStyles.bodySmall
-                    .copyWith(fontWeight: FontWeight.w700)),
+            Text(
+              l10n.createCommunityTypeLabel,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             const SizedBox(height: KolabingSpacing.xs),
             DropdownButtonFormField<CommunityType>(
               initialValue: _type,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: CommunityType.values
-                  .map((t) => DropdownMenuItem(
-                        value: t,
-                        child: Text(t.displayName),
-                      ))
+                  .map(
+                    (t) =>
+                        DropdownMenuItem(value: t, child: Text(t.displayName)),
+                  )
                   .toList(),
               onChanged: (v) => setState(() => _type = v ?? _type),
             ),
             const SizedBox(height: KolabingSpacing.lg),
-            Text(l10n.createCommunityWhoCanJoin,
-                style: KolabingTextStyles.bodySmall
-                    .copyWith(fontWeight: FontWeight.w700)),
+            Text(
+              l10n.createCommunityWhoCanJoin,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             const SizedBox(height: KolabingSpacing.xs),
             SegmentedButton<CommunityJoinPolicy>(
               segments: [
@@ -134,8 +146,7 @@ class _CreateCommunityScreenState extends ConsumerState<CreateCommunityScreen> {
                 ),
               ],
               selected: {_joinPolicy},
-              onSelectionChanged: (s) =>
-                  setState(() => _joinPolicy = s.first),
+              onSelectionChanged: (s) => setState(() => _joinPolicy = s.first),
             ),
             const SizedBox(height: KolabingSpacing.xl),
             FilledButton(

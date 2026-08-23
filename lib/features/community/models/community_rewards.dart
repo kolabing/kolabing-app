@@ -57,15 +57,15 @@ class CommunityGoal {
   });
 
   factory CommunityGoal.fromJson(Map<String, dynamic> json) => CommunityGoal(
-        id: json['id'].toString(),
-        title: json['title'] as String? ?? '',
-        earnType: GoalEarnType.fromString(json['earn_type'] as String?),
-        target: (json['target'] as num?)?.toInt() ?? 0,
-        rewardPoints: (json['reward_points'] as num?)?.toInt() ?? 0,
-        challengeId: json['challenge_id']?.toString(),
-        isActive: json['is_active'] as bool? ?? true,
-        progress: (json['progress'] as num?)?.toInt(),
-      );
+    id: json['id'].toString(),
+    title: json['title'] as String? ?? '',
+    earnType: GoalEarnType.fromString(json['earn_type'] as String?),
+    target: (json['target'] as num?)?.toInt() ?? 0,
+    rewardPoints: (json['reward_points'] as num?)?.toInt() ?? 0,
+    challengeId: json['challenge_id']?.toString(),
+    isActive: json['is_active'] as bool? ?? true,
+    progress: (json['progress'] as num?)?.toInt(),
+  );
 
   final String id;
   final String title;
@@ -88,13 +88,13 @@ class CommunityGoal {
   bool get isCompleted => (progress ?? 0) >= target && target > 0;
 
   Map<String, dynamic> toCreateJson() => {
-        'title': title,
-        'earn_type': earnType.toApiValue(),
-        'target': target,
-        'reward_points': rewardPoints,
-        if (earnType == GoalEarnType.challenge && challengeId != null)
-          'challenge_id': challengeId,
-      };
+    'title': title,
+    'earn_type': earnType.toApiValue(),
+    'target': target,
+    'reward_points': rewardPoints,
+    if (earnType == GoalEarnType.challenge && challengeId != null)
+      'challenge_id': challengeId,
+  };
 }
 
 // -----------------------------------------------------------------------------
@@ -139,11 +139,11 @@ class CommunityReward {
   bool get isOutOfStock => stock != null && stock! <= 0;
 
   Map<String, dynamic> toCreateJson() => {
-        'title': title,
-        if (description != null) 'description': description,
-        'cost_points': costPoints,
-        if (stock != null) 'stock': stock,
-      };
+    'title': title,
+    if (description != null) 'description': description,
+    'cost_points': costPoints,
+    if (stock != null) 'stock': stock,
+  };
 }
 
 // -----------------------------------------------------------------------------
@@ -200,19 +200,21 @@ class CommunityBadge {
   });
 
   factory CommunityBadge.fromJson(Map<String, dynamic> json) => CommunityBadge(
-        id: json['id'].toString(),
-        title: json['title'] as String? ?? '',
-        icon: json['icon'] as String?,
-        criteriaType:
-            BadgeCriteriaType.fromString(json['criteria_type'] as String?),
-        criteriaValue: (json['criteria_value'] as num?)?.toInt() ?? 0,
-        challengeIds: (json['challenge_ids'] as List<dynamic>?)
-                ?.map((e) => e.toString())
-                .toList() ??
-            const [],
-        isActive: json['is_active'] as bool? ?? true,
-        earned: json['earned'] as bool?,
-      );
+    id: json['id'].toString(),
+    title: json['title'] as String? ?? '',
+    icon: json['icon'] as String?,
+    criteriaType: BadgeCriteriaType.fromString(
+      json['criteria_type'] as String?,
+    ),
+    criteriaValue: (json['criteria_value'] as num?)?.toInt() ?? 0,
+    challengeIds:
+        (json['challenge_ids'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        const [],
+    isActive: json['is_active'] as bool? ?? true,
+    earned: json['earned'] as bool?,
+  );
 
   final String id;
   final String title;
@@ -228,13 +230,13 @@ class CommunityBadge {
   bool get isEarned => earned ?? false;
 
   Map<String, dynamic> toCreateJson() => {
-        'title': title,
-        if (icon != null) 'icon': icon,
-        'criteria_type': criteriaType.toApiValue(),
-        'criteria_value': criteriaValue,
-        if (criteriaType == BadgeCriteriaType.challengesCompleted)
-          'challenge_ids': challengeIds,
-      };
+    'title': title,
+    if (icon != null) 'icon': icon,
+    'criteria_type': criteriaType.toApiValue(),
+    'criteria_value': criteriaValue,
+    if (criteriaType == BadgeCriteriaType.challengesCompleted)
+      'challenge_ids': challengeIds,
+  };
 }
 
 // -----------------------------------------------------------------------------
@@ -260,15 +262,18 @@ class CommunityRewardsHub {
     return CommunityRewardsHub(
       myPoints: (json['my_points'] as num?)?.toInt() ?? 0,
       myTierName: tierName,
-      goals: (json['goals'] as List<dynamic>?)
+      goals:
+          (json['goals'] as List<dynamic>?)
               ?.map((e) => CommunityGoal.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      badges: (json['badges'] as List<dynamic>?)
+      badges:
+          (json['badges'] as List<dynamic>?)
               ?.map((e) => CommunityBadge.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      rewards: (json['rewards'] as List<dynamic>?)
+      rewards:
+          (json['rewards'] as List<dynamic>?)
               ?.map((e) => CommunityReward.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
