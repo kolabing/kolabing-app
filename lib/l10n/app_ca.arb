@@ -2039,6 +2039,8 @@
   "businessProductPhotosEmptyDescription": "Mostra el que ofereixes. Puja les teves fotos, elimina les que no vulguis i ordena-les aquí.",
   "communityStep1SizeHelper": "Aproximadament, quants membres té la teva comunitat?",
   "missionsTitle": "Missions",
+  "soloChallengesTitle": "Reptes que fas pel teu compte",
+  "soloChallengesHint": "Kolabing els segueix amb els teus registres d'assist\u00e8ncia. Ning\u00fa els ha de confirmar.",
   "missionsProgress": "{progress}/{target}",
   "@missionsProgress": {
     "placeholders": {

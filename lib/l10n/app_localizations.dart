@@ -12272,6 +12272,18 @@ abstract class AppLocalizations {
   /// **'Missions'**
   String get missionsTitle;
 
+  /// Attendee profile row opening the auto-verified challenges (missions).
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges you do on your own'**
+  String get soloChallengesTitle;
+
+  /// Explainer at the top of the solo challenges screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Kolabing tracks these from your check-ins. Nobody has to confirm them.'**
+  String get soloChallengesHint;
+
   /// Mission progress as current over target, e.g. 2/5
   ///
   /// In en, this message translates to:

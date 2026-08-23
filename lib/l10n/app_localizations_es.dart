@@ -7004,6 +7004,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get missionsTitle => 'Misiones';
 
   @override
+  String get soloChallengesTitle => 'Retos que haces por tu cuenta';
+
+  @override
+  String get soloChallengesHint =>
+      'Kolabing los sigue con tus registros de asistencia. Nadie tiene que confirmarlos.';
+
+  @override
   String missionsProgress(int progress, int target) {
     return '$progress/$target';
   }

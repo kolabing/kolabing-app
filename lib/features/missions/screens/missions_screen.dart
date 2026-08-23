@@ -43,9 +43,8 @@ class MissionsScreen extends ConsumerWidget {
           onRefresh: () async => ref.invalidate(myMissionsProvider),
         ),
         loading: () => const _MissionsLoading(),
-        error: (error, _) => _MissionsError(
-          onRetry: () => ref.invalidate(myMissionsProvider),
-        ),
+        error: (error, _) =>
+            _MissionsError(onRetry: () => ref.invalidate(myMissionsProvider)),
       ),
     );
   }
@@ -69,10 +68,7 @@ class _MissionsContent extends StatelessWidget {
         color: context.colors.primary,
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          children: const [
-            SizedBox(height: 120),
-            _MissionsEmpty(),
-          ],
+          children: const [SizedBox(height: 120), _MissionsEmpty()],
         ),
       );
     }
@@ -84,8 +80,9 @@ class _MissionsContent extends StatelessWidget {
     }
     final categories = grouped.keys.toList()
       ..sort((a, b) {
-        final byOrder =
-            MissionCategory.order(a).compareTo(MissionCategory.order(b));
+        final byOrder = MissionCategory.order(
+          a,
+        ).compareTo(MissionCategory.order(b));
         return byOrder != 0 ? byOrder : a.compareTo(b);
       });
 
@@ -109,12 +106,56 @@ class _MissionsContent extends StatelessWidget {
           top: KolabingSpacing.md,
           bottom: KolabingSpacing.xl,
         ),
-        itemCount: categories.length,
+        // One extra row at the top: a line saying nobody has to confirm these
+        // (#158). Without it the screen sits next to the peer-challenge flow
+        // looking like the same thing with a different name, when the whole
+        // point of §5 is that not every challenge needs another person.
+        itemCount: categories.length + 1,
         itemBuilder: (context, index) {
-          final category = categories[index];
+          if (index == 0) return const _SoloExplainer();
+
+          final category = categories[index - 1];
           final list = grouped[category]!;
           return _CategorySection(category: category, missions: list);
         },
+      ),
+    );
+  }
+}
+
+/// Why this screen is not the peer-challenge flow (#158).
+class _SoloExplainer extends StatelessWidget {
+  const _SoloExplainer();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: KolabingSpacing.md),
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            LucideIcons.checkCircle,
+            size: 18,
+            color: context.colors.onSurfaceVariant,
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: Text(
+              l10n.soloChallengesHint,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -248,11 +289,7 @@ class _MissionTile extends StatelessWidget {
           color: context.colors.success.withValues(alpha: 0.15),
           shape: BoxShape.circle,
         ),
-        child: Icon(
-          LucideIcons.check,
-          size: 16,
-          color: context.colors.success,
-        ),
+        child: Icon(LucideIcons.check, size: 16, color: context.colors.success),
       );
     }
     return _PointsChip(points: mission.points, label: l10n.missionsPointsLabel);
@@ -299,8 +336,9 @@ class _ProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fillColor =
-        completed ? context.colors.success : context.colors.primary;
+    final fillColor = completed
+        ? context.colors.success
+        : context.colors.primary;
     return ClipRRect(
       borderRadius: BorderRadius.circular(KolabingRadius.round),
       child: LinearProgressIndicator(
@@ -429,9 +467,7 @@ class _MissionsLoading extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
-      children: [
-        for (var i = 0; i < 6; i++) const _MissionShimmerTile(),
-      ],
+      children: [for (var i = 0; i < 6; i++) const _MissionShimmerTile()],
     );
   }
 }

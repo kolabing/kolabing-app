@@ -8741,6 +8741,14 @@
     "description": "Community onboarding step 1: community size helper text"
   },
   "missionsTitle": "Missions",
+  "soloChallengesTitle": "Challenges you do on your own",
+  "@soloChallengesTitle": {
+    "description": "Attendee profile row opening the auto-verified challenges (missions)."
+  },
+  "soloChallengesHint": "Kolabing tracks these from your check-ins. Nobody has to confirm them.",
+  "@soloChallengesHint": {
+    "description": "Explainer at the top of the solo challenges screen."
+  },
   "@missionsTitle": {
     "description": "Missions screen app-bar title and profile entry label"
   },
