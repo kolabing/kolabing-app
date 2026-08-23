@@ -6473,6 +6473,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get attendeeHomeScopeAll => 'Todos los eventos';
 
   @override
+  String get eventQrRotateFailed =>
+      'No se pudo generar un código nuevo. Inténtalo de nuevo.';
+
+  @override
   String get attendeeHomeScopeFollowing => 'Siguiendo';
 
   @override
@@ -7329,6 +7333,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get communityChallengesEmptyLibrary => 'Aún no hay retos para elegir.';
 
   @override
+  String get communityChallengesLoadFailed =>
+      'No se pudieron cargar los retos de esta comunidad. Inténtalo de nuevo.';
+
+  @override
   String get peerInitiateAlreadyPending =>
       'Ya les has pedido que confirmen este reto.';
 
@@ -7547,6 +7555,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String challengeTogetherWaiting(String name) {
     return 'Esperando a que $name confirme…';
   }
+
+  @override
+  String get challengeTogetherNoLongerWaiting =>
+      'Este reto ya no sigue en pie.';
+
+  @override
+  String challengeTogetherStillWaitingTitle(String name) {
+    return 'Seguimos esperando a $name';
+  }
+
+  @override
+  String get challengeTogetherStillWaitingBody =>
+      'Algunos retos llevan su tiempo. Sigue esperando o vuelve más tarde.';
+
+  @override
+  String get challengeTogetherKeepWaiting => 'Seguir esperando';
 
   @override
   String challengeTogetherEachEarns(int points) {

@@ -40,9 +40,22 @@ enum MembershipOutcome {
 /// So the sheet resolves the questions *before* deciding whether to render
 /// anything, and a member of a community that asks nothing never sees a form.
 class CommunityApplicationSheet extends ConsumerStatefulWidget {
-  const CommunityApplicationSheet({super.key, required this.community});
+  const CommunityApplicationSheet({
+    super.key,
+    required this.community,
+    required this.questions,
+  });
 
   final Community community;
+
+  /// The questions to ask, resolved by [run] BEFORE this is built.
+  ///
+  /// Passed in rather than re-read from the provider inside `build`. Reading it
+  /// there meant loading and error both rendered as "asks nothing" — a title, no
+  /// fields, and an enabled Submit — and submitting in that window posted
+  /// `{"answers": []}`, which is exactly the payload that opts into the
+  /// backend's required-answer enforcement and comes back 422.
+  final List<CommunityJoinQuestion> questions;
 
   /// Runs the whole flow and resolves with what happened. Shows a form only if
   /// the community actually asks something.
@@ -73,7 +86,8 @@ class CommunityApplicationSheet extends ConsumerStatefulWidget {
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => CommunityApplicationSheet(community: community),
+      builder: (_) =>
+          CommunityApplicationSheet(community: community, questions: questions),
     );
     return outcome ?? MembershipOutcome.dismissed;
   }
@@ -172,10 +186,7 @@ class _CommunityApplicationSheetState
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final async = ref.watch(
-      communityJoinQuestionsProvider(widget.community.id),
-    );
-    final questions = async.asData?.value ?? const <CommunityJoinQuestion>[];
+    final questions = widget.questions;
 
     return Container(
       constraints: BoxConstraints(

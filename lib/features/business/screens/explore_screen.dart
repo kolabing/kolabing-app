@@ -292,7 +292,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Expanded(child: PageTitle('Explore')),
+          // Localized like every other nav label around it. The literal here
+          // was the one string on this screen the repo's mandatory-i18n rule
+          // had missed.
+          Expanded(
+            child: PageTitle(AppLocalizations.of(context).businessNavExplore),
+          ),
           const NotificationBell(),
           const SizedBox(width: KolabingSpacing.xs),
           Container(

@@ -52,6 +52,35 @@ void main() {
   });
 
   group('bucketFor', () {
+    /// The regression this fallback exists for: the `.contains(...)` matchers
+    /// that used to live in the card widgets coloured compound labels, and the
+    /// exact-match-only resolver that replaced them sent every one of them to
+    /// neutral grey.
+    test('compound labels resolve to the head noun', () {
+      expect(
+        CategoryStyleResolver.bucketFor('Fitness Community'),
+        isNot(CategoryBucket.unknown),
+      );
+      expect(
+        CategoryStyleResolver.bucketFor('Sports Facility'),
+        CategoryBucket.sports,
+      );
+      expect(
+        CategoryStyleResolver.bucketFor('Run Club'),
+        CategoryStyleResolver.bucketFor('running'),
+      );
+    });
+
+    /// Word-level rather than substring, so a longer word that merely contains
+    /// a keyword is not miscoloured.
+    test('a keyword inside a longer word does not match', () {
+      expect(CategoryStyleResolver.bucketFor('party'), CategoryBucket.unknown);
+      expect(
+        CategoryStyleResolver.bucketFor('barbershop'),
+        CategoryBucket.unknown,
+      );
+    });
+
     test('spelling variants land in the same bucket', () {
       for (final v in <String>['Sports', 'sports', 'SPORTS']) {
         expect(CategoryStyleResolver.bucketFor(v), CategoryBucket.sports);

@@ -8080,6 +8080,10 @@
     "description": "Empty-state hint when no events match in the selected city."
   },
   "attendeeHomeScopeAll": "All events",
+  "eventQrRotateFailed": "Couldn't get a new code. Try again.",
+  "@eventQrRotateFailed": {
+    "description": "Shown when rotating an event's check-in QR fails."
+  },
   "@attendeeHomeScopeAll": {
     "description": "Feed scope tab: every public event in the selected city."
   },
@@ -9164,6 +9168,10 @@
     "description": "Shown when the library endpoint is not deployed."
   },
   "communityChallengesEmptyLibrary": "There are no challenges to choose from yet.",
+  "communityChallengesLoadFailed": "Couldn't load this community's challenges. Try again.",
+  "@communityChallengesLoadFailed": {
+    "description": "Shown when the community's challenge set fails to load, so the checklist is not rendered unusable."
+  },
   "@communityChallengesEmptyLibrary": {
     "description": "Shown when the library is empty."
   },
@@ -9452,6 +9460,23 @@
   "challengeTogetherTitle": "Together",
   "@challengeTogetherTitle": {"description": "Title of the shared challenge screen both devices show."},
   "challengeTogetherWaiting": "Waiting for {name} to confirm…",
+  "challengeTogetherNoLongerWaiting": "This challenge isn't happening any more.",
+  "@challengeTogetherNoLongerWaiting": {
+    "description": "Shown when a challenge request was withdrawn or ran out."
+  },
+  "challengeTogetherStillWaitingTitle": "Still waiting on {name}",
+  "@challengeTogetherStillWaitingTitle": {
+    "description": "Shown when the app stopped polling for a confirmation after two minutes.",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "challengeTogetherStillWaitingBody": "Some challenges take a while. Keep waiting, or come back to it later.",
+  "@challengeTogetherStillWaitingBody": {
+    "description": "Body of the stopped-watching state."
+  },
+  "challengeTogetherKeepWaiting": "Keep waiting",
+  "@challengeTogetherKeepWaiting": {
+    "description": "Button that resumes polling for the partner's confirmation."
+  },
   "@challengeTogetherWaiting": {"description": "Shown to the person who started the challenge.", "placeholders": {"name": {"type": "String", "example": "Ana"}}},
   "challengeTogetherEachEarns": "{points} XP each",
   "@challengeTogetherEachEarns": {"description": "How much both people earn — the challenge pays both sides.", "placeholders": {"points": {"type": "int", "example": "15"}}},

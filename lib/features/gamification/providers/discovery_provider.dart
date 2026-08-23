@@ -196,12 +196,21 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
 
     state = state.copyWith(
       following: following,
-      isLoading: true,
+      isLoading: false,
       error: null,
       events: [],
       currentPage: 1,
       hasMore: true,
     );
+
+    // Turning Following OFF can leave nothing to scope by: someone who denied
+    // location and never picked a city could switch it on (the toggle is always
+    // there) and back off, and the fetch would go out with no `lat` and no
+    // `city_id` — a 422 rendered as a broken feed, where the screen already has
+    // a "pick a city" prompt ready for exactly this state.
+    if (!state.canQuery) return;
+
+    state = state.copyWith(isLoading: true);
 
     await _fetchEvents();
   }

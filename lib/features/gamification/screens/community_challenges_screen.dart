@@ -82,7 +82,9 @@ class _CommunityChallengesScreenState
     final library = ref.watch(challengeLibraryProvider);
     final set = ref.watch(communityChallengeSetProvider(widget.communityId));
 
-    final selections = set.asData?.value.selections ?? const [];
+    final loaded = set.asData?.value;
+    final selections =
+        loaded?.selections ?? const <CommunityChallengeSelection>[];
     final byId = {for (final s in selections) s.challengeId: s};
 
     return Scaffold(
@@ -105,10 +107,25 @@ class _CommunityChallengesScreenState
             return _Message(text: l10n.communityChallengesEmptyLibrary);
           }
 
+          // The library and the community's set load independently, so the set
+          // can fail while the library succeeds. Rendering the library anyway
+          // meant every box unticked, Save enabled — and every tap a silent
+          // no-op, because toggle/setOptions/save all bail out when the set is
+          // not loaded. That is the bug class #145 was; do not reintroduce it.
+          if (set.hasError) {
+            return _Message(text: l10n.communityChallengesLoadFailed);
+          }
+          if (loaded == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
           return Column(
             children: [
               _Banner(
-                curated: selections.isNotEmpty,
+                // The server's own answer, not a guess from the list length.
+                // They agree today — an empty set IS no curation — but the flag
+                // is the contract and the length is an implementation detail.
+                curated: loaded.curated || selections.isNotEmpty,
                 l10n: l10n,
                 communityName: widget.communityName,
               ),

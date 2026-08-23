@@ -6405,6 +6405,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendeeHomeScopeAll => 'All events';
 
   @override
+  String get eventQrRotateFailed => 'Couldn\'t get a new code. Try again.';
+
+  @override
   String get attendeeHomeScopeFollowing => 'Following';
 
   @override
@@ -7258,6 +7261,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'There are no challenges to choose from yet.';
 
   @override
+  String get communityChallengesLoadFailed =>
+      'Couldn\'t load this community\'s challenges. Try again.';
+
+  @override
   String get peerInitiateAlreadyPending =>
       'You\'ve already asked them to confirm this one.';
 
@@ -7477,6 +7484,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String challengeTogetherWaiting(String name) {
     return 'Waiting for $name to confirm…';
   }
+
+  @override
+  String get challengeTogetherNoLongerWaiting =>
+      'This challenge isn\'t happening any more.';
+
+  @override
+  String challengeTogetherStillWaitingTitle(String name) {
+    return 'Still waiting on $name';
+  }
+
+  @override
+  String get challengeTogetherStillWaitingBody =>
+      'Some challenges take a while. Keep waiting, or come back to it later.';
+
+  @override
+  String get challengeTogetherKeepWaiting => 'Keep waiting';
 
   @override
   String challengeTogetherEachEarns(int points) {

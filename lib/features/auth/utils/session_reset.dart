@@ -6,6 +6,8 @@ import '../../business/providers/profile_provider.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../community/providers/community_providers.dart';
 import '../../discovery/providers/discovery_provider.dart';
+import '../../community/providers/community_follow_provider.dart';
+import '../../gamification/providers/pending_challenge_provider.dart';
 import '../../gamification/providers/active_event_session_provider.dart';
 import '../../gamification/providers/badge_provider.dart';
 import '../../gamification/providers/checkin_provider.dart';
@@ -118,6 +120,16 @@ void invalidateUserScopedProviders(Ref ref) {
   inv(() => ref.invalidate(redeemQRProvider));
   inv(() => ref.invalidate(confirmRedeemProvider));
   inv(() => ref.invalidate(checkinProvider));
+
+  // Which communities this person follows. Per-account, held in a
+  // non-autoDispose Notifier read by always-mounted widgets, so it survives a
+  // sign-out unless it is invalidated here: the next account would otherwise
+  // see the previous one's Following feed and a live Unfollow on communities
+  // they have never heard of.
+  inv(() => ref.invalidate(communityFollowsProvider));
+
+  // Any pending challenge request aimed at the previous account.
+  inv(() => ref.invalidate(pendingChallengeProvider));
 
   // The "which event am I at" session is per-account and persisted on disk, so
   // invalidating the notifier is not enough — clear the stored value too, or

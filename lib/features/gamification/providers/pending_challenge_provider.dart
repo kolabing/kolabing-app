@@ -55,6 +55,7 @@ class PendingChallengeNotifier extends Notifier<ChallengeCompletion?> {
       if (next == null) {
         state = null;
         _running = false;
+        _generation++; // retire whatever loop is still sleeping
       } else {
         Future.microtask(start);
       }
@@ -70,20 +71,30 @@ class PendingChallengeNotifier extends Notifier<ChallengeCompletion?> {
     if (state?.id == completionId) state = null;
   }
 
+  /// Bumped every time a loop is asked to stop, so a loop that is mid-`await`
+  /// when the next one starts knows it is no longer the current one.
+  ///
+  /// `_running` alone was not enough: the session going null then non-null
+  /// inside one 4-second interval set `_running = false` and then called
+  /// `start()` again, which saw `false` and began a SECOND loop while the first
+  /// was still sleeping — two pollers, both writing `state`.
+  int _generation = 0;
+
   Future<void> start() async {
     if (_running || _disposed) return;
     _running = true;
+    final generation = ++_generation;
 
     final config = ref.read(pendingChallengeConfigProvider);
 
-    while (_running && !_disposed) {
+    while (_running && !_disposed && generation == _generation) {
       if (ref.read(activeEventSessionProvider) == null) {
         _running = false;
         return;
       }
 
       final found = await _poll(config.pageSize);
-      if (_disposed) return;
+      if (_disposed || generation != _generation) return;
       if (found != null && state?.id != found.id) state = found;
 
       await Future<void>.delayed(config.interval);

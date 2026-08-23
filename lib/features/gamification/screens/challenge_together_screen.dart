@@ -182,6 +182,16 @@ class _ChallengeTogetherScreenState
     final completion = _settled ?? watched?.completion;
     final settledVerified = completion?.isVerified ?? false;
     final settledRejected = completion?.isRejected ?? false;
+    // Withdrawn or run out (#154). These were falling through to _Agreed, so a
+    // request that ended without an answer left the starter watching a spinner
+    // for something that no longer existed.
+    final settledDead =
+        completion?.status == ChallengeCompletionStatus.cancelled ||
+        completion?.status == ChallengeCompletionStatus.expired;
+    // The watch gave up (2 minutes). Nothing re-armed it and nothing read this,
+    // so a pair who took longer than that left the starter on "waiting for X"
+    // forever — and their XP never appeared even after the partner confirmed.
+    final gaveUp = watched?.timedOut ?? false;
 
     // Points come from the server once settled, and only fall back to the
     // challenge's face value while still pending.
@@ -219,6 +229,18 @@ class _ChallengeTogetherScreenState
               ? _Reveal(points: points, otherName: otherName)
               : settledRejected
               ? _Rejected(onDone: _dismiss)
+              : settledDead
+              ? _NoLongerWaiting(onDone: _dismiss)
+              : gaveUp
+              ? _StoppedWatching(
+                  otherName: otherName,
+                  onKeepWaiting: () => ref
+                      .read(
+                        completionWatchProvider(widget.completionId).notifier,
+                      )
+                      .start(),
+                  onDone: _dismiss,
+                )
               : _Agreed(
                   challengeName: challengeName,
                   challengeDescription: challengeDescription,
@@ -462,6 +484,110 @@ class _Reveal extends StatelessWidget {
             variant: KolabingButtonVariant.primary,
           ),
         ),
+      ],
+    );
+  }
+}
+
+/// The request ended without an answer — withdrawn, or it ran out (#154).
+///
+/// Muted, not an error: nothing went wrong, it just is not happening.
+class _NoLongerWaiting extends StatelessWidget {
+  const _NoLongerWaiting({required this.onDone});
+
+  final VoidCallback onDone;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          LucideIcons.minusCircle,
+          size: 64,
+          color: context.colors.onSurfaceVariant,
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+        Text(
+          l10n.challengeTogetherNoLongerWaiting,
+          textAlign: TextAlign.center,
+          style: KolabingTextStyles.titleMedium.copyWith(
+            color: context.colors.onSurface,
+          ),
+        ),
+        const Spacer(),
+        SizedBox(
+          width: double.infinity,
+          child: KolabingButton(
+            label: l10n.commonDone,
+            onPressed: onDone,
+            variant: KolabingButtonVariant.primary,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The watch stopped after two minutes without an answer.
+///
+/// It used to stop silently: `timedOut` was set and read by nothing, so the
+/// starter kept looking at a spinner and "waiting for X" — and if the partner
+/// confirmed after that, the XP never showed up on this screen at all. Some
+/// challenges genuinely take longer than two minutes, so the honest options are
+/// "keep waiting" and "leave", not a spinner that means nothing.
+class _StoppedWatching extends StatelessWidget {
+  const _StoppedWatching({
+    required this.otherName,
+    required this.onKeepWaiting,
+    required this.onDone,
+  });
+
+  final String otherName;
+  final VoidCallback onKeepWaiting;
+  final VoidCallback onDone;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          LucideIcons.clock,
+          size: 64,
+          color: context.colors.onSurfaceVariant,
+        ),
+        const SizedBox(height: KolabingSpacing.md),
+        Text(
+          l10n.challengeTogetherStillWaitingTitle(otherName),
+          textAlign: TextAlign.center,
+          style: KolabingTextStyles.titleMedium.copyWith(
+            color: context.colors.onSurface,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
+        Text(
+          l10n.challengeTogetherStillWaitingBody,
+          textAlign: TextAlign.center,
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+        const Spacer(),
+        SizedBox(
+          width: double.infinity,
+          child: KolabingButton(
+            label: l10n.challengeTogetherKeepWaiting,
+            onPressed: onKeepWaiting,
+            variant: KolabingButtonVariant.primary,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.xs),
+        TextButton(onPressed: onDone, child: Text(l10n.commonDone)),
       ],
     );
   }

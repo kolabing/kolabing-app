@@ -134,8 +134,34 @@ abstract final class CategoryStyleResolver {
   };
 
   /// Resolves a raw backend/display label to its semantic bucket.
-  static CategoryBucket bucketFor(String rawLabel) =>
-      _buckets[canonicalKey(rawLabel)] ?? CategoryBucket.unknown;
+  ///
+  /// Exact match first, then a word-level fallback. The exact-only version was a
+  /// regression: every compound label missed and fell to neutral grey —
+  /// "Fitness Community", "Run Club", "Bar Lounge", "Sports Facility", "Food
+  /// Brand" — while the `.contains(...)` matchers this replaced did colour them.
+  ///
+  /// Word-level, not `contains`: a substring test makes "art" match "party" and
+  /// "bar" match "barbershop". Splitting on the canonical key's spaces and
+  /// looking each word up keeps compound labels working without inventing
+  /// matches inside longer words.
+  ///
+  /// The LAST recognised word wins, because these labels read as
+  /// "<qualifier> <thing>" — "Fitness Community" is a community, "Food Brand" is
+  /// a brand — so the head noun is the one that carries the category.
+  static CategoryBucket bucketFor(String rawLabel) {
+    final key = canonicalKey(rawLabel);
+
+    final exact = _buckets[key];
+    if (exact != null) return exact;
+
+    var found = CategoryBucket.unknown;
+    for (final word in key.split(' ')) {
+      final bucket = _buckets[word];
+      if (bucket != null) found = bucket;
+    }
+
+    return found;
+  }
 
   /// Resolves a raw backend/display label to its colours.
   static CategoryStyle styleFor(String rawLabel, KolabingColorTokens c) =>

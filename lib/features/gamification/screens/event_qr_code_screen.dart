@@ -54,7 +54,19 @@ class EventQRCodeScreen extends ConsumerWidget {
             icon: Icon(LucideIcons.refreshCw, color: textColor),
             onPressed: qrTokenAsync.isLoading
                 ? null
-                : () => rotateEventCheckinCode(ref, eventId),
+                : () async {
+                    // Awaited and reported: an organizer retiring a leaked code
+                    // needs to know whether it actually happened.
+                    final ok = await rotateEventCheckinCode(ref, eventId);
+                    if (!context.mounted || ok) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context).eventQrRotateFailed,
+                        ),
+                      ),
+                    );
+                  },
           ),
         ],
       ),

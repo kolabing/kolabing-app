@@ -6506,6 +6506,10 @@ class AppLocalizationsCa extends AppLocalizations {
   String get attendeeHomeScopeAll => 'Tots els esdeveniments';
 
   @override
+  String get eventQrRotateFailed =>
+      'No s\'ha pogut generar un codi nou. Torna-ho a provar.';
+
+  @override
   String get attendeeHomeScopeFollowing => 'Seguint';
 
   @override
@@ -7369,6 +7373,10 @@ class AppLocalizationsCa extends AppLocalizations {
       'Encara no hi ha reptes per triar.';
 
   @override
+  String get communityChallengesLoadFailed =>
+      'No s\'han pogut carregar els reptes d\'aquesta comunitat. Torna-ho a provar.';
+
+  @override
   String get peerInitiateAlreadyPending =>
       'Ja els has demanat que confirmin aquest repte.';
 
@@ -7586,6 +7594,21 @@ class AppLocalizationsCa extends AppLocalizations {
   String challengeTogetherWaiting(String name) {
     return 'Esperant que $name ho confirmi…';
   }
+
+  @override
+  String get challengeTogetherNoLongerWaiting => 'Aquest repte ja no segueix.';
+
+  @override
+  String challengeTogetherStillWaitingTitle(String name) {
+    return 'Encara esperem $name';
+  }
+
+  @override
+  String get challengeTogetherStillWaitingBody =>
+      'Alguns reptes triguen. Segueix esperant o torna-hi més tard.';
+
+  @override
+  String get challengeTogetherKeepWaiting => 'Segueix esperant';
 
   @override
   String challengeTogetherEachEarns(int points) {

@@ -172,10 +172,20 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
   /// bug #145 was.
   Future<void> _startChosen(Challenge challenge, String profileRef) async {
     final l10n = AppLocalizations.of(context);
+    // The event the CHALLENGE came from wins over whatever session happens to be
+    // open. A session lives 12 hours, so picking a challenge from tonight's
+    // event while yesterday's session is still alive would otherwise file the
+    // request against yesterday — wrong event credited, or a 404 for a
+    // challenge scoped to the right one.
     final session = ref.read(activeEventSessionProvider);
+    final liveSession = session == null || session.isExpired ? null : session;
+    final eventId = widget.eventId ?? liveSession?.eventId;
 
-    if (session == null || session.isExpired) {
-      _snack(l10n.peerNoSessionTitle);
+    if (eventId == null) {
+      // No event to file it against. Hand over to the sheet rather than
+      // stopping at a snackbar: it carries the whole recovery — today's RSVP'd
+      // events and self check-in (#144) — which this path would otherwise lose.
+      await _pairViaSheet(profileRef);
       return;
     }
 
@@ -187,7 +197,7 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
         .read(initiateChallengeProvider.notifier)
         .initiate(
           challengeId: challenge.id,
-          eventId: session.eventId,
+          eventId: eventId,
           verifierProfileId: peer.profileId,
         );
 
@@ -392,6 +402,12 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
       return;
     }
 
+    await _pairViaSheet(profileRef);
+  }
+
+  /// The scan-first path: the sheet asks which challenge, and when there is no
+  /// active session it offers the way into one.
+  Future<void> _pairViaSheet(String profileRef) async {
     final result = await PeerChallengeSheet.show(
       context,
       peerProfileRef: profileRef,

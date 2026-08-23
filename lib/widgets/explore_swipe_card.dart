@@ -396,7 +396,13 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   Widget _buildTagChips(List<String> chips) => Wrap(
     spacing: 6,
     runSpacing: 6,
-    children: [for (final chip in chips) CategoryChip(label: chip)],
+    // This card's body is unconditionally white (see the DecoratedBox above),
+    // so its chips have to be light-palette too or dark mode puts near-black
+    // pills with light text on a white card.
+    children: [
+      for (final chip in chips)
+        CategoryChip(label: chip, forceLightSurface: true),
+    ],
   );
 
   Widget _buildViewDetailsRow() => Row(

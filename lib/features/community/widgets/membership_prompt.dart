@@ -49,11 +49,13 @@ class MembershipPrompt {
       builder: (_) => _PromptSheet(communityName: checkin.communityName!),
     );
 
-    if (wants != true) {
-      // Someone who said no while walking into a run must not be asked again.
-      await _remember(checkin.eventId);
-      return;
-    }
+    // Remembered whichever way it went. The class promises to ask once per
+    // event, and recording only the decline broke that: tapping "Become a
+    // member" and then dismissing the form left nothing recorded, so the next
+    // check-in asked again.
+    await _remember(checkin.eventId);
+
+    if (wants != true) return;
     if (!context.mounted) return;
 
     // The existing flow, verbatim: it already resolves the leader's questions

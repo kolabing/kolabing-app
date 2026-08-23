@@ -28,8 +28,15 @@ class DiscoverCommunitiesScreen extends ConsumerStatefulWidget {
 
 class _DiscoverCommunitiesScreenState
     extends ConsumerState<DiscoverCommunitiesScreen> {
-  /// Ids followed this session — their cards switch to "Following".
-  final Set<String> _joined = <String>{};
+  /// Ids followed **in this session** — added optimistically on tap.
+  ///
+  /// Not the source of truth: [build] unions this with
+  /// `communityFollowsProvider`, because a set that only ever grew from taps
+  /// showed an enabled "Follow" for a community the person already followed.
+  /// Tapping it then hit `CommunityFollowsNotifier.follow`, which early-returns
+  /// for an id it already holds — no request, and a snackbar reporting success
+  /// for a no-op.
+  final Set<String> _justFollowed = <String>{};
 
   /// Ids with a call in flight — disables the button while awaited.
   final Set<String> _pending = <String>{};
@@ -52,7 +59,7 @@ class _DiscoverCommunitiesScreenState
     if (!mounted) return;
     setState(() {
       _pending.remove(community.id);
-      if (ok) _joined.add(community.id);
+      if (ok) _justFollowed.add(community.id);
     });
 
     messenger.showSnackBar(
@@ -68,6 +75,8 @@ class _DiscoverCommunitiesScreenState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final async = ref.watch(discoverCommunitiesProvider(null));
+    // What this person actually follows, not just what they tapped here.
+    final followed = ref.watch(communityFollowsProvider);
 
     return Scaffold(
       backgroundColor: KolabingColors.background,
@@ -107,7 +116,8 @@ class _DiscoverCommunitiesScreenState
                 final c = communities[i];
                 return _DiscoverCard(
                   community: c,
-                  joined: _joined.contains(c.id),
+                  joined:
+                      followed.contains(c.id) || _justFollowed.contains(c.id),
                   pending: _pending.contains(c.id),
                   onJoin: () => _follow(c),
                 );
@@ -136,7 +146,11 @@ class _DiscoverCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final inviteOnly = community.joinPolicy == CommunityJoinPolicy.inviteOnly;
+    // NOTE: `join_policy` is deliberately NOT read here any more. It governs
+    // MEMBERSHIP, and this card's button is Follow — which needs no approval and
+    // is independent of the policy (#138). Keying the button on it made
+    // invite-only communities un-followable from the only discovery surface
+    // there is.
 
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
@@ -215,32 +229,18 @@ class _DiscoverCard extends StatelessWidget {
             ),
           ],
           const SizedBox(height: KolabingSpacing.md),
-          SizedBox(
-            width: double.infinity,
-            child: _buildAction(context, l10n, inviteOnly),
-          ),
+          SizedBox(width: double.infinity, child: _buildAction(context, l10n)),
         ],
       ),
     );
   }
 
-  Widget _buildAction(
-    BuildContext context,
-    AppLocalizations l10n,
-    bool inviteOnly,
-  ) {
+  Widget _buildAction(BuildContext context, AppLocalizations l10n) {
     if (joined) {
       return OutlinedButton.icon(
         onPressed: null,
         icon: const Icon(LucideIcons.check, size: 18),
         label: Text(l10n.communityFollowing),
-      );
-    }
-    if (inviteOnly) {
-      return OutlinedButton.icon(
-        onPressed: null,
-        icon: const Icon(LucideIcons.lock, size: 16),
-        label: Text(l10n.discoverCommunitiesInviteOnly),
       );
     }
     return ElevatedButton(

@@ -11414,6 +11414,12 @@ abstract class AppLocalizations {
   /// **'All events'**
   String get attendeeHomeScopeAll;
 
+  /// Shown when rotating an event's check-in QR fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t get a new code. Try again.'**
+  String get eventQrRotateFailed;
+
   /// Feed scope tab: only events from communities the attendee follows.
   ///
   /// In en, this message translates to:
@@ -12842,6 +12848,12 @@ abstract class AppLocalizations {
   /// **'There are no challenges to choose from yet.'**
   String get communityChallengesEmptyLibrary;
 
+  /// Shown when the community's challenge set fails to load, so the checklist is not rendered unusable.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this community\'s challenges. Try again.'**
+  String get communityChallengesLoadFailed;
+
   /// Refusal shown when a pending request for the same challenge and pair already exists.
   ///
   /// In en, this message translates to:
@@ -13213,6 +13225,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Waiting for {name} to confirm…'**
   String challengeTogetherWaiting(String name);
+
+  /// Shown when a challenge request was withdrawn or ran out.
+  ///
+  /// In en, this message translates to:
+  /// **'This challenge isn\'t happening any more.'**
+  String get challengeTogetherNoLongerWaiting;
+
+  /// Shown when the app stopped polling for a confirmation after two minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Still waiting on {name}'**
+  String challengeTogetherStillWaitingTitle(String name);
+
+  /// Body of the stopped-watching state.
+  ///
+  /// In en, this message translates to:
+  /// **'Some challenges take a while. Keep waiting, or come back to it later.'**
+  String get challengeTogetherStillWaitingBody;
+
+  /// Button that resumes polling for the partner's confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep waiting'**
+  String get challengeTogetherKeepWaiting;
 
   /// How much both people earn — the challenge pays both sides.
   ///
