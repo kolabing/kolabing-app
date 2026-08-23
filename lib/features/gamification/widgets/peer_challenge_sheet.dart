@@ -18,6 +18,7 @@ import '../providers/todays_events_provider.dart';
 import '../services/challenge_service.dart';
 import '../services/checkin_service.dart';
 import 'challenge_card.dart';
+import 'challenge_failure_message.dart';
 
 /// What the pairing sheet wants the caller to do after it closes.
 enum PeerSheetOutcome {
@@ -132,7 +133,7 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
       final kind = ref.read(initiateChallengeProvider).failure;
       setState(() {
         _startingChallengeId = null;
-        _error = _messageFor(kind, l10n);
+        _error = challengeFailureMessage(kind, l10n);
       });
       return;
     }
@@ -148,19 +149,6 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
       ),
     );
   }
-
-  String _messageFor(ChallengeFailure? kind, AppLocalizations l10n) =>
-      switch (kind) {
-        ChallengeFailure.bothMustCheckIn => l10n.peerInitiateBothCheckedIn,
-        // Three different refusals that used to share one generic message
-        // (#150). "You already asked them" and "you two have done this one" are
-        // not the same sentence, and neither tells you to go find someone new.
-        ChallengeFailure.alreadyPending => l10n.peerInitiateAlreadyPending,
-        ChallengeFailure.alreadyCompleted => l10n.peerInitiateAlreadyCompleted,
-        ChallengeFailure.needsNewPerson => l10n.peerInitiateNeedsNewPerson,
-        ChallengeFailure.eventLimitReached => l10n.peerInitiateEventLimit,
-        _ => l10n.peerInitiateFailed,
-      };
 
   @override
   Widget build(BuildContext context) {

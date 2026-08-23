@@ -7240,6 +7240,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get peerInitiateFailed => 'No se pudo iniciar el reto.';
 
   @override
+  String get challengeFirstChoose => 'Elige un reto';
+
+  @override
+  String get challengeFirstScanThem =>
+      'Escanea a la persona con quien lo harás';
+
+  @override
   String get communityChallengesTitle => 'Retos';
 
   @override

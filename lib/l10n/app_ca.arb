@@ -2118,6 +2118,8 @@
   "peerNoSessionAction": "ESCANEJA EL CODI DE L'ESDEVENIMENT",
   "peerInitiateBothCheckedIn": "No s'ha pogut iniciar aquest repte. Assegureu-vos que tots dos heu fet check-in en aquest esdeveniment.",
   "peerInitiateFailed": "No s'ha pogut iniciar el repte.",
+  "challengeFirstChoose": "Tria un repte",
+  "challengeFirstScanThem": "Escaneja la persona amb qui ho far\u00e0s",
   "communityChallengesTitle": "Reptes",
   "communityChallengesHubSubtitle": "Tria qu\u00e8 fan servir els teus esdeveniments",
   "communityChallengesDefaultHint": "No has triat cap, aix\u00ed que els teus esdeveniments fan servir tots els reptes de Kolabing. Marca'n alguns per acotar-ho.",

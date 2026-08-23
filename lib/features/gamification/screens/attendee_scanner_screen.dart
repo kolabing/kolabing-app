@@ -13,11 +13,15 @@ import '../../../services/permission_service.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../event/providers/event_provider.dart';
 import '../models/event_checkin.dart';
+import '../models/challenge.dart';
 import '../models/qr_payload.dart';
 import '../../community/widgets/membership_prompt.dart';
 import '../providers/active_event_session_provider.dart';
+import '../providers/challenge_provider.dart';
 import '../providers/checkin_provider.dart';
+import '../providers/peer_profile_provider.dart';
 import '../services/checkin_service.dart';
+import '../widgets/challenge_failure_message.dart';
 import '../widgets/peer_challenge_sheet.dart';
 import '../widgets/qr_scan_frame.dart';
 import '../widgets/scan_outcome_sheet.dart';
@@ -34,7 +38,12 @@ import 'challenge_together_screen.dart';
 /// Members do not have to know which is which — that classification is
 /// [QrPayload.parse]'s job, which is why there is one scanner and not three.
 class AttendeeScannerScreen extends ConsumerStatefulWidget {
-  const AttendeeScannerScreen({super.key, this.eventId, this.eventName});
+  const AttendeeScannerScreen({
+    super.key,
+    this.eventId,
+    this.eventName,
+    this.challenge,
+  });
 
   /// The event the scanner was opened from, when it was opened from one.
   ///
@@ -43,17 +52,33 @@ class AttendeeScannerScreen extends ConsumerStatefulWidget {
   /// checked in server-side with no local session — and the only thing the app
   /// can suggest is rescanning the code that 409s.
   final String? eventId;
+
+  /// A challenge already chosen, when the person came here to do a specific one
+  /// (#152).
+  ///
+  /// The flow the product model asks for is **choose challenge → scan person →
+  /// they confirm**: the intention is clear before a camera is pointed at
+  /// anyone, and "I want to do THIS with you" is a different social act from
+  /// "let me scan you and see what's on offer".
+  ///
+  /// Null keeps the older path — scan first, then pick from the sheet — because
+  /// the scanner is reachable on its own and a peer scan should never dead-end.
+  final Challenge? challenge;
   final String? eventName;
 
   static Future<void> open(
     BuildContext context, {
     String? eventId,
     String? eventName,
+    Challenge? challenge,
   }) {
     return Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (_) =>
-            AttendeeScannerScreen(eventId: eventId, eventName: eventName),
+        builder: (_) => AttendeeScannerScreen(
+          eventId: eventId,
+          eventName: eventName,
+          challenge: challenge,
+        ),
       ),
     );
   }
@@ -138,6 +163,55 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
       case QrUnknown():
         break; // handled above
     }
+  }
+
+  /// Starts an already-chosen challenge with the person just scanned (#152).
+  ///
+  /// Refusals are shown here rather than swallowed: this is the one screen the
+  /// person is looking at, and a scan that quietly does nothing is exactly the
+  /// bug #145 was.
+  Future<void> _startChosen(Challenge challenge, String profileRef) async {
+    final l10n = AppLocalizations.of(context);
+    final session = ref.read(activeEventSessionProvider);
+
+    if (session == null || session.isExpired) {
+      _snack(l10n.peerNoSessionTitle);
+      return;
+    }
+
+    final peer = await ref
+        .read(scannedPeerProvider(profileRef).future)
+        .then((p) => p, onError: (_) => ScannedPeer(profileId: profileRef));
+
+    final completion = await ref
+        .read(initiateChallengeProvider.notifier)
+        .initiate(
+          challengeId: challenge.id,
+          eventId: session.eventId,
+          verifierProfileId: peer.profileId,
+        );
+
+    if (!mounted) return;
+
+    if (completion == null) {
+      _snack(
+        challengeFailureMessage(
+          ref.read(initiateChallengeProvider).failure,
+          l10n,
+        ),
+      );
+      return;
+    }
+
+    await ChallengeTogetherScreen.open(
+      context,
+      completionId: completion.id,
+      role: TogetherRole.starter,
+      challengeName: challenge.name,
+      challengeDescription: challenge.description,
+      otherName: peer.displayName,
+      points: challenge.points,
+    );
   }
 
   /// Re-arms the camera so the member can scan the next code without leaving.
@@ -304,6 +378,16 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
 
     if (profileRef == user?.id || profileRef == user?.handle) {
       _snack(l10n.scannerOwnCode);
+      await _resume();
+      return;
+    }
+
+    // Challenge already chosen: there is nothing left to ask, so start it
+    // (#152). The model's flow is three steps, not four — the person being
+    // scanned is the one who confirms, and adding "are you sure?" here would
+    // make the starter confirm their own intention twice.
+    if (widget.challenge != null) {
+      await _startChosen(widget.challenge!, profileRef);
       await _resume();
       return;
     }

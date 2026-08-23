@@ -7279,6 +7279,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get peerInitiateFailed => 'No s\'ha pogut iniciar el repte.';
 
   @override
+  String get challengeFirstChoose => 'Tria un repte';
+
+  @override
+  String get challengeFirstScanThem => 'Escaneja la persona amb qui ho faràs';
+
+  @override
   String get communityChallengesTitle => 'Reptes';
 
   @override

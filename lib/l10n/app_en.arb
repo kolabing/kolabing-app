@@ -9063,6 +9063,14 @@
     "description": "Backend 422 on /challenges/initiate — the pair are not both checked in."
   },
   "peerInitiateFailed": "Couldn't start the challenge.",
+  "challengeFirstChoose": "Choose a challenge",
+  "@challengeFirstChoose": {
+    "description": "Primary action after checking in: opens this event's challenge list."
+  },
+  "challengeFirstScanThem": "Scan the person you're doing it with",
+  "@challengeFirstScanThem": {
+    "description": "Button on a challenge's details: opens the scanner with that challenge already chosen."
+  },
   "communityChallengesTitle": "Challenges",
   "communityChallengesHubSubtitle": "Choose what your events play",
   "@communityChallengesHubSubtitle": {
