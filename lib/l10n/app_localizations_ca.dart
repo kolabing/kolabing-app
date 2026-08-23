@@ -7431,6 +7431,18 @@ class AppLocalizationsCa extends AppLocalizations {
   String get communityBecomeMember => 'Fes-te membre';
 
   @override
+  String membershipPromptTitle(String community) {
+    return 'Ets a $community';
+  }
+
+  @override
+  String get membershipPromptBody =>
+      'Els membres tenen el xat de la comunitat, esdeveniments exclusius i les seves recompenses.';
+
+  @override
+  String get membershipPromptNotNow => 'Ara no';
+
+  @override
   String get communityMemberBadge => 'Membre';
 
   @override

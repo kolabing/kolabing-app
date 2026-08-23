@@ -16,6 +16,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../gamification/providers/active_event_session_provider.dart';
 import '../../gamification/providers/checkin_provider.dart';
 import '../../gamification/screens/attendee_scanner_screen.dart';
+import '../../community/widgets/membership_prompt.dart';
 import '../../gamification/services/checkin_service.dart';
 import '../models/event.dart';
 import '../providers/event_provider.dart';
@@ -460,6 +461,11 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
       if (!mounted) return;
       setState(() => _checkinBusy = false);
       _snack(_l10n.eventCheckinYoureIn);
+
+      // Same question through this door as through the QR one (#148).
+      if (checkin != null && mounted) {
+        await MembershipPrompt.maybeOffer(context, ref, checkin);
+      }
     } on CheckinException catch (e) {
       if (!mounted) return;
       setState(() => _checkinBusy = false);

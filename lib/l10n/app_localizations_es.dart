@@ -7393,6 +7393,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get communityBecomeMember => 'Hazte miembro';
 
   @override
+  String membershipPromptTitle(String community) {
+    return 'Estás en $community';
+  }
+
+  @override
+  String get membershipPromptBody =>
+      'Los miembros tienen el chat de la comunidad, eventos exclusivos y sus recompensas.';
+
+  @override
+  String get membershipPromptNotNow => 'Ahora no';
+
+  @override
   String get communityMemberBadge => 'Miembro';
 
   @override
