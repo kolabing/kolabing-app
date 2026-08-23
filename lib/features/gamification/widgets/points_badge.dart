@@ -54,15 +54,14 @@ class PointsBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            LucideIcons.star,
-            size: iconSize,
-            color: textColor,
-          ),
+          Icon(LucideIcons.star, size: iconSize, color: textColor),
           const SizedBox(width: 4),
           Text(
             '+$points',
-            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: textColor),
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontWeight: FontWeight.w700,
+              color: textColor,
+            ),
           ),
         ],
       ),

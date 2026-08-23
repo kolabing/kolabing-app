@@ -12961,6 +12961,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t send your application. Try again.'**
   String get communityApplicationFailed;
+
+  /// Title of the shared challenge screen both devices show.
+  ///
+  /// In en, this message translates to:
+  /// **'Together'**
+  String get challengeTogetherTitle;
+
+  /// Shown to the person who started the challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for {name} to confirm…'**
+  String challengeTogetherWaiting(String name);
+
+  /// How much both people earn — the challenge pays both sides.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} XP each'**
+  String challengeTogetherEachEarns(int points);
+
+  /// Celebration title on the shared reveal.
+  ///
+  /// In en, this message translates to:
+  /// **'Nice one!'**
+  String get challengeTogetherRevealTitle;
+
+  /// Body on the shared reveal, naming the other person.
+  ///
+  /// In en, this message translates to:
+  /// **'You and {name} both earned it.'**
+  String challengeTogetherRevealBody(String name);
+
+  /// Names the challenge the pair agreed on.
+  ///
+  /// In en, this message translates to:
+  /// **'You two: {challenge}'**
+  String challengeTogetherPrompt(String challenge);
 }
 
 class _AppLocalizationsDelegate

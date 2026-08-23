@@ -143,7 +143,9 @@ class _InitiateChallengeScreenState
         content: Text(message),
         backgroundColor: context.colors.error,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KolabingRadius.md)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(KolabingRadius.md),
+        ),
       ),
     );
   }
@@ -153,9 +155,7 @@ class _InitiateChallengeScreenState
     final l10n = AppLocalizations.of(context);
     final initiateState = ref.watch(initiateChallengeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark
-        ? context.colors.surface
-        : context.colors.background;
+    final bgColor = isDark ? context.colors.surface : context.colors.background;
     final textColor = isDark
         ? context.colors.textOnDark
         : context.colors.onSurface;
@@ -244,21 +244,26 @@ class _InitiateChallengeScreenState
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      l10n.initiateChallengePointsAwarded(widget.challenge!.points),
-                                      style: KolabingTextStyles.bodySmall.copyWith(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: context.colors.onPrimary,
+                                      l10n.initiateChallengePointsAwarded(
+                                        widget.challenge!.points,
                                       ),
+                                      style: KolabingTextStyles.bodySmall
+                                          .copyWith(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                            color: context.colors.onPrimary,
+                                          ),
                                     ),
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
                                     widget.challenge!.difficulty.label,
-                                    style: KolabingTextStyles.bodySmall.copyWith(
-                                      fontSize: 12,
-                                      color: context.colors.onSurfaceVariant,
-                                    ),
+                                    style: KolabingTextStyles.bodySmall
+                                        .copyWith(
+                                          fontSize: 12,
+                                          color:
+                                              context.colors.onSurfaceVariant,
+                                        ),
                                   ),
                                 ],
                               ),
@@ -292,7 +297,10 @@ class _InitiateChallengeScreenState
                   number: '3',
                   text: l10n.initiateChallengeStep3,
                 ),
-                _InstructionStep(number: '4', text: l10n.initiateChallengeStep4),
+                _InstructionStep(
+                  number: '4',
+                  text: l10n.initiateChallengeStep4,
+                ),
 
                 const SizedBox(height: KolabingSpacing.xl),
 

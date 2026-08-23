@@ -2163,5 +2163,11 @@
   "communityApplicationSubmit": "ENVIAR SOLICITUD",
   "communityApplicationSentSnack": "Solicitud enviada. El organizador la revisará.",
   "communityApplicationJoinedSnack": "Ya eres miembro.",
-  "communityApplicationFailed": "No se pudo enviar tu solicitud. Inténtalo de nuevo."
+  "communityApplicationFailed": "No se pudo enviar tu solicitud. Inténtalo de nuevo.",
+  "challengeTogetherTitle": "Juntos",
+  "challengeTogetherWaiting": "Esperando a que {name} confirme…",
+  "challengeTogetherEachEarns": "{points} XP para cada uno",
+  "challengeTogetherRevealTitle": "¡Bien hecho!",
+  "challengeTogetherRevealBody": "{name} y tú lo habéis ganado los dos.",
+  "challengeTogetherPrompt": "Vosotros dos: {challenge}"
 }

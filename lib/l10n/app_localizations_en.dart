@@ -7330,4 +7330,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get communityApplicationFailed =>
       'Couldn\'t send your application. Try again.';
+
+  @override
+  String get challengeTogetherTitle => 'Together';
+
+  @override
+  String challengeTogetherWaiting(String name) {
+    return 'Waiting for $name to confirm…';
+  }
+
+  @override
+  String challengeTogetherEachEarns(int points) {
+    return '$points XP each';
+  }
+
+  @override
+  String get challengeTogetherRevealTitle => 'Nice one!';
+
+  @override
+  String challengeTogetherRevealBody(String name) {
+    return 'You and $name both earned it.';
+  }
+
+  @override
+  String challengeTogetherPrompt(String challenge) {
+    return 'You two: $challenge';
+  }
 }

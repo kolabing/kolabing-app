@@ -17,11 +17,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 /// call for a community reward is NOT here — it reuses P2's
 /// `CommunityRewardsService.redeemReward`.
 class MeRewardsService {
-  MeRewardsService({
-    required AuthService authService,
-    http.Client? httpClient,
-  })  : _authService = authService,
-        _httpClient = httpClient ?? http.Client();
+  MeRewardsService({required AuthService authService, http.Client? httpClient})
+    : _authService = authService,
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -31,10 +29,7 @@ class MeRewardsService {
     if (token == null) {
       throw const MeRewardsException('Not authenticated');
     }
-    return {
-      'Authorization': 'Bearer $token',
-      'Accept': 'application/json',
-    };
+    return {'Authorization': 'Bearer $token', 'Accept': 'application/json'};
   }
 
   /// True when a status means "endpoint not deployed yet" — treat as empty.

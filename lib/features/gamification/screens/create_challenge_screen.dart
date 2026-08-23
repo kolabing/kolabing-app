@@ -78,9 +78,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            AppLocalizations.of(context).createChallengeSuccess,
-          ),
+          content: Text(AppLocalizations.of(context).createChallengeSuccess),
           backgroundColor: context.colors.success,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -112,9 +110,7 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark
-        ? context.colors.surface
-        : context.colors.background;
+    final bgColor = isDark ? context.colors.surface : context.colors.background;
     final textColor = isDark
         ? context.colors.textOnDark
         : context.colors.onSurface;
@@ -134,7 +130,11 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
         ),
         title: Text(
           l10n.createChallengeTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: textColor),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: textColor,
+          ),
         ),
       ),
       body: KeyboardAvoidingContent(
@@ -147,7 +147,10 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Name field
-                _FieldLabel(label: l10n.createChallengeNameLabel, required: true),
+                _FieldLabel(
+                  label: l10n.createChallengeNameLabel,
+                  required: true,
+                ),
                 const SizedBox(height: KolabingSpacing.xs),
                 TextFormField(
                   controller: _nameController,
@@ -172,7 +175,10 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                 const SizedBox(height: KolabingSpacing.lg),
 
                 // Description field
-                _FieldLabel(label: l10n.createChallengeDescriptionLabel, required: false),
+                _FieldLabel(
+                  label: l10n.createChallengeDescriptionLabel,
+                  required: false,
+                ),
                 const SizedBox(height: KolabingSpacing.xs),
                 TextFormField(
                   controller: _descriptionController,
@@ -189,7 +195,10 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                 const SizedBox(height: KolabingSpacing.lg),
 
                 // Difficulty selection
-                _FieldLabel(label: l10n.createChallengeDifficultyLabel, required: true),
+                _FieldLabel(
+                  label: l10n.createChallengeDifficultyLabel,
+                  required: true,
+                ),
                 const SizedBox(height: KolabingSpacing.xs),
                 _DifficultySelector(
                   selectedDifficulty: _selectedDifficulty,
@@ -200,7 +209,10 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                 const SizedBox(height: KolabingSpacing.lg),
 
                 // Points field
-                _FieldLabel(label: l10n.createChallengePointsLabel, required: false),
+                _FieldLabel(
+                  label: l10n.createChallengePointsLabel,
+                  required: false,
+                ),
                 const SizedBox(height: KolabingSpacing.xs),
                 Row(
                   children: [
@@ -246,7 +258,10 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
                   l10n.createChallengePointsDefaultHint,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    color: context.colors.textTertiary,
+                  ),
                 ),
 
                 const SizedBox(height: KolabingSpacing.xxl),
@@ -274,7 +289,9 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
+      hintStyle: KolabingTextStyles.bodyMedium.copyWith(
+        color: context.colors.textTertiary,
+      ),
       prefixIcon: prefixIcon != null
           ? Icon(prefixIcon, color: context.colors.textTertiary)
           : null,
@@ -321,12 +338,18 @@ class _FieldLabel extends StatelessWidget {
       children: [
         Text(
           label,
-          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: textColor),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontWeight: FontWeight.w600,
+            color: textColor,
+          ),
         ),
         if (required)
           Text(
             ' *',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.error),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w600,
+              color: context.colors.error,
+            ),
           ),
       ],
     );
@@ -434,11 +457,17 @@ class _DifficultyOption extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 difficulty.label,
-                style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500, color: textColor),
+                style: KolabingTextStyles.captionSecondary.copyWith(
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: textColor,
+                ),
               ),
               Text(
-                AppLocalizations.of(context).createChallengePointsValue(difficulty.defaultPoints),
-                style: KolabingTextStyles.labelSmall.copyWith(color: textColor.withValues(alpha: 0.7),
+                AppLocalizations.of(
+                  context,
+                ).createChallengePointsValue(difficulty.defaultPoints),
+                style: KolabingTextStyles.labelSmall.copyWith(
+                  color: textColor.withValues(alpha: 0.7),
                 ),
               ),
             ],

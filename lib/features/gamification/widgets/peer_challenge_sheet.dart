@@ -31,11 +31,22 @@ enum PeerSheetOutcome {
 /// The result of showing the pairing sheet.
 @immutable
 class PeerSheetResult {
-  const PeerSheetResult(this.outcome, {this.completionId, this.verifierName});
+  const PeerSheetResult(
+    this.outcome, {
+    this.completionId,
+    this.verifierName,
+    this.challengeName,
+    this.points,
+  });
 
   final PeerSheetOutcome outcome;
   final String? completionId;
   final String? verifierName;
+
+  /// What the pair agreed to do, and what each of them earns for it — carried
+  /// through so the shared screen can render immediately.
+  final String? challengeName;
+  final int? points;
 }
 
 /// Step 2 of the loop: paired with another member, pick one of **this event's**
@@ -106,6 +117,8 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
         PeerSheetOutcome.challengeStarted,
         completionId: completion.id,
         verifierName: peer.displayName,
+        challengeName: challenge.name,
+        points: challenge.points,
       ),
     );
   }

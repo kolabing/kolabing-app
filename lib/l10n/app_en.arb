@@ -9287,5 +9287,17 @@
   "communityApplicationFailed": "Couldn't send your application. Try again.",
   "@communityApplicationFailed": {
     "description": "Shown when submitting the application fails."
-  }
+  },
+  "challengeTogetherTitle": "Together",
+  "@challengeTogetherTitle": {"description": "Title of the shared challenge screen both devices show."},
+  "challengeTogetherWaiting": "Waiting for {name} to confirm…",
+  "@challengeTogetherWaiting": {"description": "Shown to the person who started the challenge.", "placeholders": {"name": {"type": "String", "example": "Ana"}}},
+  "challengeTogetherEachEarns": "{points} XP each",
+  "@challengeTogetherEachEarns": {"description": "How much both people earn — the challenge pays both sides.", "placeholders": {"points": {"type": "int", "example": "15"}}},
+  "challengeTogetherRevealTitle": "Nice one!",
+  "@challengeTogetherRevealTitle": {"description": "Celebration title on the shared reveal."},
+  "challengeTogetherRevealBody": "You and {name} both earned it.",
+  "@challengeTogetherRevealBody": {"description": "Body on the shared reveal, naming the other person.", "placeholders": {"name": {"type": "String", "example": "Ana"}}},
+  "challengeTogetherPrompt": "You two: {challenge}",
+  "@challengeTogetherPrompt": {"description": "Names the challenge the pair agreed on.", "placeholders": {"challenge": {"type": "String", "example": "Take a selfie together"}}}
 }

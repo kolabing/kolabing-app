@@ -34,15 +34,15 @@ class AttendeeProfile {
   final DateTime updatedAt;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'profile_id': profileId,
-        'total_points': totalPoints,
-        'total_challenges_completed': totalChallengesCompleted,
-        'total_events_attended': totalEventsAttended,
-        if (globalRank != null) 'global_rank': globalRank,
-        'created_at': createdAt.toIso8601String(),
-        'updated_at': updatedAt.toIso8601String(),
-      };
+    'id': id,
+    'profile_id': profileId,
+    'total_points': totalPoints,
+    'total_challenges_completed': totalChallengesCompleted,
+    'total_events_attended': totalEventsAttended,
+    if (globalRank != null) 'global_rank': globalRank,
+    'created_at': createdAt.toIso8601String(),
+    'updated_at': updatedAt.toIso8601String(),
+  };
 
   AttendeeProfile copyWith({
     String? id,
@@ -53,16 +53,15 @@ class AttendeeProfile {
     int? globalRank,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) =>
-      AttendeeProfile(
-        id: id ?? this.id,
-        profileId: profileId ?? this.profileId,
-        totalPoints: totalPoints ?? this.totalPoints,
-        totalChallengesCompleted:
-            totalChallengesCompleted ?? this.totalChallengesCompleted,
-        totalEventsAttended: totalEventsAttended ?? this.totalEventsAttended,
-        globalRank: globalRank ?? this.globalRank,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
+  }) => AttendeeProfile(
+    id: id ?? this.id,
+    profileId: profileId ?? this.profileId,
+    totalPoints: totalPoints ?? this.totalPoints,
+    totalChallengesCompleted:
+        totalChallengesCompleted ?? this.totalChallengesCompleted,
+    totalEventsAttended: totalEventsAttended ?? this.totalEventsAttended,
+    globalRank: globalRank ?? this.globalRank,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
 }

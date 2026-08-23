@@ -23,88 +23,92 @@ class BadgeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-      onTap: onTap ?? () => _showBadgeDetail(context),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(KolabingSpacing.sm),
-        decoration: BoxDecoration(
+    onTap: onTap ?? () => _showBadgeDetail(context),
+    borderRadius: BorderRadius.circular(12),
+    child: Container(
+      padding: const EdgeInsets.all(KolabingSpacing.sm),
+      decoration: BoxDecoration(
+        color: isEarned
+            ? context.colors.primary.withValues(alpha: 0.1)
+            : context.colors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
           color: isEarned
-              ? context.colors.primary.withValues(alpha: 0.1)
-              : context.colors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isEarned
-                ? context.colors.primary.withValues(alpha: 0.3)
-                : context.colors.darkBorder,
-          ),
+              ? context.colors.primary.withValues(alpha: 0.3)
+              : context.colors.darkBorder,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Badge icon
-            Stack(
-              alignment: Alignment.center,
-              children: [
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Badge icon
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: isEarned
+                      ? context.colors.primary.withValues(alpha: 0.2)
+                      : context.colors.textTertiary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: badge.iconUrl != null
+                      ? Image.network(
+                          badge.iconUrl!,
+                          width: 32,
+                          height: 32,
+                          color: isEarned ? null : context.colors.textTertiary,
+                          colorBlendMode: isEarned
+                              ? null
+                              : BlendMode.saturation,
+                        )
+                      : _buildBadgeIcon(
+                          size: 28,
+                          color: isEarned ? null : context.colors.textTertiary,
+                        ),
+                ),
+              ),
+              if (!isEarned)
                 Container(
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: isEarned
-                        ? context.colors.primary.withValues(alpha: 0.2)
-                        : context.colors.textTertiary.withValues(alpha: 0.1),
+                    color: Colors.white.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                    child: badge.iconUrl != null
-                        ? Image.network(
-                            badge.iconUrl!,
-                            width: 32,
-                            height: 32,
-                            color: isEarned ? null : context.colors.textTertiary,
-                            colorBlendMode: isEarned ? null : BlendMode.saturation,
-                          )
-                        : _buildBadgeIcon(
-                            size: 28,
-                            color: isEarned
-                                ? null
-                                : context.colors.textTertiary,
-                          ),
+                    child: UiIcon(
+                      icon: UiIconSlug.lock,
+                      size: 20,
+                      color: context.colors.textTertiary,
+                    ),
                   ),
                 ),
-                if (!isEarned)
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: UiIcon(
-                        icon: UiIconSlug.lock,
-                        size: 20,
-                        color: context.colors.textTertiary,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: KolabingSpacing.xs),
+            ],
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
 
-            // Badge name
-            Text(
-              badge.name,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w600, color: isEarned
-                    ? context.colors.onSurface
-                    : context.colors.textTertiary),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+          // Badge name
+          Text(
+            badge.name,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: isEarned
+                  ? context.colors.onSurface
+                  : context.colors.textTertiary,
             ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
-    );
+    ),
+  );
 
   UiIconSlug _getBadgeIconSlug() {
     // Map badge types to icons based on name/slug
@@ -183,8 +187,7 @@ class BadgeCard extends StatelessWidget {
                       )
                     : _buildBadgeIcon(
                         size: 40,
-                        color:
-                            isEarned ? null : context.colors.textTertiary,
+                        color: isEarned ? null : context.colors.textTertiary,
                       ),
               ),
             ),
@@ -193,7 +196,11 @@ class BadgeCard extends StatelessWidget {
             // Badge name
             Text(
               badge.name,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: context.colors.onSurface,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -201,7 +208,9 @@ class BadgeCard extends StatelessWidget {
             // Description
             Text(
               badge.description,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -219,7 +228,11 @@ class BadgeCard extends StatelessWidget {
               ),
               child: Text(
                 'Requirement: ${badge.thresholdValue} ${badge.thresholdType}',
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurfaceVariant),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
             ),
 
@@ -237,7 +250,11 @@ class BadgeCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     'Earned on ${earnedAt!.day}/${earnedAt!.month}/${earnedAt!.year}',
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.success),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.success,
+                    ),
                   ),
                 ],
               ),
@@ -256,7 +273,10 @@ class BadgeCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     'Not yet earned',
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      fontSize: 12,
+                      color: context.colors.textTertiary,
+                    ),
                   ),
                 ],
               ),

@@ -28,12 +28,15 @@ class ChallengeCompletionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surfaceColor =
-        isDark ? context.colors.darkSurface : context.colors.surface;
-    final textColor =
-        isDark ? context.colors.textOnDark : context.colors.onSurface;
-    final secondaryTextColor =
-        isDark ? context.colors.textTertiary : context.colors.onSurfaceVariant;
+    final surfaceColor = isDark
+        ? context.colors.darkSurface
+        : context.colors.surface;
+    final textColor = isDark
+        ? context.colors.textOnDark
+        : context.colors.onSurface;
+    final secondaryTextColor = isDark
+        ? context.colors.textTertiary
+        : context.colors.onSurfaceVariant;
 
     return Material(
       color: surfaceColor,
@@ -46,7 +49,9 @@ class ChallengeCompletionCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
+              color: isDark
+                  ? context.colors.darkBorder
+                  : context.colors.darkBorder,
             ),
           ),
           child: Column(
@@ -65,15 +70,22 @@ class ChallengeCompletionCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          completion.challengeName ?? l10n.challengeCompletionDefaultName,
-                          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: textColor),
+                          completion.challengeName ??
+                              l10n.challengeCompletionDefaultName,
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: textColor,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         if (completion.eventName != null)
                           Text(
                             completion.eventName!,
-                            style: KolabingTextStyles.captionSecondary.copyWith(color: secondaryTextColor),
+                            style: KolabingTextStyles.captionSecondary.copyWith(
+                              color: secondaryTextColor,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -108,7 +120,8 @@ class ChallengeCompletionCard extends StatelessWidget {
               ),
 
               // Verification actions (if pending and user is verifier)
-              if (completion.isPending && (onVerify != null || onReject != null))
+              if (completion.isPending &&
+                  (onVerify != null || onReject != null))
                 Padding(
                   padding: const EdgeInsets.only(top: KolabingSpacing.sm),
                   child: Row(
@@ -125,8 +138,12 @@ class ChallengeCompletionCard extends StatelessWidget {
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
-                                completion.challengerName ?? l10n.challengeCompletionDefaultChallenger,
-                                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: secondaryTextColor),
+                                completion.challengerName ??
+                                    l10n.challengeCompletionDefaultChallenger,
+                                style: KolabingTextStyles.bodySmall.copyWith(
+                                  fontSize: 12,
+                                  color: secondaryTextColor,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -189,11 +206,7 @@ class ChallengeCompletionCard extends StatelessWidget {
         color: bgColor,
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Icon(
-        icon,
-        size: 20,
-        color: color,
-      ),
+      child: Icon(icon, size: 20, color: color),
     );
   }
 
@@ -225,7 +238,11 @@ class ChallengeCompletionCard extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: textColor),
+        style: KolabingTextStyles.bodySmall.copyWith(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
       ),
     );
   }
@@ -253,10 +270,7 @@ class _ActionButton extends StatelessWidget {
         onTap: onPressed,
         borderRadius: BorderRadius.circular(8),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 10,
-            vertical: 6,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -264,7 +278,11 @@ class _ActionButton extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 label,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: color),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
               ),
             ],
           ),

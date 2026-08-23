@@ -24,7 +24,10 @@ class GamificationStats {
       globalRank: json['global_rank'] as int?,
       badgesCount: json['badges_count'] as int,
       rewardsCount: json['rewards_count'] as int,
-      totalBadgesEarned: json['total_badges_earned'] as int? ?? json['badges_count'] as int? ?? 0,
+      totalBadgesEarned:
+          json['total_badges_earned'] as int? ??
+          json['badges_count'] as int? ??
+          0,
       totalRewardsWon: json['total_rewards_won'] as int? ?? 0,
       totalRewardsRedeemed: json['total_rewards_redeemed'] as int? ?? 0,
       totalEventsDiscovered: json['total_events_discovered'] as int? ?? 0,
@@ -51,18 +54,18 @@ class GamificationStats {
   String get rankDisplay => globalRank != null ? '#$globalRank' : '--';
 
   Map<String, dynamic> toJson() => {
-        'total_points': totalPoints,
-        'total_challenges_completed': totalChallengesCompleted,
-        'total_events_attended': totalEventsAttended,
-        if (globalRank != null) 'global_rank': globalRank,
-        'badges_count': badgesCount,
-        'rewards_count': rewardsCount,
-        'total_badges_earned': totalBadgesEarned,
-        'total_rewards_won': totalRewardsWon,
-        'total_rewards_redeemed': totalRewardsRedeemed,
-        'total_events_discovered': totalEventsDiscovered,
-        'total_spins': totalSpins,
-      };
+    'total_points': totalPoints,
+    'total_challenges_completed': totalChallengesCompleted,
+    'total_events_attended': totalEventsAttended,
+    if (globalRank != null) 'global_rank': globalRank,
+    'badges_count': badgesCount,
+    'rewards_count': rewardsCount,
+    'total_badges_earned': totalBadgesEarned,
+    'total_rewards_won': totalRewardsWon,
+    'total_rewards_redeemed': totalRewardsRedeemed,
+    'total_events_discovered': totalEventsDiscovered,
+    'total_spins': totalSpins,
+  };
 }
 
 /// Profile data for game card
@@ -95,11 +98,11 @@ class GameCardProfile {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'email': email,
-        if (avatarUrl != null) 'avatar_url': avatarUrl,
-        'user_type': userType,
-      };
+    'id': id,
+    'email': email,
+    if (avatarUrl != null) 'avatar_url': avatarUrl,
+    'user_type': userType,
+  };
 }
 
 /// Public game card for a user
@@ -112,8 +115,9 @@ class GameCard {
 
   factory GameCard.fromJson(Map<String, dynamic> json) {
     return GameCard(
-      profile:
-          GameCardProfile.fromJson(json['profile'] as Map<String, dynamic>),
+      profile: GameCardProfile.fromJson(
+        json['profile'] as Map<String, dynamic>,
+      ),
       stats: GamificationStats.fromJson(json['stats'] as Map<String, dynamic>),
       recentBadges: (json['recent_badges'] as List<dynamic>)
           .map((e) => BadgeAward.fromJson(e as Map<String, dynamic>))
@@ -126,8 +130,8 @@ class GameCard {
   final List<BadgeAward> recentBadges;
 
   Map<String, dynamic> toJson() => {
-        'profile': profile.toJson(),
-        'stats': stats.toJson(),
-        'recent_badges': recentBadges.map((e) => e.toJson()).toList(),
-      };
+    'profile': profile.toJson(),
+    'stats': stats.toJson(),
+    'recent_badges': recentBadges.map((e) => e.toJson()).toList(),
+  };
 }

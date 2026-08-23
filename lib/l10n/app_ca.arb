@@ -2163,5 +2163,11 @@
   "communityApplicationSubmit": "ENVIA LA SOL·LICITUD",
   "communityApplicationSentSnack": "Sol·licitud enviada. L'organitzador la revisarà.",
   "communityApplicationJoinedSnack": "Ja ets membre.",
-  "communityApplicationFailed": "No s'ha pogut enviar la teva sol·licitud. Torna-ho a provar."
+  "communityApplicationFailed": "No s'ha pogut enviar la teva sol·licitud. Torna-ho a provar.",
+  "challengeTogetherTitle": "Junts",
+  "challengeTogetherWaiting": "Esperant que {name} ho confirmi…",
+  "challengeTogetherEachEarns": "{points} XP per a cadascú",
+  "challengeTogetherRevealTitle": "Ben fet!",
+  "challengeTogetherRevealBody": "Tu i {name} ho heu guanyat tots dos.",
+  "challengeTogetherPrompt": "Vosaltres dos: {challenge}"
 }

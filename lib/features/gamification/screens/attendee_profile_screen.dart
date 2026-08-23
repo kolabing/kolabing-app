@@ -22,7 +22,6 @@ import '../../friends/providers/friends_provider.dart';
 import '../../identity/widgets/handle_field.dart';
 import '../../../widgets/kolabing_button.dart';
 
-
 /// Attendee profile — a Flaire-style social hub.
 ///
 /// Layout: a brand-gradient cover band; a large circular avatar overlapping its
@@ -152,13 +151,15 @@ class _AttendeeProfileScreenState extends ConsumerState<AttendeeProfileScreen> {
     final l10n = AppLocalizations.of(context);
 
     // Stat sources.
-    final friendsCount =
-        ref.watch(friendsProvider).maybeWhen(data: (f) => f.length, orElse: () => 0);
+    final friendsCount = ref
+        .watch(friendsProvider)
+        .maybeWhen(data: (f) => f.length, orElse: () => 0);
     final chatsCount = ref.watch(chatThreadsProvider).value?.length ?? 0;
     final eventsCount = attendeeProfile?.totalEventsAttended ?? 0;
     final pointsCount = attendeeProfile?.totalPoints ?? 0;
 
-    final cityName = user?.communityProfile?.city?.name ??
+    final cityName =
+        user?.communityProfile?.city?.name ??
         user?.businessProfile?.city?.name ??
         user?.cityName;
 
@@ -204,7 +205,8 @@ class _AttendeeProfileScreenState extends ConsumerState<AttendeeProfileScreen> {
                               _FlankStat(
                                 value: friendsCount,
                                 label: l10n.attendeeProfileStatFriends,
-                                onTap: () => context.push(KolabingRoutes.friends),
+                                onTap: () =>
+                                    context.push(KolabingRoutes.friends),
                               ),
                               _FlankStat(
                                 value: eventsCount,
@@ -272,7 +274,9 @@ class _AttendeeProfileScreenState extends ConsumerState<AttendeeProfileScreen> {
                             right: 0,
                             bottom: 0,
                             child: Container(
-                              padding: const EdgeInsets.all(KolabingSpacing.xxs),
+                              padding: const EdgeInsets.all(
+                                KolabingSpacing.xxs,
+                              ),
                               decoration: BoxDecoration(
                                 color: KolabingColors.primary,
                                 shape: BoxShape.circle,
@@ -302,8 +306,12 @@ class _AttendeeProfileScreenState extends ConsumerState<AttendeeProfileScreen> {
             if (_editingIdentity)
               _buildIdentityEditor(l10n)
             else
-              _buildIdentityDisplay(user?.displayName, user?.handle, cityName,
-                  l10n),
+              _buildIdentityDisplay(
+                user?.displayName,
+                user?.handle,
+                cityName,
+                l10n,
+              ),
 
             const SizedBox(height: KolabingSpacing.lg),
 
@@ -319,21 +327,30 @@ class _AttendeeProfileScreenState extends ConsumerState<AttendeeProfileScreen> {
 
             // ---- Settings list ----------------------------------------------
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+              padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.md,
+              ),
               child: Column(
                 children: [
-                  const Divider(height: 1, color: KolabingColors.outlineVariant),
+                  const Divider(
+                    height: 1,
+                    color: KolabingColors.outlineVariant,
+                  ),
                   _SettingsRow(
                     icon: LucideIcons.bell,
                     label: l10n.notifSettingsTitle,
-                    onTap: () => context.push(KolabingRoutes.notificationSettings),
+                    onTap: () =>
+                        context.push(KolabingRoutes.notificationSettings),
                   ),
                   _SettingsRow(
                     icon: LucideIcons.globe,
                     label: l10n.settingsLanguage,
                     onTap: () => context.push(KolabingRoutes.language),
                   ),
-                  const Divider(height: 1, color: KolabingColors.outlineVariant),
+                  const Divider(
+                    height: 1,
+                    color: KolabingColors.outlineVariant,
+                  ),
                   const SizedBox(height: KolabingSpacing.md),
                   SizedBox(
                     width: double.infinity,
@@ -346,7 +363,9 @@ class _AttendeeProfileScreenState extends ConsumerState<AttendeeProfileScreen> {
                         side: const BorderSide(color: KolabingColors.error),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(KolabingRadius.md),
+                          borderRadius: BorderRadius.circular(
+                            KolabingRadius.md,
+                          ),
                         ),
                       ),
                     ),
@@ -368,142 +387,141 @@ class _AttendeeProfileScreenState extends ConsumerState<AttendeeProfileScreen> {
     String? handle,
     String? cityName,
     AppLocalizations l10n,
-  ) =>
-      GestureDetector(
-        onTap: _startEditingIdentity,
-        behavior: HitTestBehavior.opaque,
-        child: Column(
+  ) => GestureDetector(
+    onTap: _startEditingIdentity,
+    behavior: HitTestBehavior.opaque,
+    child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                  child: Text(
-                    displayName ?? l10n.attendeeRoleLabel,
-                    textAlign: TextAlign.center,
-                    style: KolabingTextStyles.bodyLarge.copyWith(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: KolabingColors.onSurface,
-                    ),
-                  ),
+            Flexible(
+              child: Text(
+                displayName ?? l10n.attendeeRoleLabel,
+                textAlign: TextAlign.center,
+                style: KolabingTextStyles.bodyLarge.copyWith(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: KolabingColors.onSurface,
                 ),
-                const SizedBox(width: KolabingSpacing.xs),
-                const Icon(
-                  LucideIcons.edit3,
-                  size: 16,
-                  color: KolabingColors.onSurfaceVariant,
-                ),
-              ],
+              ),
             ),
-            if (handle != null && handle.isNotEmpty) ...[
-              const SizedBox(height: 2),
-              Text(
-                '@$handle',
-                style: KolabingTextStyles.bodySmall.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-            if (cityName != null && cityName.isNotEmpty) ...[
-              const SizedBox(height: 2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    LucideIcons.mapPin,
-                    size: 14,
-                    color: KolabingColors.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    cityName,
-                    style: KolabingTextStyles.bodySmall
-                        .copyWith(color: KolabingColors.onSurfaceVariant),
-                  ),
-                ],
-              ),
-            ],
+            const SizedBox(width: KolabingSpacing.xs),
+            const Icon(
+              LucideIcons.edit3,
+              size: 16,
+              color: KolabingColors.onSurfaceVariant,
+            ),
           ],
         ),
-      );
+        if (handle != null && handle.isNotEmpty) ...[
+          const SizedBox(height: 2),
+          Text(
+            '@$handle',
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+        if (cityName != null && cityName.isNotEmpty) ...[
+          const SizedBox(height: 2),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                LucideIcons.mapPin,
+                size: 14,
+                color: KolabingColors.onSurfaceVariant,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                cityName,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: KolabingColors.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
+    ),
+  );
 
   /// Inline name + @handle editor shown in place of the display block.
   Widget _buildIdentityEditor(AppLocalizations l10n) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+    padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextField(
+          controller: _nameController,
+          enabled: !_savingIdentity,
+          textAlign: TextAlign.center,
+          style: KolabingTextStyles.bodyLarge.copyWith(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: KolabingColors.onSurface,
+          ),
+          decoration: InputDecoration(
+            hintText: l10n.editProfileNameHint,
+            filled: true,
+            fillColor: KolabingColors.surfaceVariant,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(KolabingRadius.sm),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: KolabingSpacing.md,
+              vertical: KolabingSpacing.sm + 2,
+            ),
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+        HandleField(
+          controller: _handleController,
+          initialHandle: _initialHandle,
+          enabled: !_savingIdentity,
+          onChanged: (handle, ok) {
+            _handle = handle;
+            if (ok != _handleOk && mounted) {
+              setState(() => _handleOk = ok);
+            } else {
+              _handleOk = ok;
+            }
+          },
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+        Row(
           children: [
-            TextField(
-              controller: _nameController,
-              enabled: !_savingIdentity,
-              textAlign: TextAlign.center,
-              style: KolabingTextStyles.bodyLarge.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: KolabingColors.onSurface,
-              ),
-              decoration: InputDecoration(
-                hintText: l10n.editProfileNameHint,
-                filled: true,
-                fillColor: KolabingColors.surfaceVariant,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(KolabingRadius.sm),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.md,
-                  vertical: KolabingSpacing.sm + 2,
-                ),
-              ),
-            ),
-            const SizedBox(height: KolabingSpacing.sm),
-            HandleField(
-              controller: _handleController,
-              initialHandle: _initialHandle,
-              enabled: !_savingIdentity,
-              onChanged: (handle, ok) {
-                _handle = handle;
-                if (ok != _handleOk && mounted) {
-                  setState(() => _handleOk = ok);
-                } else {
-                  _handleOk = ok;
-                }
-              },
-            ),
-            const SizedBox(height: KolabingSpacing.sm),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: _savingIdentity ? null : _cancelEditingIdentity,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: KolabingColors.onSurface,
-                      side:
-                          const BorderSide(color: KolabingColors.outlineVariant),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(KolabingRadius.md),
-                      ),
-                    ),
-                    child: Text(l10n.commonCancel),
+            Expanded(
+              child: OutlinedButton(
+                onPressed: _savingIdentity ? null : _cancelEditingIdentity,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: KolabingColors.onSurface,
+                  side: const BorderSide(color: KolabingColors.outlineVariant),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(KolabingRadius.md),
                   ),
                 ),
-                const SizedBox(width: KolabingSpacing.sm),
-                Expanded(
-                  child: KolabingButton(
-                    label: l10n.commonSave,
-                    onPressed: _savingIdentity ? null : _saveIdentity,
-                    variant: KolabingButtonVariant.primary,
-                    isLoading: _savingIdentity,
-                    size: KolabingButtonSize.compact,
-                  ),
-                ),
-              ],
+                child: Text(l10n.commonCancel),
+              ),
+            ),
+            const SizedBox(width: KolabingSpacing.sm),
+            Expanded(
+              child: KolabingButton(
+                label: l10n.commonSave,
+                onPressed: _savingIdentity ? null : _saveIdentity,
+                variant: KolabingButtonVariant.primary,
+                isLoading: _savingIdentity,
+                size: KolabingButtonSize.compact,
+              ),
             ),
           ],
         ),
-      );
+      ],
+    ),
+  );
 
   String _getInitials(String name) {
     final parts = name.trim().split(' ');
@@ -555,31 +573,31 @@ class _FlankStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              '$value',
-              style: KolabingTextStyles.bodyLarge.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: KolabingColors.onSurface,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: KolabingTextStyles.bodySmall.copyWith(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: KolabingColors.onSurfaceVariant,
-              ),
-            ),
-          ],
+    onTap: onTap,
+    behavior: HitTestBehavior.opaque,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '$value',
+          style: KolabingTextStyles.bodyLarge.copyWith(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: KolabingColors.onSurface,
+          ),
         ),
-      );
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: KolabingColors.onSurfaceVariant,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 // =============================================================================
@@ -618,24 +636,24 @@ class _ProfileAvatar extends StatelessWidget {
   }
 
   Widget _initialCircle(BoxBorder border) => Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: KolabingColors.primary.withValues(alpha: 0.25),
-          border: border,
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: KolabingColors.primary.withValues(alpha: 0.25),
+      border: border,
+    ),
+    child: Center(
+      child: Text(
+        initial,
+        style: KolabingTextStyles.bodyLarge.copyWith(
+          fontSize: 34,
+          fontWeight: FontWeight.w700,
+          color: KolabingColors.onPrimary,
         ),
-        child: Center(
-          child: Text(
-            initial,
-            style: KolabingTextStyles.bodyLarge.copyWith(
-              fontSize: 34,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.onPrimary,
-            ),
-          ),
-        ),
-      );
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -670,8 +688,7 @@ class _MyCommunitiesSection extends ConsumerWidget {
               GestureDetector(
                 // Attendees DISCOVER and join communities — open the discovery
                 // surface (NOT the leader collab-create flow).
-                onTap: () =>
-                    context.push(KolabingRoutes.discoverCommunities),
+                onTap: () => context.push(KolabingRoutes.discoverCommunities),
                 child: Container(
                   padding: const EdgeInsets.all(KolabingSpacing.xxs),
                   decoration: BoxDecoration(
@@ -785,47 +802,47 @@ class _MyCommunitiesEmpty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(KolabingSpacing.md),
-          decoration: BoxDecoration(
-            color: KolabingColors.surfaceContainerLow,
-            borderRadius: BorderRadius.circular(KolabingRadius.lg),
-            border: Border.all(color: KolabingColors.outlineVariant),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+    child: Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: KolabingColors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(KolabingRadius.lg),
+        border: Border.all(color: KolabingColors.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  const Icon(
-                    LucideIcons.users,
-                    size: 22,
+              const Icon(
+                LucideIcons.users,
+                size: 22,
+                color: KolabingColors.onSurfaceVariant,
+              ),
+              const SizedBox(width: KolabingSpacing.sm),
+              Expanded(
+                child: Text(
+                  l10n.attendeeProfileNoCommunities,
+                  style: KolabingTextStyles.bodySmall.copyWith(
                     color: KolabingColors.onSurfaceVariant,
                   ),
-                  const SizedBox(width: KolabingSpacing.sm),
-                  Expanded(
-                    child: Text(
-                      l10n.attendeeProfileNoCommunities,
-                      style: KolabingTextStyles.bodySmall
-                          .copyWith(color: KolabingColors.onSurfaceVariant),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: KolabingSpacing.sm),
-              KolabingButton(
-                label: l10n.discoverCommunitiesCta,
-                onPressed: () =>
-                    context.push(KolabingRoutes.discoverCommunities),
-                variant: KolabingButtonVariant.primary,
-                icon: const Icon(LucideIcons.compass, size: 18),
+                ),
               ),
             ],
           ),
-        ),
-      );
+          const SizedBox(height: KolabingSpacing.sm),
+          KolabingButton(
+            label: l10n.discoverCommunitiesCta,
+            onPressed: () => context.push(KolabingRoutes.discoverCommunities),
+            variant: KolabingButtonVariant.primary,
+            icon: const Icon(LucideIcons.compass, size: 18),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -840,10 +857,9 @@ class _FriendsPreviewSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final friends = ref.watch(friendsProvider).maybeWhen(
-          data: (f) => f,
-          orElse: () => const <FriendSummary>[],
-        );
+    final friends = ref
+        .watch(friendsProvider)
+        .maybeWhen(data: (f) => f, orElse: () => const <FriendSummary>[]);
 
     // Always show the Friends widget. When empty, invite the user to find
     // friends instead of hiding the section.
@@ -962,36 +978,36 @@ class _FriendAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: (avatarUrl != null && avatarUrl!.isNotEmpty)
-            ? ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: avatarUrl!,
-                  width: 48,
-                  height: 48,
-                  fit: BoxFit.cover,
-                  errorWidget: (_, _, _) => _initialCircle(),
-                ),
-              )
-            : _initialCircle(),
-      );
+    onTap: onTap,
+    child: (avatarUrl != null && avatarUrl!.isNotEmpty)
+        ? ClipOval(
+            child: CachedNetworkImage(
+              imageUrl: avatarUrl!,
+              width: 48,
+              height: 48,
+              fit: BoxFit.cover,
+              errorWidget: (_, _, _) => _initialCircle(),
+            ),
+          )
+        : _initialCircle(),
+  );
 
   Widget _initialCircle() => Container(
-        width: 48,
-        height: 48,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: KolabingColors.primary.withValues(alpha: 0.2),
-          shape: BoxShape.circle,
-        ),
-        child: Text(
-          initial,
-          style: KolabingTextStyles.bodyMedium.copyWith(
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.onSurface,
-          ),
-        ),
-      );
+    width: 48,
+    height: 48,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: KolabingColors.primary.withValues(alpha: 0.2),
+      shape: BoxShape.circle,
+    ),
+    child: Text(
+      initial,
+      style: KolabingTextStyles.bodyMedium.copyWith(
+        fontWeight: FontWeight.w700,
+        color: KolabingColors.onSurface,
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -1011,29 +1027,29 @@ class _SettingsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm + 2),
-          child: Row(
-            children: [
-              Icon(icon, size: 20, color: KolabingColors.onSurfaceVariant),
-              const SizedBox(width: KolabingSpacing.sm),
-              Expanded(
-                child: Text(
-                  label,
-                  style: KolabingTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: KolabingColors.onSurface,
-                  ),
-                ),
+    onTap: onTap,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm + 2),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: KolabingColors.onSurfaceVariant),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: Text(
+              label,
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w500,
+                color: KolabingColors.onSurface,
               ),
-              const Icon(
-                LucideIcons.chevronRight,
-                size: 18,
-                color: KolabingColors.textTertiary,
-              ),
-            ],
+            ),
           ),
-        ),
-      );
+          const Icon(
+            LucideIcons.chevronRight,
+            size: 18,
+            color: KolabingColors.textTertiary,
+          ),
+        ],
+      ),
+    ),
+  );
 }

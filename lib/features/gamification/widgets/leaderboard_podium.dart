@@ -8,10 +8,7 @@ import '../models/leaderboard.dart';
 
 /// Widget displaying the top 3 in a podium layout
 class LeaderboardPodium extends StatelessWidget {
-  const LeaderboardPodium({
-    super.key,
-    required this.topThree,
-  });
+  const LeaderboardPodium({super.key, required this.topThree});
 
   final List<LeaderboardEntry> topThree;
 
@@ -74,7 +71,11 @@ class LeaderboardPodium extends StatelessWidget {
   }
 
   Widget _buildPodiumEntry(
-      BuildContext context, LeaderboardEntry entry, int rank, double height) {
+    BuildContext context,
+    LeaderboardEntry entry,
+    int rank,
+    double height,
+  ) {
     Color crownColor;
     Color bgColor;
 
@@ -96,12 +97,7 @@ class LeaderboardPodium extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Crown for 1st place
-        if (rank == 1)
-          Icon(
-            LucideIcons.crown,
-            size: 28,
-            color: crownColor,
-          ),
+        if (rank == 1) Icon(LucideIcons.crown, size: 28, color: crownColor),
         if (rank == 1) const SizedBox(height: 4),
 
         // Avatar
@@ -112,10 +108,7 @@ class LeaderboardPodium extends StatelessWidget {
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: crownColor,
-                  width: rank == 1 ? 3 : 2,
-                ),
+                border: Border.all(color: crownColor, width: rank == 1 ? 3 : 2),
               ),
               child: CircleAvatar(
                 radius: rank == 1 ? 36 : 28,
@@ -128,7 +121,10 @@ class LeaderboardPodium extends StatelessWidget {
                         entry.displayName.isNotEmpty
                             ? entry.displayName[0].toUpperCase()
                             : '?',
-                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.primary),
+                        style: KolabingTextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.primary,
+                        ),
                       )
                     : null,
               ),
@@ -152,7 +148,11 @@ class LeaderboardPodium extends StatelessWidget {
                 child: Center(
                   child: Text(
                     '$rank',
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: rank == 1 ? Colors.black : Colors.white),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: rank == 1 ? Colors.black : Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -166,7 +166,10 @@ class LeaderboardPodium extends StatelessWidget {
           width: 80,
           child: Text(
             entry.displayName,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontWeight: FontWeight.w600,
+              color: context.colors.onSurface,
+            ),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -177,15 +180,14 @@ class LeaderboardPodium extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              LucideIcons.star,
-              size: 12,
-              color: context.colors.primary,
-            ),
+            Icon(LucideIcons.star, size: 12, color: context.colors.primary),
             const SizedBox(width: 2),
             Text(
               '${entry.totalPoints}',
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.primary),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w700,
+                color: context.colors.primary,
+              ),
             ),
           ],
         ),
@@ -197,17 +199,16 @@ class LeaderboardPodium extends StatelessWidget {
           height: height,
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(8),
-            ),
-            border: Border.all(
-              color: crownColor.withValues(alpha: 0.5),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+            border: Border.all(color: crownColor.withValues(alpha: 0.5)),
           ),
           child: Center(
             child: Text(
               _ordinal(rank),
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: crownColor),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w700,
+                color: crownColor,
+              ),
             ),
           ),
         ),

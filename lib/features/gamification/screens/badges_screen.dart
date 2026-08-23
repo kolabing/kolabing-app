@@ -23,7 +23,9 @@ class BadgesScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context).badgesScreenTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
       ),
@@ -33,12 +35,14 @@ class BadgesScreen extends ConsumerWidget {
           loading: () => Center(
             child: CircularProgressIndicator(color: context.colors.primary),
           ),
-          error: (error, stack) => _buildErrorState(context, ref, error.toString()),
+          error: (error, stack) =>
+              _buildErrorState(context, ref, error.toString()),
         ),
         loading: () => Center(
           child: CircularProgressIndicator(color: context.colors.primary),
         ),
-        error: (error, stack) => _buildErrorState(context, ref, error.toString()),
+        error: (error, stack) =>
+            _buildErrorState(context, ref, error.toString()),
       ),
     );
   }
@@ -52,7 +56,7 @@ class BadgesScreen extends ConsumerWidget {
     // Create a map of earned badge IDs for quick lookup
     final earnedBadgeIds = myBadges.badges.map((b) => b.badge.id).toSet();
     final badgeAwardMap = {
-      for (var award in myBadges.badges) award.badge.id: award
+      for (var award in myBadges.badges) award.badge.id: award,
     };
 
     return RefreshIndicator(
@@ -64,9 +68,7 @@ class BadgesScreen extends ConsumerWidget {
       child: CustomScrollView(
         slivers: [
           // Stats header
-          SliverToBoxAdapter(
-            child: _buildStatsHeader(context, myBadges),
-          ),
+          SliverToBoxAdapter(child: _buildStatsHeader(context, myBadges)),
 
           // Earned badges section
           if (myBadges.badges.isNotEmpty) ...[
@@ -80,12 +82,19 @@ class BadgesScreen extends ConsumerWidget {
                 ),
                 child: Text(
                   AppLocalizations.of(context).badgesScreenEarnedBadges,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.2),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.onSurfaceVariant,
+                    letterSpacing: 1.2,
+                  ),
                 ),
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+              padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.md,
+              ),
               sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
@@ -93,17 +102,14 @@ class BadgesScreen extends ConsumerWidget {
                   mainAxisSpacing: KolabingSpacing.sm,
                   childAspectRatio: 0.85,
                 ),
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final award = myBadges.badges[index];
-                    return BadgeCard(
-                      badge: award.badge,
-                      isEarned: true,
-                      earnedAt: award.awardedAt,
-                    );
-                  },
-                  childCount: myBadges.badges.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final award = myBadges.badges[index];
+                  return BadgeCard(
+                    badge: award.badge,
+                    isEarned: true,
+                    earnedAt: award.awardedAt,
+                  );
+                }, childCount: myBadges.badges.length),
               ),
             ),
           ],
@@ -119,7 +125,12 @@ class BadgesScreen extends ConsumerWidget {
               ),
               child: Text(
                 AppLocalizations.of(context).badgesScreenAllBadges,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.2),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.onSurfaceVariant,
+                  letterSpacing: 1.2,
+                ),
               ),
             ),
           ),
@@ -133,27 +144,22 @@ class BadgesScreen extends ConsumerWidget {
                 mainAxisSpacing: KolabingSpacing.sm,
                 childAspectRatio: 0.85,
               ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final badge = allBadges.badges[index];
-                  final isEarned = earnedBadgeIds.contains(badge.id);
-                  final award = badgeAwardMap[badge.id];
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final badge = allBadges.badges[index];
+                final isEarned = earnedBadgeIds.contains(badge.id);
+                final award = badgeAwardMap[badge.id];
 
-                  return BadgeCard(
-                    badge: badge,
-                    isEarned: isEarned,
-                    earnedAt: award?.awardedAt,
-                  );
-                },
-                childCount: allBadges.badges.length,
-              ),
+                return BadgeCard(
+                  badge: badge,
+                  isEarned: isEarned,
+                  earnedAt: award?.awardedAt,
+                );
+              }, childCount: allBadges.badges.length),
             ),
           ),
 
           // Bottom padding
-          const SliverToBoxAdapter(
-            child: SizedBox(height: KolabingSpacing.xl),
-          ),
+          const SliverToBoxAdapter(child: SizedBox(height: KolabingSpacing.xl)),
         ],
       ),
     );
@@ -203,11 +209,16 @@ class BadgesScreen extends ConsumerWidget {
             children: [
               Text(
                 '${myBadges.badges.length}',
-                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 36, fontWeight: FontWeight.w700, color: context.colors.onPrimary),
+                style: KolabingTextStyles.bodyLarge.copyWith(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.onPrimary,
+                ),
               ),
               Text(
                 AppLocalizations.of(context).badgesScreenBadgesEarned,
-                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onPrimary.withValues(alpha: 0.9),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: context.colors.onPrimary.withValues(alpha: 0.9),
                 ),
               ),
             ],
@@ -232,12 +243,17 @@ class BadgesScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).badgesScreenFailedToLoad,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),

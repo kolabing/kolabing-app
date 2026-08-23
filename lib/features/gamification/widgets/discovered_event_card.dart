@@ -9,11 +9,7 @@ import '../models/discovered_event.dart';
 
 /// Card displaying a discovered event
 class DiscoveredEventCard extends StatelessWidget {
-  const DiscoveredEventCard({
-    super.key,
-    required this.event,
-    this.onTap,
-  });
+  const DiscoveredEventCard({super.key, required this.event, this.onTap});
 
   final DiscoveredEvent event;
   final VoidCallback? onTap;
@@ -84,9 +80,13 @@ class DiscoveredEventCard extends StatelessWidget {
                       event.isBusiness
                           ? l10n.eventPartnerBusiness
                           : l10n.eventPartnerCommunity,
-                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: event.isBusiness
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: event.isBusiness
                             ? context.colors.info
-                            : context.colors.success),
+                            : context.colors.success,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -94,7 +94,10 @@ class DiscoveredEventCard extends StatelessWidget {
                   // Event name
                   Text(
                     event.name,
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.onSurface,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -102,7 +105,10 @@ class DiscoveredEventCard extends StatelessWidget {
                   // Host community name · type
                   Text(
                     _hostLine(),
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: KolabingColors.onSurfaceVariant),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      fontSize: 12,
+                      color: KolabingColors.onSurfaceVariant,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -119,7 +125,9 @@ class DiscoveredEventCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         _formatDate(context, event.eventDate),
-                        style: KolabingTextStyles.labelSmall.copyWith(color: KolabingColors.textTertiary),
+                        style: KolabingTextStyles.labelSmall.copyWith(
+                          color: KolabingColors.textTertiary,
+                        ),
                       ),
                       const SizedBox(width: KolabingSpacing.sm),
                       Icon(
@@ -130,7 +138,9 @@ class DiscoveredEventCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         '${event.attendeeCount}',
-                        style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.textTertiary),
+                        style: KolabingTextStyles.labelSmall.copyWith(
+                          color: context.colors.textTertiary,
+                        ),
                       ),
                     ],
                   ),
@@ -159,7 +169,11 @@ class DiscoveredEventCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     event.distanceDisplay,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.primary),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.primary,
+                    ),
                   ),
                 ],
               ),

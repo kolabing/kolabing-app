@@ -53,7 +53,10 @@ class DifficultyBadge extends StatelessWidget {
           ],
           Text(
             difficulty.label,
-            style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: textColor),
+            style: KolabingTextStyles.labelSmall.copyWith(
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
           ),
         ],
       ),

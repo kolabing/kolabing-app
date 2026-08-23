@@ -17,7 +17,10 @@ import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chats_screen.dart';
 import '../../community/screens/my_communities_screen.dart';
 import 'attendee_home_screen.dart';
+import '../models/challenge_completion.dart';
+import '../providers/pending_challenge_provider.dart';
 import 'attendee_scanner_screen.dart';
+import 'challenge_together_screen.dart';
 
 /// Attendee (Community Member) main screen with bottom navigation
 ///
@@ -90,11 +93,31 @@ class _AttendeeMainScreenState extends ConsumerState<AttendeeMainScreen> {
     );
   }
 
+  /// Guards against opening the shared screen twice for the same challenge if
+  /// the provider emits again while it is already on screen.
+  String? _showingCompletionId;
+
+  /// Someone just asked this device to do a challenge together — open the same
+  /// screen they are looking at (#140). This is what removed the second QR
+  /// scan: the partner's phone finds out by itself.
+  void _openPendingChallenge(ChallengeCompletion completion) async {
+    if (!mounted || _showingCompletionId == completion.id) return;
+    _showingCompletionId = completion.id;
+
+    await ChallengeTogetherScreen.openForPartner(context, completion);
+
+    if (mounted) _showingCompletionId = null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final chatUnread = ref.watch(chatUnreadProvider);
+
+    ref.listen(pendingChallengeProvider, (previous, next) {
+      if (next != null) _openPendingChallenge(next);
+    });
 
     final navItems = [
       NavItem(
