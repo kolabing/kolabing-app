@@ -14,6 +14,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../event/providers/event_provider.dart';
 import '../models/event_checkin.dart';
 import '../models/qr_payload.dart';
+import '../../community/widgets/membership_prompt.dart';
 import '../providers/active_event_session_provider.dart';
 import '../providers/checkin_provider.dart';
 import '../services/checkin_service.dart';
@@ -165,6 +166,13 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
     final checkin = state.checkin;
     if (checkin != null) {
       await ref.read(activeEventSessionProvider.notifier).start(checkin);
+
+      // Turning up is the moment worth asking whether they want to belong
+      // (#148). After the session opens, so a "not now" leaves them able to
+      // play regardless.
+      if (mounted) {
+        await MembershipPrompt.maybeOffer(context, ref, checkin);
+      }
     }
     if (!mounted) return;
 

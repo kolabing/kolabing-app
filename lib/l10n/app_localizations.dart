@@ -12992,6 +12992,24 @@ abstract class AppLocalizations {
   /// **'Become a member'**
   String get communityBecomeMember;
 
+  /// Title of the sheet offering membership after a check-in. Placeholder is the community name.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re at {community}'**
+  String membershipPromptTitle(String community);
+
+  /// Body of the post-check-in membership prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Members get the community chat, member-only events and its rewards.'**
+  String get membershipPromptBody;
+
+  /// Dismiss button on the post-check-in membership prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get membershipPromptNotNow;
+
   /// Shown when the viewer is already a member of the community.
   ///
   /// In en, this message translates to:

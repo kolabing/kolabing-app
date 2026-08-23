@@ -9299,6 +9299,19 @@
     "description": "Shown when following or unfollowing fails."
   },
   "communityBecomeMember": "Become a member",
+  "membershipPromptTitle": "You're at {community}",
+  "@membershipPromptTitle": {
+    "description": "Title of the sheet offering membership after a check-in. Placeholder is the community name.",
+    "placeholders": { "community": { "type": "String" } }
+  },
+  "membershipPromptBody": "Members get the community chat, member-only events and its rewards.",
+  "@membershipPromptBody": {
+    "description": "Body of the post-check-in membership prompt."
+  },
+  "membershipPromptNotNow": "Not now",
+  "@membershipPromptNotNow": {
+    "description": "Dismiss button on the post-check-in membership prompt."
+  },
   "@communityBecomeMember": {
     "description": "Action that starts the membership application."
   },

@@ -581,6 +581,9 @@ class _JoinCtaBarState extends ConsumerState<_JoinCtaBar> {
             .read(communityByIdProvider(_c.id).notifier)
             .setCommunity(_c.copyWith(isMember: true));
         await ref.read(communityByIdProvider(_c.id).notifier).reload();
+        // Joining now follows too (#146); reload so nothing offers a Follow
+        // button for a community they already belong to.
+        await ref.read(communityFollowsProvider.notifier).reload();
         if (mounted) _snack(l10n.communityApplicationJoinedSnack);
       case MembershipOutcome.pending:
         ref

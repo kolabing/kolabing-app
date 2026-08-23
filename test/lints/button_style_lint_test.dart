@@ -121,7 +121,9 @@ void main() {
   test('no Anton/display font inside button label Text widgets', () {
     final violations = <String>[];
 
-    final antonPattern = RegExp(r'\bantonFont\b|\bfontDisplay\b|\bfontPageTitle\b|Anton');
+    final antonPattern = RegExp(
+      r'\bantonFont\b|\bfontDisplay\b|\bfontPageTitle\b|Anton',
+    );
     final buttonContext = RegExp(
       r'ElevatedButton\b|FilledButton\b|OutlinedButton\b|TextButton\b',
     );
@@ -152,6 +154,89 @@ void main() {
       reason:
           'Anton/display font found inside a button label.\n'
           'Fix: button labels must use KolabingTextStyles.button (Hanken Grotesk w700).\n\n'
+          'Violations:\n${violations.join('\n')}',
+    );
+  });
+
+  // ---------------------------------------------------------------------------
+  // Rule 4: A theme-sized button must not sit directly inside a Row
+  //
+  // ElevatedButton/FilledButton/OutlinedButton themes all set
+  // minimumSize.width = double.infinity so form buttons stretch. A Row measures
+  // its non-flex children with an UNBOUNDED width, so that infinity claims the
+  // entire row: every sibling Expanded collapses to 0px and its text wraps one
+  // letter per line (the community Rewards tile shipped like that).
+  //
+  // Fix: either wrap the button in Expanded/Flexible/SizedBox, or pass an
+  // explicit bounded minimumSize (e.g. `Size(0, KolabingLayout
+  // .buttonHeightSecondary)`) in styleFrom.
+  // ---------------------------------------------------------------------------
+  test('no theme-sized button placed directly inside a Row', () {
+    final violations = <String>[];
+
+    final buttonOpen = RegExp(
+      r'\b(ElevatedButton|FilledButton|OutlinedButton)(\.icon)?\s*\(',
+    );
+    // Ancestors that give the button a bounded/flex width of its own.
+    final boundedParent = RegExp(
+      r'\b(Expanded|Flexible|SizedBox|ConstrainedBox|IntrinsicWidth|Container)\s*\(',
+    );
+    final layoutParent = RegExp(
+      r'\b(Row|Column|Wrap|Stack|Flex|ListView)\s*\(',
+    );
+
+    for (final file in dartFiles()) {
+      final lines = file.readAsLinesSync();
+      for (var i = 0; i < lines.length; i++) {
+        final line = lines[i];
+        if (!buttonOpen.hasMatch(line)) continue;
+        // Style declarations and theme definitions are not widget instances.
+        if (line.contains('styleFrom') ||
+            line.contains('ButtonTheme') ||
+            line.contains('ButtonStyle')) {
+          continue;
+        }
+
+        final indent = line.length - line.trimLeft().length;
+
+        // Walk up through strictly-outdented lines: those are the ancestors.
+        var current = indent;
+        var parentIsRow = false;
+        for (var j = i - 1; j >= 0; j--) {
+          final candidate = lines[j];
+          if (candidate.trim().isEmpty) continue;
+          final candidateIndent =
+              candidate.length - candidate.trimLeft().length;
+          if (candidateIndent >= current) continue;
+          current = candidateIndent;
+          if (boundedParent.hasMatch(candidate)) break;
+          final layout = layoutParent.firstMatch(candidate);
+          if (layout != null) {
+            parentIsRow = layout.group(1) == 'Row';
+            break;
+          }
+          if (current == 0) break;
+        }
+        if (!parentIsRow) continue;
+
+        // A bounded minimumSize inside the button's own style clears it.
+        final body = lines
+            .sublist(i, (i + 30).clamp(0, lines.length))
+            .join(' ');
+        if (body.contains('minimumSize')) continue;
+
+        violations.add('${file.path}:${i + 1}  ${line.trim()}');
+      }
+    }
+
+    expect(
+      violations,
+      isEmpty,
+      reason:
+          'A full-width-themed button sits directly in a Row; it will squeeze '
+          'its siblings to 0px.\n'
+          'Fix: wrap it in Expanded/SizedBox, or pass a bounded minimumSize in '
+          'styleFrom.\n\n'
           'Violations:\n${violations.join('\n')}',
     );
   });

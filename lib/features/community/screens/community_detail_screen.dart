@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/feature_flags.dart';
@@ -667,9 +668,21 @@ class _MemberRewardTileState extends ConsumerState<_MemberRewardTile> {
             const SizedBox(width: KolabingSpacing.sm),
             FilledButton(
               onPressed: canRedeem ? _redeem : null,
+              // The app's FilledButtonTheme sets minimumSize.width = infinity
+              // (full-width form buttons). A Row measures its non-flex children
+              // with an unbounded width, so that infinity claimed the whole row
+              // and left the Expanded title 0px wide — the reward name then
+              // wrapped one letter per line. Bound the button here.
               style: FilledButton.styleFrom(
                 backgroundColor: context.colors.primary,
                 foregroundColor: context.colors.onPrimary,
+                minimumSize: const Size(
+                  0,
+                  KolabingLayout.buttonHeightSecondary,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.md,
+                ),
               ),
               child: _busy
                   ? SizedBox(
