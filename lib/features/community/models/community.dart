@@ -125,8 +125,9 @@ class Community {
       description: json['description'] as String?,
       avatarUrl: normalizeRemoteMediaUrlOrNull(json['avatar_url'] as String?),
       isPrimary: json['is_primary'] as bool? ?? true,
-      joinPolicy:
-          CommunityJoinPolicy.fromString(json['join_policy'] as String? ?? 'open'),
+      joinPolicy: CommunityJoinPolicy.fromString(
+        json['join_policy'] as String? ?? 'open',
+      ),
       memberCount: json['member_count'] as int?,
       // Viewer-scoped fields exposed by `GET /communities/{id}` (attendee
       // community-profile contract). Self-gated: null when the backend hasn't
@@ -198,25 +199,24 @@ class Community {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'owner_profile_id': ownerProfileId,
-        if (communityProfileId != null)
-          'community_profile_id': communityProfileId,
-        'name': name,
-        'slug': slug,
-        'type': type.toApiValue(),
-        if (description != null) 'description': description,
-        if (avatarUrl != null) 'avatar_url': avatarUrl,
-        'is_primary': isPrimary,
-        'join_policy': joinPolicy.toApiValue(),
-        if (memberCount != null) 'member_count': memberCount,
-        if (isMember != null) 'is_member': isMember,
-        if (myJoinRequestStatus != null)
-          'my_join_request_status': myJoinRequestStatus,
-        if (inviteUrl != null) 'invite_url': inviteUrl,
-        'created_at': createdAt.toIso8601String(),
-        'updated_at': updatedAt.toIso8601String(),
-      };
+    'id': id,
+    'owner_profile_id': ownerProfileId,
+    if (communityProfileId != null) 'community_profile_id': communityProfileId,
+    'name': name,
+    'slug': slug,
+    'type': type.toApiValue(),
+    if (description != null) 'description': description,
+    if (avatarUrl != null) 'avatar_url': avatarUrl,
+    'is_primary': isPrimary,
+    'join_policy': joinPolicy.toApiValue(),
+    if (memberCount != null) 'member_count': memberCount,
+    if (isMember != null) 'is_member': isMember,
+    if (myJoinRequestStatus != null)
+      'my_join_request_status': myJoinRequestStatus,
+    if (inviteUrl != null) 'invite_url': inviteUrl,
+    'created_at': createdAt.toIso8601String(),
+    'updated_at': updatedAt.toIso8601String(),
+  };
 
   Community copyWith({
     String? id,
@@ -237,25 +237,24 @@ class Community {
     bool? isMember,
     String? myJoinRequestStatus,
     String? inviteUrl,
-  }) =>
-      Community(
-        id: id ?? this.id,
-        ownerProfileId: ownerProfileId ?? this.ownerProfileId,
-        communityProfileId: communityProfileId ?? this.communityProfileId,
-        name: name ?? this.name,
-        slug: slug ?? this.slug,
-        type: type ?? this.type,
-        description: description ?? this.description,
-        avatarUrl: avatarUrl ?? this.avatarUrl,
-        isPrimary: isPrimary ?? this.isPrimary,
-        joinPolicy: joinPolicy ?? this.joinPolicy,
-        memberCount: memberCount ?? this.memberCount,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        typeSlug: typeSlug ?? this.typeSlug,
-        matched: matched ?? this.matched,
-        isMember: isMember ?? this.isMember,
-        myJoinRequestStatus: myJoinRequestStatus ?? this.myJoinRequestStatus,
-        inviteUrl: inviteUrl ?? this.inviteUrl,
-      );
+  }) => Community(
+    id: id ?? this.id,
+    ownerProfileId: ownerProfileId ?? this.ownerProfileId,
+    communityProfileId: communityProfileId ?? this.communityProfileId,
+    name: name ?? this.name,
+    slug: slug ?? this.slug,
+    type: type ?? this.type,
+    description: description ?? this.description,
+    avatarUrl: avatarUrl ?? this.avatarUrl,
+    isPrimary: isPrimary ?? this.isPrimary,
+    joinPolicy: joinPolicy ?? this.joinPolicy,
+    memberCount: memberCount ?? this.memberCount,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    typeSlug: typeSlug ?? this.typeSlug,
+    matched: matched ?? this.matched,
+    isMember: isMember ?? this.isMember,
+    myJoinRequestStatus: myJoinRequestStatus ?? this.myJoinRequestStatus,
+    inviteUrl: inviteUrl ?? this.inviteUrl,
+  );
 }

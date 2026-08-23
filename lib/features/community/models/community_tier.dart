@@ -90,10 +90,9 @@ class TierPermissions {
 
   factory TierPermissions.fromJson(Map<String, dynamic>? json) {
     if (json == null) return const TierPermissions();
-    List<String> list(String key) =>
-        (json[key] as List<dynamic>? ?? const [])
-            .map((e) => e.toString())
-            .toList();
+    List<String> list(String key) => (json[key] as List<dynamic>? ?? const [])
+        .map((e) => e.toString())
+        .toList();
     return TierPermissions(
       view: list('view'),
       chatChannels: list('chat_channels'),
@@ -119,26 +118,25 @@ class TierPermissions {
   final Map<String, dynamic> raw;
 
   Map<String, dynamic> toJson() => {
-        ...raw,
-        'view': view,
-        'chat_channels': chatChannels,
-        'perks': perks,
-        'capabilities': capabilities,
-      };
+    ...raw,
+    'view': view,
+    'chat_channels': chatChannels,
+    'perks': perks,
+    'capabilities': capabilities,
+  };
 
   TierPermissions copyWith({
     List<String>? view,
     List<String>? chatChannels,
     List<String>? perks,
     List<String>? capabilities,
-  }) =>
-      TierPermissions(
-        view: view ?? this.view,
-        chatChannels: chatChannels ?? this.chatChannels,
-        perks: perks ?? this.perks,
-        capabilities: capabilities ?? this.capabilities,
-        raw: raw,
-      );
+  }) => TierPermissions(
+    view: view ?? this.view,
+    chatChannels: chatChannels ?? this.chatChannels,
+    perks: perks ?? this.perks,
+    capabilities: capabilities ?? this.capabilities,
+    raw: raw,
+  );
 }
 
 /// A leader-defined rung within a single community.
@@ -169,11 +167,13 @@ class CommunityTier {
       name: json['name'] as String,
       rank: json['rank'] as int? ?? 0,
       color: json['color'] as String?,
-      assignmentRule:
-          TierAssignmentRule.fromString(json['assignment_rule'] as String? ?? 'manual'),
+      assignmentRule: TierAssignmentRule.fromString(
+        json['assignment_rule'] as String? ?? 'manual',
+      ),
       threshold: json['threshold'] as int?,
       permissions: TierPermissions.fromJson(
-          (json['permissions'] as Map?)?.cast<String, dynamic>()),
+        (json['permissions'] as Map?)?.cast<String, dynamic>(),
+      ),
       isDefault: json['is_default'] as bool? ?? false,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
@@ -201,18 +201,18 @@ class CommunityTier {
   final DateTime updatedAt;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'community_id': communityId,
-        'name': name,
-        'rank': rank,
-        if (color != null) 'color': color,
-        'assignment_rule': assignmentRule.toApiValue(),
-        if (threshold != null) 'threshold': threshold,
-        'permissions': permissions.toJson(),
-        'is_default': isDefault,
-        'created_at': createdAt.toIso8601String(),
-        'updated_at': updatedAt.toIso8601String(),
-      };
+    'id': id,
+    'community_id': communityId,
+    'name': name,
+    'rank': rank,
+    if (color != null) 'color': color,
+    'assignment_rule': assignmentRule.toApiValue(),
+    if (threshold != null) 'threshold': threshold,
+    'permissions': permissions.toJson(),
+    'is_default': isDefault,
+    'created_at': createdAt.toIso8601String(),
+    'updated_at': updatedAt.toIso8601String(),
+  };
 
   CommunityTier copyWith({
     String? id,
@@ -226,18 +226,17 @@ class CommunityTier {
     bool? isDefault,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) =>
-      CommunityTier(
-        id: id ?? this.id,
-        communityId: communityId ?? this.communityId,
-        name: name ?? this.name,
-        rank: rank ?? this.rank,
-        color: color ?? this.color,
-        assignmentRule: assignmentRule ?? this.assignmentRule,
-        threshold: threshold ?? this.threshold,
-        permissions: permissions ?? this.permissions,
-        isDefault: isDefault ?? this.isDefault,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
+  }) => CommunityTier(
+    id: id ?? this.id,
+    communityId: communityId ?? this.communityId,
+    name: name ?? this.name,
+    rank: rank ?? this.rank,
+    color: color ?? this.color,
+    assignmentRule: assignmentRule ?? this.assignmentRule,
+    threshold: threshold ?? this.threshold,
+    permissions: permissions ?? this.permissions,
+    isDefault: isDefault ?? this.isDefault,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
 }

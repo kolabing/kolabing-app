@@ -2128,5 +2128,20 @@
   "permissionDeniedDialogBody": "Se ha denegado el acceso a {permission}. Puedes activarlo desde los ajustes del dispositivo.",
   "permissionDeniedDialogLater": "Más tarde",
   "permissionDeniedDialogOpenSettings": "Abrir ajustes",
-  "subscriptionManageAppleFailed": "No se han podido abrir tus suscripciones de la App Store. Ve a Ajustes › tu nombre › Suscripciones para gestionarla o cancelarla."
+  "subscriptionManageAppleFailed": "No se han podido abrir tus suscripciones de la App Store. Ve a Ajustes › tu nombre › Suscripciones para gestionarla o cancelarla.",
+  "communityFollow": "Seguir",
+  "communityFollowing": "Siguiendo",
+  "communityFollowedSnack": "Ya la sigues. Sus eventos aparecerán en tu feed.",
+  "communityUnfollowedSnack": "Has dejado de seguirla.",
+  "communityFollowFailed": "No se pudo actualizar. Inténtalo de nuevo.",
+  "communityBecomeMember": "Hazte miembro",
+  "communityMemberBadge": "Miembro",
+  "communityApplicationTitle": "Hazte miembro",
+  "communityApplicationIntro": "{community} hace algunas preguntas antes de añadir nuevos miembros.",
+  "communityApplicationOptional": "Opcional",
+  "communityApplicationRequiredError": "Responde a esto, por favor",
+  "communityApplicationSubmit": "ENVIAR SOLICITUD",
+  "communityApplicationSentSnack": "Solicitud enviada. El organizador la revisará.",
+  "communityApplicationJoinedSnack": "Ya eres miembro.",
+  "communityApplicationFailed": "No se pudo enviar tu solicitud. Inténtalo de nuevo."
 }

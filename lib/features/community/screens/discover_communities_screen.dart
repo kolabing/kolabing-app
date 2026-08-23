@@ -8,6 +8,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../models/community.dart';
+import '../providers/community_follow_provider.dart';
 import '../providers/community_providers.dart';
 import '../services/community_service.dart';
 
@@ -27,52 +28,40 @@ class DiscoverCommunitiesScreen extends ConsumerStatefulWidget {
 
 class _DiscoverCommunitiesScreenState
     extends ConsumerState<DiscoverCommunitiesScreen> {
-  /// Ids the user joined this session — their cards switch to "Joined".
+  /// Ids followed this session — their cards switch to "Following".
   final Set<String> _joined = <String>{};
 
-  /// Ids with a join request in flight — disables the button while awaited.
+  /// Ids with a call in flight — disables the button while awaited.
   final Set<String> _pending = <String>{};
 
-  Future<void> _join(Community community) async {
+  /// Follow, not join.
+  ///
+  /// This is a browsing surface: someone scanning a list of communities they do
+  /// not know yet should not be handed membership — and membership may now be
+  /// gated by the leader's questions anyway. Follow is the right weight here,
+  /// and "Become a member" lives on the community's own profile (#138).
+  Future<void> _follow(Community community) async {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     setState(() => _pending.add(community.id));
-    try {
-      await ref
-          .read(communityServiceProvider)
-          .joinCommunity(community.id);
-      if (!mounted) return;
-      setState(() {
-        _joined.add(community.id);
-        _pending.remove(community.id);
-      });
-      // Refresh the attendee's memberships so the profile/Communities tab show
-      // the newly joined community.
-      await ref.read(myMembershipsProvider.notifier).reload();
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(l10n.discoverCommunitiesJoinedToast(community.name)),
+
+    final ok = await ref
+        .read(communityFollowsProvider.notifier)
+        .follow(community.id);
+
+    if (!mounted) return;
+    setState(() {
+      _pending.remove(community.id);
+      if (ok) _joined.add(community.id);
+    });
+
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          ok ? l10n.communityFollowedSnack : l10n.communityFollowFailed,
         ),
-      );
-    } on CommunityException catch (e) {
-      if (!mounted) return;
-      setState(() => _pending.remove(community.id));
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(
-            e.isInviteOnly
-                ? l10n.discoverCommunitiesInviteOnlyMessage(community.name)
-                : l10n.discoverCommunitiesJoinError,
-          ),
-        ),
-      );
-    } catch (_) {
-      if (!mounted) return;
-      setState(() => _pending.remove(community.id));
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.discoverCommunitiesJoinError)),
-      );
-    }
+      ),
+    );
   }
 
   @override
@@ -120,7 +109,7 @@ class _DiscoverCommunitiesScreenState
                   community: c,
                   joined: _joined.contains(c.id),
                   pending: _pending.contains(c.id),
-                  onJoin: () => _join(c),
+                  onJoin: () => _follow(c),
                 );
               },
             ),
@@ -244,7 +233,7 @@ class _DiscoverCard extends StatelessWidget {
       return OutlinedButton.icon(
         onPressed: null,
         icon: const Icon(LucideIcons.check, size: 18),
-        label: Text(l10n.discoverCommunitiesJoined),
+        label: Text(l10n.communityFollowing),
       );
     }
     if (inviteOnly) {
@@ -265,7 +254,7 @@ class _DiscoverCard extends StatelessWidget {
                 color: KolabingColors.onPrimary,
               ),
             )
-          : Text(l10n.discoverCommunitiesJoin),
+          : Text(l10n.communityFollow),
     );
   }
 }
@@ -277,20 +266,20 @@ class _Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-        decoration: BoxDecoration(
-          color: KolabingColors.primary.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(KolabingRadius.sm),
-        ),
-        child: Text(
-          label,
-          style: KolabingTextStyles.bodySmall.copyWith(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: KolabingColors.onSurface,
-          ),
-        ),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+    decoration: BoxDecoration(
+      color: KolabingColors.primary.withValues(alpha: 0.2),
+      borderRadius: BorderRadius.circular(KolabingRadius.sm),
+    ),
+    child: Text(
+      label,
+      style: KolabingTextStyles.bodySmall.copyWith(
+        fontSize: 11,
+        fontWeight: FontWeight.w700,
+        color: KolabingColors.onSurface,
+      ),
+    ),
+  );
 }
 
 class _DiscoverMessage extends StatelessWidget {
@@ -310,45 +299,45 @@ class _DiscoverMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: KolabingColors.primary.withValues(alpha: 0.18),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, size: 32, color: iconColor),
-              ),
-              const SizedBox(height: KolabingSpacing.lg),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: KolabingTextStyles.bodyLarge.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              if (body != null) ...[
-                const SizedBox(height: KolabingSpacing.sm),
-                Text(
-                  body!,
-                  textAlign: TextAlign.center,
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    color: KolabingColors.onSurfaceVariant,
-                  ),
-                ),
-              ],
-              if (action != null) ...[
-                const SizedBox(height: KolabingSpacing.lg),
-                action!,
-              ],
-            ],
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: KolabingColors.primary.withValues(alpha: 0.18),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 32, color: iconColor),
           ),
-        ),
-      );
+          const SizedBox(height: KolabingSpacing.lg),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          if (body != null) ...[
+            const SizedBox(height: KolabingSpacing.sm),
+            Text(
+              body!,
+              textAlign: TextAlign.center,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: KolabingColors.onSurfaceVariant,
+              ),
+            ),
+          ],
+          if (action != null) ...[
+            const SizedBox(height: KolabingSpacing.lg),
+            action!,
+          ],
+        ],
+      ),
+    ),
+  );
 }

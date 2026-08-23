@@ -14,8 +14,9 @@ import '../../event/providers/event_provider.dart';
 import '../../event/widgets/event_card.dart';
 import '../models/community.dart';
 import '../models/community_membership.dart';
+import '../providers/community_follow_provider.dart';
 import '../providers/community_providers.dart';
-import '../services/community_service.dart';
+import '../widgets/community_application_sheet.dart';
 import 'community_detail_screen.dart';
 
 /// Attendee-facing community profile, keyed by **community id**.
@@ -52,38 +53,40 @@ class AttendeeCommunityProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildLoading() => const Center(
-        child: CircularProgressIndicator(color: KolabingColors.primary),
-      );
+    child: CircularProgressIndicator(color: KolabingColors.primary),
+  );
 
   Widget _buildError(BuildContext context, WidgetRef ref, String message) {
     final l10n = AppLocalizations.of(context);
     return SafeArea(
       child: Stack(
         children: [
-          Align(
-            alignment: Alignment.topLeft,
-            child: _BackButton(),
-          ),
+          Align(alignment: Alignment.topLeft, child: _BackButton()),
           Center(
             child: Padding(
               padding: const EdgeInsets.all(KolabingSpacing.xl),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(LucideIcons.alertCircle,
-                      size: 40, color: KolabingColors.error),
+                  const Icon(
+                    LucideIcons.alertCircle,
+                    size: 40,
+                    color: KolabingColors.error,
+                  ),
                   const SizedBox(height: KolabingSpacing.md),
                   Text(
                     l10n.attendeeCommunityProfileErrorTitle,
-                    style: KolabingTextStyles.titleMedium
-                        .copyWith(color: KolabingColors.onSurface),
+                    style: KolabingTextStyles.titleMedium.copyWith(
+                      color: KolabingColors.onSurface,
+                    ),
                   ),
                   const SizedBox(height: KolabingSpacing.xs),
                   Text(
                     message,
                     textAlign: TextAlign.center,
-                    style: KolabingTextStyles.bodySmall
-                        .copyWith(color: KolabingColors.onSurfaceVariant),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: KolabingColors.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: KolabingSpacing.lg),
                   ElevatedButton.icon(
@@ -195,7 +198,7 @@ class _Header extends ConsumerWidget {
     // generic label while the taxonomy loads or for an unknown slug.
     final typeLabel =
         ref.watch(communityTypeLabelProvider(community.typeSlug)) ??
-            l10n.attendeeCommunityProfileTypeFallback;
+        l10n.attendeeCommunityProfileTypeFallback;
 
     return Stack(
       clipBehavior: Clip.none,
@@ -212,7 +215,11 @@ class _Header extends ConsumerWidget {
             ),
           ),
         ),
-        const Positioned(top: 0, left: 0, child: SafeArea(child: _BackButton())),
+        const Positioned(
+          top: 0,
+          left: 0,
+          child: SafeArea(child: _BackButton()),
+        ),
         // Avatar + identity.
         Padding(
           padding: const EdgeInsets.only(top: 102),
@@ -245,8 +252,9 @@ class _Header extends ConsumerWidget {
                 child: Text(
                   community.name,
                   textAlign: TextAlign.center,
-                  style: KolabingTextStyles.headlineMedium
-                      .copyWith(color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.headlineMedium.copyWith(
+                    color: KolabingColors.onSurface,
+                  ),
                 ),
               ),
               const SizedBox(height: KolabingSpacing.xs),
@@ -277,8 +285,9 @@ class _Header extends ConsumerWidget {
                 l10n.attendeeCommunityProfileMemberCount(
                   community.memberCount ?? 0,
                 ),
-                style: KolabingTextStyles.bodySmall
-                    .copyWith(color: KolabingColors.onSurfaceVariant),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: KolabingColors.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -288,15 +297,16 @@ class _Header extends ConsumerWidget {
   }
 
   Widget _avatarPlaceholder(String name) => Container(
-        color: KolabingColors.surfaceVariant,
-        child: Center(
-          child: Text(
-            name.isNotEmpty ? name[0].toUpperCase() : '?',
-            style: KolabingTextStyles.displaySmall
-                .copyWith(color: KolabingColors.textTertiary),
-          ),
+    color: KolabingColors.surfaceVariant,
+    child: Center(
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : '?',
+        style: KolabingTextStyles.displaySmall.copyWith(
+          color: KolabingColors.textTertiary,
         ),
-      );
+      ),
+    ),
+  );
 }
 
 class _BackButton extends StatelessWidget {
@@ -304,20 +314,19 @@ class _BackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.all(KolabingSpacing.sm),
-        child: IconButton(
-          onPressed: () => context.pop(),
-          icon: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.35),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(LucideIcons.arrowLeft,
-                color: Colors.white, size: 20),
-          ),
+    padding: const EdgeInsets.all(KolabingSpacing.sm),
+    child: IconButton(
+      onPressed: () => context.pop(),
+      icon: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.35),
+          shape: BoxShape.circle,
         ),
-      );
+        child: const Icon(LucideIcons.arrowLeft, color: Colors.white, size: 20),
+      ),
+    ),
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -351,14 +360,16 @@ class _AboutSection extends StatelessWidget {
         children: [
           Text(
             l10n.attendeeCommunityProfileAboutTitle,
-            style: KolabingTextStyles.titleMedium
-                .copyWith(color: KolabingColors.onSurface),
+            style: KolabingTextStyles.titleMedium.copyWith(
+              color: KolabingColors.onSurface,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             about,
-            style: KolabingTextStyles.bodyMedium
-                .copyWith(color: KolabingColors.onSurfaceVariant),
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              color: KolabingColors.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -386,15 +397,15 @@ class _UpcomingEventsSection extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+            padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   l10n.attendeeCommunityProfileUpcomingEventsTitle,
-                  style: KolabingTextStyles.titleMedium
-                      .copyWith(color: KolabingColors.onSurface),
+                  style: KolabingTextStyles.titleMedium.copyWith(
+                    color: KolabingColors.onSurface,
+                  ),
                 ),
                 // "See all →" routes to the community detail Events sub-tab.
                 async.maybeWhen(
@@ -403,11 +414,11 @@ class _UpcomingEventsSection extends ConsumerWidget {
                       : TextButton(
                           onPressed: () =>
                               AttendeeCommunityProfileScreen.openCommunityDetail(
-                            context,
-                            community,
-                            initialTabIndex:
-                                AttendeeCommunityProfileScreen._eventsTabIndex,
-                          ),
+                                context,
+                                community,
+                                initialTabIndex: AttendeeCommunityProfileScreen
+                                    ._eventsTabIndex,
+                              ),
                           child: Text(l10n.attendeeCommunityProfileSeeAll),
                         ),
                   orElse: () => const SizedBox.shrink(),
@@ -420,8 +431,7 @@ class _UpcomingEventsSection extends ConsumerWidget {
             loading: () => const Padding(
               padding: EdgeInsets.all(KolabingSpacing.lg),
               child: Center(
-                child: CircularProgressIndicator(
-                    color: KolabingColors.primary),
+                child: CircularProgressIndicator(color: KolabingColors.primary),
               ),
             ),
             // A backend without the events filter (or none) → friendly empty,
@@ -458,25 +468,29 @@ class _UpcomingEventsSection extends ConsumerWidget {
       context.push('/event/${event.id}');
 
   Widget _empty(AppLocalizations l10n) => Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.md,
-          vertical: KolabingSpacing.lg,
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.md,
+      vertical: KolabingSpacing.lg,
+    ),
+    child: Row(
+      children: [
+        const Icon(
+          LucideIcons.calendar,
+          size: 20,
+          color: KolabingColors.onSurfaceVariant,
         ),
-        child: Row(
-          children: [
-            const Icon(LucideIcons.calendar,
-                size: 20, color: KolabingColors.onSurfaceVariant),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: Text(
-                l10n.attendeeCommunityProfileNoUpcomingEvents,
-                style: KolabingTextStyles.bodySmall
-                    .copyWith(color: KolabingColors.onSurfaceVariant),
-              ),
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(
+          child: Text(
+            l10n.attendeeCommunityProfileNoUpcomingEvents,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.onSurfaceVariant,
             ),
-          ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -516,119 +530,156 @@ class _JoinCtaBarState extends ConsumerState<_JoinCtaBar> {
 
   Community get _c => widget.community;
 
-  void _snack(String message) => ScaffoldMessenger.of(context)
-      .showSnackBar(SnackBar(content: Text(message)));
+  void _snack(String message) => ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text(message)));
 
-  Future<void> _join() async {
+  /// Follow / unfollow — one tap, no approval. This is the low-commitment
+  /// relationship: it puts the community's events in your feed and nothing
+  /// more. Membership is the separate, deliberate step below (#138).
+  Future<void> _toggleFollow() async {
     if (_busy) return;
     setState(() => _busy = true);
     final l10n = AppLocalizations.of(context);
-    try {
-      await ref.read(communityServiceProvider).joinCommunity(_c.id);
-      // Flip CTA → member, optimistically and via a refetch.
-      ref
-          .read(communityByIdProvider(_c.id).notifier)
-          .setCommunity(_c.copyWith(isMember: true));
-      await ref.read(communityByIdProvider(_c.id).notifier).reload();
-      if (mounted) _snack(l10n.attendeeCommunityProfileJoinedSnack);
-    } on CommunityException catch (e) {
-      // Invite-only → fall back to request flow.
-      if (e.isInviteOnly) {
-        await _requestToJoin();
-        return;
-      }
-      if (mounted) _snack(e.message);
-    } catch (e) {
-      if (mounted) _snack(e.toString());
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
+    final follows = ref.read(communityFollowsProvider.notifier);
+    final wasFollowing = follows.isFollowing(_c.id);
+
+    final ok = wasFollowing
+        ? await follows.unfollow(_c.id)
+        : await follows.follow(_c.id);
+
+    if (!mounted) return;
+    setState(() => _busy = false);
+    _snack(
+      !ok
+          ? l10n.communityFollowFailed
+          : wasFollowing
+          ? l10n.communityUnfollowedSnack
+          : l10n.communityFollowedSnack,
+    );
   }
 
-  Future<void> _requestToJoin() async {
+  /// Become a member. Asks the community's questions if it has any, and joins
+  /// straight away if it does not — the leader's choice, not ours.
+  Future<void> _becomeMember() async {
     if (_busy) return;
     setState(() => _busy = true);
     final l10n = AppLocalizations.of(context);
-    try {
-      await ref.read(communityServiceProvider).requestToJoin(_c.id);
-      ref
-          .read(communityByIdProvider(_c.id).notifier)
-          .setCommunity(_c.copyWith(myJoinRequestStatus: 'pending'));
-      await ref.read(communityByIdProvider(_c.id).notifier).reload();
-      if (mounted) _snack(l10n.attendeeCommunityProfileRequestedSnack);
-    } on CommunityException catch (e) {
-      // Self-gated: endpoint not deployed yet → soft notice, no crash.
-      if (e.code == 'request_unavailable') {
-        if (mounted) _snack(l10n.attendeeCommunityProfileRequestUnavailable);
-      } else {
-        if (mounted) _snack(e.message);
-      }
-    } catch (e) {
-      if (mounted) _snack(l10n.attendeeCommunityProfileRequestUnavailable);
-    } finally {
-      if (mounted) setState(() => _busy = false);
+
+    final outcome = await CommunityApplicationSheet.run(
+      context,
+      ref,
+      community: _c,
+    );
+
+    if (!mounted) return;
+    setState(() => _busy = false);
+
+    switch (outcome) {
+      case MembershipOutcome.joined:
+        ref
+            .read(communityByIdProvider(_c.id).notifier)
+            .setCommunity(_c.copyWith(isMember: true));
+        await ref.read(communityByIdProvider(_c.id).notifier).reload();
+        if (mounted) _snack(l10n.communityApplicationJoinedSnack);
+      case MembershipOutcome.pending:
+        ref
+            .read(communityByIdProvider(_c.id).notifier)
+            .setCommunity(_c.copyWith(myJoinRequestStatus: 'pending'));
+        await ref.read(communityByIdProvider(_c.id).notifier).reload();
+        if (mounted) _snack(l10n.communityApplicationSentSnack);
+      case MembershipOutcome.failed:
+        _snack(l10n.communityApplicationFailed);
+      case MembershipOutcome.dismissed:
+        break;
     }
   }
 
-  void _openCommunity() => AttendeeCommunityProfileScreen.openCommunityDetail(
-        context,
-        _c,
-      );
+  void _openCommunity() =>
+      AttendeeCommunityProfileScreen.openCommunityDetail(context, _c);
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    // Resolve the CTA state from join policy + membership + request status.
+    // Member and pending states are terminal — one button each. Everyone else
+    // gets BOTH relationships offered: Follow (one tap) and Become a member
+    // (the deliberate step). They are different commitments, so they are
+    // different buttons rather than one CTA that guesses (#138).
     final isMember = _c.isMember ?? false;
     final pending = _c.hasPendingJoinRequest;
-    final inviteOnly = _c.joinPolicy == CommunityJoinPolicy.inviteOnly;
+    final isFollowing = ref.watch(communityFollowsProvider).contains(_c.id);
 
-    final (String label, IconData icon, VoidCallback? onTap, bool filled) =
-        switch (true) {
-      _ when isMember => (
-          l10n.attendeeCommunityProfileOpenCommunity,
-          LucideIcons.arrowRight,
-          _openCommunity,
-          false,
-        ),
-      _ when pending => (
-          l10n.attendeeCommunityProfileRequested,
-          LucideIcons.clock,
-          null, // disabled while pending
-          true,
-        ),
-      _ when inviteOnly => (
-          l10n.attendeeCommunityProfileRequestToJoin,
-          LucideIcons.userPlus,
-          _requestToJoin,
-          true,
-        ),
-      _ => (
-          l10n.attendeeCommunityProfileJoin,
-          LucideIcons.userPlus,
-          _join,
-          true,
-        ),
-    };
+    final Widget content;
 
-    final button = filled
+    if (isMember) {
+      content = _cta(
+        label: l10n.attendeeCommunityProfileOpenCommunity,
+        icon: LucideIcons.arrowRight,
+        onTap: _openCommunity,
+        filled: false,
+      );
+    } else if (pending) {
+      content = _cta(
+        label: l10n.attendeeCommunityProfileRequested,
+        icon: LucideIcons.clock,
+        onTap: null, // disabled while the leader decides
+        filled: true,
+      );
+    } else {
+      content = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _cta(
+            label: isFollowing ? l10n.communityFollowing : l10n.communityFollow,
+            icon: isFollowing ? LucideIcons.check : LucideIcons.plus,
+            onTap: _toggleFollow,
+            // Following is the state, not the invitation — so once following,
+            // the button stops shouting.
+            filled: !isFollowing,
+          ),
+          const SizedBox(height: KolabingSpacing.sm),
+          _cta(
+            label: l10n.communityBecomeMember,
+            icon: LucideIcons.userPlus,
+            onTap: _becomeMember,
+            filled: isFollowing,
+          ),
+        ],
+      );
+    }
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        child: content,
+      ),
+    );
+  }
+
+  Widget _cta({
+    required String label,
+    required IconData icon,
+    required VoidCallback? onTap,
+    required bool filled,
+  }) {
+    final labelWidget = Text(
+      label,
+      style: KolabingTextStyles.bodyMedium.copyWith(
+        fontWeight: FontWeight.w700,
+      ),
+    );
+
+    return filled
         ? FilledButton.icon(
             onPressed: _busy ? null : onTap,
             style: FilledButton.styleFrom(
               backgroundColor: KolabingColors.primary,
               foregroundColor: KolabingColors.onPrimary,
               minimumSize: const Size(double.infinity, 52),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
             ),
             icon: _busyOrIcon(icon),
-            label: Text(
-              label,
-              style: KolabingTextStyles.bodyMedium
-                  .copyWith(fontWeight: FontWeight.w700),
-            ),
+            label: labelWidget,
           )
         : OutlinedButton.icon(
             onPressed: _busy ? null : onTap,
@@ -636,24 +687,10 @@ class _JoinCtaBarState extends ConsumerState<_JoinCtaBar> {
               foregroundColor: KolabingColors.onSurface,
               side: const BorderSide(color: KolabingColors.primary),
               minimumSize: const Size(double.infinity, 52),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
             ),
             icon: _busyOrIcon(icon),
-            label: Text(
-              label,
-              style: KolabingTextStyles.bodyMedium
-                  .copyWith(fontWeight: FontWeight.w700),
-            ),
+            label: labelWidget,
           );
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        child: button,
-      ),
-    );
   }
 
   Widget _busyOrIcon(IconData icon) => _busy

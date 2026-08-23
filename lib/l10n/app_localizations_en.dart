@@ -7092,4 +7092,54 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get subscriptionManageAppleFailed =>
       'Couldn\'t open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.';
+
+  @override
+  String get communityFollow => 'Follow';
+
+  @override
+  String get communityFollowing => 'Following';
+
+  @override
+  String get communityFollowedSnack =>
+      'Following. Their events will show up in your feed.';
+
+  @override
+  String get communityUnfollowedSnack => 'Unfollowed.';
+
+  @override
+  String get communityFollowFailed => 'Couldn\'t update that. Try again.';
+
+  @override
+  String get communityBecomeMember => 'Become a member';
+
+  @override
+  String get communityMemberBadge => 'Member';
+
+  @override
+  String get communityApplicationTitle => 'Become a member';
+
+  @override
+  String communityApplicationIntro(String community) {
+    return '$community asks a few questions before adding new members.';
+  }
+
+  @override
+  String get communityApplicationOptional => 'Optional';
+
+  @override
+  String get communityApplicationRequiredError => 'Please answer this';
+
+  @override
+  String get communityApplicationSubmit => 'SEND APPLICATION';
+
+  @override
+  String get communityApplicationSentSnack =>
+      'Application sent. The organiser will review it.';
+
+  @override
+  String get communityApplicationJoinedSnack => 'You\'re a member now.';
+
+  @override
+  String get communityApplicationFailed =>
+      'Couldn\'t send your application. Try again.';
 }

@@ -18,12 +18,12 @@ class CommunityMembership {
   factory CommunityMembership.fromJson(Map<String, dynamic> json) {
     final tierJson = json['tier'] as Map<String, dynamic>?;
     return CommunityMembership(
-      community:
-          Community.fromJson(json['community'] as Map<String, dynamic>),
+      community: Community.fromJson(json['community'] as Map<String, dynamic>),
       tier: tierJson != null ? CommunityTier.fromJson(tierJson) : null,
       canManage: json['can_manage'] as bool? ?? false,
-      status:
-          MembershipStatus.fromString(json['status'] as String? ?? 'active'),
+      status: MembershipStatus.fromString(
+        json['status'] as String? ?? 'active',
+      ),
       joinedAt: json['joined_at'] != null
           ? DateTime.parse(json['joined_at'] as String)
           : null,

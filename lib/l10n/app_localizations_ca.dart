@@ -7200,4 +7200,55 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get subscriptionManageAppleFailed =>
       'No s\'han pogut obrir les teves subscripcions de l\'App Store. Ves a Configuració › el teu nom › Subscripcions per gestionar-la o cancel·lar-la.';
+
+  @override
+  String get communityFollow => 'Segueix';
+
+  @override
+  String get communityFollowing => 'Seguint';
+
+  @override
+  String get communityFollowedSnack =>
+      'Ja la segueixes. Els seus esdeveniments apareixeran al teu feed.';
+
+  @override
+  String get communityUnfollowedSnack => 'Has deixat de seguir-la.';
+
+  @override
+  String get communityFollowFailed =>
+      'No s\'ha pogut actualitzar. Torna-ho a provar.';
+
+  @override
+  String get communityBecomeMember => 'Fes-te membre';
+
+  @override
+  String get communityMemberBadge => 'Membre';
+
+  @override
+  String get communityApplicationTitle => 'Fes-te membre';
+
+  @override
+  String communityApplicationIntro(String community) {
+    return '$community fa unes preguntes abans d\'afegir nous membres.';
+  }
+
+  @override
+  String get communityApplicationOptional => 'Opcional';
+
+  @override
+  String get communityApplicationRequiredError => 'Respon a això, si us plau';
+
+  @override
+  String get communityApplicationSubmit => 'ENVIA LA SOL·LICITUD';
+
+  @override
+  String get communityApplicationSentSnack =>
+      'Sol·licitud enviada. L\'organitzador la revisarà.';
+
+  @override
+  String get communityApplicationJoinedSnack => 'Ja ets membre.';
+
+  @override
+  String get communityApplicationFailed =>
+      'No s\'ha pogut enviar la teva sol·licitud. Torna-ho a provar.';
 }

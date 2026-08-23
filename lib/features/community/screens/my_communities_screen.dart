@@ -30,7 +30,8 @@ class MyCommunitiesScreen extends ConsumerWidget {
       data: (memberships) {
         if (memberships.isEmpty) return const _Empty();
         return RefreshIndicator(
-          onRefresh: () async => ref.read(myMembershipsProvider.notifier).reload(),
+          onRefresh: () async =>
+              ref.read(myMembershipsProvider.notifier).reload(),
           child: ListView.separated(
             padding: const EdgeInsets.all(KolabingSpacing.md),
             itemCount: memberships.length,
@@ -87,10 +88,7 @@ class _MembershipCard extends StatelessWidget {
                     ? NetworkImage(community.avatarUrl!)
                     : null,
                 child: community.avatarUrl == null
-                    ? Icon(
-                        LucideIcons.users,
-                        color: context.colors.onSurface,
-                      )
+                    ? Icon(LucideIcons.users, color: context.colors.onSurface)
                     : null,
               ),
               const SizedBox(width: KolabingSpacing.md),
@@ -225,8 +223,7 @@ class _Empty extends StatelessWidget {
             ),
             const SizedBox(height: KolabingSpacing.lg),
             ElevatedButton.icon(
-              onPressed: () =>
-                  context.push(KolabingRoutes.discoverCommunities),
+              onPressed: () => context.push(KolabingRoutes.discoverCommunities),
               icon: const Icon(LucideIcons.compass, size: 18),
               label: Text(l10n.discoverCommunitiesCta),
             ),
@@ -249,11 +246,7 @@ class _Error extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            LucideIcons.alertCircle,
-            size: 32,
-            color: context.colors.error,
-          ),
+          Icon(LucideIcons.alertCircle, size: 32, color: context.colors.error),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             message,
@@ -264,8 +257,9 @@ class _Error extends StatelessWidget {
           ),
           const SizedBox(height: KolabingSpacing.lg),
           OutlinedButton(
-              onPressed: onRetry,
-              child: Text(AppLocalizations.of(context).commonRetry)),
+            onPressed: onRetry,
+            child: Text(AppLocalizations.of(context).commonRetry),
+          ),
         ],
       ),
     ),

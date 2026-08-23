@@ -2128,5 +2128,20 @@
   "permissionDeniedDialogBody": "S'ha denegat l'accés a {permission}. Pots activar-ho des de la configuració del dispositiu.",
   "permissionDeniedDialogLater": "Més tard",
   "permissionDeniedDialogOpenSettings": "Obre la configuració",
-  "subscriptionManageAppleFailed": "No s'han pogut obrir les teves subscripcions de l'App Store. Ves a Configuració › el teu nom › Subscripcions per gestionar-la o cancel·lar-la."
+  "subscriptionManageAppleFailed": "No s'han pogut obrir les teves subscripcions de l'App Store. Ves a Configuració › el teu nom › Subscripcions per gestionar-la o cancel·lar-la.",
+  "communityFollow": "Segueix",
+  "communityFollowing": "Seguint",
+  "communityFollowedSnack": "Ja la segueixes. Els seus esdeveniments apareixeran al teu feed.",
+  "communityUnfollowedSnack": "Has deixat de seguir-la.",
+  "communityFollowFailed": "No s'ha pogut actualitzar. Torna-ho a provar.",
+  "communityBecomeMember": "Fes-te membre",
+  "communityMemberBadge": "Membre",
+  "communityApplicationTitle": "Fes-te membre",
+  "communityApplicationIntro": "{community} fa unes preguntes abans d'afegir nous membres.",
+  "communityApplicationOptional": "Opcional",
+  "communityApplicationRequiredError": "Respon a això, si us plau",
+  "communityApplicationSubmit": "ENVIA LA SOL·LICITUD",
+  "communityApplicationSentSnack": "Sol·licitud enviada. L'organitzador la revisarà.",
+  "communityApplicationJoinedSnack": "Ja ets membre.",
+  "communityApplicationFailed": "No s'ha pogut enviar la teva sol·licitud. Torna-ho a provar."
 }
