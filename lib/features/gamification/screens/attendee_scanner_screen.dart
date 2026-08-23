@@ -316,6 +316,7 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
         completionId: result.completionId!,
         role: TogetherRole.starter,
         challengeName: result.challengeName,
+        challengeDescription: result.challengeDescription,
         otherName: result.verifierName,
         points: result.points,
       );

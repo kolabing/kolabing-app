@@ -12836,6 +12836,48 @@ abstract class AppLocalizations {
   /// **'Show check-in QR'**
   String get eventHubShowCheckinQr;
 
+  /// Self check-in button on the event screen: checks the attendee in without an organizer's QR.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m here'**
+  String get eventCheckinImHere;
+
+  /// Secondary option under the self check-in button.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the organizer\'s QR instead'**
+  String get eventCheckinScanOrganizerQr;
+
+  /// Button shown once checked in: opens the scanner to pair with another attendee.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan someone'**
+  String get eventCheckinScanSomeone;
+
+  /// Confirmation after a successful self check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re in. Find someone to play a challenge with.'**
+  String get eventCheckinYoureIn;
+
+  /// Title of the sheet listing today's events the attendee is going to.
+  ///
+  /// In en, this message translates to:
+  /// **'Which event are you at?'**
+  String get eventCheckinPickEvent;
+
+  /// Empty state of the pick-an-event sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re not going to anything today.'**
+  String get eventCheckinPickEventEmpty;
+
+  /// Scanner hint when there is no active event session.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in to an event first'**
+  String get eventCheckinNoEventYet;
+
   /// Member action that opens the scanner to check in to the event.
   ///
   /// In en, this message translates to:

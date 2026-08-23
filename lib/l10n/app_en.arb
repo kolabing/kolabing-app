@@ -9198,6 +9198,34 @@
   "@eventHubShowCheckinQr": {
     "description": "Organizer action that displays the event's check-in QR code."
   },
+  "eventCheckinImHere": "I'm here",
+  "@eventCheckinImHere": {
+    "description": "Self check-in button on the event screen: checks the attendee in without an organizer's QR."
+  },
+  "eventCheckinScanOrganizerQr": "Scan the organizer's QR instead",
+  "@eventCheckinScanOrganizerQr": {
+    "description": "Secondary option under the self check-in button."
+  },
+  "eventCheckinScanSomeone": "Scan someone",
+  "@eventCheckinScanSomeone": {
+    "description": "Button shown once checked in: opens the scanner to pair with another attendee."
+  },
+  "eventCheckinYoureIn": "You're in. Find someone to play a challenge with.",
+  "@eventCheckinYoureIn": {
+    "description": "Confirmation after a successful self check-in."
+  },
+  "eventCheckinPickEvent": "Which event are you at?",
+  "@eventCheckinPickEvent": {
+    "description": "Title of the sheet listing today's events the attendee is going to."
+  },
+  "eventCheckinPickEventEmpty": "You're not going to anything today.",
+  "@eventCheckinPickEventEmpty": {
+    "description": "Empty state of the pick-an-event sheet."
+  },
+  "eventCheckinNoEventYet": "Check in to an event first",
+  "@eventCheckinNoEventYet": {
+    "description": "Scanner hint when there is no active event session."
+  },
   "eventHubCheckIn": "Check in",
   "@eventHubCheckIn": {
     "description": "Member action that opens the scanner to check in to the event."
