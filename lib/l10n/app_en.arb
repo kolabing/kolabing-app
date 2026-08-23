@@ -9063,6 +9063,62 @@
     "description": "Backend 422 on /challenges/initiate — the pair are not both checked in."
   },
   "peerInitiateFailed": "Couldn't start the challenge.",
+  "communityChallengesTitle": "Challenges",
+  "communityChallengesHubSubtitle": "Choose what your events play",
+  "@communityChallengesHubSubtitle": {
+    "description": "Subtitle of the Challenges row on the community hub."
+  },
+  "@communityChallengesTitle": {
+    "description": "Title of the leader screen for choosing which challenges the community plays."
+  },
+  "communityChallengesDefaultHint": "Nothing chosen, so your events play every Kolabing challenge. Tick some to narrow it down.",
+  "@communityChallengesDefaultHint": {
+    "description": "Banner shown when the community has not curated \u2014 explains that empty means everything, not nothing."
+  },
+  "communityChallengesCuratedHint": "Your events play only what's ticked here, plus anything you add to a single event.",
+  "@communityChallengesCuratedHint": {
+    "description": "Banner shown when the community has curated."
+  },
+  "communityChallengesAllowRepeat": "Let the same two people repeat it",
+  "@communityChallengesAllowRepeat": {
+    "description": "Switch label for allow_repeat_with_same_person."
+  },
+  "communityChallengesRequiresNewPerson": "Only with someone they haven't played with",
+  "@communityChallengesRequiresNewPerson": {
+    "description": "Switch label for requires_new_person."
+  },
+  "communityChallengesSaved": "Saved.",
+  "@communityChallengesSaved": {
+    "description": "Confirmation after saving the community's challenge set."
+  },
+  "communityChallengesSaveFailed": "Couldn't save that. Try again.",
+  "@communityChallengesSaveFailed": {
+    "description": "Failure after saving the community's challenge set."
+  },
+  "communityChallengesUnavailable": "The challenge library isn't available yet.",
+  "@communityChallengesUnavailable": {
+    "description": "Shown when the library endpoint is not deployed."
+  },
+  "communityChallengesEmptyLibrary": "There are no challenges to choose from yet.",
+  "@communityChallengesEmptyLibrary": {
+    "description": "Shown when the library is empty."
+  },
+  "peerInitiateAlreadyPending": "You've already asked them to confirm this one.",
+  "@peerInitiateAlreadyPending": {
+    "description": "Refusal shown when a pending request for the same challenge and pair already exists."
+  },
+  "peerInitiateAlreadyCompleted": "You two have already done this one. Try another.",
+  "@peerInitiateAlreadyCompleted": {
+    "description": "Refusal shown when the pair completed this challenge and the community does not allow repeats."
+  },
+  "peerInitiateNeedsNewPerson": "This one's for someone you haven't played with yet.",
+  "@peerInitiateNeedsNewPerson": {
+    "description": "Refusal shown for a challenge that requires a new person."
+  },
+  "peerInitiateEventLimit": "You've done all the challenges you can at this event.",
+  "@peerInitiateEventLimit": {
+    "description": "Refusal shown when the event's per-attendee challenge limit is reached."
+  },
   "@peerInitiateFailed": {
     "description": "Generic failure when starting a challenge."
   },

@@ -7240,6 +7240,58 @@ class AppLocalizationsEs extends AppLocalizations {
   String get peerInitiateFailed => 'No se pudo iniciar el reto.';
 
   @override
+  String get communityChallengesTitle => 'Retos';
+
+  @override
+  String get communityChallengesHubSubtitle => 'Elige qué usan tus eventos';
+
+  @override
+  String get communityChallengesDefaultHint =>
+      'No has elegido ninguno, así que tus eventos usan todos los retos de Kolabing. Marca algunos para acotarlo.';
+
+  @override
+  String get communityChallengesCuratedHint =>
+      'Tus eventos solo usan lo marcado aquí, más lo que añadas a un evento concreto.';
+
+  @override
+  String get communityChallengesAllowRepeat =>
+      'Permitir que las mismas dos personas lo repitan';
+
+  @override
+  String get communityChallengesRequiresNewPerson =>
+      'Solo con alguien con quien no hayan jugado';
+
+  @override
+  String get communityChallengesSaved => 'Guardado.';
+
+  @override
+  String get communityChallengesSaveFailed =>
+      'No se pudo guardar. Inténtalo de nuevo.';
+
+  @override
+  String get communityChallengesUnavailable =>
+      'La biblioteca de retos aún no está disponible.';
+
+  @override
+  String get communityChallengesEmptyLibrary => 'Aún no hay retos para elegir.';
+
+  @override
+  String get peerInitiateAlreadyPending =>
+      'Ya les has pedido que confirmen este reto.';
+
+  @override
+  String get peerInitiateAlreadyCompleted =>
+      'Ya habéis hecho este reto. Prueba otro.';
+
+  @override
+  String get peerInitiateNeedsNewPerson =>
+      'Este reto es para alguien con quien aún no has jugado.';
+
+  @override
+  String get peerInitiateEventLimit =>
+      'Ya has hecho todos los retos posibles en este evento.';
+
+  @override
   String get verifyQrTitle => 'Que te lo confirmen';
 
   @override
