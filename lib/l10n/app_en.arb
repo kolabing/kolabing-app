@@ -3824,6 +3824,26 @@
     "description": "Status badge for a rejected completion"
   },
   "challengeCompletionStatusPending": "Pending",
+  "challengeCompletionStatusCancelled": "Cancelled",
+  "@challengeCompletionStatusCancelled": {
+    "description": "Status badge for a challenge request the challenger withdrew."
+  },
+  "challengeCompletionStatusExpired": "Expired",
+  "@challengeCompletionStatusExpired": {
+    "description": "Status badge for a challenge request nobody answered in time."
+  },
+  "challengeTogetherCancel": "Cancel this request",
+  "@challengeTogetherCancel": {
+    "description": "Button on the waiting screen: withdraws the request."
+  },
+  "challengeTogetherCancelled": "Request cancelled.",
+  "@challengeTogetherCancelled": {
+    "description": "Confirmation after cancelling a challenge request."
+  },
+  "challengeTogetherCancelFailed": "Couldn't cancel that \u2014 they may have already answered.",
+  "@challengeTogetherCancelFailed": {
+    "description": "Failure after trying to cancel a challenge request."
+  },
   "@challengeCompletionStatusPending": {
     "description": "Status badge for a pending completion"
   },

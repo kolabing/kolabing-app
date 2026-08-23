@@ -5404,6 +5404,36 @@ abstract class AppLocalizations {
   /// **'Pending'**
   String get challengeCompletionStatusPending;
 
+  /// Status badge for a challenge request the challenger withdrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get challengeCompletionStatusCancelled;
+
+  /// Status badge for a challenge request nobody answered in time.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get challengeCompletionStatusExpired;
+
+  /// Button on the waiting screen: withdraws the request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this request'**
+  String get challengeTogetherCancel;
+
+  /// Confirmation after cancelling a challenge request.
+  ///
+  /// In en, this message translates to:
+  /// **'Request cancelled.'**
+  String get challengeTogetherCancelled;
+
+  /// Failure after trying to cancel a challenge request.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t cancel that — they may have already answered.'**
+  String get challengeTogetherCancelFailed;
+
   /// Media step header when promoting a venue
   ///
   /// In en, this message translates to:

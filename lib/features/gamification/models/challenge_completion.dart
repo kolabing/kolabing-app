@@ -4,7 +4,13 @@ import 'challenge.dart';
 enum ChallengeCompletionStatus {
   pending,
   verified,
-  rejected;
+  rejected,
+
+  /// The challenger took the request back before it was answered (#154).
+  cancelled,
+
+  /// Nobody answered it before it ran out.
+  expired;
 
   /// Parse status from string
   static ChallengeCompletionStatus fromString(String value) {
@@ -15,8 +21,16 @@ enum ChallengeCompletionStatus {
         return ChallengeCompletionStatus.verified;
       case 'rejected':
         return ChallengeCompletionStatus.rejected;
+      case 'cancelled':
+        return ChallengeCompletionStatus.cancelled;
+      case 'expired':
+        return ChallengeCompletionStatus.expired;
       default:
-        return ChallengeCompletionStatus.pending;
+        // Terminal, on purpose. This used to fall back to `pending`, which
+        // meant any status a build did not recognise showed up as a live
+        // request that could never be answered. An unknown state is one this
+        // build cannot act on, so the safe reading is "nothing to do here".
+        return ChallengeCompletionStatus.expired;
     }
   }
 
@@ -32,6 +46,10 @@ enum ChallengeCompletionStatus {
         return 'VERIFIED';
       case ChallengeCompletionStatus.rejected:
         return 'REJECTED';
+      case ChallengeCompletionStatus.cancelled:
+        return 'CANCELLED';
+      case ChallengeCompletionStatus.expired:
+        return 'EXPIRED';
     }
   }
 }
