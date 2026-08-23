@@ -197,6 +197,13 @@ class ChallengeCompletionCard extends StatelessWidget {
         icon = LucideIcons.clock;
         color = context.colors.warning;
         bgColor = context.colors.warning.withValues(alpha: 0.15);
+      // Both went nowhere and neither is anyone's fault, so they read the same:
+      // muted, not red (#154).
+      case ChallengeCompletionStatus.cancelled:
+      case ChallengeCompletionStatus.expired:
+        icon = LucideIcons.minusCircle;
+        color = context.colors.onSurfaceVariant;
+        bgColor = context.colors.surfaceContainerHigh;
     }
 
     return Container(
@@ -228,6 +235,14 @@ class ChallengeCompletionCard extends StatelessWidget {
         text = l10n.challengeCompletionStatusPending;
         bgColor = context.colors.pendingBg;
         textColor = context.colors.pendingText;
+      case ChallengeCompletionStatus.cancelled:
+        text = l10n.challengeCompletionStatusCancelled;
+        bgColor = context.colors.surfaceContainerHigh;
+        textColor = context.colors.onSurfaceVariant;
+      case ChallengeCompletionStatus.expired:
+        text = l10n.challengeCompletionStatusExpired;
+        bgColor = context.colors.surfaceContainerHigh;
+        textColor = context.colors.onSurfaceVariant;
     }
 
     return Container(
