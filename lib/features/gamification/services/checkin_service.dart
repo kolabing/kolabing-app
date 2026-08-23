@@ -152,6 +152,80 @@ class CheckinService {
     }
   }
 
+  /// Check the caller in to an event they said they were going to, with no
+  /// organizer and no QR (#144).
+  ///
+  /// The second door into the same room. The QR one needs another person present
+  /// with their phone out, and when nobody is, the whole challenge loop is
+  /// unreachable — the backend requires a check-in row for *both* attendees
+  /// before a challenge can start, so there is no client-side way around it.
+  ///
+  /// A 409 ("already checked in") is returned as a success here rather than
+  /// thrown: the caller's intent is satisfied, and the only reason to distinguish
+  /// them is to say something different on screen, which is not worth a branch.
+  /// The event id is what the session needs, and we already have it.
+  ///
+  /// POST /api/v1/events/{event}/checkin
+  Future<EventCheckin?> selfCheckIn(String eventId) async {
+    final token = await _authService.getToken();
+    if (token == null) {
+      throw const AuthException('Not authenticated');
+    }
+
+    final url = '$_baseUrl/events/$eventId/checkin';
+    debugPrint('🎫 Self check-in: POST $url');
+
+    try {
+      final response = await _httpClient.post(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      );
+
+      debugPrint('🎫 Self check-in status: ${response.statusCode}');
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        unawaited(
+          AnalyticsService.instance.capture(AnalyticsEvents.eventCheckedIn),
+        );
+        return _tryParseCheckin(json['data']);
+      }
+
+      if (response.statusCode == 409) {
+        // Already in. Nothing to do, nothing to apologise for.
+        return _tryParseCheckin(
+          (jsonDecode(response.body) as Map<String, dynamic>)['data'],
+        );
+      }
+
+      // 404 means the route is not deployed yet, which must not read as "this
+      // event refused you" — the caller falls back to the QR door.
+      if (response.statusCode == 404) {
+        throw const CheckinException(
+          'Self check-in is not available yet.',
+          kind: CheckinFailure.unavailable,
+        );
+      }
+
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      throw CheckinException(
+        json['message'] as String? ?? 'Could not check you in.',
+        kind: CheckinFailure.notAcceptingCheckins,
+      );
+    } catch (e) {
+      if (e is CheckinException || e is AuthException) rethrow;
+      debugPrint('🎫 Self check-in error: $e');
+      throw CheckinException(
+        'Failed to connect to server: $e',
+        kind: CheckinFailure.network,
+      );
+    }
+  }
+
   /// Reads an [EventCheckin] out of a payload that may or may not carry one.
   ///
   /// Used for the 409 body, whose shape is not guaranteed — a miss is fine, it
@@ -308,6 +382,11 @@ enum CheckinFailure {
   notAcceptingCheckins,
   unauthorized,
   network,
+
+  /// The endpoint is not on this backend yet (404 on the route itself). Distinct
+  /// from a refusal, because the caller should offer the QR door rather than
+  /// telling the attendee the event turned them away.
+  unavailable,
   unknown,
 }
 

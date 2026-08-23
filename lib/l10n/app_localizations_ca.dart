@@ -7344,6 +7344,27 @@ class AppLocalizationsCa extends AppLocalizations {
   String get eventHubShowCheckinQr => 'Mostra el QR de check-in';
 
   @override
+  String get eventCheckinImHere => 'Sóc aquí';
+
+  @override
+  String get eventCheckinScanOrganizerQr => 'Escaneja el QR de l\'organitzador';
+
+  @override
+  String get eventCheckinScanSomeone => 'Escaneja algú';
+
+  @override
+  String get eventCheckinYoureIn => 'Ja hi ets. Busca algú per fer un repte.';
+
+  @override
+  String get eventCheckinPickEvent => 'A quin esdeveniment ets?';
+
+  @override
+  String get eventCheckinPickEventEmpty => 'Avui no vas a cap esdeveniment.';
+
+  @override
+  String get eventCheckinNoEventYet => 'Primer registra\'t en un esdeveniment';
+
+  @override
   String get eventHubCheckIn => 'Fes check-in';
 
   @override

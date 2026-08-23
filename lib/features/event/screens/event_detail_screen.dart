@@ -10,8 +10,13 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../config/routes/routes.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../config/feature_flags.dart';
 import '../../auth/models/user_model.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../gamification/providers/active_event_session_provider.dart';
+import '../../gamification/providers/checkin_provider.dart';
+import '../../gamification/screens/attendee_scanner_screen.dart';
+import '../../gamification/services/checkin_service.dart';
 import '../models/event.dart';
 import '../providers/event_provider.dart';
 
@@ -39,6 +44,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
   /// fetch is authoritative for signup state (`my_signup`, counts).
   Event? _event;
   bool _rsvpBusy = false;
+  bool _checkinBusy = false;
 
   @override
   void dispose() {
@@ -258,6 +264,12 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                   if (event.isUpcoming) ...[
                     const SizedBox(height: KolabingSpacing.lg),
                     _buildRsvpButton(event),
+                    // Checking in lives here too, not only on the event hub
+                    // (#144). This is the screen an attendee actually reaches
+                    // from the feed, and it had no way in at all — so the whole
+                    // challenge loop was unreachable from the path most people
+                    // take to an event.
+                    if (kEventCheckinQrEnabled) ..._buildCheckinActions(event),
                     if (event.isWaitlisted &&
                         event.waitlistPosition != null) ...[
                       const SizedBox(height: KolabingSpacing.sm),
@@ -331,6 +343,144 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
 
   /// RSVP button mirroring `event_hub_screen._rsvpButton`: going (mint
   /// active-state tokens) / waitlisted / join-waitlist (full) / I'm going.
+  /// Check-in, on the screen an attendee actually lands on (#144).
+  ///
+  /// Three states, in the order a person moves through them:
+  ///  - the organizer sees **Show check-in QR** — their own event, and the QR
+  ///    used to be reachable only from a popup menu on another screen;
+  ///  - someone going, not yet checked in, sees **I'm here** (self check-in,
+  ///    needing nobody else) with the scanner as the secondary option;
+  ///  - someone already checked in sees **Scan someone** — the next thing to do
+  ///    is find a person, not press check-in again.
+  List<Widget> _buildCheckinActions(Event event) {
+    final myProfileId = ref.read(authProvider).user?.id;
+    final isHost =
+        myProfileId != null &&
+        event.hostProfileId != null &&
+        event.hostProfileId == myProfileId;
+
+    if (isHost) {
+      return [
+        const SizedBox(height: KolabingSpacing.sm),
+        SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: OutlinedButton.icon(
+            onPressed: () => context.push(
+              KolabingRoutes.buildEventQRCodePath(event.id, name: event.name),
+            ),
+            icon: const Icon(LucideIcons.qrCode, size: 18),
+            label: Text(_l10n.eventHubShowCheckinQr),
+          ),
+        ),
+      ];
+    }
+
+    if (!event.isGoing) return const [];
+
+    final session = ref.watch(activeEventSessionProvider);
+    final alreadyIn = session?.eventId == event.id;
+
+    if (alreadyIn) {
+      return [
+        const SizedBox(height: KolabingSpacing.sm),
+        SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: FilledButton.icon(
+            onPressed: () => AttendeeScannerScreen.open(
+              context,
+              eventId: event.id,
+              eventName: event.name,
+            ),
+            style: FilledButton.styleFrom(
+              backgroundColor: KolabingColors.primary,
+              foregroundColor: KolabingColors.onPrimary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            icon: const Icon(LucideIcons.scanLine, size: 18),
+            label: Text(_l10n.eventCheckinScanSomeone),
+          ),
+        ),
+      ];
+    }
+
+    return [
+      const SizedBox(height: KolabingSpacing.sm),
+      SizedBox(
+        width: double.infinity,
+        height: 52,
+        child: OutlinedButton.icon(
+          onPressed: _checkinBusy ? null : () => _selfCheckIn(event),
+          icon: _checkinBusy
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(LucideIcons.mapPin, size: 18),
+          label: Text(_l10n.eventCheckinImHere),
+        ),
+      ),
+      const SizedBox(height: KolabingSpacing.xs),
+      Center(
+        child: TextButton.icon(
+          onPressed: () => AttendeeScannerScreen.open(
+            context,
+            eventId: event.id,
+            eventName: event.name,
+          ),
+          icon: const Icon(LucideIcons.qrCode, size: 14),
+          label: Text(_l10n.eventCheckinScanOrganizerQr),
+        ),
+      ),
+    ];
+  }
+
+  /// Check in without an organizer, then open the session so pairing works.
+  Future<void> _selfCheckIn(Event event) async {
+    setState(() => _checkinBusy = true);
+    try {
+      final checkin = await ref
+          .read(checkinServiceProvider)
+          .selfCheckIn(event.id);
+
+      // Start the session from the check-in when we got one, and from the event
+      // otherwise — a 409 body is not guaranteed to carry it, and the event id
+      // is the only thing the session actually needs.
+      final sessions = ref.read(activeEventSessionProvider.notifier);
+      if (checkin != null) {
+        await sessions.start(checkin);
+      } else {
+        await sessions.startForEvent(eventId: event.id, eventName: event.name);
+      }
+
+      if (!mounted) return;
+      setState(() => _checkinBusy = false);
+      _snack(_l10n.eventCheckinYoureIn);
+    } on CheckinException catch (e) {
+      if (!mounted) return;
+      setState(() => _checkinBusy = false);
+      // Not deployed yet → send them to the door that does exist, rather than
+      // telling them the event refused them.
+      if (e.kind == CheckinFailure.unavailable) {
+        await AttendeeScannerScreen.open(
+          context,
+          eventId: event.id,
+          eventName: event.name,
+        );
+        return;
+      }
+      _snack(e.message);
+    } on Object catch (e) {
+      if (!mounted) return;
+      setState(() => _checkinBusy = false);
+      _snack(e.toString().replaceFirst('Exception: ', ''));
+    }
+  }
+
   Widget _buildRsvpButton(Event event) {
     final (String label, IconData icon, Color bg, Color fg) = switch (event) {
       _ when event.isGoing => (
