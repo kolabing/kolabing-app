@@ -6490,6 +6490,29 @@ class AppLocalizationsCa extends AppLocalizations {
       'Prova una altra ciutat o esborra els filtres.';
 
   @override
+  String get attendeeHomeScopeAll => 'Tots els esdeveniments';
+
+  @override
+  String get attendeeHomeScopeFollowing => 'Seguint';
+
+  @override
+  String get attendeeHomeNoFollowsTitle => 'Encara no segueixes ningú';
+
+  @override
+  String get attendeeHomeNoFollowsHint =>
+      'Segueix una comunitat i tot el que organitzi apareixerà aquí.';
+
+  @override
+  String get attendeeHomeNoFollowedEventsTitle => 'Res de pròxim';
+
+  @override
+  String get attendeeHomeNoFollowedEventsHint =>
+      'Les comunitats que segueixes encara no han anunciat res.';
+
+  @override
+  String get attendeeHomeFollowMore => 'Segueix més comunitats';
+
+  @override
   String get eventPartnerBusiness => 'Negoci';
 
   @override

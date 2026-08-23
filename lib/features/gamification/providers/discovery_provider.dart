@@ -44,6 +44,7 @@ class DiscoveryState {
     this.dateRange = DiscoveryDateRange.upcoming,
     this.typeSlug,
     this.typeName,
+    this.following = false,
     this.events = const [],
     this.isLoading = false,
     this.error,
@@ -61,6 +62,11 @@ class DiscoveryState {
   final String dateRange;
   final String? typeSlug;
   final String? typeName;
+
+  /// The feed's scope (#142): false = the city feed, true = only the
+  /// communities the viewer follows.
+  final bool following;
+
   final List<DiscoveredEvent> events;
   final bool isLoading;
   final String? error;
@@ -70,8 +76,9 @@ class DiscoveryState {
   bool get hasLocation => latitude != null && longitude != null;
   bool get hasCity => cityId != null && cityId!.isNotEmpty;
 
-  /// Whether the notifier has enough context to query (a city or a geo fix).
-  bool get canQuery => hasCity || hasLocation;
+  /// Whether the notifier has enough context to query (a city, a geo fix, or
+  /// the Following scope — which needs neither).
+  bool get canQuery => hasCity || hasLocation || following;
 
   DiscoveryState copyWith({
     double? latitude,
@@ -83,6 +90,7 @@ class DiscoveryState {
     String? typeSlug,
     String? typeName,
     bool clearType = false,
+    bool? following,
     List<DiscoveredEvent>? events,
     bool? isLoading,
     String? error,
@@ -97,6 +105,7 @@ class DiscoveryState {
     dateRange: dateRange ?? this.dateRange,
     typeSlug: clearType ? null : (typeSlug ?? this.typeSlug),
     typeName: clearType ? null : (typeName ?? this.typeName),
+    following: following ?? this.following,
     events: events ?? this.events,
     isLoading: isLoading ?? this.isLoading,
     error: error,
@@ -159,6 +168,34 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
     state = state.copyWith(
       cityId: cityId,
       cityName: cityName,
+      isLoading: true,
+      error: null,
+      events: [],
+      currentPage: 1,
+      hasMore: true,
+    );
+
+    await _fetchEvents();
+  }
+
+  /// Switch the feed between the city scope and Following (#142).
+  ///
+  /// The city selection is deliberately KEPT while Following is on, so turning
+  /// it off puts the attendee back on the city they were browsing instead of
+  /// making them pick again. The city is simply not SENT while following: a
+  /// community you follow is worth knowing about wherever it is, and a feed
+  /// labelled Barcelona showing events in three cities would be a lie.
+  Future<void> setFollowing(bool following) async {
+    if (!ensureAuthenticatedUser(
+      clearSignedOutState: _clearSignedOutState,
+      onUnauthenticated: _invalidateActiveRequests,
+    )) {
+      return;
+    }
+    if (state.following == following) return;
+
+    state = state.copyWith(
+      following: following,
       isLoading: true,
       error: null,
       events: [],
@@ -305,19 +342,25 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
     final sessionVersion = activeAuthSessionVersion;
 
     try {
-      // City mode takes precedence (NF-19); geo is used only when no city is
-      // selected. Self-gated filter params (date/type) are passed through.
-      final useCity = state.hasCity;
+      // Following wins outright (#142): it asks about a relationship, so no
+      // place filter applies and the type filter is meaningless — you already
+      // know who you follow. Otherwise city mode takes precedence (NF-19) and
+      // geo is used only when no city is selected. `date` composes with all
+      // three.
+      final useFollowing = state.following;
+      final useCity = !useFollowing && state.hasCity;
+      final useGeo = !useFollowing && !useCity;
       final response = await _service.discoverEvents(
-        latitude: useCity ? null : state.latitude,
-        longitude: useCity ? null : state.longitude,
+        latitude: useGeo ? state.latitude : null,
+        longitude: useGeo ? state.longitude : null,
         radiusKm: state.radiusKm,
         cityId: useCity ? state.cityId : null,
+        following: useFollowing,
         // `upcoming` is the default (no `date` param → all future events).
         date: state.dateRange == DiscoveryDateRange.upcoming
             ? null
             : state.dateRange,
-        typeSlug: state.typeSlug,
+        typeSlug: useFollowing ? null : state.typeSlug,
         page: state.currentPage,
       );
 
