@@ -8059,6 +8059,34 @@
   "@attendeeHomeNoEventsCityHint": {
     "description": "Empty-state hint when no events match in the selected city."
   },
+  "attendeeHomeScopeAll": "All events",
+  "@attendeeHomeScopeAll": {
+    "description": "Feed scope tab: every public event in the selected city."
+  },
+  "attendeeHomeScopeFollowing": "Following",
+  "@attendeeHomeScopeFollowing": {
+    "description": "Feed scope tab: only events from communities the attendee follows."
+  },
+  "attendeeHomeNoFollowsTitle": "You don't follow anyone yet",
+  "@attendeeHomeNoFollowsTitle": {
+    "description": "Empty state in the Following feed when the attendee follows no community."
+  },
+  "attendeeHomeNoFollowsHint": "Follow a community and everything it puts on shows up here.",
+  "@attendeeHomeNoFollowsHint": {
+    "description": "Hint under the no-follows empty state."
+  },
+  "attendeeHomeNoFollowedEventsTitle": "Nothing coming up",
+  "@attendeeHomeNoFollowedEventsTitle": {
+    "description": "Empty state in the Following feed when followed communities have no upcoming events."
+  },
+  "attendeeHomeNoFollowedEventsHint": "The communities you follow haven't announced anything yet.",
+  "@attendeeHomeNoFollowedEventsHint": {
+    "description": "Hint under the no-followed-events empty state."
+  },
+  "attendeeHomeFollowMore": "Follow more communities",
+  "@attendeeHomeFollowMore": {
+    "description": "Button in the Following feed's empty state, opens community discovery."
+  },
   "eventPartnerBusiness": "Business",
   "@eventPartnerBusiness": {
     "description": "Event card badge for a business-hosted event."

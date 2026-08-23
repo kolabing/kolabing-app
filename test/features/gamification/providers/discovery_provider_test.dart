@@ -135,6 +135,7 @@ class _ScriptedDiscoveryService extends DiscoveryService {
     String? cityId,
     String? date,
     String? typeSlug,
+    bool following = false,
     int page = 1,
     int limit = 10,
   }) async {

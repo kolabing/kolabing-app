@@ -6386,6 +6386,29 @@ class AppLocalizationsEn extends AppLocalizations {
       'Try another city or clear your filters.';
 
   @override
+  String get attendeeHomeScopeAll => 'All events';
+
+  @override
+  String get attendeeHomeScopeFollowing => 'Following';
+
+  @override
+  String get attendeeHomeNoFollowsTitle => 'You don\'t follow anyone yet';
+
+  @override
+  String get attendeeHomeNoFollowsHint =>
+      'Follow a community and everything it puts on shows up here.';
+
+  @override
+  String get attendeeHomeNoFollowedEventsTitle => 'Nothing coming up';
+
+  @override
+  String get attendeeHomeNoFollowedEventsHint =>
+      'The communities you follow haven\'t announced anything yet.';
+
+  @override
+  String get attendeeHomeFollowMore => 'Follow more communities';
+
+  @override
   String get eventPartnerBusiness => 'Business';
 
   @override
