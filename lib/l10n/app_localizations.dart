@@ -12728,6 +12728,90 @@ abstract class AppLocalizations {
   /// **'Couldn\'t start the challenge.'**
   String get peerInitiateFailed;
 
+  /// Title of the leader screen for choosing which challenges the community plays.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get communityChallengesTitle;
+
+  /// Subtitle of the Challenges row on the community hub.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what your events play'**
+  String get communityChallengesHubSubtitle;
+
+  /// Banner shown when the community has not curated — explains that empty means everything, not nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing chosen, so your events play every Kolabing challenge. Tick some to narrow it down.'**
+  String get communityChallengesDefaultHint;
+
+  /// Banner shown when the community has curated.
+  ///
+  /// In en, this message translates to:
+  /// **'Your events play only what\'s ticked here, plus anything you add to a single event.'**
+  String get communityChallengesCuratedHint;
+
+  /// Switch label for allow_repeat_with_same_person.
+  ///
+  /// In en, this message translates to:
+  /// **'Let the same two people repeat it'**
+  String get communityChallengesAllowRepeat;
+
+  /// Switch label for requires_new_person.
+  ///
+  /// In en, this message translates to:
+  /// **'Only with someone they haven\'t played with'**
+  String get communityChallengesRequiresNewPerson;
+
+  /// Confirmation after saving the community's challenge set.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved.'**
+  String get communityChallengesSaved;
+
+  /// Failure after saving the community's challenge set.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save that. Try again.'**
+  String get communityChallengesSaveFailed;
+
+  /// Shown when the library endpoint is not deployed.
+  ///
+  /// In en, this message translates to:
+  /// **'The challenge library isn\'t available yet.'**
+  String get communityChallengesUnavailable;
+
+  /// Shown when the library is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no challenges to choose from yet.'**
+  String get communityChallengesEmptyLibrary;
+
+  /// Refusal shown when a pending request for the same challenge and pair already exists.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve already asked them to confirm this one.'**
+  String get peerInitiateAlreadyPending;
+
+  /// Refusal shown when the pair completed this challenge and the community does not allow repeats.
+  ///
+  /// In en, this message translates to:
+  /// **'You two have already done this one. Try another.'**
+  String get peerInitiateAlreadyCompleted;
+
+  /// Refusal shown for a challenge that requires a new person.
+  ///
+  /// In en, this message translates to:
+  /// **'This one\'s for someone you haven\'t played with yet.'**
+  String get peerInitiateNeedsNewPerson;
+
+  /// Refusal shown when the event's per-attendee challenge limit is reached.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve done all the challenges you can at this event.'**
+  String get peerInitiateEventLimit;
+
   /// Title of the screen showing the challenger's verification QR.
   ///
   /// In en, this message translates to:

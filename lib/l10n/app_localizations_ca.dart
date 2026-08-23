@@ -7302,6 +7302,60 @@ class AppLocalizationsCa extends AppLocalizations {
   String get peerInitiateFailed => 'No s\'ha pogut iniciar el repte.';
 
   @override
+  String get communityChallengesTitle => 'Reptes';
+
+  @override
+  String get communityChallengesHubSubtitle =>
+      'Tria què fan servir els teus esdeveniments';
+
+  @override
+  String get communityChallengesDefaultHint =>
+      'No has triat cap, així que els teus esdeveniments fan servir tots els reptes de Kolabing. Marca\'n alguns per acotar-ho.';
+
+  @override
+  String get communityChallengesCuratedHint =>
+      'Els teus esdeveniments només fan servir el que es marca aquí, més el que afegeixis a un esdeveniment concret.';
+
+  @override
+  String get communityChallengesAllowRepeat =>
+      'Permetre que les mateixes dues persones el repeteixin';
+
+  @override
+  String get communityChallengesRequiresNewPerson =>
+      'Només amb algú amb qui no hagin jugat';
+
+  @override
+  String get communityChallengesSaved => 'Guardat.';
+
+  @override
+  String get communityChallengesSaveFailed =>
+      'No s\'ha pogut guardar. Torna-ho a provar.';
+
+  @override
+  String get communityChallengesUnavailable =>
+      'La biblioteca de reptes encara no està disponible.';
+
+  @override
+  String get communityChallengesEmptyLibrary =>
+      'Encara no hi ha reptes per triar.';
+
+  @override
+  String get peerInitiateAlreadyPending =>
+      'Ja els has demanat que confirmin aquest repte.';
+
+  @override
+  String get peerInitiateAlreadyCompleted =>
+      'Ja heu fet aquest repte. Prova un altre.';
+
+  @override
+  String get peerInitiateNeedsNewPerson =>
+      'Aquest repte és per a algú amb qui encara no has jugat.';
+
+  @override
+  String get peerInitiateEventLimit =>
+      'Ja has fet tots els reptes possibles en aquest esdeveniment.';
+
+  @override
   String get verifyQrTitle => 'Fes que t\'ho confirmin';
 
   @override

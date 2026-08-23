@@ -152,6 +152,13 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
   String _messageFor(ChallengeFailure? kind, AppLocalizations l10n) =>
       switch (kind) {
         ChallengeFailure.bothMustCheckIn => l10n.peerInitiateBothCheckedIn,
+        // Three different refusals that used to share one generic message
+        // (#150). "You already asked them" and "you two have done this one" are
+        // not the same sentence, and neither tells you to go find someone new.
+        ChallengeFailure.alreadyPending => l10n.peerInitiateAlreadyPending,
+        ChallengeFailure.alreadyCompleted => l10n.peerInitiateAlreadyCompleted,
+        ChallengeFailure.needsNewPerson => l10n.peerInitiateNeedsNewPerson,
+        ChallengeFailure.eventLimitReached => l10n.peerInitiateEventLimit,
         _ => l10n.peerInitiateFailed,
       };
 
