@@ -66,6 +66,30 @@ Both attendees are already `going` to the event and active **members** of the
 community. The event deliberately has **no check-in token** — minting one is the
 first thing you test.
 
+### 2.1a State on dev right now (verified 2026-08-23)
+
+Deployed from `integration/all-open-prs`; all 170 migrations ran, nothing pending.
+Checked against the live API, not assumed:
+
+| Check | Result |
+|---|---|
+| `POST /auth/login` as attendee A | 200 — seeded accounts exist |
+| Event date | **today**, 18:00, public, Barcelona |
+| `checkin_token` | **null** — step 1 of flow 3 is genuinely untested |
+| `GET /events/discover?following=1` | **200** — be#214 is live (it would be 422 without it) |
+| `?following=1&date=today` | composes, returns the seeded event |
+| `?following=0` with no city | **422 on lat/lng** — the strip guard works |
+| `GET /me/tickets` | 200 — be#210 is live |
+
+**Attendee A has been pre-followed** to `[QA] Eixample Runners`, so their Following
+tab has content immediately. **Attendee B is deliberately left following nobody**,
+so the empty state in flow 6 is still testable. Use B for step 2 and A for step 3.
+
+> **The seeded attendees are already members of the QA community, so it does NOT
+> appear in Explore → discover communities for them** — discover hides what you
+> have already joined. To reach it, open the event and tap the host community, or
+> use a fresh attendee account.
+
 ### 2.2 Get the app onto something with a camera
 
 ```bash
@@ -179,7 +203,7 @@ split — and it is also the trap in flow 6.
 |---|---|---|
 | 1 | Attendee home | The events section has **All events \| Following** |
 | 2 | With a fresh account that follows nobody, tap **Following** | "You don't follow anyone yet" + **Explore communities**. Not an error, not a blank list |
-| 3 | Follow `[QA] Eixample Runners`, come back, tap **Following** | The `[QA]` event is listed, and **the city chip is gone** |
+| 3 | As attendee **A** (already following), tap **Following** | The `[QA]` event is listed with its host community, and **the city chip is gone**. To do the follow yourself: the QA community is not in Explore for a member — open the event and tap the host community |
 | 4 | Switch to **All events**, set the city to **Madrid**, switch back to **Following** | The Barcelona event is **still there**. This is the whole point: a community you followed is relevant wherever it is |
 | 5 | Switch back to **All events** | The city chip is back, still saying Madrid, and the feed is city-scoped again — you are not asked to pick a city twice |
 | 6 | In **Following**, set the date chip to **Today** | Still Following, now narrowed to today (the seeded event is today, so it stays) |
