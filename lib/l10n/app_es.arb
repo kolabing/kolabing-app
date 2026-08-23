@@ -2125,6 +2125,8 @@
   "peerNoSessionAction": "ESCANEAR CÓDIGO DEL EVENTO",
   "peerInitiateBothCheckedIn": "No se pudo iniciar este reto. Aseguraos de que los dos habéis hecho check-in en este evento.",
   "peerInitiateFailed": "No se pudo iniciar el reto.",
+  "challengeFirstChoose": "Elige un reto",
+  "challengeFirstScanThem": "Escanea a la persona con quien lo har\u00e1s",
   "communityChallengesTitle": "Retos",
   "communityChallengesHubSubtitle": "Elige qu\u00e9 usan tus eventos",
   "communityChallengesDefaultHint": "No has elegido ninguno, as\u00ed que tus eventos usan todos los retos de Kolabing. Marca algunos para acotarlo.",

@@ -7193,6 +7193,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get peerInitiateFailed => 'Couldn\'t start the challenge.';
 
   @override
+  String get challengeFirstChoose => 'Choose a challenge';
+
+  @override
+  String get challengeFirstScanThem => 'Scan the person you\'re doing it with';
+
+  @override
   String get communityChallengesTitle => 'Challenges';
 
   @override

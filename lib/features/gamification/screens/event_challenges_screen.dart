@@ -11,6 +11,7 @@ import '../../../widgets/kolabing_button.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
 import '../widgets/challenge_card.dart';
+import 'attendee_scanner_screen.dart';
 
 /// Screen showing challenges for a specific event
 class EventChallengesScreen extends ConsumerStatefulWidget {
@@ -442,17 +443,22 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
 
                 const SizedBox(height: KolabingSpacing.xl),
 
-                // Initiate button
+                // Choose first, THEN scan (#152). This used to push a screen
+                // asking the person to type the other attendee's profile UUID
+                // into a text field, which is not a flow anyone can complete
+                // standing in a room.
                 KolabingButton(
-                  label: l10n.eventChallengesStartChallenge,
+                  label: l10n.challengeFirstScanThem,
                   onPressed: () {
                     Navigator.of(context).pop();
-                    context.push(
-                      '/attendee/events/$eventId/challenges/${challenge.id}/initiate',
+                    AttendeeScannerScreen.open(
+                      context,
+                      eventId: eventId,
+                      challenge: challenge,
                     );
                   },
                   variant: KolabingButtonVariant.primary,
-                  icon: const Icon(LucideIcons.userPlus),
+                  icon: const Icon(LucideIcons.scanLine),
                 ),
 
                 const SizedBox(height: KolabingSpacing.md),

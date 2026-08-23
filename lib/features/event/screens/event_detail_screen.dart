@@ -389,11 +389,11 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
           width: double.infinity,
           height: 52,
           child: FilledButton.icon(
-            onPressed: () => AttendeeScannerScreen.open(
-              context,
-              eventId: event.id,
-              eventName: event.name,
-            ),
+            // Choose a challenge first, then scan whoever you are doing it with
+            // (#152) — the intention should be clear before a camera is pointed
+            // at anyone.
+            onPressed: () =>
+                context.push(KolabingRoutes.buildEventChallengesPath(event.id)),
             style: FilledButton.styleFrom(
               backgroundColor: KolabingColors.primary,
               foregroundColor: KolabingColors.onPrimary,
@@ -401,8 +401,8 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            icon: const Icon(LucideIcons.scanLine, size: 18),
-            label: Text(_l10n.eventCheckinScanSomeone),
+            icon: const Icon(LucideIcons.swords, size: 18),
+            label: Text(_l10n.challengeFirstChoose),
           ),
         ),
       ];

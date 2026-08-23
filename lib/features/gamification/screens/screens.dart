@@ -8,7 +8,6 @@ export 'create_challenge_screen.dart';
 export 'event_challenges_screen.dart';
 export 'event_discovery_screen.dart';
 export 'event_qr_code_screen.dart';
-export 'initiate_challenge_screen.dart';
 export 'leaderboard_screen.dart';
 export 'personal_rewards_screen.dart';
 export 'reward_detail_screen.dart';
