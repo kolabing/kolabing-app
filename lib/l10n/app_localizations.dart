@@ -9284,6 +9284,102 @@ abstract class AppLocalizations {
   /// **'{count} spot(s) left'**
   String eventHubSpotsLeft(num count);
 
+  /// Event page: details section label
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get eventPageDetailsTitle;
+
+  /// Event page: opens the venue in a maps app
+  ///
+  /// In en, this message translates to:
+  /// **'Directions'**
+  String get eventPageDirections;
+
+  /// Event page: chip on an occurrence of a series
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get eventPageRecurring;
+
+  /// Event page: which occurrence this is
+  ///
+  /// In en, this message translates to:
+  /// **'#{index} in the series'**
+  String eventPageSeriesOccurrence(num index);
+
+  /// Event page: public visibility, in words
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone can see and join this event'**
+  String get eventPageWhoCanSeePublic;
+
+  /// Event page: members-only visibility, in words
+  ///
+  /// In en, this message translates to:
+  /// **'Members of this community only'**
+  String get eventPageWhoCanSeeMembers;
+
+  /// Event page: tier-gated visibility, in words
+  ///
+  /// In en, this message translates to:
+  /// **'Limited to certain membership tiers'**
+  String get eventPageWhoCanSeeTier;
+
+  /// Event page: opens the holder’s ticket
+  ///
+  /// In en, this message translates to:
+  /// **'My ticket'**
+  String get eventPageMyTicket;
+
+  /// Event page: how many attendees are through the door
+  ///
+  /// In en, this message translates to:
+  /// **'{count} admitted'**
+  String eventPageAdmittedCount(num count);
+
+  /// Event page: the host’s website link
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get eventPageWebsite;
+
+  /// Ticket sheet: title
+  ///
+  /// In en, this message translates to:
+  /// **'Your ticket'**
+  String get eventTicketSheetTitle;
+
+  /// Ticket sheet: what to do with it
+  ///
+  /// In en, this message translates to:
+  /// **'Show this at the door'**
+  String get eventTicketShowAtDoor;
+
+  /// Ticket sheet: already used
+  ///
+  /// In en, this message translates to:
+  /// **'Admitted at {time}'**
+  String eventTicketAdmitted(String time);
+
+  /// Ticket sheet: waitlisted holder
+  ///
+  /// In en, this message translates to:
+  /// **'You’re on the waitlist. This ticket works once a spot opens.'**
+  String get eventTicketWaitlistedBody;
+
+  /// Ticket sheet: label above the ticket code
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get eventTicketCodeLabel;
+
+  /// Ticket sheet: fallback when no QR came back
+  ///
+  /// In en, this message translates to:
+  /// **'Show this code at the door.'**
+  String get eventTicketNoQr;
+
   /// Event hub: unlimited capacity label
   ///
   /// In en, this message translates to:

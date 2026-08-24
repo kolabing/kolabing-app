@@ -16,7 +16,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/cards/kolabing_cards.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../event/providers/event_provider.dart';
-import '../../event/screens/event_hub_screen.dart';
+import '../../event/screens/event_detail_screen.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
 import '../models/community_membership.dart';
@@ -25,6 +25,7 @@ import '../models/community_tier.dart';
 import '../providers/community_providers.dart';
 import '../providers/community_rewards_providers.dart';
 import '../services/community_service.dart';
+import '../../../widgets/hero_circle_action.dart';
 import '../widgets/community_page_sections.dart';
 import '../widgets/community_rewards_editor_sheets.dart';
 import 'roster_screen.dart';
@@ -143,14 +144,14 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                 avatarUrl: c.avatarUrl,
                 showBack: !widget.embedded,
                 actions: [
-                  CommunityHeroAction(
+                  HeroCircleAction(
                     icon: LucideIcons.messageCircle,
                     tooltip: l10n.communityDetailChatsAction,
                     onTap: _openChats,
                   ),
                   // Self-gated: only when we have a usable link.
                   if (c.shareInviteUrl != null)
-                    CommunityHeroAction(
+                    HeroCircleAction(
                       icon: LucideIcons.share2,
                       tooltip: l10n.communityShareInvite,
                       onTap: _shareInvite,
@@ -1253,7 +1254,7 @@ class _EventsSection extends ConsumerWidget {
               onOpen: (event) => Navigator.of(context).push<void>(
                 MaterialPageRoute<void>(
                   builder: (_) =>
-                      EventHubScreen(event: event, isLeader: canManage),
+                      EventDetailScreen.forEvent(event, isLeader: canManage),
                 ),
               ),
               onLocked: (_) => ScaffoldMessenger.of(context).showSnackBar(
