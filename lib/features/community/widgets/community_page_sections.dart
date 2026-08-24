@@ -25,6 +25,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/color_tokens.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/hero_circle_action.dart';
 import '../../event/models/event.dart';
 
 // =============================================================================
@@ -81,7 +82,7 @@ class CommunityCoverHero extends StatelessWidget {
               child: Row(
                 children: [
                   if (showBack)
-                    CommunityHeroAction(
+                    HeroCircleAction(
                       icon: LucideIcons.arrowLeft,
                       onTap: () => Navigator.of(context).maybePop(),
                     ),
@@ -100,40 +101,6 @@ class CommunityCoverHero extends StatelessWidget {
       ],
     ),
   );
-}
-
-/// Translucent circular icon button for use on top of the cover band.
-class CommunityHeroAction extends StatelessWidget {
-  const CommunityHeroAction({
-    super.key,
-    required this.icon,
-    required this.onTap,
-    this.tooltip,
-  });
-
-  final IconData icon;
-  final VoidCallback onTap;
-  final String? tooltip;
-
-  @override
-  Widget build(BuildContext context) {
-    final child = Padding(
-      padding: const EdgeInsets.only(left: KolabingSpacing.xs),
-      child: Material(
-        color: Colors.black.withValues(alpha: 0.35),
-        shape: const CircleBorder(),
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(9),
-            child: Icon(icon, size: 20, color: Colors.white),
-          ),
-        ),
-      ),
-    );
-    return tooltip == null ? child : Tooltip(message: tooltip!, child: child);
-  }
 }
 
 class _Cover extends StatelessWidget {

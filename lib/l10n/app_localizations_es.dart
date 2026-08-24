@@ -5270,6 +5270,63 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get eventPageDetailsTitle => 'Detalles';
+
+  @override
+  String get eventPageDirections => 'Cómo llegar';
+
+  @override
+  String get eventPageRecurring => 'Recurrente';
+
+  @override
+  String eventPageSeriesOccurrence(num index) {
+    return '#$index de la serie';
+  }
+
+  @override
+  String get eventPageWhoCanSeePublic =>
+      'Cualquiera puede ver y unirse a este evento';
+
+  @override
+  String get eventPageWhoCanSeeMembers => 'Solo miembros de esta comunidad';
+
+  @override
+  String get eventPageWhoCanSeeTier =>
+      'Limitado a ciertos niveles de membresía';
+
+  @override
+  String get eventPageMyTicket => 'Mi entrada';
+
+  @override
+  String eventPageAdmittedCount(num count) {
+    return '$count admitidos';
+  }
+
+  @override
+  String get eventPageWebsite => 'Web';
+
+  @override
+  String get eventTicketSheetTitle => 'Tu entrada';
+
+  @override
+  String get eventTicketShowAtDoor => 'Muéstrala en la puerta';
+
+  @override
+  String eventTicketAdmitted(String time) {
+    return 'Admitido a las $time';
+  }
+
+  @override
+  String get eventTicketWaitlistedBody =>
+      'Estás en lista de espera. Esta entrada servirá cuando se libere una plaza.';
+
+  @override
+  String get eventTicketCodeLabel => 'Código';
+
+  @override
+  String get eventTicketNoQr => 'Muestra este código en la puerta.';
+
+  @override
   String get eventHubUnlimited => 'Ilimitado';
 
   @override

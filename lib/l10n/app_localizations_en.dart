@@ -5212,6 +5212,61 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get eventPageDetailsTitle => 'Details';
+
+  @override
+  String get eventPageDirections => 'Directions';
+
+  @override
+  String get eventPageRecurring => 'Recurring';
+
+  @override
+  String eventPageSeriesOccurrence(num index) {
+    return '#$index in the series';
+  }
+
+  @override
+  String get eventPageWhoCanSeePublic => 'Anyone can see and join this event';
+
+  @override
+  String get eventPageWhoCanSeeMembers => 'Members of this community only';
+
+  @override
+  String get eventPageWhoCanSeeTier => 'Limited to certain membership tiers';
+
+  @override
+  String get eventPageMyTicket => 'My ticket';
+
+  @override
+  String eventPageAdmittedCount(num count) {
+    return '$count admitted';
+  }
+
+  @override
+  String get eventPageWebsite => 'Website';
+
+  @override
+  String get eventTicketSheetTitle => 'Your ticket';
+
+  @override
+  String get eventTicketShowAtDoor => 'Show this at the door';
+
+  @override
+  String eventTicketAdmitted(String time) {
+    return 'Admitted at $time';
+  }
+
+  @override
+  String get eventTicketWaitlistedBody =>
+      'You’re on the waitlist. This ticket works once a spot opens.';
+
+  @override
+  String get eventTicketCodeLabel => 'Code';
+
+  @override
+  String get eventTicketNoQr => 'Show this code at the door.';
+
+  @override
   String get eventHubUnlimited => 'Unlimited';
 
   @override
