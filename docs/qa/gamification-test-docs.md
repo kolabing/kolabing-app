@@ -34,12 +34,30 @@ state needs a brand-new account.**
 
 ## 1. Setup
 
-### 1.1 Seed
+### 1.1 Seed — **re-run the first command every testing day**
 
 ```bash
-php artisan kolabing:seed-qa-gamification      # accounts, community, event, 3 challenges
-php artisan db:seed --class=PeerChallengeLibrarySeeder   # the challenge library
+php artisan kolabing:seed-qa-gamification                 # accounts, community, event, 3 challenges
+php artisan db:seed --class=PeerChallengeLibrarySeeder    # the challenge library (once)
 ```
+
+**The QA event is created for _today_, so it ages out overnight.** Found the hard
+way: the morning after seeding, the attendee's upcoming-events list came back
+empty and it looked like a broken feed. It was not — the event was simply
+yesterday's, and an event in the past is not upcoming, is not check-in-able, and
+is not in any feed.
+
+Re-running the seeder moves it to today **and clears the check-in token**, which
+is what you want: minting one is step 1 of flow 2. It is idempotent, so running
+it again costs nothing.
+
+The library seeder only needs running once per environment — it is
+`updateOrCreate` on slug, so re-running just refreshes the rows.
+
+**State on dev after seeding** (verified, 2026-08-24): 8 library challenges live,
+and the QA event offers **11** — the 8 from the library plus the 3 the seeder
+writes for that event, which is exactly the resolution order for a community that
+has curated nothing.
 
 The second one is new and matters: **#150 built the library and left it empty.**
 Verified on dev before adding it — `challenges where is_system and trigger_action
