@@ -86,6 +86,47 @@ dependencies:
   posthog_flutter: ^5.26.0
   dart_pusher_channels: ^1.3.1
 
+# -----------------------------------------------------------------------------
+# App Store validation blocker (#160)
+#
+# Apple refused the upload:
+#
+#   Invalid executable. The "Runner.app/Frameworks/objective_c.framework/
+#   objective_c" executable references an unsupported platform in the arm64
+#   slice. Simulator platforms aren't permitted.
+#
+# `path_provider_foundation` 2.6.0 moved from Swift/pigeon to FFI and pulled in
+# `objective_c`, which Flutter builds through the NATIVE ASSETS pipeline
+# (`code_assets` / `hooks` / `native_toolchain_c`) rather than CocoaPods — the
+# only framework in this app built that way.
+#
+# What is VERIFIED: pinning to 2.5.1, the last version with no `objective_c`
+# dependency, removes that framework from the archive entirely. Checked — the
+# rebuilt Runner.app has 48 frameworks and none of them is the one Apple named.
+#
+# What is NOT verified: exactly why that binary was invalid. It carried only the
+# legacy `LC_VERSION_MIN_IPHONEOS` marker, but so do all ten bundled OneSignal
+# frameworks, and those have shipped — so the legacy marker alone is not the
+# rejection. The likelier culprit is the native-assets build emitting a slice for
+# the wrong platform, possibly contaminated by an earlier
+# `flutter build ios --simulator` in the same tree. The offending artefact was
+# overwritten by the clean rebuild, so that stays a hypothesis rather than a
+# finding.
+#
+# Either way the pin removes the whole class, and path_provider is TRANSITIVE
+# here — nothing in this app calls it directly — so the only cost is the newer
+# plugin's internals.
+#
+# The same package is also why an iOS 17.5 simulator could not launch the app at
+# all ("Failed to load dynamic library 'objective_c.framework/objective_c'"). One
+# dependency, two symptoms.
+#
+# Remove this override once a Flutter release bundles native-asset frameworks
+# cleanly, and re-check with `make beta-dry` before trusting it.
+# -----------------------------------------------------------------------------
+dependency_overrides:
+  path_provider_foundation: 2.5.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
