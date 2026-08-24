@@ -9338,12 +9338,6 @@ abstract class AppLocalizations {
   /// **'{count} admitted'**
   String eventPageAdmittedCount(num count);
 
-  /// Event page: the host’s website link
-  ///
-  /// In en, this message translates to:
-  /// **'Website'**
-  String get eventPageWebsite;
-
   /// Ticket sheet: title
   ///
   /// In en, this message translates to:
@@ -9379,6 +9373,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show this code at the door.'**
   String get eventTicketNoQr;
+
+  /// Generic label for a website link
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get commonWebsite;
+
+  /// Community page: photo strip section label
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get communityPagePhotosTitle;
+
+  /// Community page: filter chip for upcoming events
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get communityPageFilterUpcoming;
+
+  /// Community page: filter chip for past events
+  ///
+  /// In en, this message translates to:
+  /// **'Past'**
+  String get communityPageFilterPast;
+
+  /// Event badge: no spots left
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get eventCapacityFull;
+
+  /// Event badge: few spots left
+  ///
+  /// In en, this message translates to:
+  /// **'Near capacity'**
+  String get eventCapacityNearly;
+
+  /// Event badge: spots remaining
+  ///
+  /// In en, this message translates to:
+  /// **'{count} left'**
+  String eventCapacityLeft(num count);
 
   /// Event hub: unlimited capacity label
   ///

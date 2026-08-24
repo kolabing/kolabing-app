@@ -5243,9 +5243,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get eventPageWebsite => 'Website';
-
-  @override
   String get eventTicketSheetTitle => 'Your ticket';
 
   @override
@@ -5265,6 +5262,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get eventTicketNoQr => 'Show this code at the door.';
+
+  @override
+  String get commonWebsite => 'Website';
+
+  @override
+  String get communityPagePhotosTitle => 'Photos';
+
+  @override
+  String get communityPageFilterUpcoming => 'Upcoming';
+
+  @override
+  String get communityPageFilterPast => 'Past';
+
+  @override
+  String get eventCapacityFull => 'Full';
+
+  @override
+  String get eventCapacityNearly => 'Near capacity';
+
+  @override
+  String eventCapacityLeft(num count) {
+    return '$count left';
+  }
 
   @override
   String get eventHubUnlimited => 'Unlimited';

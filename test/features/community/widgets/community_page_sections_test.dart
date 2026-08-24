@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kolabing_app/config/theme/theme.dart';
 import 'package:kolabing_app/features/community/widgets/community_page_sections.dart';
 import 'package:kolabing_app/features/event/models/event.dart';
+import 'package:kolabing_app/features/profile/providers/gallery_provider.dart';
 import 'package:kolabing_app/l10n/app_localizations.dart';
 
 const _longTitle =
@@ -22,6 +23,8 @@ Event _event({
   String? location,
   String? signupStatus,
   bool canAccess = true,
+  int? capacity,
+  int goingCount = 0,
 }) => Event(
   id: id,
   name: name,
@@ -34,6 +37,8 @@ Event _event({
   location: location,
   mySignupStatus: signupStatus,
   canAccess: canAccess,
+  capacity: capacity,
+  goingCount: goingCount,
   attendeeCount: 12,
   photos: const [],
   createdAt: DateTime(2026, 1, 1),
@@ -163,4 +168,165 @@ void main() {
     expect(refused, ['e3']);
     expect(opened, ['e2']);
   });
+
+  testWidgets('the hero paints a real cover photo when there is one', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      const CommunityCoverHero(
+        name: 'Real Run Club',
+        avatarUrl: 'https://example.test/avatar.jpg',
+        coverUrl: 'https://example.test/cover.jpg',
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+    // Sharp cover + logo tile, not two copies of the blurred avatar.
+    expect(find.byType(ImageFiltered), findsNothing);
+    expect(find.byType(Image), findsNWidgets(2));
+  });
+
+  testWidgets('with no photo at all the hero stays on the brand band', (
+    tester,
+  ) async {
+    await _pump(tester, const CommunityCoverHero(name: 'Real Run Club'));
+    expect(tester.takeException(), isNull);
+    expect(find.byType(Image), findsNothing);
+  });
+
+  testWidgets('the identity block shows the handles a community has', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      const CommunityIdentityBlock(
+        name: 'Real Run Club',
+        metaText: 'Barcelona · Running club · 5 members',
+        instagram: 'realrunclub',
+        website: 'run.club',
+      ),
+    );
+
+    expect(find.text('@realrunclub'), findsOneWidget);
+    expect(find.text('Website'), findsOneWidget);
+    // No tiktok handle → no dead icon.
+    expect(find.text('@'), findsNothing);
+  });
+
+  testWidgets('filter chips report their counts and their selection', (
+    tester,
+  ) async {
+    CommunityEventFilter? picked;
+    await _pump(
+      tester,
+      CommunityFilterChips(
+        counts: const {
+          CommunityEventFilter.upcoming: 3,
+          CommunityEventFilter.past: 7,
+          CommunityEventFilter.publicOnly: 2,
+          CommunityEventFilter.membersOnly: 1,
+        },
+        selected: CommunityEventFilter.upcoming,
+        onSelect: (f) => picked = f,
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Upcoming'), findsOneWidget);
+    expect(find.text('7'), findsOneWidget);
+
+    await tester.tap(find.text('Past'));
+    await tester.pump();
+    expect(picked, CommunityEventFilter.past);
+  });
+
+  testWidgets('a filter nobody can use is not offered', (tester) async {
+    await _pump(
+      tester,
+      CommunityFilterChips(
+        counts: const {
+          CommunityEventFilter.upcoming: 3,
+          CommunityEventFilter.past: 0,
+          CommunityEventFilter.publicOnly: 0,
+          CommunityEventFilter.membersOnly: 0,
+        },
+        selected: CommunityEventFilter.upcoming,
+        onSelect: (_) {},
+      ),
+    );
+    // One live filter is not a choice, so the row disappears entirely.
+    expect(find.text('Upcoming'), findsNothing);
+  });
+
+  testWidgets(
+    'an event says how full it is, and an uncapped one says nothing',
+    (tester) async {
+      await _pump(
+        tester,
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: CommunityEventTimeline(
+            events: [
+              _event(
+                id: 'full',
+                name: 'Sold out run',
+                day: DateTime(2026, 9, 6, 19),
+                capacity: 10,
+                goingCount: 10,
+              ),
+              _event(
+                id: 'nearly',
+                name: 'Almost full run',
+                day: DateTime(2026, 9, 7, 19),
+                capacity: 10,
+                goingCount: 9,
+              ),
+              _event(
+                id: 'roomy',
+                name: 'Plenty of room run',
+                day: DateTime(2026, 9, 8, 19),
+                capacity: 20,
+                goingCount: 2,
+              ),
+              _event(
+                id: 'uncapped',
+                name: 'Uncapped run',
+                day: DateTime(2026, 9, 9, 19),
+              ),
+            ],
+            onOpen: (_) {},
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Full'), findsOneWidget);
+      expect(find.text('Near capacity'), findsOneWidget);
+      expect(find.text('18 left'), findsOneWidget);
+      // Four events, three badges: "unlimited" is not news.
+      expect(find.text('Unlimited'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'the photo strip renders what it is given, and hides when empty',
+    (tester) async {
+      await _pump(tester, const CommunityPhotoStrip(photos: []));
+      expect(find.text('PHOTOS'), findsNothing);
+
+      await _pump(
+        tester,
+        const CommunityPhotoStrip(
+          photos: [
+            GalleryPhoto(id: '1', url: 'https://example.test/1.jpg'),
+            GalleryPhoto(id: '2', url: 'https://example.test/2.jpg'),
+          ],
+        ),
+      );
+      expect(tester.takeException(), isNull);
+      expect(find.text('PHOTOS'), findsOneWidget);
+      expect(find.byType(Image), findsNWidgets(2));
+    },
+  );
 }
