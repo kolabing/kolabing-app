@@ -20,7 +20,7 @@
 DEV_DEFINE  := --dart-define=APP_ENV=dev
 PROD_DEFINE := --dart-define=APP_ENV=prod
 
-.PHONY: run-dev run-prod ipa-dev ipa-prod serve-sim serve-sim-status serve-sim-stop help
+.PHONY: run-dev run-prod ipa-dev ipa-prod beta-dev beta-prod beta-dry serve-sim serve-sim-status serve-sim-stop help
 
 help:
 	@echo "Targets:"
@@ -28,6 +28,9 @@ help:
 	@echo "  make run-prod         # flutter run against the PROD backend"
 	@echo "  make ipa-dev          # build a DEV IPA (for the dev TestFlight group)"
 	@echo "  make ipa-prod         # build a PROD IPA (for normal testers / release)"
+	@echo "  make beta-dev         # build AND upload a DEV build to TestFlight"
+	@echo "  make beta-prod        # build AND upload a PROD build to TestFlight"
+	@echo "  make beta-dry         # build + export only, upload nothing"
 	@echo "  make serve-sim        # boot the iOS sim + stream it to a browser (macOS only; see docs/ios-serve-sim-qa.md)"
 	@echo "  make serve-sim-status # check whether a backgrounded serve-sim (started remotely) is running"
 	@echo "  make serve-sim-stop   # stop a backgrounded serve-sim"
@@ -56,3 +59,22 @@ ipa-dev:
 
 ipa-prod:
 	flutter build ipa $(PROD_DEFINE)
+
+# -----------------------------------------------------------------------------
+# TestFlight, without opening App Store Connect (#159)
+#
+# These bump the build number, archive, export with an App Store Connect API key
+# and upload — no interactive login, no session to expire. `ipa-dev`/`ipa-prod`
+# above still exist for when you only want the artefact.
+#
+# One-time setup: docs/release/ios-release-automation.md
+# -----------------------------------------------------------------------------
+
+beta-dev:
+	./scripts/release-ios.sh dev
+
+beta-prod:
+	./scripts/release-ios.sh prod
+
+beta-dry:
+	./scripts/release-ios.sh dev --dry-run

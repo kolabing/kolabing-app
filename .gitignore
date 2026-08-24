@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Release credentials (#159). Both of these are keys to the App Store account —
+# committing either is a credential leak, so they are ignored by name AND by
+# extension.
+.env.release
+*.p8
+**/private_keys/
