@@ -12086,6 +12086,18 @@ abstract class AppLocalizations {
   /// **'Tier'**
   String get communityEventVisibilityTier;
 
+  /// Event row badge: the viewer has a confirmed sign-up.
+  ///
+  /// In en, this message translates to:
+  /// **'Going'**
+  String get communityEventBadgeGoing;
+
+  /// Event row badge: the viewer is on the waitlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Waitlisted'**
+  String get communityEventBadgeWaitlisted;
+
   /// Business onboarding goal step: title
   ///
   /// In en, this message translates to:

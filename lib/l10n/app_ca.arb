@@ -2008,6 +2008,8 @@
   "communityEventVisibilityPublic": "Públic",
   "communityEventVisibilityMembers": "Membres",
   "communityEventVisibilityTier": "Nivell",
+  "communityEventBadgeGoing": "Hi vaig",
+  "communityEventBadgeWaitlisted": "A la llista d'espera",
   "businessGoalTitle": "Quin és el teu objectiu?",
   "businessGoalSubtitle": "Adaptarem la teva configuració segons el que vulguis aconseguir.",
   "businessGoalVenueTitle": "Omplir el meu local",

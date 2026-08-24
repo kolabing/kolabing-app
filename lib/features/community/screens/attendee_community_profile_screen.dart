@@ -3,20 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
-import '../../../config/feature_flags.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../event/models/event.dart';
 import '../../event/providers/event_provider.dart';
-import '../../event/widgets/event_card.dart';
 import '../models/community.dart';
 import '../models/community_membership.dart';
 import '../providers/community_follow_provider.dart';
 import '../providers/community_providers.dart';
 import '../widgets/community_application_sheet.dart';
+import '../widgets/community_page_sections.dart';
 import 'community_detail_screen.dart';
 
 /// Attendee-facing community profile, keyed by **community id**.
@@ -31,11 +28,6 @@ class AttendeeCommunityProfileScreen extends ConsumerWidget {
   const AttendeeCommunityProfileScreen({super.key, required this.communityId});
 
   final String communityId;
-
-  /// Events sub-tab index inside [CommunityDetailScreen]. The Members tab sits
-  /// between Rewards and Events, so hiding it (kCommunityMembersTabEnabled)
-  /// shifts Events from index 2 down to 1.
-  static const int _eventsTabIndex = kCommunityMembersTabEnabled ? 2 : 1;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -123,33 +115,39 @@ class AttendeeCommunityProfileScreen extends ConsumerWidget {
         color: KolabingColors.primary,
         onRefresh: () async {
           await ref.read(communityByIdProvider(community.id).notifier).reload();
-          ref
+          await ref
               .read(communityUpcomingEventsProvider(community.id).notifier)
               .reload();
         },
         child: CustomScrollView(
           slivers: [
-            // Header band + avatar.
-            SliverToBoxAdapter(child: _Header(community: community)),
-
-            // About.
-            if (community.description != null &&
-                community.description!.isNotEmpty)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    KolabingSpacing.md,
-                    KolabingSpacing.lg,
-                    KolabingSpacing.md,
-                    0,
-                  ),
-                  child: _AboutSection(about: community.description!),
-                ),
-              ),
-
-            // Upcoming events.
+            // Cover band + logo tile.
             SliverToBoxAdapter(
-              child: _UpcomingEventsSection(community: community),
+              child: CommunityCoverHero(
+                name: community.name,
+                avatarUrl: community.avatarUrl,
+              ),
+            ),
+
+            // Name, about, type · members.
+            SliverToBoxAdapter(child: _Identity(community: community)),
+
+            // Where the viewer stands, when they stand anywhere: a member can
+            // step into the community, a pending request says so. Everyone else
+            // is asked by the bottom CTA instead, so no row.
+            SliverToBoxAdapter(child: _MembershipRow(community: community)),
+
+            // Everything coming up, grouped by day.
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  KolabingSpacing.md,
+                  KolabingSpacing.md,
+                  KolabingSpacing.md,
+                  0,
+                ),
+                child: _UpcomingEventsSection(community: community),
+              ),
             ),
 
             // Social links.
@@ -165,17 +163,12 @@ class AttendeeCommunityProfileScreen extends ConsumerWidget {
   }
 
   /// Build the membership wrapper so we can reuse [CommunityDetailScreen]
-  /// (member view) for "See all →" and "Open community".
-  static void openCommunityDetail(
-    BuildContext context,
-    Community community, {
-    int initialTabIndex = 0,
-  }) {
+  /// (member view) for "Open community".
+  static void openCommunityDetail(BuildContext context, Community community) {
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
         builder: (_) => CommunityDetailScreen(
           membership: CommunityMembership(community: community),
-          initialTabIndex: initialTabIndex,
         ),
       ),
     );
@@ -183,11 +176,11 @@ class AttendeeCommunityProfileScreen extends ConsumerWidget {
 }
 
 // -----------------------------------------------------------------------------
-// Header — cover/brand band + avatar + name · type · city · member count
+// Identity — name · about · type and member count
 // -----------------------------------------------------------------------------
 
-class _Header extends ConsumerWidget {
-  const _Header({required this.community});
+class _Identity extends ConsumerWidget {
+  const _Identity({required this.community});
 
   final Community community;
 
@@ -200,113 +193,52 @@ class _Header extends ConsumerWidget {
         ref.watch(communityTypeLabelProvider(community.typeSlug)) ??
         l10n.attendeeCommunityProfileTypeFallback;
 
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        // Brand band.
-        Container(
-          height: 150,
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [KolabingColors.primary, KolabingColors.softYellow],
-            ),
-          ),
-        ),
-        const Positioned(
-          top: 0,
-          left: 0,
-          child: SafeArea(child: _BackButton()),
-        ),
-        // Avatar + identity.
-        Padding(
-          padding: const EdgeInsets.only(top: 102),
-          child: Column(
-            children: [
-              Container(
-                width: 96,
-                height: 96,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: KolabingColors.surface, width: 4),
-                  color: KolabingColors.surface,
-                ),
-                child: ClipOval(
-                  child: community.avatarUrl != null
-                      ? Image.network(
-                          community.avatarUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
-                              _avatarPlaceholder(community.name),
-                        )
-                      : _avatarPlaceholder(community.name),
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.sm),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.lg,
-                ),
-                child: Text(
-                  community.name,
-                  textAlign: TextAlign.center,
-                  style: KolabingTextStyles.headlineMedium.copyWith(
-                    color: KolabingColors.onSurface,
-                  ),
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              // Type · city.
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.md,
-                  vertical: KolabingSpacing.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: KolabingColors.info.withValues(alpha: 0.1),
-                  borderRadius: KolabingRadius.borderRadiusRound,
-                  border: Border.all(
-                    color: KolabingColors.info.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Text(
-                  typeLabel,
-                  style: KolabingTextStyles.labelSmall.copyWith(
-                    color: KolabingColors.info,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(height: KolabingSpacing.xs),
-              // Member count.
-              Text(
-                l10n.attendeeCommunityProfileMemberCount(
-                  community.memberCount ?? 0,
-                ),
-                style: KolabingTextStyles.bodySmall.copyWith(
-                  color: KolabingColors.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+    return CommunityIdentityBlock(
+      name: community.name,
+      description: community.description,
+      metaText: l10n.communityDetailTypeAndMembers(
+        typeLabel,
+        community.memberCount ?? 0,
+      ),
     );
   }
+}
 
-  Widget _avatarPlaceholder(String name) => Container(
-    color: KolabingColors.surfaceVariant,
-    child: Center(
-      child: Text(
-        name.isNotEmpty ? name[0].toUpperCase() : '?',
-        style: KolabingTextStyles.displaySmall.copyWith(
-          color: KolabingColors.textTertiary,
+// -----------------------------------------------------------------------------
+// Membership row
+// -----------------------------------------------------------------------------
+
+class _MembershipRow extends StatelessWidget {
+  const _MembershipRow({required this.community});
+
+  final Community community;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (community.isMember ?? false) {
+      return CommunityNavRow(
+        icon: LucideIcons.badgeCheck,
+        title: community.name,
+        subtitle: l10n.attendeeCommunityProfileOpenCommunity,
+        iconColor: context.colors.success,
+        onTap: () => AttendeeCommunityProfileScreen.openCommunityDetail(
+          context,
+          community,
         ),
-      ),
-    ),
-  );
+      );
+    }
+    if (community.hasPendingJoinRequest) {
+      return CommunityNavRow(
+        icon: LucideIcons.clock,
+        title: community.name,
+        subtitle: l10n.attendeeCommunityProfileRequested,
+        iconColor: context.colors.warning,
+      );
+    }
+    // No relationship yet — the bottom CTA does the asking.
+    return const SizedBox.shrink();
+  }
 }
 
 class _BackButton extends StatelessWidget {
@@ -330,54 +262,6 @@ class _BackButton extends StatelessWidget {
 }
 
 // -----------------------------------------------------------------------------
-// About
-// -----------------------------------------------------------------------------
-
-class _AboutSection extends StatelessWidget {
-  const _AboutSection({required this.about});
-
-  final String about;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      decoration: BoxDecoration(
-        color: KolabingColors.surface,
-        borderRadius: KolabingRadius.borderRadiusLg,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            l10n.attendeeCommunityProfileAboutTitle,
-            style: KolabingTextStyles.titleMedium.copyWith(
-              color: KolabingColors.onSurface,
-            ),
-          ),
-          const SizedBox(height: KolabingSpacing.sm),
-          Text(
-            about,
-            style: KolabingTextStyles.bodyMedium.copyWith(
-              color: KolabingColors.onSurfaceVariant,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// -----------------------------------------------------------------------------
 // Upcoming events — cards (tap → event detail) + "See all →"
 // -----------------------------------------------------------------------------
 
@@ -390,88 +274,50 @@ class _UpcomingEventsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final async = ref.watch(communityUpcomingEventsProvider(community.id));
+    final typeLabel = ref.watch(communityTypeLabelProvider(community.typeSlug));
 
-    return Padding(
-      padding: const EdgeInsets.only(top: KolabingSpacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CommunitySectionLabel(l10n.attendeeCommunityProfileUpcomingEventsTitle),
+        async.when(
+          loading: () => const Padding(
+            padding: EdgeInsets.all(KolabingSpacing.lg),
+            child: Center(
+              child: CircularProgressIndicator(color: KolabingColors.primary),
+            ),
+          ),
+          // A backend without the events filter (or none) → friendly empty,
+          // never a scary error.
+          error: (_, _) => _empty(l10n),
+          data: (events) {
+            if (events.isEmpty) return _empty(l10n);
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  l10n.attendeeCommunityProfileUpcomingEventsTitle,
-                  style: KolabingTextStyles.titleMedium.copyWith(
-                    color: KolabingColors.onSurface,
+                if (typeLabel != null)
+                  CommunityTagChip(label: typeLabel, count: events.length),
+                CommunityEventTimeline(
+                  events: events,
+                  onOpen: (event) => context.push('/event/${event.id}'),
+                  // Members-only and tier events are visible but shut until the
+                  // viewer joins — say so instead of opening a 403.
+                  onLocked: (_) => ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(l10n.communityDetailEventLockedSnack),
+                    ),
                   ),
-                ),
-                // "See all →" routes to the community detail Events sub-tab.
-                async.maybeWhen(
-                  data: (events) => events.isEmpty
-                      ? const SizedBox.shrink()
-                      : TextButton(
-                          onPressed: () =>
-                              AttendeeCommunityProfileScreen.openCommunityDetail(
-                                context,
-                                community,
-                                initialTabIndex: AttendeeCommunityProfileScreen
-                                    ._eventsTabIndex,
-                              ),
-                          child: Text(l10n.attendeeCommunityProfileSeeAll),
-                        ),
-                  orElse: () => const SizedBox.shrink(),
                 ),
               ],
-            ),
-          ),
-          const SizedBox(height: KolabingSpacing.sm),
-          async.when(
-            loading: () => const Padding(
-              padding: EdgeInsets.all(KolabingSpacing.lg),
-              child: Center(
-                child: CircularProgressIndicator(color: KolabingColors.primary),
-              ),
-            ),
-            // A backend without the events filter (or none) → friendly empty,
-            // never a scary error (same pattern as community detail Events).
-            error: (_, __) => _empty(l10n),
-            data: (events) {
-              if (events.isEmpty) return _empty(l10n);
-              // Show the next few; full list lives behind "See all".
-              final shown = events.take(5).toList();
-              return SizedBox(
-                height: 170,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.md,
-                  ),
-                  itemCount: shown.length,
-                  separatorBuilder: (_, __) =>
-                      const SizedBox(width: KolabingSpacing.sm),
-                  itemBuilder: (_, i) => EventCard(
-                    event: shown[i],
-                    onTap: () => _openEvent(context, shown[i]),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+            );
+          },
+        ),
+      ],
     );
   }
 
-  void _openEvent(BuildContext context, Event event) =>
-      context.push('/event/${event.id}');
-
   Widget _empty(AppLocalizations l10n) => Padding(
-    padding: const EdgeInsets.symmetric(
-      horizontal: KolabingSpacing.md,
-      vertical: KolabingSpacing.lg,
-    ),
+    padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
     child: Row(
       children: [
         const Icon(

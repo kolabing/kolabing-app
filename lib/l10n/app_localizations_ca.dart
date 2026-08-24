@@ -6934,6 +6934,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get communityEventVisibilityTier => 'Nivell';
 
   @override
+  String get communityEventBadgeGoing => 'Hi vaig';
+
+  @override
+  String get communityEventBadgeWaitlisted => 'A la llista d\'espera';
+
+  @override
   String get businessGoalTitle => 'Quin és el teu objectiu?';
 
   @override
