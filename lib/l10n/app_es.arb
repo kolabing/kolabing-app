@@ -2008,6 +2008,8 @@
   "communityEventVisibilityPublic": "Público",
   "communityEventVisibilityMembers": "Miembros",
   "communityEventVisibilityTier": "Nivel",
+  "communityEventBadgeGoing": "Voy",
+  "communityEventBadgeWaitlisted": "En lista de espera",
   "businessGoalTitle": "¿Cuál es tu objetivo?",
   "businessGoalSubtitle": "Adaptaremos tu configuración según lo que quieras conseguir.",
   "businessGoalVenueTitle": "Llenar mi local",

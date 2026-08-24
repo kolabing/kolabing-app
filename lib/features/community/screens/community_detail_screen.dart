@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +8,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../config/constants/layout.dart';
-import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/feature_flags.dart';
 import '../../../config/theme/colors.dart';
@@ -14,7 +15,6 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/cards/kolabing_cards.dart';
 import '../../auth/providers/auth_provider.dart';
-import '../../event/models/event.dart';
 import '../../event/providers/event_provider.dart';
 import '../../event/screens/event_hub_screen.dart';
 import '../models/community.dart';
@@ -25,6 +25,7 @@ import '../models/community_tier.dart';
 import '../providers/community_providers.dart';
 import '../providers/community_rewards_providers.dart';
 import '../services/community_service.dart';
+import '../widgets/community_page_sections.dart';
 import '../widgets/community_rewards_editor_sheets.dart';
 import 'roster_screen.dart';
 import 'tier_editor_screen.dart';
@@ -39,20 +40,13 @@ class CommunityDetailScreen extends ConsumerStatefulWidget {
   const CommunityDetailScreen({
     super.key,
     required this.membership,
-    this.initialTabIndex = 0,
     this.embedded = false,
   });
 
   final CommunityMembership membership;
 
-  /// Which sub-tab to open on. Indices depend on [kCommunityMembersTabEnabled]:
-  /// with Members shown it's (0 Rewards · 1 Members · 2 Events); with Members
-  /// hidden it's (0 Rewards · 1 Events). The attendee community profile's
-  /// "See all →" routes here on the Events tab via `_eventsTabIndex`.
-  final int initialTabIndex;
-
   /// When rendered as a bottom-nav tab body (the leader's COMMUNITY tab) rather
-  /// than a pushed route — suppresses the app-bar back button.
+  /// than a pushed route — suppresses the hero's back button.
   final bool embedded;
 
   @override
@@ -60,58 +54,42 @@ class CommunityDetailScreen extends ConsumerStatefulWidget {
       _CommunityDetailScreenState();
 }
 
-class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabs;
-
+class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
   Community get _community => widget.membership.community;
   bool get _canManage => widget.membership.canManage;
 
-  /// Members is a **manager** surface: `GET /communities/{id}/members` is gated
-  /// on the `manage` ability and 403s for an ordinary member. Showing the tab
+  /// The roster is a **manager** surface: `GET /communities/{id}/members` is
+  /// gated on the `manage` ability and 403s for an ordinary member. Offering it
   /// to one only ever produced "You are not authorized to manage this
   /// community."
-  bool get _showMembersTab => kCommunityMembersTabEnabled && _canManage;
+  bool get _showMembers => kCommunityMembersTabEnabled && _canManage;
 
   @override
   void initState() {
     super.initState();
-    final tabCount = _showMembersTab ? 3 : 2;
-    _tabs = TabController(
-      length: tabCount,
-      vsync: this,
-      initialIndex: widget.initialTabIndex.clamp(0, tabCount - 1),
-    );
     // Refresh events + rewards on open so newly-granted tier content (or a new
     // event / goal) appears without a manual pull-to-refresh.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref
-          .read(communityUpcomingEventsProvider(_community.id).notifier)
-          .reload();
-      ref.read(communityRewardsHubProvider(_community.id).notifier).reload();
-      // Only a manager may read the roster; firing this as a member is a
-      // guaranteed 403.
-      if (_showMembersTab) {
-        ref.read(communityMembersByIdProvider(_community.id).notifier).reload();
-      }
-      if (_canManage) {
-        ref
-            .read(communityRewardsAdminProvider(_community.id).notifier)
-            .reloadAll();
-      }
+      unawaited(_reload());
     });
   }
 
-  @override
-  void dispose() {
-    _tabs.dispose();
-    super.dispose();
+  Future<void> _reload() async {
+    final id = _community.id;
+    await Future.wait([
+      ref.read(communityUpcomingEventsProvider(id).notifier).reload(),
+      ref.read(communityRewardsHubProvider(id).notifier).reload(),
+      // Only a manager may read the roster or the admin lists; firing either as
+      // an ordinary member is a guaranteed 403.
+      if (_showMembers)
+        ref.read(communityMembersByIdProvider(id).notifier).reload(),
+      if (_canManage)
+        ref.read(communityRewardsAdminProvider(id).notifier).reloadAll(),
+    ]);
   }
 
-  /// Open the chat inbox; the backend role-scopes the threads. Reuses the
-  /// existing `/chats` navigation (the former Chats tab pointed at the same
-  /// thread list).
+  /// Open the chat inbox; the backend role-scopes the threads.
   void _openChats() => context.pushNamed('chats');
 
   /// Share a join-invite link for this community. Uses the backend's canonical
@@ -154,128 +132,149 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
     final c = _community;
     return Scaffold(
       backgroundColor: context.colors.background,
-      appBar: AppBar(
-        automaticallyImplyLeading: !widget.embedded,
-        title: Text(c.name),
-        actions: [
-          // Chats → opens the chat screen for this community.
-          IconButton(
-            icon: const Icon(LucideIcons.messageCircle),
-            tooltip: l10n.communityDetailChatsAction,
-            onPressed: _openChats,
-          ),
-          // Self-gated: only show Share invite when we have a usable link.
-          if (c.shareInviteUrl != null)
-            IconButton(
-              icon: const Icon(LucideIcons.share2),
-              tooltip: l10n.communityShareInvite,
-              onPressed: _shareInvite,
+      body: RefreshIndicator(
+        onRefresh: _reload,
+        child: CustomScrollView(
+          slivers: [
+            // Cover + logo tile, with the two actions the old app bar carried.
+            SliverToBoxAdapter(
+              child: CommunityCoverHero(
+                name: c.name,
+                avatarUrl: c.avatarUrl,
+                showBack: !widget.embedded,
+                actions: [
+                  CommunityHeroAction(
+                    icon: LucideIcons.messageCircle,
+                    tooltip: l10n.communityDetailChatsAction,
+                    onTap: _openChats,
+                  ),
+                  // Self-gated: only when we have a usable link.
+                  if (c.shareInviteUrl != null)
+                    CommunityHeroAction(
+                      icon: LucideIcons.share2,
+                      tooltip: l10n.communityShareInvite,
+                      onTap: _shareInvite,
+                    ),
+                ],
+              ),
             ),
-        ],
-        bottom: TabBar(
-          controller: _tabs,
-          isScrollable: true,
-          tabAlignment: TabAlignment.start,
-          // App bar is yellow; force dark labels/indicator so the SELECTED tab
-          // isn't yellow-on-yellow (brand rule: black text on yellow).
-          labelColor: context.colors.onSurface,
-          unselectedLabelColor: context.colors.onSurface.withValues(alpha: 0.6),
-          indicatorColor: context.colors.onSurface,
-          tabs: [
-            Tab(text: l10n.communityDetailTabRewards),
-            if (_showMembersTab) Tab(text: l10n.communityDetailTabMembers),
-            Tab(text: l10n.communityDetailTabEvents),
+            SliverToBoxAdapter(
+              child: CommunityIdentityBlock(
+                name: c.name,
+                description: c.description,
+                metaText: l10n.communityDetailTypeAndMembers(
+                  c.type.displayName,
+                  c.memberCount ?? 0,
+                ),
+              ),
+            ),
+
+            // Where the viewer stands in this community: a member sees points +
+            // tier, a manager gets into the roster.
+            if (!_canManage)
+              SliverToBoxAdapter(child: _StandingNavRow(communityId: c.id)),
+            if (_showMembers)
+              SliverToBoxAdapter(child: _RosterNavRow(community: c)),
+
+            // Events, grouped by day.
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  KolabingSpacing.md,
+                  KolabingSpacing.md,
+                  KolabingSpacing.md,
+                  0,
+                ),
+                child: _EventsSection(community: c, canManage: _canManage),
+              ),
+            ),
+
+            // Rewards / goals / badges — leaders manage them, members earn them.
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  KolabingSpacing.md,
+                  KolabingSpacing.lg,
+                  KolabingSpacing.md,
+                  0,
+                ),
+                child: _canManage
+                    ? _RewardsLeaderSection(communityId: c.id)
+                    : _RewardsMemberSection(communityId: c.id),
+              ),
+            ),
+            const SliverToBoxAdapter(
+              child: SizedBox(height: KolabingSpacing.xxl),
+            ),
           ],
         ),
-      ),
-      body: Column(
-        children: [
-          _Header(membership: widget.membership, onChats: _openChats),
-          Expanded(
-            child: TabBarView(
-              controller: _tabs,
-              children: [
-                _RewardsTab(communityId: c.id, canManage: _canManage),
-                if (_showMembersTab)
-                  _MembersTab(community: c, canManage: _canManage),
-                _EventsTab(communityId: c.id, canManage: _canManage),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
 }
 
 // -----------------------------------------------------------------------------
-// Header (logo + name + type + member count + Chats action)
+// Standing / roster rows
 // -----------------------------------------------------------------------------
 
-class _Header extends StatelessWidget {
-  const _Header({required this.membership, required this.onChats});
+/// A member's own standing: points and tier. Silent until the rewards hub has
+/// loaded (the endpoint is self-gated and may not be deployed).
+class _StandingNavRow extends ConsumerWidget {
+  const _StandingNavRow({required this.communityId});
 
-  final CommunityMembership membership;
-  final VoidCallback onChats;
+  final String communityId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final hub = ref
+        .watch(communityRewardsHubProvider(communityId))
+        .maybeWhen(data: (hub) => hub, orElse: () => null);
+    if (hub == null) return const SizedBox.shrink();
+    return CommunityNavRow(
+      icon: LucideIcons.star,
+      title: l10n.communityMembersPoints(hub.myPoints),
+      subtitle: hub.myTierName ?? l10n.communityRewardsNoTier,
+    );
+  }
+}
+
+/// Manager-only: into the tier-grouped roster, which used to be a tab.
+class _RosterNavRow extends StatelessWidget {
+  const _RosterNavRow({required this.community});
+
+  final Community community;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final c = membership.community;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        border: Border(bottom: BorderSide(color: context.colors.hairline)),
+    return CommunityNavRow(
+      icon: LucideIcons.users,
+      title: l10n.communityDetailTabMembers,
+      subtitle: l10n.attendeeCommunityProfileMemberCount(
+        community.memberCount ?? 0,
       ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundColor: context.colors.primary.withValues(alpha: 0.2),
-            backgroundImage: c.avatarUrl != null
-                ? NetworkImage(c.avatarUrl!)
-                : null,
-            child: c.avatarUrl == null
-                ? Icon(LucideIcons.flag, color: context.colors.onSurface)
-                : null,
-          ),
-          const SizedBox(width: KolabingSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  c.name,
-                  style: KolabingTextStyles.bodyLarge.copyWith(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  l10n.communityDetailTypeAndMembers(
-                    c.type.displayName,
-                    c.memberCount ?? 0,
-                  ),
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    color: context.colors.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          TextButton.icon(
-            onPressed: onChats,
-            icon: const Icon(LucideIcons.messageCircle, size: 16),
-            label: Text(l10n.communityDetailChatsAction),
-            style: TextButton.styleFrom(
-              foregroundColor: context.colors.onSurface,
-            ),
-          ),
-        ],
+      onTap: () => Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (_) => _MembersScreen(community: community),
+        ),
       ),
+    );
+  }
+}
+
+class _MembersScreen extends StatelessWidget {
+  const _MembersScreen({required this.community});
+
+  final Community community;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Scaffold(
+      backgroundColor: context.colors.background,
+      appBar: AppBar(title: Text(l10n.communityDetailTabMembers)),
+      body: _MembersTab(community: community, canManage: true),
     );
   }
 }
@@ -284,26 +283,12 @@ class _Header extends StatelessWidget {
 // Rewards tab
 // =============================================================================
 
-class _RewardsTab extends ConsumerWidget {
-  const _RewardsTab({required this.communityId, required this.canManage});
-
-  final String communityId;
-  final bool canManage;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return canManage
-        ? _RewardsLeaderView(communityId: communityId)
-        : _RewardsMemberView(communityId: communityId);
-  }
-}
-
 // -----------------------------------------------------------------------------
 // Rewards — MEMBER view
 // -----------------------------------------------------------------------------
 
-class _RewardsMemberView extends ConsumerWidget {
-  const _RewardsMemberView({required this.communityId});
+class _RewardsMemberSection extends ConsumerWidget {
+  const _RewardsMemberSection({required this.communityId});
 
   final String communityId;
 
@@ -312,120 +297,46 @@ class _RewardsMemberView extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final async = ref.watch(communityRewardsHubProvider(communityId));
     return async.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, __) => _comingSoon(context, l10n),
+      loading: () => const _InlineLoader(),
+      error: (_, _) => _comingSoon(context, l10n),
       data: (hub) {
         // Self-gated: null hub = endpoint not deployed yet.
         if (hub == null) return _comingSoon(context, l10n);
-        return RefreshIndicator(
-          onRefresh: () => ref
-              .read(communityRewardsHubProvider(communityId).notifier)
-              .reload(),
-          child: ListView(
-            padding: const EdgeInsets.all(KolabingSpacing.md),
-            children: [
-              _PointsCard(points: hub.myPoints, tierName: hub.myTierName),
-              const SizedBox(height: KolabingSpacing.lg),
-              _SectionLabel(l10n.communityRewardsGoalsTitle),
-              if (hub.goals.isEmpty)
-                _emptyLine(context, l10n.communityRewardsGoalsEmpty)
-              else
-                for (final g in hub.goals) _MemberGoalTile(goal: g),
-              const SizedBox(height: KolabingSpacing.lg),
-              _SectionLabel(l10n.communityRewardsBadgesTitle),
-              if (hub.badges.isEmpty)
-                _emptyLine(context, l10n.communityRewardsBadgesEmpty)
-              else
-                _BadgeGrid(badges: hub.badges),
-              const SizedBox(height: KolabingSpacing.lg),
-              _SectionLabel(l10n.communityRewardsRewardsTitle),
-              if (hub.rewards.isEmpty)
-                _emptyLine(context, l10n.communityRewardsRewardsEmpty)
-              else
-                for (final r in hub.rewards)
-                  _MemberRewardTile(communityId: communityId, reward: r),
-            ],
-          ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CommunitySectionLabel(l10n.communityRewardsGoalsTitle),
+            if (hub.goals.isEmpty)
+              _emptyLine(context, l10n.communityRewardsGoalsEmpty)
+            else
+              for (final g in hub.goals) _MemberGoalTile(goal: g),
+            const SizedBox(height: KolabingSpacing.lg),
+            CommunitySectionLabel(l10n.communityRewardsBadgesTitle),
+            if (hub.badges.isEmpty)
+              _emptyLine(context, l10n.communityRewardsBadgesEmpty)
+            else
+              _BadgeGrid(badges: hub.badges),
+            const SizedBox(height: KolabingSpacing.lg),
+            CommunitySectionLabel(l10n.communityRewardsRewardsTitle),
+            if (hub.rewards.isEmpty)
+              _emptyLine(context, l10n.communityRewardsRewardsEmpty)
+            else
+              for (final r in hub.rewards)
+                _MemberRewardTile(communityId: communityId, reward: r),
+          ],
         );
       },
     );
   }
 
-  Widget _comingSoon(BuildContext context, AppLocalizations l10n) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(KolabingSpacing.xl),
-      child: EmptyStateCard(
-        icon: LucideIcons.gift,
-        title: l10n.communityRewardsComingSoonTitle,
-        message: l10n.communityRewardsComingSoonBody,
-      ),
+  Widget _comingSoon(BuildContext context, AppLocalizations l10n) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+    child: EmptyStateCard(
+      icon: LucideIcons.gift,
+      title: l10n.communityRewardsComingSoonTitle,
+      message: l10n.communityRewardsComingSoonBody,
     ),
   );
-}
-
-class _PointsCard extends StatelessWidget {
-  const _PointsCard({required this.points, this.tierName});
-
-  final int points;
-  final String? tierName;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return Container(
-      padding: const EdgeInsets.all(KolabingSpacing.lg),
-      decoration: BoxDecoration(
-        color: context.colors.primary.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(KolabingRadius.lg),
-        border: Border.all(
-          color: context.colors.primary.withValues(alpha: 0.4),
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(LucideIcons.star, color: context.colors.onSurface),
-          const SizedBox(width: KolabingSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.communityRewardsPointsLabel,
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    color: context.colors.onSurfaceVariant,
-                  ),
-                ),
-                Text(
-                  l10n.communityMembersPoints(points),
-                  style: KolabingTextStyles.bodyLarge.copyWith(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                l10n.communityRewardsTierLabel,
-                style: KolabingTextStyles.bodySmall.copyWith(
-                  color: context.colors.onSurfaceVariant,
-                ),
-              ),
-              Text(
-                tierName ?? l10n.communityRewardsNoTier,
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _MemberGoalTile extends StatelessWidget {
@@ -706,8 +617,8 @@ class _MemberRewardTileState extends ConsumerState<_MemberRewardTile> {
 // Rewards — LEADER view
 // -----------------------------------------------------------------------------
 
-class _RewardsLeaderView extends ConsumerWidget {
-  const _RewardsLeaderView({required this.communityId});
+class _RewardsLeaderSection extends ConsumerWidget {
+  const _RewardsLeaderSection({required this.communityId});
 
   final String communityId;
 
@@ -715,93 +626,86 @@ class _RewardsLeaderView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(communityRewardsAdminProvider(communityId));
-    return RefreshIndicator(
-      onRefresh: () => ref
-          .read(communityRewardsAdminProvider(communityId).notifier)
-          .reloadAll(),
-      child: ListView(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: _AddButton(
-                  icon: LucideIcons.target,
-                  label: l10n.communityRewardsAddGoal,
-                  onTap: () =>
-                      showGoalEditor(context, communityId: communityId),
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _AddButton(
+                icon: LucideIcons.target,
+                label: l10n.communityRewardsAddGoal,
+                onTap: () => showGoalEditor(context, communityId: communityId),
               ),
-              const SizedBox(width: KolabingSpacing.sm),
-              Expanded(
-                child: _AddButton(
-                  icon: LucideIcons.gift,
-                  label: l10n.communityRewardsAddReward,
-                  onTap: () =>
-                      showRewardEditor(context, communityId: communityId),
-                ),
+            ),
+            const SizedBox(width: KolabingSpacing.sm),
+            Expanded(
+              child: _AddButton(
+                icon: LucideIcons.gift,
+                label: l10n.communityRewardsAddReward,
+                onTap: () =>
+                    showRewardEditor(context, communityId: communityId),
               ),
-              const SizedBox(width: KolabingSpacing.sm),
-              Expanded(
-                child: _AddButton(
-                  icon: LucideIcons.award,
-                  label: l10n.communityRewardsAddBadge,
-                  onTap: () =>
-                      showBadgeEditor(context, communityId: communityId),
-                ),
+            ),
+            const SizedBox(width: KolabingSpacing.sm),
+            Expanded(
+              child: _AddButton(
+                icon: LucideIcons.award,
+                label: l10n.communityRewardsAddBadge,
+                onTap: () => showBadgeEditor(context, communityId: communityId),
               ),
-            ],
-          ),
-          const SizedBox(height: KolabingSpacing.lg),
+            ),
+          ],
+        ),
+        const SizedBox(height: KolabingSpacing.lg),
 
-          // Goals
-          _SectionLabel(l10n.communityRewardsGoalsTitle),
-          state.goals.when(
-            loading: () => const _InlineLoader(),
-            error: (e, _) => _emptyLine(context, e.toString()),
-            data: (goals) => goals.isEmpty
-                ? _emptyLine(context, l10n.communityRewardsGoalsEmpty)
-                : Column(
-                    children: [
-                      for (final g in goals)
-                        _LeaderGoalRow(communityId: communityId, goal: g),
-                    ],
-                  ),
-          ),
-          const SizedBox(height: KolabingSpacing.lg),
+        // Goals
+        CommunitySectionLabel(l10n.communityRewardsGoalsTitle),
+        state.goals.when(
+          loading: () => const _InlineLoader(),
+          error: (e, _) => _emptyLine(context, e.toString()),
+          data: (goals) => goals.isEmpty
+              ? _emptyLine(context, l10n.communityRewardsGoalsEmpty)
+              : Column(
+                  children: [
+                    for (final g in goals)
+                      _LeaderGoalRow(communityId: communityId, goal: g),
+                  ],
+                ),
+        ),
+        const SizedBox(height: KolabingSpacing.lg),
 
-          // Rewards
-          _SectionLabel(l10n.communityRewardsRewardsTitle),
-          state.rewards.when(
-            loading: () => const _InlineLoader(),
-            error: (e, _) => _emptyLine(context, e.toString()),
-            data: (rewards) => rewards.isEmpty
-                ? _emptyLine(context, l10n.communityRewardsRewardsEmpty)
-                : Column(
-                    children: [
-                      for (final r in rewards)
-                        _LeaderRewardRow(communityId: communityId, reward: r),
-                    ],
-                  ),
-          ),
-          const SizedBox(height: KolabingSpacing.lg),
+        // Rewards
+        CommunitySectionLabel(l10n.communityRewardsRewardsTitle),
+        state.rewards.when(
+          loading: () => const _InlineLoader(),
+          error: (e, _) => _emptyLine(context, e.toString()),
+          data: (rewards) => rewards.isEmpty
+              ? _emptyLine(context, l10n.communityRewardsRewardsEmpty)
+              : Column(
+                  children: [
+                    for (final r in rewards)
+                      _LeaderRewardRow(communityId: communityId, reward: r),
+                  ],
+                ),
+        ),
+        const SizedBox(height: KolabingSpacing.lg),
 
-          // Badges
-          _SectionLabel(l10n.communityRewardsBadgesTitle),
-          state.badges.when(
-            loading: () => const _InlineLoader(),
-            error: (e, _) => _emptyLine(context, e.toString()),
-            data: (badges) => badges.isEmpty
-                ? _emptyLine(context, l10n.communityRewardsBadgesEmpty)
-                : Column(
-                    children: [
-                      for (final b in badges)
-                        _LeaderBadgeRow(communityId: communityId, badge: b),
-                    ],
-                  ),
-          ),
-        ],
-      ),
+        // Badges
+        CommunitySectionLabel(l10n.communityRewardsBadgesTitle),
+        state.badges.when(
+          loading: () => const _InlineLoader(),
+          error: (e, _) => _emptyLine(context, e.toString()),
+          data: (badges) => badges.isEmpty
+              ? _emptyLine(context, l10n.communityRewardsBadgesEmpty)
+              : Column(
+                  children: [
+                    for (final b in badges)
+                      _LeaderBadgeRow(communityId: communityId, badge: b),
+                  ],
+                ),
+        ),
+      ],
     );
   }
 }
@@ -1314,10 +1218,10 @@ class _MemberRow extends StatelessWidget {
 // Events tab — cards with profile picture + visibility badge + view toggle
 // =============================================================================
 
-class _EventsTab extends ConsumerWidget {
-  const _EventsTab({required this.communityId, required this.canManage});
+class _EventsSection extends ConsumerWidget {
+  const _EventsSection({required this.community, required this.canManage});
 
-  final String communityId;
+  final Community community;
 
   /// Whether the viewer manages this community. Decides whether tapping an
   /// event opens the hub in leader mode — without it a leader reaching their
@@ -1328,176 +1232,53 @@ class _EventsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final async = ref.watch(communityUpcomingEventsProvider(communityId));
-    // No my-view/attendee-view toggle: a leader can access every event, so an
-    // "attendee preview" filters nothing and renders identically. Each card
-    // carries an always-on visibility badge (Public/Members/Tier), which is the
-    // information that preview was meant to convey.
-    Future<void> reload() => ref
-        .read(communityUpcomingEventsProvider(communityId).notifier)
-        .reload();
+    final async = ref.watch(communityUpcomingEventsProvider(community.id));
     return async.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, __) => _TabMessage(
-        icon: LucideIcons.calendar,
-        title: l10n.communityDetailNoEventsTitle,
-        subtitle: l10n.communityDetailNoEventsBody,
-      ),
+      loading: () => const _InlineLoader(),
+      // A backend without the events filter (or none) → friendly empty, never
+      // a scary error.
+      error: (_, _) => const _NoEvents(),
       data: (events) {
-        if (events.isEmpty) {
-          return RefreshIndicator(
-            onRefresh: reload,
-            child: ListView(
-              children: [
-                const SizedBox(height: 120),
-                _TabMessage(
-                  icon: LucideIcons.calendar,
-                  title: l10n.communityDetailNoEventsTitle,
-                  subtitle: l10n.communityDetailNoEventsBody,
-                ),
-              ],
+        if (events.isEmpty) return const _NoEvents();
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Luma's category chip; the count is what is actually coming up.
+            CommunityTagChip(
+              label: community.type.displayName,
+              count: events.length,
             ),
-          );
-        }
-        return RefreshIndicator(
-          onRefresh: reload,
-          child: ListView.builder(
-            padding: const EdgeInsets.all(KolabingSpacing.md),
-            itemCount: events.length,
-            itemBuilder: (_, i) =>
-                _EventCard(event: events[i], canManage: canManage),
-          ),
+            CommunityEventTimeline(
+              events: events,
+              onOpen: (event) => Navigator.of(context).push<void>(
+                MaterialPageRoute<void>(
+                  builder: (_) =>
+                      EventHubScreen(event: event, isLeader: canManage),
+                ),
+              ),
+              onLocked: (_) => ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(l10n.communityDetailEventLockedSnack)),
+              ),
+            ),
+          ],
         );
       },
     );
   }
 }
 
-class _EventCard extends StatelessWidget {
-  const _EventCard({required this.event, required this.canManage});
-
-  final Event event;
-
-  final bool canManage;
+class _NoEvents extends StatelessWidget {
+  const _NoEvents();
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final locked = !event.canAccess;
-    final muted = context.colors.onSurfaceVariant;
-    final pictureUrl = event.coverPhotoUrl ?? event.partner.profilePhoto;
     return Padding(
-      padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-      child: CompactListCard(
-        onTap: locked
-            ? () => ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.communityDetailEventLockedSnack)),
-              )
-            : () => Navigator.of(context).push<void>(
-                MaterialPageRoute<void>(
-                  builder: (_) =>
-                      EventHubScreen(event: event, isLeader: canManage),
-                ),
-              ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(KolabingRadius.md),
-              child: SizedBox(
-                width: 56,
-                height: 56,
-                child: pictureUrl != null
-                    ? Image.network(
-                        pictureUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) =>
-                            _eventPlaceholder(context, locked),
-                      )
-                    : _eventPlaceholder(context, locked),
-              ),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    event.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: KolabingTextStyles.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: locked ? muted : context.colors.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    locked
-                        ? l10n.communityDetailEventLockedSubtitle
-                        : event.formattedDate,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: muted),
-                  ),
-                  const SizedBox(height: KolabingSpacing.xs),
-                  _VisibilityBadge(visibility: event.visibility),
-                ],
-              ),
-            ),
-            Icon(
-              locked ? LucideIcons.lock : LucideIcons.chevronRight,
-              size: 18,
-              color: locked ? muted : null,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _eventPlaceholder(BuildContext context, bool locked) => Container(
-    color: context.colors.surfaceContainerHigh,
-    child: Icon(
-      locked ? LucideIcons.lock : LucideIcons.calendar,
-      size: 20,
-      color: context.colors.onSurfaceVariant,
-    ),
-  );
-}
-
-class _VisibilityBadge extends StatelessWidget {
-  const _VisibilityBadge({this.visibility});
-
-  final String? visibility;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    // Null visibility = legacy events default to "members" per the backend.
-    final value = visibility ?? 'members';
-    final (label, icon) = switch (value) {
-      'public' => (l10n.communityEventVisibilityPublic, LucideIcons.globe),
-      'tier' => (l10n.communityEventVisibilityTier, LucideIcons.layers),
-      _ => (l10n.communityEventVisibilityMembers, LucideIcons.users),
-    };
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: context.colors.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: context.colors.onSurfaceVariant),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: KolabingTextStyles.bodySmall.copyWith(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: context.colors.onSurfaceVariant,
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+      child: EmptyStateCard(
+        icon: LucideIcons.calendar,
+        title: l10n.communityDetailNoEventsTitle,
+        message: l10n.communityDetailNoEventsBody,
       ),
     );
   }
@@ -1506,24 +1287,6 @@ class _VisibilityBadge extends StatelessWidget {
 // =============================================================================
 // Small shared widgets
 // =============================================================================
-
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.text);
-  final String text;
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-    child: Text(
-      text.toUpperCase(),
-      style: KolabingTextStyles.bodySmall.copyWith(
-        fontSize: 12,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 1.1,
-        color: context.colors.onSurfaceVariant,
-      ),
-    ),
-  );
-}
 
 Widget _emptyLine(BuildContext context, String text) => Padding(
   padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),

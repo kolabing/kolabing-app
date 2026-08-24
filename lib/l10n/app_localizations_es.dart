@@ -6896,6 +6896,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get communityEventVisibilityTier => 'Nivel';
 
   @override
+  String get communityEventBadgeGoing => 'Voy';
+
+  @override
+  String get communityEventBadgeWaitlisted => 'En lista de espera';
+
+  @override
   String get businessGoalTitle => '¿Cuál es tu objetivo?';
 
   @override

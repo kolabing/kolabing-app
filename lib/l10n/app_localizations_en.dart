@@ -6825,6 +6825,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityEventVisibilityTier => 'Tier';
 
   @override
+  String get communityEventBadgeGoing => 'Going';
+
+  @override
+  String get communityEventBadgeWaitlisted => 'Waitlisted';
+
+  @override
   String get businessGoalTitle => 'What\'s your goal?';
 
   @override

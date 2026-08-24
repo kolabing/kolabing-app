@@ -8602,6 +8602,14 @@
   "@communityEventVisibilityTier": {
     "description": "Event visibility badge: tier-gated."
   },
+  "communityEventBadgeGoing": "Going",
+  "@communityEventBadgeGoing": {
+    "description": "Event row badge: the viewer has a confirmed sign-up."
+  },
+  "communityEventBadgeWaitlisted": "Waitlisted",
+  "@communityEventBadgeWaitlisted": {
+    "description": "Event row badge: the viewer is on the waitlist."
+  },
   "businessGoalTitle": "What's your goal?",
   "@businessGoalTitle": {
     "description": "Business onboarding goal step: title"
