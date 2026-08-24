@@ -3083,10 +3083,6 @@
   "@attendeeMyQrUnavailable": {
     "description": "Attendee: shown when the user's profile id/handle is missing so no QR can be rendered"
   },
-  "attendeeHomeWelcomeBack": "Welcome back",
-  "@attendeeHomeWelcomeBack": {
-    "description": "Attendee home greeting above the user name"
-  },
   "attendeeHomeNearbyEvents": "NEARBY EVENTS",
   "@attendeeHomeNearbyEvents": {
     "description": "Attendee home section header for nearby events list"
@@ -3129,18 +3125,6 @@
   "attendeeHomeLoadMore": "Load More",
   "@attendeeHomeLoadMore": {
     "description": "Button to load more events in the feed"
-  },
-  "attendeeHomeStatPoints": "Points",
-  "@attendeeHomeStatPoints": {
-    "description": "Attendee home stat card label: points"
-  },
-  "attendeeHomeStatChallenges": "Challenges",
-  "@attendeeHomeStatChallenges": {
-    "description": "Attendee home stat card label: challenges"
-  },
-  "attendeeHomeStatEvents": "Events",
-  "@attendeeHomeStatEvents": {
-    "description": "Attendee home stat card label: events"
   },
   "attendeeHomeLocationRequired": "Location Required",
   "@attendeeHomeLocationRequired": {
@@ -8127,10 +8111,6 @@
   "@rosterNoAccountForIdentifier": {
     "description": "Shown when the invited identifier matches no account."
   },
-  "attendeeHomeEventsTitle": "EVENTS",
-  "@attendeeHomeEventsTitle": {
-    "description": "Attendee home events section header."
-  },
   "attendeeHomeChooseCity": "Choose city",
   "@attendeeHomeChooseCity": {
     "description": "City picker button label when no city is selected."
@@ -8218,14 +8198,6 @@
   "attendeeHomeFollowMore": "Follow more communities",
   "@attendeeHomeFollowMore": {
     "description": "Button in the Following feed's empty state, opens community discovery."
-  },
-  "eventPartnerBusiness": "Business",
-  "@eventPartnerBusiness": {
-    "description": "Event card badge for a business-hosted event."
-  },
-  "eventPartnerCommunity": "Community",
-  "@eventPartnerCommunity": {
-    "description": "Event card badge for a community-hosted event."
   },
   "eventDateToday": "Today",
   "@eventDateToday": {
@@ -9601,5 +9573,23 @@
   "challengeTogetherRevealBody": "You and {name} both earned it.",
   "@challengeTogetherRevealBody": {"description": "Body on the shared reveal, naming the other person.", "placeholders": {"name": {"type": "String", "example": "Ana"}}},
   "challengeTogetherPrompt": "You two: {challenge}",
-  "@challengeTogetherPrompt": {"description": "Names the challenge the pair agreed on.", "placeholders": {"challenge": {"type": "String", "example": "Take a selfie together"}}}
+  "@challengeTogetherPrompt": {"description": "Names the challenge the pair agreed on.", "placeholders": {"challenge": {"type": "String", "example": "Take a selfie together"}}},
+  "eventWhenDayTime": "{day}, {time}",
+  "@eventWhenDayTime": {"description": "Event row when-line joining a day label and a clock time.", "placeholders": {"day": {"type": "String", "example": "Today"}, "time": {"type": "String", "example": "19:30"}}},
+  "attendeeFeedYourEvents": "Your events",
+  "@attendeeFeedYourEvents": {"description": "Attendee feed section heading above the events the viewer signed up for."},
+  "attendeeFeedViewAll": "View all",
+  "@attendeeFeedViewAll": {"description": "Attendee feed section action opening the full list."},
+  "attendeeFeedFollowing": "Communities you follow",
+  "@attendeeFeedFollowing": {"description": "Attendee feed section heading above the followed-community logo tiles."},
+  "attendeeFeedWhatsOn": "What's on",
+  "@attendeeFeedWhatsOn": {"description": "Attendee feed section heading above the city discovery list."},
+  "attendeeFeedPointsStrip": "{points} points · {events, plural, =1{1 event} other{{events} events}}",
+  "@attendeeFeedPointsStrip": {"description": "Attendee feed points line: total points and events attended.", "placeholders": {"points": {"type": "String", "example": "1,240"}, "events": {"type": "int", "example": "8"}}},
+  "myEventsTitle": "My events",
+  "@myEventsTitle": {"description": "Title of the screen listing every upcoming event the attendee signed up for."},
+  "myEventsEmpty": "Nothing coming up",
+  "@myEventsEmpty": {"description": "Empty state title on the My events screen."},
+  "myEventsEmptyHint": "Events you sign up for will show up here.",
+  "@myEventsEmptyHint": {"description": "Empty state body on the My events screen."}
 }

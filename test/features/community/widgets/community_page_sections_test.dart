@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kolabing_app/config/theme/theme.dart';
 import 'package:kolabing_app/features/community/widgets/community_page_sections.dart';
+import 'package:kolabing_app/features/event/widgets/event_timeline.dart';
 import 'package:kolabing_app/features/event/models/event.dart';
 import 'package:kolabing_app/features/profile/providers/gallery_provider.dart';
 import 'package:kolabing_app/l10n/app_localizations.dart';
@@ -133,7 +134,7 @@ void main() {
       tester,
       Padding(
         padding: const EdgeInsets.all(16),
-        child: CommunityEventTimeline(
+        child: EventTimeline(
           events: events,
           onOpen: (event) => opened.add(event.id),
           onLocked: (event) => refused.add(event.id),
@@ -266,7 +267,7 @@ void main() {
         tester,
         Padding(
           padding: const EdgeInsets.all(16),
-          child: CommunityEventTimeline(
+          child: EventTimeline(
             events: [
               _event(
                 id: 'full',
