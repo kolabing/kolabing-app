@@ -62,6 +62,11 @@ class Event {
   /// the relation. Falls back to [EventPartner.name].
   final String? communityName;
 
+  /// The host community's raw type slug, for the dynamic taxonomy label
+  /// (`communityTypeLabelProvider`). Never branch logic on it — it is a display
+  /// key, and unknown slugs are legitimate.
+  final String? communityType;
+
   /// The tiers allowed to sign up, or null when every member may. Only its
   /// emptiness is read: the page says "tier-gated", never which tier.
   final List<dynamic>? tierGate;
@@ -94,6 +99,7 @@ class Event {
     this.address,
     this.cityName,
     this.communityName,
+    this.communityType,
     this.tierGate,
   });
 
@@ -163,6 +169,7 @@ class Event {
       address: json['address'] as String?,
       cityName: json['city_name'] as String?,
       communityName: json['community_name'] as String?,
+      communityType: json['community_type'] as String?,
       tierGate: json['tier_gate'] as List<dynamic>?,
       photos:
           (json['photos'] as List<dynamic>?)
@@ -221,6 +228,7 @@ class Event {
     String? address,
     String? cityName,
     String? communityName,
+    String? communityType,
     List<dynamic>? tierGate,
   }) => Event(
     id: id ?? this.id,
@@ -250,6 +258,7 @@ class Event {
     address: address ?? this.address,
     cityName: cityName ?? this.cityName,
     communityName: communityName ?? this.communityName,
+    communityType: communityType ?? this.communityType,
     tierGate: tierGate ?? this.tierGate,
   );
 

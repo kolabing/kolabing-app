@@ -20,6 +20,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
 import '../../chat/services/chat_service.dart';
+import '../../community/providers/community_providers.dart';
 import '../../community/widgets/membership_prompt.dart';
 import '../../gamification/providers/active_event_session_provider.dart';
 import '../../gamification/providers/checkin_provider.dart';
@@ -921,11 +922,12 @@ class _HostCard extends ConsumerWidget {
 
     return EventHostCard(
       hostName: event.hostName,
-      typeLabel: event.partner.type == PartnerType.business
-          ? l10n.eventDetailKolabWithLabel
-          : (event.communityName != null
-                ? l10n.communityEventVisibilityMembers
-                : l10n.eventDetailKolabWithLabel),
+      // The community's own type ("Running club"), resolved through the same
+      // dynamic taxonomy the community pages use. Falls back to the generic
+      // label while it loads or for a business host, which has no such slug.
+      typeLabel:
+          ref.watch(communityTypeLabelProvider(event.communityType)) ??
+          l10n.eventDetailKolabWithLabel,
       avatarUrl: profile?.avatarUrl ?? event.partner.profilePhoto,
       about: profile?.about,
       instagram: profile?.instagram,
