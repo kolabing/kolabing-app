@@ -7,12 +7,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kolabing_app/config/theme/theme.dart';
 import 'package:kolabing_app/features/community/widgets/community_page_sections.dart';
 import 'package:kolabing_app/features/event/widgets/event_timeline.dart';
 import 'package:kolabing_app/features/event/models/event.dart';
 import 'package:kolabing_app/features/profile/providers/gallery_provider.dart';
 import 'package:kolabing_app/l10n/app_localizations.dart';
+import 'package:kolabing_app/widgets/hero_circle_action.dart';
 
 const _longTitle =
     '10% honest greens discount with every Sunday run, members only';
@@ -330,4 +332,87 @@ void main() {
       expect(find.byType(Image), findsNWidgets(2));
     },
   );
+
+  testWidgets('the hero back button actually goes back', (tester) async {
+    // It did not. `Navigator.maybePop()` on a page entered cold from a deep
+    // link has nothing to pop, so the button was silently dead.
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: KolabingTheme.lightTheme,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: ElevatedButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const Scaffold(
+                      body: CommunityCoverHero(name: 'Real Run Club'),
+                    ),
+                  ),
+                ),
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    expect(find.byType(CommunityCoverHero), findsOneWidget);
+
+    await tester.tap(find.byType(HeroBackButton));
+    await tester.pumpAndSettle();
+    expect(find.byType(CommunityCoverHero), findsNothing);
+    expect(find.text('open'), findsOneWidget);
+  });
+
+  testWidgets('with nothing behind it and no router, back is inert not fatal', (
+    tester,
+  ) async {
+    await _pump(tester, const CommunityCoverHero(name: 'Real Run Club'));
+    await tester.tap(find.byType(HeroBackButton));
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('deep-linked with nothing behind it, back opens the app', (
+    tester,
+  ) async {
+    // The reported bug, exactly: arriving cold on a community page (a shared
+    // link, a notification) left the back button with an empty navigator, and
+    // `maybePop()` did nothing at all. It should let the visitor in.
+    final router = GoRouter(
+      initialLocation: '/community/deep',
+      routes: [
+        GoRoute(
+          path: '/',
+          builder: (_, _) => const Scaffold(body: Text('the app')),
+        ),
+        GoRoute(
+          path: '/community/deep',
+          builder: (_, _) =>
+              const Scaffold(body: CommunityCoverHero(name: 'Real Run Club')),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+        theme: KolabingTheme.lightTheme,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        routerConfig: router,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(CommunityCoverHero), findsOneWidget);
+
+    await tester.tap(find.byType(HeroBackButton));
+    await tester.pumpAndSettle();
+    expect(find.text('the app'), findsOneWidget);
+  });
 }
