@@ -6612,10 +6612,6 @@
       }
     }
   },
-  "eventPageWebsite": "Website",
-  "@eventPageWebsite": {
-    "description": "Event page: the host’s website link"
-  },
   "eventTicketSheetTitle": "Your ticket",
   "@eventTicketSheetTitle": {
     "description": "Ticket sheet: title"
@@ -6644,6 +6640,39 @@
   "eventTicketNoQr": "Show this code at the door.",
   "@eventTicketNoQr": {
     "description": "Ticket sheet: fallback when no QR came back"
+  },
+  "commonWebsite": "Website",
+  "@commonWebsite": {
+    "description": "Generic label for a website link"
+  },
+  "communityPagePhotosTitle": "Photos",
+  "@communityPagePhotosTitle": {
+    "description": "Community page: photo strip section label"
+  },
+  "communityPageFilterUpcoming": "Upcoming",
+  "@communityPageFilterUpcoming": {
+    "description": "Community page: filter chip for upcoming events"
+  },
+  "communityPageFilterPast": "Past",
+  "@communityPageFilterPast": {
+    "description": "Community page: filter chip for past events"
+  },
+  "eventCapacityFull": "Full",
+  "@eventCapacityFull": {
+    "description": "Event badge: no spots left"
+  },
+  "eventCapacityNearly": "Near capacity",
+  "@eventCapacityNearly": {
+    "description": "Event badge: few spots left"
+  },
+  "eventCapacityLeft": "{count} left",
+  "@eventCapacityLeft": {
+    "description": "Event badge: spots remaining",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "eventHubUnlimited": "Unlimited",
   "@eventHubUnlimited": {

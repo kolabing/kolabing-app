@@ -15,6 +15,7 @@ import 'package:kolabing_app/features/event/models/event_ticket.dart';
 import 'package:kolabing_app/features/event/widgets/event_page_sections.dart';
 import 'package:kolabing_app/features/event/widgets/my_ticket_sheet.dart';
 import 'package:kolabing_app/l10n/app_localizations.dart';
+import 'package:kolabing_app/widgets/social_links_row.dart';
 
 const _qrSvg =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
@@ -210,7 +211,7 @@ void main() {
     ) async {
       await _pump(
         tester,
-        const EventSocialLinks(instagram: 'realrunclub', website: 'run.club'),
+        const SocialLinksRow(instagram: 'realrunclub', website: 'run.club'),
       );
       expect(find.text('@realrunclub'), findsOneWidget);
       expect(find.text('Website'), findsOneWidget);
@@ -219,7 +220,7 @@ void main() {
     });
 
     testWidgets('render nothing at all when the host has none', (tester) async {
-      await _pump(tester, const EventSocialLinks());
+      await _pump(tester, const SocialLinksRow());
       expect(find.byType(InkWell), findsNothing);
     });
   });

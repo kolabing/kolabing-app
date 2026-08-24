@@ -10,13 +10,13 @@ library;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/color_tokens.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/social_links_row.dart';
 import '../models/event.dart';
 
 // =============================================================================
@@ -422,7 +422,7 @@ class EventHostCard extends StatelessWidget {
               ),
             ),
           ],
-          EventSocialLinks(
+          SocialLinksRow(
             instagram: instagram,
             tiktok: tiktok,
             website: website,
@@ -479,107 +479,6 @@ class _Avatar extends StatelessWidget {
       style: KolabingTextStyles.bodyLarge.copyWith(
         fontWeight: FontWeight.w800,
         color: context.colors.onSurface,
-      ),
-    ),
-  );
-}
-
-/// Instagram / TikTok / website, in the same handle-to-URL shape the profile
-/// screens already use. Renders nothing at all when the host has no handles.
-class EventSocialLinks extends StatelessWidget {
-  const EventSocialLinks({
-    super.key,
-    this.instagram,
-    this.tiktok,
-    this.website,
-  });
-
-  final String? instagram;
-  final String? tiktok;
-  final String? website;
-
-  static bool _has(String? v) => v != null && v.trim().isNotEmpty;
-
-  bool get hasAny => _has(instagram) || _has(tiktok) || _has(website);
-
-  @override
-  Widget build(BuildContext context) {
-    if (!hasAny) return const SizedBox.shrink();
-    final l10n = AppLocalizations.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(top: KolabingSpacing.xs),
-      child: Wrap(
-        spacing: KolabingSpacing.xs,
-        runSpacing: KolabingSpacing.xs,
-        children: [
-          if (_has(instagram))
-            _SocialChip(
-              icon: LucideIcons.instagram,
-              label: '@${instagram!.trim()}',
-              url: 'https://instagram.com/${instagram!.trim()}',
-            ),
-          if (_has(tiktok))
-            _SocialChip(
-              icon: LucideIcons.music,
-              label: '@${tiktok!.trim()}',
-              url: 'https://tiktok.com/@${tiktok!.trim()}',
-            ),
-          if (_has(website))
-            _SocialChip(
-              icon: LucideIcons.globe,
-              label: l10n.eventPageWebsite,
-              url: website!.trim(),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SocialChip extends StatelessWidget {
-  const _SocialChip({
-    required this.icon,
-    required this.label,
-    required this.url,
-  });
-
-  final IconData icon;
-  final String label;
-  final String url;
-
-  Future<void> _open() async {
-    final uri = Uri.tryParse(url.startsWith('http') ? url : 'https://$url');
-    if (uri == null) return;
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-
-  @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: _open,
-    borderRadius: BorderRadius.circular(KolabingRadius.round),
-    child: Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.xs,
-        vertical: 5,
-      ),
-      decoration: BoxDecoration(
-        color: context.colors.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(KolabingRadius.round),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 13, color: context.colors.onSurface),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: KolabingTextStyles.bodySmall.copyWith(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: context.colors.onSurface,
-            ),
-          ),
-        ],
       ),
     ),
   );

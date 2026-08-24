@@ -13,6 +13,9 @@ import '../models/community_membership.dart';
 import '../providers/community_follow_provider.dart';
 import '../providers/community_providers.dart';
 import '../widgets/community_application_sheet.dart';
+import '../../event/models/event.dart';
+import '../../profile/providers/public_profile_provider.dart';
+import '../providers/community_media_provider.dart';
 import '../widgets/community_page_sections.dart';
 import 'community_detail_screen.dart';
 
@@ -123,9 +126,17 @@ class AttendeeCommunityProfileScreen extends ConsumerWidget {
           slivers: [
             // Cover band + logo tile.
             SliverToBoxAdapter(
-              child: CommunityCoverHero(
-                name: community.name,
-                avatarUrl: community.avatarUrl,
+              child: Consumer(
+                builder: (context, ref, _) => CommunityCoverHero(
+                  name: community.name,
+                  avatarUrl: community.avatarUrl,
+                  coverUrl: ref.watch(
+                    communityCoverPhotoProvider((
+                      communityId: community.id,
+                      ownerProfileId: community.ownerProfileId,
+                    )),
+                  ),
+                ),
               ),
             ),
 
@@ -136,6 +147,28 @@ class AttendeeCommunityProfileScreen extends ConsumerWidget {
             // step into the community, a pending request says so. Everyone else
             // is asked by the bottom CTA instead, so no row.
             SliverToBoxAdapter(child: _MembershipRow(community: community)),
+
+            // Its photographs — curated, or drawn from its own events.
+            SliverToBoxAdapter(
+              child: Consumer(
+                builder: (context, ref, _) => Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    KolabingSpacing.md,
+                    KolabingSpacing.md,
+                    0,
+                    0,
+                  ),
+                  child: CommunityPhotoStrip(
+                    photos: ref.watch(
+                      communityPhotosProvider((
+                        communityId: community.id,
+                        ownerProfileId: community.ownerProfileId,
+                      )),
+                    ),
+                  ),
+                ),
+              ),
+            ),
 
             // Everything coming up, grouped by day.
             SliverToBoxAdapter(
@@ -193,13 +226,32 @@ class _Identity extends ConsumerWidget {
         ref.watch(communityTypeLabelProvider(community.typeSlug)) ??
         l10n.attendeeCommunityProfileTypeFallback;
 
+    // The city and the handles live on the owner's public profile — the only
+    // place `community_profiles` exposes them.
+    final owner = community.ownerProfileId;
+    final profile = owner.isEmpty
+        ? null
+        : ref
+              .watch(publicProfileProvider(owner))
+              .maybeWhen(data: (p) => p, orElse: () => null);
+    final typeAndMembers = l10n.communityDetailTypeAndMembers(
+      typeLabel,
+      community.memberCount ?? 0,
+    );
+    final city = profile?.cityName;
+
     return CommunityIdentityBlock(
       name: community.name,
       description: community.description,
-      metaText: l10n.communityDetailTypeAndMembers(
-        typeLabel,
-        community.memberCount ?? 0,
-      ),
+      metaText: city == null || city.isEmpty
+          ? typeAndMembers
+          : '$city · $typeAndMembers',
+      metaIcon: city == null || city.isEmpty
+          ? LucideIcons.users
+          : LucideIcons.mapPin,
+      instagram: profile?.instagram,
+      tiktok: profile?.tiktok,
+      website: profile?.website,
     );
   }
 }
@@ -265,53 +317,86 @@ class _BackButton extends StatelessWidget {
 // Upcoming events — cards (tap → event detail) + "See all →"
 // -----------------------------------------------------------------------------
 
-class _UpcomingEventsSection extends ConsumerWidget {
+class _UpcomingEventsSection extends ConsumerStatefulWidget {
   const _UpcomingEventsSection({required this.community});
 
   final Community community;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_UpcomingEventsSection> createState() =>
+      _UpcomingEventsSectionState();
+}
+
+class _UpcomingEventsSectionState
+    extends ConsumerState<_UpcomingEventsSection> {
+  CommunityEventFilter _filter = CommunityEventFilter.upcoming;
+
+  static bool _isPublic(Event e) => (e.visibility ?? 'members') == 'public';
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final async = ref.watch(communityUpcomingEventsProvider(community.id));
-    final typeLabel = ref.watch(communityTypeLabelProvider(community.typeSlug));
+    final id = widget.community.id;
+
+    final upcomingAsync = ref.watch(communityUpcomingEventsProvider(id));
+    final upcoming = upcomingAsync.maybeWhen(
+      data: (e) => e,
+      orElse: () => const <Event>[],
+    );
+    final past = ref
+        .watch(communityPastEventsProvider(id))
+        .maybeWhen(data: (e) => e, orElse: () => const <Event>[]);
+
+    final counts = <CommunityEventFilter, int>{
+      CommunityEventFilter.upcoming: upcoming.length,
+      CommunityEventFilter.past: past.length,
+      CommunityEventFilter.publicOnly: upcoming.where(_isPublic).length,
+      CommunityEventFilter.membersOnly: upcoming
+          .where((e) => !_isPublic(e))
+          .length,
+    };
+    final shown = switch (_filter) {
+      CommunityEventFilter.upcoming => upcoming,
+      CommunityEventFilter.past => past,
+      CommunityEventFilter.publicOnly => upcoming.where(_isPublic).toList(),
+      CommunityEventFilter.membersOnly =>
+        upcoming.where((e) => !_isPublic(e)).toList(),
+    };
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CommunitySectionLabel(l10n.attendeeCommunityProfileUpcomingEventsTitle),
-        async.when(
-          loading: () => const Padding(
+        if (upcomingAsync.isLoading && upcoming.isEmpty && past.isEmpty)
+          const Padding(
             padding: EdgeInsets.all(KolabingSpacing.lg),
             child: Center(
               child: CircularProgressIndicator(color: KolabingColors.primary),
             ),
+          )
+        // A backend without the events filter (or none at all) → friendly
+        // empty, never a scary error.
+        else if (upcoming.isEmpty && past.isEmpty)
+          _empty(l10n)
+        else ...[
+          CommunityFilterChips(
+            counts: counts,
+            selected: _filter,
+            onSelect: (f) => setState(() => _filter = f),
           ),
-          // A backend without the events filter (or none) → friendly empty,
-          // never a scary error.
-          error: (_, _) => _empty(l10n),
-          data: (events) {
-            if (events.isEmpty) return _empty(l10n);
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (typeLabel != null)
-                  CommunityTagChip(label: typeLabel, count: events.length),
-                CommunityEventTimeline(
-                  events: events,
-                  onOpen: (event) => context.push('/event/${event.id}'),
-                  // Members-only and tier events are visible but shut until the
-                  // viewer joins — say so instead of opening a 403.
-                  onLocked: (_) => ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.communityDetailEventLockedSnack),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+          if (shown.isEmpty)
+            _empty(l10n)
+          else
+            CommunityEventTimeline(
+              events: shown,
+              onOpen: (event) => context.push('/event/${event.id}'),
+              // Members-only and tier events are visible but shut until the
+              // viewer joins — say so instead of opening a 403.
+              onLocked: (_) => ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(l10n.communityDetailEventLockedSnack)),
+              ),
+            ),
+        ],
       ],
     );
   }

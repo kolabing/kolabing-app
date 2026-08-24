@@ -5328,9 +5328,6 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
-  String get eventPageWebsite => 'Web';
-
-  @override
   String get eventTicketSheetTitle => 'La teva entrada';
 
   @override
@@ -5350,6 +5347,29 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get eventTicketNoQr => 'Mostra aquest codi a la porta.';
+
+  @override
+  String get commonWebsite => 'Web';
+
+  @override
+  String get communityPagePhotosTitle => 'Fotos';
+
+  @override
+  String get communityPageFilterUpcoming => 'Propers';
+
+  @override
+  String get communityPageFilterPast => 'Passats';
+
+  @override
+  String get eventCapacityFull => 'Complet';
+
+  @override
+  String get eventCapacityNearly => 'Gairebé complet';
+
+  @override
+  String eventCapacityLeft(num count) {
+    return 'En queden $count';
+  }
 
   @override
   String get eventHubUnlimited => 'Il·limitat';

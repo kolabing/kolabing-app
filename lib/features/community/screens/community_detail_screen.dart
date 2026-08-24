@@ -16,7 +16,10 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/cards/kolabing_cards.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../event/providers/event_provider.dart';
+import '../../event/models/event.dart';
 import '../../event/screens/event_detail_screen.dart';
+import '../../profile/providers/public_profile_provider.dart';
+import '../providers/community_media_provider.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
 import '../models/community_membership.dart';
@@ -90,6 +93,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     ]);
   }
 
+  /// Which community, and whose profile might hold its curated photos.
+  CommunityMediaKey get _mediaKey =>
+      (communityId: _community.id, ownerProfileId: _community.ownerProfileId);
+
   /// Open the chat inbox; the backend role-scopes the threads.
   void _openChats() => context.pushNamed('chats');
 
@@ -142,6 +149,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
               child: CommunityCoverHero(
                 name: c.name,
                 avatarUrl: c.avatarUrl,
+                coverUrl: ref.watch(communityCoverPhotoProvider(_mediaKey)),
                 showBack: !widget.embedded,
                 actions: [
                   HeroCircleAction(
@@ -159,13 +167,20 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                 ],
               ),
             ),
+            SliverToBoxAdapter(child: _Identity(community: c)),
+
+            // The community's photographs: curated when the leader curated
+            // some, its own event photos when not.
             SliverToBoxAdapter(
-              child: CommunityIdentityBlock(
-                name: c.name,
-                description: c.description,
-                metaText: l10n.communityDetailTypeAndMembers(
-                  c.type.displayName,
-                  c.memberCount ?? 0,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  KolabingSpacing.md,
+                  KolabingSpacing.md,
+                  0,
+                  0,
+                ),
+                child: CommunityPhotoStrip(
+                  photos: ref.watch(communityPhotosProvider(_mediaKey)),
                 ),
               ),
             ),
@@ -173,7 +188,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
             // Where the viewer stands in this community: a member sees points +
             // tier, a manager gets into the roster.
             if (!_canManage)
-              SliverToBoxAdapter(child: _StandingNavRow(communityId: c.id)),
+              SliverToBoxAdapter(child: _StandingNavRow(community: c)),
             if (_showMembers)
               SliverToBoxAdapter(child: _RosterNavRow(community: c)),
 
@@ -218,24 +233,63 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
 // Standing / roster rows
 // -----------------------------------------------------------------------------
 
-/// A member's own standing: points and tier. Silent until the rewards hub has
-/// loaded (the endpoint is self-gated and may not be deployed).
-class _StandingNavRow extends ConsumerWidget {
-  const _StandingNavRow({required this.communityId});
+/// A member's own standing: points and tier.
+///
+/// Both arrive inside `GET /communities/{id}` as `my_points` and `my_tier`, so
+/// this no longer waits on the rewards hub — it was making a second call for
+/// something the page had already been sent.
+class _StandingNavRow extends StatelessWidget {
+  const _StandingNavRow({required this.community});
 
-  final String communityId;
+  final Community community;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return CommunityNavRow(
+      icon: LucideIcons.star,
+      title: l10n.communityMembersPoints(community.myPoints),
+      subtitle: community.myTier?.name ?? l10n.communityRewardsNoTier,
+    );
+  }
+}
+
+/// Name, about, meta line and the owner's social handles.
+class _Identity extends ConsumerWidget {
+  const _Identity({required this.community});
+
+  final Community community;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final hub = ref
-        .watch(communityRewardsHubProvider(communityId))
-        .maybeWhen(data: (hub) => hub, orElse: () => null);
-    if (hub == null) return const SizedBox.shrink();
-    return CommunityNavRow(
-      icon: LucideIcons.star,
-      title: l10n.communityMembersPoints(hub.myPoints),
-      subtitle: hub.myTierName ?? l10n.communityRewardsNoTier,
+    final owner = community.ownerProfileId;
+    // Self-gated: the handles and the city live on the owner's public profile,
+    // which may not have loaded (or may not exist for an older payload).
+    final profile = owner.isEmpty
+        ? null
+        : ref
+              .watch(publicProfileProvider(owner))
+              .maybeWhen(data: (p) => p, orElse: () => null);
+
+    final typeAndMembers = l10n.communityDetailTypeAndMembers(
+      community.type.displayName,
+      community.memberCount ?? 0,
+    );
+    final city = profile?.cityName;
+
+    return CommunityIdentityBlock(
+      name: community.name,
+      description: community.description,
+      metaText: city == null || city.isEmpty
+          ? typeAndMembers
+          : '$city · $typeAndMembers',
+      metaIcon: city == null || city.isEmpty
+          ? LucideIcons.users
+          : LucideIcons.mapPin,
+      instagram: profile?.instagram,
+      tiktok: profile?.tiktok,
+      website: profile?.website,
     );
   }
 }
@@ -1219,51 +1273,90 @@ class _MemberRow extends StatelessWidget {
 // Events tab — cards with profile picture + visibility badge + view toggle
 // =============================================================================
 
-class _EventsSection extends ConsumerWidget {
+class _EventsSection extends ConsumerStatefulWidget {
   const _EventsSection({required this.community, required this.canManage});
 
   final Community community;
 
   /// Whether the viewer manages this community. Decides whether tapping an
-  /// event opens the hub in leader mode — without it a leader reaching their
-  /// own event from here got the member view, with no way to show the event's
-  /// check-in QR.
+  /// event opens it in leader mode — without it a leader reaching their own
+  /// event from here got the member view, with no way to show its check-in QR.
   final bool canManage;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_EventsSection> createState() => _EventsSectionState();
+}
+
+class _EventsSectionState extends ConsumerState<_EventsSection> {
+  CommunityEventFilter _filter = CommunityEventFilter.upcoming;
+
+  static bool _isPublic(Event e) => (e.visibility ?? 'members') == 'public';
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final async = ref.watch(communityUpcomingEventsProvider(community.id));
-    return async.when(
-      loading: () => const _InlineLoader(),
-      // A backend without the events filter (or none) → friendly empty, never
-      // a scary error.
-      error: (_, _) => const _NoEvents(),
-      data: (events) {
-        if (events.isEmpty) return const _NoEvents();
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Luma's category chip; the count is what is actually coming up.
-            CommunityTagChip(
-              label: community.type.displayName,
-              count: events.length,
-            ),
-            CommunityEventTimeline(
-              events: events,
-              onOpen: (event) => Navigator.of(context).push<void>(
-                MaterialPageRoute<void>(
-                  builder: (_) =>
-                      EventDetailScreen.forEvent(event, isLeader: canManage),
+    final id = widget.community.id;
+
+    final upcomingAsync = ref.watch(communityUpcomingEventsProvider(id));
+    final upcoming = upcomingAsync.maybeWhen(
+      data: (e) => e,
+      orElse: () => const <Event>[],
+    );
+    // Past events make a community between events look alive rather than
+    // abandoned. The provider has existed since NF-6 and nothing called it.
+    final past = ref
+        .watch(communityPastEventsProvider(id))
+        .maybeWhen(data: (e) => e, orElse: () => const <Event>[]);
+
+    final counts = <CommunityEventFilter, int>{
+      CommunityEventFilter.upcoming: upcoming.length,
+      CommunityEventFilter.past: past.length,
+      CommunityEventFilter.publicOnly: upcoming.where(_isPublic).length,
+      CommunityEventFilter.membersOnly: upcoming
+          .where((e) => !_isPublic(e))
+          .length,
+    };
+
+    final shown = switch (_filter) {
+      CommunityEventFilter.upcoming => upcoming,
+      CommunityEventFilter.past => past,
+      CommunityEventFilter.publicOnly => upcoming.where(_isPublic).toList(),
+      CommunityEventFilter.membersOnly =>
+        upcoming.where((e) => !_isPublic(e)).toList(),
+    };
+
+    if (upcomingAsync.isLoading && upcoming.isEmpty && past.isEmpty) {
+      return const _InlineLoader();
+    }
+    // Nothing at all, ever — the honest empty state.
+    if (upcoming.isEmpty && past.isEmpty) return const _NoEvents();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CommunityFilterChips(
+          counts: counts,
+          selected: _filter,
+          onSelect: (f) => setState(() => _filter = f),
+        ),
+        if (shown.isEmpty)
+          _emptyLine(context, l10n.communityDetailNoEventsBody)
+        else
+          CommunityEventTimeline(
+            events: shown,
+            onOpen: (event) => Navigator.of(context).push<void>(
+              MaterialPageRoute<void>(
+                builder: (_) => EventDetailScreen.forEvent(
+                  event,
+                  isLeader: widget.canManage,
                 ),
               ),
-              onLocked: (_) => ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.communityDetailEventLockedSnack)),
-              ),
             ),
-          ],
-        );
-      },
+            onLocked: (_) => ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(l10n.communityDetailEventLockedSnack)),
+            ),
+          ),
+      ],
     );
   }
 }
