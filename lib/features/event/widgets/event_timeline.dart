@@ -21,10 +21,23 @@ import '../../../config/theme/color_tokens.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../models/event.dart';
+import 'event_feed_card.dart';
 
 // =============================================================================
 // Timeline
 // =============================================================================
+
+/// How each event inside the timeline is drawn.
+enum EventTimelineVariant {
+  /// A compact row: 72px thumbnail, host, title, when, where, chips. The
+  /// default, and right where a page holds many events and the reader is
+  /// scanning a schedule.
+  row,
+
+  /// The photo card the Explore feed uses — same anatomy, so the app's two
+  /// browsing surfaces look like one product.
+  card,
+}
 
 /// Upcoming events grouped under a "Today / Sunday" date header, in the
 /// caller's locale. Bare rows on the page background, Luma-style — no cards.
@@ -36,6 +49,7 @@ class EventTimeline extends StatelessWidget {
     this.onLocked,
     this.showHost = false,
     this.showVisibility = true,
+    this.variant = EventTimelineVariant.row,
   });
 
   final List<Event> events;
@@ -52,6 +66,9 @@ class EventTimeline extends StatelessWidget {
   /// Show the Public / Members / Tier chip. Off on surfaces that only ever list
   /// public events — a chip that reads the same on every row is noise.
   final bool showVisibility;
+
+  /// Row or card. See [EventTimelineVariant].
+  final EventTimelineVariant variant;
 
   @override
   Widget build(BuildContext context) {
@@ -101,14 +118,26 @@ class EventTimeline extends StatelessWidget {
             ),
           ),
           for (final event in groups[day]!)
-            EventTimelineRow(
-              event: event,
-              locale: locale,
-              showHost: showHost,
-              showVisibility: showVisibility,
-              onTap: () =>
-                  event.canAccess ? onOpen(event) : (onLocked ?? onOpen)(event),
-            ),
+            switch (variant) {
+              EventTimelineVariant.row => EventTimelineRow(
+                event: event,
+                locale: locale,
+                showHost: showHost,
+                showVisibility: showVisibility,
+                onTap: () => event.canAccess
+                    ? onOpen(event)
+                    : (onLocked ?? onOpen)(event),
+              ),
+              EventTimelineVariant.card => EventFeedCard(
+                event: event,
+                locale: locale,
+                showHost: showHost,
+                showVisibility: showVisibility,
+                onTap: () => event.canAccess
+                    ? onOpen(event)
+                    : (onLocked ?? onOpen)(event),
+              ),
+            },
         ],
       ],
     );

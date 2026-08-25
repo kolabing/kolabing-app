@@ -362,6 +362,10 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
           child: EventTimeline(
             events: state.events,
+            // The browsing surfaces share a shape: this is the card a business
+            // or community meets in Explore. The date headers stay, because an
+            // events feed is read as a schedule and a swipe deck cannot group.
+            variant: EventTimelineVariant.card,
             // A city-wide list: whose event this is matters more than anything
             // else on the row.
             showHost: true,
