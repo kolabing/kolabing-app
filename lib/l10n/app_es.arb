@@ -2200,5 +2200,12 @@
   "challengeTogetherEachEarns": "{points} XP para cada uno",
   "challengeTogetherRevealTitle": "¡Bien hecho!",
   "challengeTogetherRevealBody": "{name} y tú lo habéis ganado los dos.",
-  "challengeTogetherPrompt": "Vosotros dos: {challenge}"
+  "challengeTogetherPrompt": "Vosotros dos: {challenge}",
+  "attendeeHomeScopeAll": "Todos los eventos",
+  "attendeeHomeScopeFollowing": "Siguiendo",
+  "attendeeHomeNoFollowsTitle": "Aún no sigues a nadie",
+  "attendeeHomeNoFollowsHint": "Sigue a una comunidad y todo lo que organice aparecerá aquí.",
+  "attendeeHomeNoFollowedEventsTitle": "Nada próximamente",
+  "attendeeHomeNoFollowedEventsHint": "Las comunidades que sigues aún no han anunciado nada.",
+  "attendeeHomeFollowMore": "Sigue más comunidades"
 }
