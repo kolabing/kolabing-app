@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
@@ -18,6 +19,9 @@ import '../models/multi_kolab_event.dart';
 import '../providers/multi_kolab_providers.dart';
 import '../providers/multi_kolab_repository_provider.dart';
 import '../repositories/api_multi_kolab_repository.dart';
+import '../../../widgets/category_icon.dart';
+import '../../opportunity/models/opportunity.dart';
+import '../../opportunity/providers/opportunity_provider.dart';
 
 /// Create or edit a Multi-Kolab event draft.
 ///
@@ -267,6 +271,149 @@ class _MultiKolabEventEditorScreenState
     return discard ?? false;
   }
 
+  /// City — the same `GET /cities` dropdown the Kolab form uses, not free text.
+  ///
+  /// A typed city cannot be matched against anything: Explore filters and the
+  /// backend both key on the canonical list, so "barca" or a typo silently
+  /// produced an event nobody could find by city. `CANONICAL-LISTS.md` names
+  /// `citiesProvider` as the one source for this.
+  Widget _cityPicker(AppLocalizations l10n) {
+    final citiesAsync = ref.watch(citiesProvider);
+    final selected = _city.text.trim().isEmpty ? null : _city.text.trim();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.multiKolabEventFormCityLabel,
+          style: KolabingTextStyles.labelSmall.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.colors.inkBody,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.xxs),
+        citiesAsync.when(
+          loading: () => LinearProgressIndicator(
+            color: context.colors.primary,
+            backgroundColor: context.colors.darkBorder,
+          ),
+          error: (e, _) => Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.editProfileCityLoadError,
+                  style: KolabingTextStyles.captionSecondary.copyWith(
+                    color: context.colors.error,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => ref.invalidate(citiesProvider),
+                child: Text(l10n.commonRetry),
+              ),
+            ],
+          ),
+          data: (cities) => DropdownButtonFormField<String>(
+            key: const Key('multiKolabEventCityField'),
+            // A city stored before this list changed must not silently vanish
+            // from the field; it is offered alongside the canonical names.
+            initialValue:
+                selected != null && cities.every((c) => c.name != selected)
+                ? null
+                : selected,
+            isExpanded: true,
+            hint: Text(
+              l10n.attendeeHomeChooseCity,
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                color: context.colors.textTertiary,
+              ),
+            ),
+            items: [
+              for (final city in cities)
+                DropdownMenuItem<String>(
+                  value: city.name,
+                  child: Text(city.name, overflow: TextOverflow.ellipsis),
+                ),
+            ],
+            onChanged: (value) {
+              if (value == null) return;
+              setState(() => _city.text = value);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Category — the Kolab form's own chips, single-select here because a
+  /// Multi-Kolab event carries one `category`. Tapping the selected chip clears
+  /// it, since the field is optional.
+  Widget _categoryPicker(AppLocalizations l10n) {
+    final selected = _category.text.trim();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.multiKolabEventFormCategoryLabel,
+          style: KolabingTextStyles.labelSmall.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.colors.inkBody,
+          ),
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+        Wrap(
+          key: const Key('multiKolabEventCategoryField'),
+          spacing: KolabingSpacing.xs,
+          runSpacing: KolabingSpacing.xs,
+          children: [
+            for (final category in OpportunityCategories.all)
+              GestureDetector(
+                onTap: () => setState(
+                  () => _category.text = selected == category ? '' : category,
+                ),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: KolabingSpacing.sm,
+                    vertical: KolabingSpacing.xs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: selected == category
+                        ? context.colors.softYellow
+                        : context.colors.surface,
+                    borderRadius: KolabingRadius.borderRadiusSm,
+                    border: Border.all(
+                      color: selected == category
+                          ? context.colors.primary
+                          : context.colors.darkBorder,
+                      width: selected == category ? 2 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CategoryIcon(name: category, size: 18),
+                      const SizedBox(width: 6),
+                      Text(
+                        category,
+                        style: KolabingTextStyles.captionSecondary.copyWith(
+                          fontWeight: selected == category
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          color: context.colors.inkBody,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Future<void> _pickDate(
     DateTime? current,
     ValueChanged<DateTime> onPicked,
@@ -428,19 +575,9 @@ class _MultiKolabEventEditorScreenState
                   ),
                 ],
                 const SizedBox(height: KolabingSpacing.md),
-                KolabingInput(
-                  key: const Key('multiKolabEventCityField'),
-                  controller: _city,
-                  label: l10n.multiKolabEventFormCityLabel,
-                  maxLength: 100,
-                ),
+                _cityPicker(l10n),
                 const SizedBox(height: KolabingSpacing.md),
-                KolabingInput(
-                  key: const Key('multiKolabEventCategoryField'),
-                  controller: _category,
-                  label: l10n.multiKolabEventFormCategoryLabel,
-                  maxLength: 100,
-                ),
+                _categoryPicker(l10n),
                 const SizedBox(height: KolabingSpacing.md),
                 KolabingInput(
                   key: const Key('multiKolabEventRsvpField'),
