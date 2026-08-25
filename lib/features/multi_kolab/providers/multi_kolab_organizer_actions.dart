@@ -29,7 +29,8 @@ class MultiKolabActionState {
   /// never matched on (contract §10).
   final String? lastErrorCode;
 
-  bool isBusy(String kind, String targetId) => inFlight.contains('$kind:$targetId');
+  bool isBusy(String kind, String targetId) =>
+      inFlight.contains('$kind:$targetId');
 
   /// True while ANY mutation runs — used to disable whole-screen actions.
   bool get isAnyBusy => inFlight.isNotEmpty;
@@ -57,7 +58,8 @@ class MultiKolabOrganizerActions extends Notifier<MultiKolabActionState> {
   @override
   MultiKolabActionState build() => const MultiKolabActionState();
 
-  MultiKolabRepository get _repository => ref.read(multiKolabRepositoryProvider);
+  MultiKolabRepository get _repository =>
+      ref.read(multiKolabRepositoryProvider);
 
   Future<T?> _run<T>(
     String kind,
@@ -77,9 +79,7 @@ class MultiKolabOrganizerActions extends Notifier<MultiKolabActionState> {
       onSuccess?.call();
       return result;
     } on ApiException catch (e) {
-      state = state.copyWith(
-        lastErrorCode: e.error.stableCode ?? 'unknown',
-      );
+      state = state.copyWith(lastErrorCode: e.error.stableCode ?? 'unknown');
       return null;
     } on NetworkException {
       state = state.copyWith(lastErrorCode: 'network');
@@ -168,15 +168,10 @@ class MultiKolabOrganizerActions extends Notifier<MultiKolabActionState> {
   }
 
   Future<bool> cancel(String eventId, String reason) async {
-    final result = await _run<bool>(
-      'cancel',
-      eventId,
-      (r) async {
-        await r.cancelEvent(eventId, reason);
-        return true;
-      },
-      onSuccess: () => _refreshEvent(eventId),
-    );
+    final result = await _run<bool>('cancel', eventId, (r) async {
+      await r.cancelEvent(eventId, reason);
+      return true;
+    }, onSuccess: () => _refreshEvent(eventId));
     return result ?? false;
   }
 
@@ -190,7 +185,8 @@ class MultiKolabOrganizerActions extends Notifier<MultiKolabActionState> {
       'shortlist',
       applicationId,
       (r) => r.shortlist(applicationId),
-      onSuccess: () => ref.invalidate(multiKolabRoleApplicationsProvider(roleId)),
+      onSuccess: () =>
+          ref.invalidate(multiKolabRoleApplicationsProvider(roleId)),
     );
   }
 
@@ -202,7 +198,8 @@ class MultiKolabOrganizerActions extends Notifier<MultiKolabActionState> {
       'decline',
       applicationId,
       (r) => r.decline(applicationId),
-      onSuccess: () => ref.invalidate(multiKolabRoleApplicationsProvider(roleId)),
+      onSuccess: () =>
+          ref.invalidate(multiKolabRoleApplicationsProvider(roleId)),
     );
   }
 

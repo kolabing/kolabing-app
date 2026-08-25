@@ -35,7 +35,10 @@ abstract interface class MultiKolabRepository {
   /// `PATCH /multi-kolab-roles/{role}` endpoint with [updateRole]; kept as a
   /// separate method so call sites express intent and can never accidentally
   /// send other fields alongside a lifecycle change.
-  Future<MultiKolabRole> setRoleStatus(String roleId, MultiKolabRoleStatus status);
+  Future<MultiKolabRole> setRoleStatus(
+    String roleId,
+    MultiKolabRoleStatus status,
+  );
 
   /// Organizer-only list of one role's applications — contract §7
   /// `GET /multi-kolab-roles/{role}/applications`.

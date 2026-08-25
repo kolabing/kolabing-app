@@ -52,8 +52,17 @@ class ApiMultiKolabRepository implements MultiKolabRepository {
     }
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      final json = jsonDecode(response.body) as Map<String, dynamic>;
-      return onSuccess(json);
+      // `withdraw` and `cancelEvent` are Future<void> and the backend answers
+      // them with 204 / an empty 200. Decoding that threw a FormatException,
+      // which is neither ApiException nor NetworkException — so the organizer
+      // saw the cancel fail while the event was in fact cancelled.
+      final body = response.body.trim();
+      if (body.isEmpty) return onSuccess(const <String, dynamic>{});
+      final decoded = jsonDecode(body);
+      if (decoded is Map<String, dynamic>) return onSuccess(decoded);
+      // A top-level list is not what any caller expects, but crashing on the
+      // cast is worse than handing it over under `data`.
+      return onSuccess(<String, dynamic>{'data': decoded});
     }
 
     if (response.statusCode == 401 && allowRetry) {

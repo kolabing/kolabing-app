@@ -143,7 +143,10 @@ class MultiKolabApplicantReviewScreen extends ConsumerWidget {
           bottom: KolabingSpacing.xs,
         ),
         child: Text(
-          l10n.multiKolabApplicantsSectionLabel(status.label(l10n), rows.length),
+          l10n.multiKolabApplicantsSectionLabel(
+            status.label(l10n),
+            rows.length,
+          ),
           style: KolabingTextStyles.labelSmall.copyWith(
             fontWeight: FontWeight.w700,
             color: colors.inkBody,
@@ -274,10 +277,8 @@ class _ApplicationCard extends ConsumerWidget {
     final confirmed = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      builder: (context) => _AcceptConfirmSheet(
-        application: application,
-        role: role,
-      ),
+      builder: (context) =>
+          _AcceptConfirmSheet(application: application, role: role),
     );
     if (confirmed != true || !context.mounted) return;
 
@@ -388,9 +389,7 @@ class _ApplicationCard extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.xxs),
             Text(
               DateFormat.yMMMd().format(application.createdAt!),
-              style: KolabingTextStyles.bodySmall.copyWith(
-                color: colors.muted,
-              ),
+              style: KolabingTextStyles.bodySmall.copyWith(color: colors.muted),
             ),
           ],
           if (application.pitch != null && application.pitch!.isNotEmpty) ...[

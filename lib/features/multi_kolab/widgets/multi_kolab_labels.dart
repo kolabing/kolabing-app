@@ -56,7 +56,8 @@ extension MultiKolabApplicationStatusLabel on MultiKolabRoleApplicationStatus {
 
 extension MultiKolabEligibilityLabel on MultiKolabEligibleAccountType {
   String label(AppLocalizations l10n) => switch (this) {
-    MultiKolabEligibleAccountType.business => l10n.multiKolabEligibilityBusiness,
+    MultiKolabEligibleAccountType.business =>
+      l10n.multiKolabEligibilityBusiness,
     MultiKolabEligibleAccountType.community =>
       l10n.multiKolabEligibilityCommunity,
     MultiKolabEligibleAccountType.either => l10n.multiKolabEligibilityEither,

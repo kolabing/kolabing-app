@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../widgets/kolab_status_badge.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../auth/models/auth_response.dart';
 import '../models/multi_kolab_role.dart';
@@ -93,7 +92,7 @@ class _MultiKolabEventDetailScreenState
             child: ListView(
               padding: const EdgeInsets.all(KolabingSpacing.md),
               children: [
-                KolabStatusBadge(status: event.status.toApiValue()),
+                MultiKolabStatusChip.event(event.status, l10n),
                 const SizedBox(height: KolabingSpacing.sm),
                 Text(
                   event.title,
@@ -161,7 +160,10 @@ class _MultiKolabEventDetailScreenState
                       key: isFocused ? _focusedRoleKey : null,
                       role: role,
                       eventId: eventId,
-                      hasViewerApplied: event.hasViewerApplied,
+                      // Per ROLE, not per event: applying to the run-club role
+                      // must not remove Apply from the coffee role.
+                      hasViewerApplied:
+                          event.viewerApplication?.multiKolabRoleId == role.id,
                       isFocused: isFocused,
                     ),
                   );
@@ -199,7 +201,7 @@ class _ViewerApplicationBanner extends StatelessWidget {
           Expanded(
             child: Text(
               l10n.multiKolabAlreadyAppliedLabel(
-                application.status.toApiValue(),
+                application.status.label(l10n),
               ),
               style: Theme.of(
                 context,
@@ -271,7 +273,7 @@ class _RoleCard extends ConsumerWidget {
                   ).textTheme.titleSmall?.copyWith(color: colors.onSurface),
                 ),
               ),
-              KolabStatusBadge(status: role.status.toApiValue()),
+              MultiKolabStatusChip.role(role.status, l10n),
             ],
           ),
           const SizedBox(height: KolabingSpacing.xxxs),

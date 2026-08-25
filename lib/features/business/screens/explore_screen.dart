@@ -204,11 +204,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           ? null
           : () {
               Navigator.of(context).pop();
-              ProfileLink.open(
-                context,
-                ref,
-                profileId: item.creatorProfile.id,
-              );
+              ProfileLink.open(context, ref, profileId: item.creatorProfile.id);
             },
       // When the business is free, the Apply button becomes an "unlock" CTA that
       // opens the paywall sheet. This is the gate — there is NO discovery-level
@@ -609,6 +605,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     );
   }
 
+  /// The page we have already auto-requested a follow-up for after the whole
+  /// page was filtered out. Stops the empty-deck recovery from looping.
+  int? _autoLoadedPage;
+
   Widget _buildCardPageView(
     DiscoveryListState listState, {
     required bool hasBusinessSubscription,
@@ -627,6 +627,28 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       today: today,
       isCommunityViewer: _isCommunityViewer,
     );
+
+    // A whole page can be filtered away — a Business viewer whose page happens
+    // to be all community-only roles. `listState.isEmpty` in build() only knows
+    // the UNFILTERED list, so without this the deck rendered zero pages, and
+    // because `_onPageChanged` is the only load-more trigger it could never
+    // fire: a permanently dead feed with no empty state. Ask for the next page
+    // instead, and only call it empty when there is nothing left to ask for.
+    if (activeItems.isEmpty && !listState.isLoadingMore) {
+      // Once per page, never once per frame: an unguarded request here rebuilds,
+      // finds the deck still empty and asks again, and the screen never settles.
+      if (listState.hasMore && _autoLoadedPage != listState.currentPage) {
+        _autoLoadedPage = listState.currentPage;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) ref.read(discoveryListProvider.notifier).loadMore();
+        });
+      }
+      // The empty state, not a spinner: right now there genuinely is nothing to
+      // show, and a spinner that may never resolve is a worse answer than an
+      // honest one. The deck replaces this by itself when the page we just
+      // asked for arrives with something eligible on it.
+      return _buildEmptyState(ref.read(discoveryFiltersProvider));
+    }
 
     final itemCount = activeItems.length + (listState.isLoadingMore ? 1 : 0);
 

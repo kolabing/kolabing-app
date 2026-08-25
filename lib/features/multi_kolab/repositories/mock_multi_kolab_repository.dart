@@ -422,26 +422,27 @@ class MockMultiKolabRepository implements MultiKolabRepository {
     throw StateError('MockMultiKolabRepository: no role "$roleId"');
   }
 
-  MultiKolabEventSummary _summaryOf(MultiKolabEvent e) => MultiKolabEventSummary(
-    id: e.id,
-    status: e.status,
-    title: e.title,
-    valueSummary: e.valueSummary,
-    city: e.city,
-    category: e.category,
-    eventDate: e.eventDate,
-    dateMode: e.dateMode,
-    roleCounts: MultiKolabRoleCounts(
-      total: e.roleCounts.total,
-      open: e.roleCounts.open,
-      filled: e.roleCounts.filled,
-    ),
-    eligibleAccountType: e.eligibleAccountType,
-    creatorProfile: const MultiKolabCreatorSummary(
-      id: mockViewerProfileId,
-      displayName: 'Kolabing',
-    ),
-  );
+  MultiKolabEventSummary _summaryOf(MultiKolabEvent e) =>
+      MultiKolabEventSummary(
+        id: e.id,
+        status: e.status,
+        title: e.title,
+        valueSummary: e.valueSummary,
+        city: e.city,
+        category: e.category,
+        eventDate: e.eventDate,
+        dateMode: e.dateMode,
+        roleCounts: MultiKolabRoleCounts(
+          total: e.roleCounts.total,
+          open: e.roleCounts.open,
+          filled: e.roleCounts.filled,
+        ),
+        eligibleAccountType: e.eligibleAccountType,
+        creatorProfile: const MultiKolabCreatorSummary(
+          id: mockViewerProfileId,
+          displayName: 'Kolabing',
+        ),
+      );
 
   @override
   Future<MultiKolabEvent> getEvent(String eventId) async {

@@ -115,6 +115,16 @@ class _MultiKolabOrganizerDashboardScreenState
           ),
           data: (all) {
             if (all.isEmpty) {
+              // A failed entitlement request is not the same answer as "not
+              // entitled". Collapsing both into false told an entitled
+              // organizer whose request 500'd to go email support, with no
+              // retry — so an outage read as a permission problem. The
+              // entitlement error gets the retryable error state instead.
+              if (entitlement.hasError) {
+                return _DashboardError(
+                  onRetry: () => ref.invalidate(multiKolabEntitlementProvider),
+                );
+              }
               return canCreate
                   ? _DashboardEmpty(onCreate: _createEvent)
                   // No request-access destination is passed: Event Creator
