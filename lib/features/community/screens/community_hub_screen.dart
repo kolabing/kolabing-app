@@ -13,6 +13,7 @@ import '../../chat/services/chat_service.dart';
 import '../../event/providers/event_provider.dart';
 import '../../event/screens/create_event_screen.dart';
 import '../../event/screens/event_hub_screen.dart';
+import '../../gamification/screens/community_challenges_screen.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
 import '../models/community_tier.dart';
@@ -167,6 +168,37 @@ class _CommunityOverview extends ConsumerWidget {
           _SectionLabel(l10n.communityHubSectionMembers),
           const SizedBox(height: KolabingSpacing.sm),
           _MembersPreview(communityId: community.id),
+          const SizedBox(height: KolabingSpacing.lg),
+          // Which challenges this community plays (#150). Above Events on
+          // purpose: it is a standing decision about what the community is for,
+          // not a per-event one.
+          Card(
+            margin: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+            child: ListTile(
+              leading: Icon(
+                LucideIcons.listChecks,
+                color: context.colors.onSurface,
+              ),
+              title: Text(
+                l10n.communityChallengesTitle,
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              subtitle: Text(
+                l10n.communityChallengesHubSubtitle,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
+              trailing: const Icon(LucideIcons.chevronRight, size: 18),
+              onTap: () => CommunityChallengesScreen.open(
+                context,
+                communityId: community.id,
+                communityName: community.name,
+              ),
+            ),
+          ),
           const SizedBox(height: KolabingSpacing.lg),
           _SectionLabel(l10n.communityHubSectionEvents),
           const SizedBox(height: KolabingSpacing.sm),

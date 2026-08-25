@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import '../../auth/services/auth_service.dart';
 import '../models/challenge.dart';
+import '../models/community_challenge.dart';
 import '../models/challenge_completion.dart';
 import '../../../config/constants/api.dart';
 
@@ -26,6 +27,112 @@ class ChallengeService {
 
   /// Get challenges for an event (system + custom)
   ///
+  /// The challenge library — what a leader picks from (#150).
+  ///
+  /// GET /api/v1/challenge-library
+  Future<ChallengesResponse> getLibrary({int page = 1, int limit = 50}) async {
+    final token = await _authService.getToken();
+    if (token == null) throw const AuthException('Not authenticated');
+
+    final url = '$_baseUrl/challenge-library?page=$page&limit=$limit';
+    debugPrint('🎯 Library: GET $url');
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      return ChallengesResponse.fromJson(json['data'] as Map<String, dynamic>);
+    }
+
+    // 404 = not deployed yet. Typed, so the screen can say "not available"
+    // rather than showing an error for a backend that simply predates it.
+    throw ChallengeException(
+      'Could not load the challenge library.',
+      kind: response.statusCode == 404
+          ? ChallengeFailure.notFound
+          : ChallengeFailure.unknown,
+    );
+  }
+
+  /// What a community has chosen, and how strictly (#150).
+  ///
+  /// GET /api/v1/communities/{id}/challenges
+  Future<CommunityChallengeSet> getCommunityChallenges(
+    String communityId,
+  ) async {
+    final token = await _authService.getToken();
+    if (token == null) throw const AuthException('Not authenticated');
+
+    final url = '$_baseUrl/communities/$communityId/challenges';
+    debugPrint('🎯 Community challenges: GET $url');
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      return CommunityChallengeSet.fromJson(
+        json['data'] as Map<String, dynamic>,
+      );
+    }
+
+    throw ChallengeException(
+      'Could not load this community\'s challenges.',
+      kind: response.statusCode == 404
+          ? ChallengeFailure.notFound
+          : ChallengeFailure.unknown,
+    );
+  }
+
+  /// Replace a community's whole set (#150).
+  ///
+  /// An empty [selections] is meaningful and allowed: it turns curation off and
+  /// returns the community to the whole library.
+  ///
+  /// PUT /api/v1/communities/{id}/challenges
+  Future<CommunityChallengeSet> syncCommunityChallenges(
+    String communityId,
+    List<CommunityChallengeSelection> selections,
+  ) async {
+    final token = await _authService.getToken();
+    if (token == null) throw const AuthException('Not authenticated');
+
+    final url = '$_baseUrl/communities/$communityId/challenges';
+    debugPrint('🎯 Community challenges: PUT $url (${selections.length})');
+
+    final response = await _httpClient.put(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode({
+        'challenges': selections.map((s) => s.toJson()).toList(),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      return CommunityChallengeSet.fromJson(
+        json['data'] as Map<String, dynamic>,
+      );
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    throw ChallengeException(
+      json['message'] as String? ?? 'Could not save.',
+      kind: response.statusCode == 403
+          ? ChallengeFailure.forbidden
+          : ChallengeFailure.unknown,
+    );
+  }
+
   /// GET /api/v1/events/{event_id}/challenges
   Future<ChallengesResponse> getEventChallenges(
     String eventId, {
@@ -303,9 +410,11 @@ class ChallengeService {
             kind: ChallengeFailure.bothMustCheckIn,
           );
         } else if (response.statusCode == 409) {
+          // The backend names WHICH rule refused it (#150). Falling back to the
+          // generic conflict keeps an older backend working — it just says less.
           throw ChallengeException(
             message ?? 'Challenge already initiated or limit exceeded',
-            kind: ChallengeFailure.conflict,
+            kind: challengeFailureForReason(json['error'] as String?),
           );
         } else if (response.statusCode == 404) {
           throw ChallengeException(
@@ -576,9 +685,36 @@ class ChallengeCompletionsResponse {
 /// returns when the challenger and the verifier are not both checked in to the
 /// event — the most common failure in the peer flow, and the one that needs a
 /// helpful message rather than a generic one.
+/// Maps the backend's refusal reason onto something the app can localize.
+///
+/// An unknown or absent reason falls back to [ChallengeFailure.conflict], which
+/// is what every 409 used to be — so a backend without #150 still behaves, it
+/// just cannot be specific.
+ChallengeFailure challengeFailureForReason(String? reason) => switch (reason) {
+  'already_pending' => ChallengeFailure.alreadyPending,
+  'already_completed' => ChallengeFailure.alreadyCompleted,
+  'needs_new_person' => ChallengeFailure.needsNewPerson,
+  'event_limit_reached' => ChallengeFailure.eventLimitReached,
+  _ => ChallengeFailure.conflict,
+};
+
 enum ChallengeFailure {
   bothMustCheckIn,
   conflict,
+
+  /// You have already asked this person to confirm this challenge (#150).
+  alreadyPending,
+
+  /// The two of you have already completed this one — and this community does
+  /// not allow repeating it.
+  alreadyCompleted,
+
+  /// The challenge is for meeting someone you have not played with before.
+  needsNewPerson,
+
+  /// You have used up this event's allowance.
+  eventLimitReached,
+
   forbidden,
   notFound,
   network,

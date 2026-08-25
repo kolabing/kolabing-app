@@ -7170,6 +7170,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get peerInitiateFailed => 'Couldn\'t start the challenge.';
 
   @override
+  String get communityChallengesTitle => 'Challenges';
+
+  @override
+  String get communityChallengesHubSubtitle => 'Choose what your events play';
+
+  @override
+  String get communityChallengesDefaultHint =>
+      'Nothing chosen, so your events play every Kolabing challenge. Tick some to narrow it down.';
+
+  @override
+  String get communityChallengesCuratedHint =>
+      'Your events play only what\'s ticked here, plus anything you add to a single event.';
+
+  @override
+  String get communityChallengesAllowRepeat =>
+      'Let the same two people repeat it';
+
+  @override
+  String get communityChallengesRequiresNewPerson =>
+      'Only with someone they haven\'t played with';
+
+  @override
+  String get communityChallengesSaved => 'Saved.';
+
+  @override
+  String get communityChallengesSaveFailed => 'Couldn\'t save that. Try again.';
+
+  @override
+  String get communityChallengesUnavailable =>
+      'The challenge library isn\'t available yet.';
+
+  @override
+  String get communityChallengesEmptyLibrary =>
+      'There are no challenges to choose from yet.';
+
+  @override
+  String get peerInitiateAlreadyPending =>
+      'You\'ve already asked them to confirm this one.';
+
+  @override
+  String get peerInitiateAlreadyCompleted =>
+      'You two have already done this one. Try another.';
+
+  @override
+  String get peerInitiateNeedsNewPerson =>
+      'This one\'s for someone you haven\'t played with yet.';
+
+  @override
+  String get peerInitiateEventLimit =>
+      'You\'ve done all the challenges you can at this event.';
+
+  @override
   String get verifyQrTitle => 'Get it confirmed';
 
   @override
