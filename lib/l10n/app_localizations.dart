@@ -13429,6 +13429,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Events you sign up for will show up here.'**
   String get myEventsEmptyHint;
+
+  /// Onboarding header step counter.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String onboardingStepOf(int current, int total);
 }
 
 class _AppLocalizationsDelegate

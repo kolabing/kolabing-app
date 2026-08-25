@@ -7689,4 +7689,9 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get myEventsEmptyHint =>
       'Los eventos a los que te apuntes aparecerán aquí.';
+
+  @override
+  String onboardingStepOf(int current, int total) {
+    return 'Paso $current de $total';
+  }
 }

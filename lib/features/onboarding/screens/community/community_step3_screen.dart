@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../../config/constants/spacing.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -11,8 +12,13 @@ import '../../../../widgets/kolabing_button.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/city_list_item.dart';
 import '../../widgets/onboarding_header.dart';
+import '../../widgets/onboarding_search_step.dart';
 
-/// Community Onboarding Step 3: City Selection
+/// Community Onboarding Step 3: City Selection.
+///
+/// Laid out by [OnboardingSearchStep], which owns the keyboard behaviour. This
+/// screen used to build its own `Column` and, with the keyboard open, drew the
+/// Continue button on top of the search field (#163).
 class CommunityStep3Screen extends ConsumerStatefulWidget {
   const CommunityStep3Screen({super.key});
 
@@ -22,7 +28,6 @@ class CommunityStep3Screen extends ConsumerStatefulWidget {
 }
 
 class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
-  final _searchController = TextEditingController();
   String _searchQuery = '';
 
   @override
@@ -33,19 +38,13 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
 
   void _configureSystemUI() {
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
+      const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: KolabingColors.background,
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
   }
 
   void _handleBack() {
@@ -69,7 +68,11 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
     context.push('/onboarding/community/step4');
   }
 
+  /// Picking a city closes the keyboard, which brings the footer back with
+  /// Continue already enabled — the next action lands under the thumb one tap
+  /// after the choice.
   void _handleCitySelected(String id, String name) {
+    FocusScope.of(context).unfocus();
     ref.read(onboardingProvider.notifier).updateCity(id, name);
   }
 
@@ -80,197 +83,104 @@ class _CommunityStep3ScreenState extends ConsumerState<CommunityStep3Screen> {
     final filteredCities = ref.watch(filteredCitiesProvider(_searchQuery));
     final canContinue = data?.isStep3Complete ?? false;
 
-    return Scaffold(
-      backgroundColor: context.colors.background,
-      body: SafeArea(
+    return OnboardingSearchStep(
+      chrome: OnboardingHeader(
+        currentStep: 3,
+        onBack: _handleBack,
+        showSkip: false,
+      ),
+      headline: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          KolabingSpacing.lg,
+          KolabingSpacing.xl,
+          KolabingSpacing.lg,
+          KolabingSpacing.md,
+        ),
         child: Column(
           children: [
-            // Header
-            OnboardingHeader(
-              currentStep: 3,
-              onBack: _handleBack,
-              showSkip: false,
-            ),
-
-            // Content
-            Expanded(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 32),
-
-                        // Title
-                        Text(
-                          l10n.communityStep3Title,
-                          style: KolabingTextStyles.bodyLarge.copyWith(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: context.colors.onSurface,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Subtitle
-                        Text(
-                          l10n.communityStep3Subtitle,
-                          style: KolabingTextStyles.bodySmall.copyWith(
-                            color: context.colors.onSurfaceVariant,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Search field
-                        TextField(
-                          controller: _searchController,
-                          onChanged: (value) {
-                            setState(() {
-                              _searchQuery = value;
-                            });
-                          },
-                          style: KolabingTextStyles.bodyMedium.copyWith(
-                            color: context.colors.onSurface,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: l10n.communityStep3SearchHint,
-                            hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-                              color: context.colors.textTertiary,
-                            ),
-                            prefixIcon: Icon(
-                              LucideIcons.search,
-                              size: 20,
-                              color: context.colors.textTertiary,
-                            ),
-                            suffixIcon: _searchQuery.isNotEmpty
-                                ? IconButton(
-                                    icon: Icon(
-                                      LucideIcons.x,
-                                      size: 20,
-                                      color: context.colors.textTertiary,
-                                    ),
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      setState(() {
-                                        _searchQuery = '';
-                                      });
-                                    },
-                                  )
-                                : null,
-                            filled: true,
-                            fillColor: context.colors.surfaceContainerLow,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                color: context.colors.outlineVariant,
-                              ),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Section label
-                        if (_searchQuery.isEmpty)
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              l10n.communityStep3PopularCities,
-                              style: KolabingTextStyles.bodySmall.copyWith(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: context.colors.textTertiary,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Cities list
-                  Expanded(
-                    child: filteredCities.when(
-                      data: (cities) {
-                        if (cities.isEmpty) {
-                          return Center(
-                            child: Text(
-                              l10n.communityStep3NoCitiesFound,
-                              style: KolabingTextStyles.bodySmall.copyWith(
-                                color: context.colors.onSurfaceVariant,
-                              ),
-                            ),
-                          );
-                        }
-                        return ListView.builder(
-                          padding: EdgeInsets.zero,
-                          itemCount: cities.length,
-                          itemBuilder: (context, index) {
-                            final city = cities[index];
-                            return CityListItem(
-                              id: city.id,
-                              name: city.name,
-                              country: city.country,
-                              isSelected: data?.cityId == city.id,
-                              onTap: () =>
-                                  _handleCitySelected(city.id, city.name),
-                            );
-                          },
-                        );
-                      },
-                      loading: () => Center(
-                        child: CircularProgressIndicator(
-                          color: context.colors.primary,
-                        ),
-                      ),
-                      error: (error, stack) => Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.error_outline,
-                              color: context.colors.error,
-                              size: 48,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              l10n.communityStep3LoadError,
-                              style: KolabingTextStyles.bodySmall.copyWith(
-                                color: context.colors.onSurfaceVariant,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            TextButton(
-                              onPressed: () => ref.invalidate(citiesProvider),
-                              child: Text(l10n.commonRetry),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+            Text(
+              l10n.communityStep3Title,
+              textAlign: TextAlign.center,
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
               ),
             ),
-
-            // Bottom button
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: KolabingButton(
-                label: l10n.commonContinue,
-                onPressed: canContinue ? _handleContinue : null,
-                variant: KolabingButtonVariant.primary,
-                isDisabled: !canContinue,
+            const SizedBox(height: KolabingSpacing.xs),
+            Text(
+              l10n.communityStep3Subtitle,
+              textAlign: TextAlign.center,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
               ),
             ),
           ],
+        ),
+      ),
+      searchHint: l10n.communityStep3SearchHint,
+      onQueryChanged: (value) => setState(() => _searchQuery = value),
+      aboveResults: _searchQuery.isEmpty
+          ? Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                l10n.communityStep3PopularCities,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.textTertiary,
+                ),
+              ),
+            )
+          : null,
+      results: filteredCities.when(
+        data: (cities) {
+          if (cities.isEmpty) {
+            return OnboardingSearchMessage(
+              icon: LucideIcons.mapPin,
+              text: l10n.communityStep3NoCitiesFound,
+            );
+          }
+          return ListView.builder(
+            padding: EdgeInsets.zero,
+            // A drag closes the keyboard, so the footer is always reachable
+            // without having to pick something first.
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            itemCount: cities.length,
+            itemBuilder: (context, index) {
+              final city = cities[index];
+              return CityListItem(
+                id: city.id,
+                name: city.name,
+                country: city.country,
+                isSelected: data?.cityId == city.id,
+                onTap: () => _handleCitySelected(city.id, city.name),
+              );
+            },
+          );
+        },
+        loading: () => Padding(
+          padding: const EdgeInsets.all(KolabingSpacing.xl),
+          child: Center(
+            child: CircularProgressIndicator(color: context.colors.primary),
+          ),
+        ),
+        error: (error, stack) => OnboardingSearchMessage(
+          icon: LucideIcons.alertCircle,
+          text: l10n.communityStep3LoadError,
+          action: TextButton(
+            onPressed: () => ref.invalidate(citiesProvider),
+            child: Text(l10n.commonRetry),
+          ),
+        ),
+      ),
+      footer: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.lg),
+        child: KolabingButton(
+          label: l10n.commonContinue,
+          onPressed: canContinue ? _handleContinue : null,
+          variant: KolabingButtonVariant.primary,
+          isDisabled: !canContinue,
         ),
       ),
     );

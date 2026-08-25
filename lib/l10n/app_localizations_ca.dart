@@ -7726,4 +7726,9 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get myEventsEmptyHint =>
       'Els esdeveniments als quals t\'apuntis apareixeran aquí.';
+
+  @override
+  String onboardingStepOf(int current, int total) {
+    return 'Pas $current de $total';
+  }
 }

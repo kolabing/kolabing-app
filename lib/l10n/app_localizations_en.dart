@@ -7615,4 +7615,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myEventsEmptyHint => 'Events you sign up for will show up here.';
+
+  @override
+  String onboardingStepOf(int current, int total) {
+    return 'Step $current of $total';
+  }
 }

@@ -9591,5 +9591,7 @@
   "myEventsEmpty": "Nothing coming up",
   "@myEventsEmpty": {"description": "Empty state title on the My events screen."},
   "myEventsEmptyHint": "Events you sign up for will show up here.",
-  "@myEventsEmptyHint": {"description": "Empty state body on the My events screen."}
+  "@myEventsEmptyHint": {"description": "Empty state body on the My events screen."},
+  "onboardingStepOf": "Step {current} of {total}",
+  "@onboardingStepOf": {"description": "Onboarding header step counter.", "placeholders": {"current": {"type": "int", "example": "3"}, "total": {"type": "int", "example": "4"}}}
 }

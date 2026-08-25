@@ -2241,5 +2241,6 @@
   "attendeeFeedPointsStrip": "{points} punts · {events, plural, =1{1 esdeveniment} other{{events} esdeveniments}}",
   "myEventsTitle": "Els meus esdeveniments",
   "myEventsEmpty": "Res a la vista",
-  "myEventsEmptyHint": "Els esdeveniments als quals t'apuntis apareixeran aquí."
+  "myEventsEmptyHint": "Els esdeveniments als quals t'apuntis apareixeran aquí.",
+  "onboardingStepOf": "Pas {current} de {total}"
 }
