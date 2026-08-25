@@ -435,6 +435,14 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
             ],
           ],
           // Open event chat: always for the leader; for members once going.
+          // The leader's check-in QR, as a button rather than a popup-menu item
+          // (#144). It was reachable in exactly one place in the whole app —
+          // behind a ⋮ on this screen — and the report was, fairly, "I can't
+          // find the event QR code".
+          if (widget.isLeader && kEventCheckinQrEnabled) ...[
+            _showQrButton(),
+            const SizedBox(height: KolabingSpacing.sm),
+          ],
           if (widget.isLeader || e.isGoing) _chatButton(),
           if (widget.isLeader) ...[
             const SizedBox(height: KolabingSpacing.xl),
@@ -454,6 +462,16 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
     return '${_l10n.eventHubGoingCount(e.goingCount)} · '
         '${_l10n.eventHubCapacity(e.capacity!)} · ${_l10n.eventHubSpotsLeft(left)}';
   }
+
+  Widget _showQrButton() => SizedBox(
+    width: double.infinity,
+    height: 52,
+    child: OutlinedButton.icon(
+      onPressed: _showCheckinQr,
+      icon: const Icon(LucideIcons.qrCode, size: 18),
+      label: Text(_l10n.eventHubShowCheckinQr),
+    ),
+  );
 
   Widget _checkInButton() => SizedBox(
     width: double.infinity,

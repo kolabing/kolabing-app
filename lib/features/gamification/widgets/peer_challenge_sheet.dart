@@ -7,12 +7,16 @@ import '../../../config/theme/color_tokens.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolabing_button.dart';
+import '../../event/models/event.dart';
 import '../models/active_event_session.dart';
 import '../models/challenge.dart';
 import '../providers/active_event_session_provider.dart';
 import '../providers/challenge_provider.dart';
+import '../providers/checkin_provider.dart';
 import '../providers/peer_profile_provider.dart';
+import '../providers/todays_events_provider.dart';
 import '../services/challenge_service.dart';
+import '../services/checkin_service.dart';
 import 'challenge_card.dart';
 
 /// What the pairing sheet wants the caller to do after it closes.
@@ -36,6 +40,7 @@ class PeerSheetResult {
     this.completionId,
     this.verifierName,
     this.challengeName,
+    this.challengeDescription,
     this.points,
   });
 
@@ -46,6 +51,12 @@ class PeerSheetResult {
   /// What the pair agreed to do, and what each of them earns for it — carried
   /// through so the shared screen can render immediately.
   final String? challengeName;
+
+  /// What the pair actually has to DO. Carried through because the shared
+  /// screen is where the challenge is played, and a title alone ("Take a selfie
+  /// together") is a label, not an instruction.
+  final String? challengeDescription;
+
   final int? points;
 }
 
@@ -84,13 +95,25 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
   /// Id of the challenge currently being started, so only that row spins.
   String? _startingChallengeId;
 
+  /// Why the last attempt failed, shown INSIDE the sheet.
+  ///
+  /// It used to be a `SnackBar`, which a full-height modal sheet covers — so a
+  /// refused challenge looked like the tap doing nothing at all, which is
+  /// exactly how it was reported. The most common refusal is the honest one
+  /// ("you both have to be checked in"), and it has to be readable without
+  /// closing the sheet you are being refused in.
+  String? _error;
+
   Future<void> _start(Challenge challenge, ScannedPeer peer) async {
     final session = ref.read(activeEventSessionProvider);
     if (session == null || session.isExpired || _startingChallengeId != null) {
       return;
     }
 
-    setState(() => _startingChallengeId = challenge.id);
+    setState(() {
+      _startingChallengeId = challenge.id;
+      _error = null;
+    });
     final l10n = AppLocalizations.of(context);
 
     final completion = await ref
@@ -107,8 +130,10 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
       // The notifier turns exceptions into state rather than rethrowing, so
       // read the classified reason back out — never the raw backend message.
       final kind = ref.read(initiateChallengeProvider).failure;
-      setState(() => _startingChallengeId = null);
-      _snack(_messageFor(kind, l10n));
+      setState(() {
+        _startingChallengeId = null;
+        _error = _messageFor(kind, l10n);
+      });
       return;
     }
 
@@ -118,6 +143,7 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
         completionId: completion.id,
         verifierName: peer.displayName,
         challengeName: challenge.name,
+        challengeDescription: challenge.description,
         points: challenge.points,
       ),
     );
@@ -128,12 +154,6 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
         ChallengeFailure.bothMustCheckIn => l10n.peerInitiateBothCheckedIn,
         _ => l10n.peerInitiateFailed,
       };
-
-  void _snack(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +180,15 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
           const _Grabber(),
           _Header(peer: peer, session: session),
           const SizedBox(height: KolabingSpacing.md),
+          if (_error != null) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.lg,
+              ),
+              child: _SheetError(message: _error!),
+            ),
+            const SizedBox(height: KolabingSpacing.md),
+          ],
           Flexible(
             child: session == null
                 ? const _NoCheckinState()
@@ -294,44 +323,226 @@ class _EventChip extends StatelessWidget {
 
 /// Shown when the member scanned a peer without checking in first. Rather than
 /// guessing an event, it sends them back to the event's QR code.
-class _NoCheckinState extends StatelessWidget {
+/// What the sheet shows when there is no active event session.
+///
+/// This used to be a dead end: "check in first", one button, and the only way in
+/// was a QR the organizer had to be displaying at that moment. Most small
+/// community events do not have anyone holding a phone at the entrance, so the
+/// challenge loop was unreachable for them (#144).
+///
+/// Now the events you already said you were going to **today** are right here.
+/// Picking one checks you in and opens the session; because the sheet watches
+/// [activeEventSessionProvider], it swaps itself for the challenge list without
+/// the attendee going anywhere. The organizer's QR stays as the option that
+/// works when you never RSVPed — and as the stronger proof of presence.
+class _NoCheckinState extends ConsumerStatefulWidget {
   const _NoCheckinState();
+
+  @override
+  ConsumerState<_NoCheckinState> createState() => _NoCheckinStateState();
+}
+
+class _NoCheckinStateState extends ConsumerState<_NoCheckinState> {
+  String? _busyEventId;
+
+  Future<void> _pick(Event event) async {
+    if (_busyEventId != null) return;
+    setState(() => _busyEventId = event.id);
+
+    try {
+      final checkin = await ref
+          .read(checkinServiceProvider)
+          .selfCheckIn(event.id);
+
+      final sessions = ref.read(activeEventSessionProvider.notifier);
+      if (checkin != null) {
+        await sessions.start(checkin);
+      } else {
+        // A 409 body is not guaranteed to carry the check-in, and the event id
+        // is the only thing the session needs.
+        await sessions.startForEvent(eventId: event.id, eventName: event.name);
+      }
+      // No navigation: the sheet is watching the session and will rebuild into
+      // the challenge list on its own.
+      if (mounted) setState(() => _busyEventId = null);
+    } on CheckinException catch (e) {
+      if (!mounted) return;
+      setState(() => _busyEventId = null);
+      // Not deployed yet → the QR door is the honest answer, not an error.
+      if (e.kind == CheckinFailure.unavailable) {
+        Navigator.of(
+          context,
+        ).pop(const PeerSheetResult(PeerSheetOutcome.scanEventCode));
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message)));
+    } on Object catch (e) {
+      if (!mounted) return;
+      setState(() => _busyEventId = null);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final async = ref.watch(todaysGoingEventsProvider);
+    final events = async.asData?.value ?? const <Event>[];
 
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             l10n.peerNoSessionTitle,
+            textAlign: TextAlign.center,
             style: KolabingTextStyles.titleSmall.copyWith(
               color: context.colors.onSurface,
             ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
-            l10n.peerNoSessionBody,
+            events.isEmpty
+                ? l10n.peerNoSessionBody
+                : l10n.eventCheckinPickEvent,
             textAlign: TextAlign.center,
             style: KolabingTextStyles.bodySmall.copyWith(
               color: context.colors.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: KolabingSpacing.lg),
-          SizedBox(
-            width: double.infinity,
-            child: KolabingButton(
-              label: l10n.peerNoSessionAction,
-              onPressed: () => Navigator.of(
-                context,
-              ).pop(const PeerSheetResult(PeerSheetOutcome.scanEventCode)),
-              variant: KolabingButtonVariant.primary,
+          const SizedBox(height: KolabingSpacing.md),
+          if (async.isLoading && events.isEmpty)
+            const Center(child: CircularProgressIndicator())
+          else if (events.isEmpty)
+            Text(
+              l10n.eventCheckinPickEventEmpty,
+              textAlign: TextAlign.center,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            )
+          else
+            for (final event in events) ...[
+              _TodaysEventTile(
+                event: event,
+                busy: _busyEventId == event.id,
+                onTap: () => _pick(event),
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+            ],
+          const SizedBox(height: KolabingSpacing.md),
+          TextButton.icon(
+            onPressed: () => Navigator.of(
+              context,
+            ).pop(const PeerSheetResult(PeerSheetOutcome.scanEventCode)),
+            icon: const Icon(LucideIcons.qrCode, size: 14),
+            label: Text(l10n.eventCheckinScanOrganizerQr),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A refusal, rendered where the person can actually see it.
+class _SheetError extends StatelessWidget {
+  const _SheetError({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.errorBg,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            LucideIcons.alertCircle,
+            size: 18,
+            color: context.colors.errorText,
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+          Expanded(
+            child: Text(
+              message,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.errorText,
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _TodaysEventTile extends StatelessWidget {
+  const _TodaysEventTile({
+    required this.event,
+    required this.busy,
+    required this.onTap,
+  });
+
+  final Event event;
+  final bool busy;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.colors.surfaceContainerHigh,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: busy ? null : onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(KolabingSpacing.md),
+          child: Row(
+            children: [
+              Icon(
+                LucideIcons.mapPin,
+                size: 18,
+                color: context.colors.onSurfaceVariant,
+              ),
+              const SizedBox(width: KolabingSpacing.sm),
+              Expanded(
+                child: Text(
+                  event.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    color: context.colors.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: KolabingSpacing.sm),
+              if (busy)
+                const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              else
+                Icon(
+                  LucideIcons.chevronRight,
+                  size: 18,
+                  color: context.colors.onSurfaceVariant,
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

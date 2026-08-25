@@ -40,6 +40,7 @@ class ChallengeTogetherScreen extends ConsumerStatefulWidget {
     required this.completionId,
     required this.role,
     this.challengeName,
+    this.challengeDescription,
     this.otherName,
     this.points,
   });
@@ -47,6 +48,10 @@ class ChallengeTogetherScreen extends ConsumerStatefulWidget {
   final String completionId;
   final TogetherRole role;
   final String? challengeName;
+
+  /// What to actually do. The title names the challenge; this is the game.
+  final String? challengeDescription;
+
   final String? otherName;
 
   /// What each side stands to earn. Server truth; never computed here.
@@ -57,6 +62,7 @@ class ChallengeTogetherScreen extends ConsumerStatefulWidget {
     required String completionId,
     required TogetherRole role,
     String? challengeName,
+    String? challengeDescription,
     String? otherName,
     int? points,
   }) {
@@ -66,6 +72,7 @@ class ChallengeTogetherScreen extends ConsumerStatefulWidget {
           completionId: completionId,
           role: role,
           challengeName: challengeName,
+          challengeDescription: challengeDescription,
           otherName: otherName,
           points: points,
         ),
@@ -84,6 +91,7 @@ class ChallengeTogetherScreen extends ConsumerStatefulWidget {
       completionId: completion.id,
       role: TogetherRole.partner,
       challengeName: completion.challengeName ?? completion.challenge?.name,
+      challengeDescription: completion.challenge?.description,
       otherName: completion.challengerName,
       points: completion.challenge?.points,
     );
@@ -155,6 +163,8 @@ class _ChallengeTogetherScreenState
 
     final challengeName =
         completion?.challengeName ?? widget.challengeName ?? '';
+    final challengeDescription =
+        completion?.challenge?.description ?? widget.challengeDescription;
     final otherName = widget.otherName ?? l10n.challengeCompletionDefaultName;
 
     return Scaffold(
@@ -183,6 +193,7 @@ class _ChallengeTogetherScreenState
               ? _Rejected(onDone: _dismiss)
               : _Agreed(
                   challengeName: challengeName,
+                  challengeDescription: challengeDescription,
                   otherName: otherName,
                   points: points,
                   role: widget.role,
@@ -201,6 +212,7 @@ class _ChallengeTogetherScreenState
 class _Agreed extends StatelessWidget {
   const _Agreed({
     required this.challengeName,
+    required this.challengeDescription,
     required this.otherName,
     required this.points,
     required this.role,
@@ -210,6 +222,7 @@ class _Agreed extends StatelessWidget {
   });
 
   final String challengeName;
+  final String? challengeDescription;
   final String otherName;
   final int points;
   final TogetherRole role;
@@ -247,6 +260,19 @@ class _Agreed extends StatelessWidget {
             color: context.colors.onSurface,
           ),
         ),
+        // The instruction, not just the label. Without it the screen names a
+        // game and never says how to play it.
+        if (challengeDescription != null &&
+            challengeDescription!.isNotEmpty) ...[
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            challengeDescription!,
+            textAlign: TextAlign.center,
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
+        ],
         const SizedBox(height: KolabingSpacing.sm),
         // Both sides earn, and saying so is the whole point of the change.
         Container(
