@@ -67,7 +67,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Get Challenges error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -128,7 +131,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Create Challenge error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -187,7 +193,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Update Challenge error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -231,7 +240,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Delete Challenge error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -284,10 +296,19 @@ class ChallengeService {
         final message = json['message'] as String?;
 
         if (response.statusCode == 422) {
-          throw ChallengeException(message ?? 'Validation failed');
+          throw ChallengeException(
+            message ?? 'Validation failed',
+            kind: ChallengeFailure.bothMustCheckIn,
+          );
         } else if (response.statusCode == 409) {
           throw ChallengeException(
             message ?? 'Challenge already initiated or limit exceeded',
+            kind: ChallengeFailure.conflict,
+          );
+        } else if (response.statusCode == 404) {
+          throw ChallengeException(
+            message ?? 'Challenge or event not found',
+            kind: ChallengeFailure.notFound,
           );
         } else {
           throw ChallengeException(message ?? 'Failed to initiate challenge');
@@ -298,7 +319,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Initiate Challenge error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -331,12 +355,14 @@ class ChallengeService {
           json['data'] as Map<String, dynamic>,
         );
       } else if (response.statusCode == 403) {
-        throw ChallengeException(
+        throw const ChallengeException(
           'You are not the designated verifier for this challenge.',
+          kind: ChallengeFailure.forbidden,
         );
       } else if (response.statusCode == 409) {
-        throw ChallengeException(
+        throw const ChallengeException(
           'This challenge completion has already been processed.',
+          kind: ChallengeFailure.conflict,
         );
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -349,7 +375,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Verify Challenge error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -382,12 +411,14 @@ class ChallengeService {
           json['data'] as Map<String, dynamic>,
         );
       } else if (response.statusCode == 403) {
-        throw ChallengeException(
+        throw const ChallengeException(
           'You are not the designated verifier for this challenge.',
+          kind: ChallengeFailure.forbidden,
         );
       } else if (response.statusCode == 409) {
-        throw ChallengeException(
+        throw const ChallengeException(
           'This challenge completion has already been processed.',
+          kind: ChallengeFailure.conflict,
         );
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -400,7 +431,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Reject Challenge error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -446,7 +480,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Get My Completions error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 }
@@ -528,11 +565,34 @@ class ChallengeCompletionsResponse {
 }
 
 /// Exception for challenge operations
+/// Why a challenge call failed.
+///
+/// The UI localizes off this rather than showing [ChallengeException.message],
+/// which may be raw backend English. [bothMustCheckIn] is the 422 the backend
+/// returns when the challenger and the verifier are not both checked in to the
+/// event — the most common failure in the peer flow, and the one that needs a
+/// helpful message rather than a generic one.
+enum ChallengeFailure {
+  bothMustCheckIn,
+  conflict,
+  forbidden,
+  notFound,
+  network,
+  unknown,
+}
+
 class ChallengeException implements Exception {
-  const ChallengeException(this.message);
+  const ChallengeException(
+    this.message, {
+    this.kind = ChallengeFailure.unknown,
+  });
 
   final String message;
 
+  /// Classified reason, so callers can localize and branch without string
+  /// matching on [message].
+  final ChallengeFailure kind;
+
   @override
-  String toString() => 'ChallengeException: $message';
+  String toString() => 'ChallengeException($kind): $message';
 }

@@ -24,7 +24,8 @@ void main() {
         ],
       );
 
-      final firstLoad = service.responses.first as Completer<DiscoveredEventsResponse>;
+      final firstLoad =
+          service.responses.first as Completer<DiscoveredEventsResponse>;
 
       final container = ProviderContainer(
         overrides: [
@@ -39,7 +40,9 @@ void main() {
         ..read(discoveryProvider);
 
       unawaited(
-        container.read(discoveryProvider.notifier).setLocationAndDiscover(41.0, 2.0),
+        container
+            .read(discoveryProvider.notifier)
+            .setLocationAndDiscover(41.0, 2.0),
       );
       await Future<void>.delayed(Duration.zero);
 
@@ -49,10 +52,9 @@ void main() {
       authNotifier.signIn(_attendeeUser('attendee-2'));
       await Future<void>.delayed(Duration.zero);
 
-      await container.read(discoveryProvider.notifier).setLocationAndDiscover(
-        40.0,
-        3.0,
-      );
+      await container
+          .read(discoveryProvider.notifier)
+          .setLocationAndDiscover(40.0, 3.0);
 
       firstLoad.complete(_responseFor(_event('event-1')));
       await Future<void>.delayed(Duration.zero);
@@ -67,11 +69,8 @@ void main() {
   );
 }
 
-UserModel _attendeeUser(String id) => UserModel(
-  id: id,
-  email: '$id@example.com',
-  userType: UserType.attendee,
-);
+UserModel _attendeeUser(String id) =>
+    UserModel(id: id, email: '$id@example.com', userType: UserType.attendee);
 
 DiscoveredEvent _event(String id) => DiscoveredEvent(
   id: id,

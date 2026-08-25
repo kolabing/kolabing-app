@@ -11,14 +11,11 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../providers/checkin_provider.dart';
+import '../services/checkin_service.dart';
 
 /// Screen displaying QR code for event check-in (organizer view)
 class EventQRCodeScreen extends ConsumerWidget {
-  const EventQRCodeScreen({
-    super.key,
-    required this.eventId,
-    this.eventName,
-  });
+  const EventQRCodeScreen({super.key, required this.eventId, this.eventName});
 
   final String eventId;
   final String? eventName;
@@ -27,12 +24,13 @@ class EventQRCodeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final qrTokenAsync = ref.watch(qrTokenProvider(eventId));
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? context.colors.surface : context.colors.background;
-    final textColor =
-        isDark ? context.colors.textOnDark : context.colors.onSurface;
-    final surfaceColor =
-        isDark ? context.colors.darkSurface : context.colors.surface;
+    final bgColor = isDark ? context.colors.surface : context.colors.background;
+    final textColor = isDark
+        ? context.colors.textOnDark
+        : context.colors.onSurface;
+    final surfaceColor = isDark
+        ? context.colors.darkSurface
+        : context.colors.surface;
 
     return Scaffold(
       backgroundColor: bgColor,
@@ -40,25 +38,23 @@ class EventQRCodeScreen extends ConsumerWidget {
         backgroundColor: bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
-            LucideIcons.arrowLeft,
-            color: textColor,
-          ),
+          icon: Icon(LucideIcons.arrowLeft, color: textColor),
           onPressed: () => context.pop(),
         ),
         title: Text(
           AppLocalizations.of(context).eventQrTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: textColor),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: textColor,
+          ),
         ),
         actions: [
           IconButton(
-            icon: Icon(
-              LucideIcons.refreshCw,
-              color: textColor,
-            ),
+            icon: Icon(LucideIcons.refreshCw, color: textColor),
             onPressed: qrTokenAsync.isLoading
                 ? null
-                : () => ref.invalidate(qrTokenProvider(eventId)),
+                : () => rotateEventCheckinCode(ref, eventId),
           ),
         ],
       ),
@@ -72,7 +68,11 @@ class EventQRCodeScreen extends ConsumerWidget {
               if (eventName != null) ...[
                 Text(
                   eventName!,
-                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: textColor),
+                  style: KolabingTextStyles.bodyLarge.copyWith(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: textColor,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: KolabingSpacing.md),
@@ -85,8 +85,9 @@ class EventQRCodeScreen extends ConsumerWidget {
                   color: surfaceColor,
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color:
-                        isDark ? context.colors.darkBorder : context.colors.darkBorder,
+                    color: isDark
+                        ? context.colors.darkBorder
+                        : context.colors.darkBorder,
                   ),
                   boxShadow: isDark
                       ? null
@@ -101,11 +102,7 @@ class EventQRCodeScreen extends ConsumerWidget {
                 child: qrTokenAsync.when(
                   data: (token) => _buildQRCode(context, ref, token),
                   loading: () => _buildLoadingState(context),
-                  error: (error, _) => _buildErrorState(
-                    context,
-                    ref,
-                    error.toString(),
-                  ),
+                  error: (error, _) => _buildErrorState(context, ref, error),
                 ),
               ),
 
@@ -129,31 +126,24 @@ class EventQRCodeScreen extends ConsumerWidget {
                     Expanded(
                       child: Text(
                         AppLocalizations.of(context).eventQrInstructions,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: isDark
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: isDark
                               ? context.colors.textOnDark
-                              : context.colors.onSurface),
+                              : context.colors.onSurface,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: KolabingSpacing.lg),
-
-              // View check-ins button
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    context.push('/attendee/events/$eventId/checkins');
-                  },
-                  icon: const Icon(LucideIcons.users, size: 18),
-                  label: Text(AppLocalizations.of(context).eventQrViewCheckins),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                ),
-              ),
+              // NOTE: a "View check-ins" button used to sit here, pushing a
+              // hardcoded /attendee/events/{id}/checkins path. That route was
+              // never registered and the screen never existed, so it led to the
+              // router's error page — invisible while this screen itself was
+              // unreachable. The leader already has the roster on the event hub
+              // (`_AttendeesSection`); a dedicated check-ins screen is tracked
+              // separately (`eventCheckinsProvider` is ready for it).
             ],
           ),
         ),
@@ -173,7 +163,9 @@ class EventQRCodeScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).eventQrGenerating,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -181,7 +173,20 @@ class EventQRCodeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorState(BuildContext context, WidgetRef ref, String error) {
+  /// Localized copy for a token-generation failure.
+  ///
+  /// Never `error.toString()`: that renders the exception's type name and its
+  /// untranslated backend message straight into the UI.
+  String _errorMessage(BuildContext context, Object error) {
+    final l10n = AppLocalizations.of(context);
+    if (error is CheckinException &&
+        error.kind == CheckinFailure.unauthorized) {
+      return l10n.eventQrNotAuthorized;
+    }
+    return l10n.commonErrorGeneric;
+  }
+
+  Widget _buildErrorState(BuildContext context, WidgetRef ref, Object error) {
     return SizedBox(
       width: 280,
       height: 280,
@@ -197,12 +202,17 @@ class EventQRCodeScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).eventQrErrorTitle,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
-              error,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              _errorMessage(context, error),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -217,7 +227,15 @@ class EventQRCodeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildQRCode(BuildContext context, WidgetRef ref, String token) {
+  /// Renders the code.
+  ///
+  /// The QR carries [EventCheckinQr.qrData] — the backend's `checkin_url`, not
+  /// the long token. `App\Support\CheckinLink` is the one place that decides
+  /// what a check-in QR points at, and it picks a URL with the short code
+  /// because that keeps the QR at version 3 (29×29) rather than version 6
+  /// (41×41): the difference between scanning across a room and having to walk
+  /// up to the screen. It also means a plain phone camera can open it.
+  Widget _buildQRCode(BuildContext context, WidgetRef ref, EventCheckinQr qr) {
     return Column(
       children: [
         // QR Code
@@ -228,7 +246,7 @@ class EventQRCodeScreen extends ConsumerWidget {
             borderRadius: BorderRadius.circular(16),
           ),
           child: QrImageView(
-            data: token,
+            data: qr.qrData,
             version: QrVersions.auto,
             size: 250,
             backgroundColor: Colors.white,
@@ -245,9 +263,20 @@ class EventQRCodeScreen extends ConsumerWidget {
 
         const SizedBox(height: KolabingSpacing.md),
 
-        // Copy token button
+        // The typable twin, for when scanning will not cooperate — a member can
+        // read this out or type it into the web panel.
+        Text(
+          qr.displayCode,
+          style: KolabingTextStyles.titleMedium.copyWith(
+            color: context.colors.onSurface,
+            letterSpacing: 2,
+          ),
+        ),
+
+        const SizedBox(height: KolabingSpacing.xs),
+
         TextButton.icon(
-          onPressed: () => _copyToken(context, token),
+          onPressed: () => _copyToken(context, qr.displayCode),
           icon: const Icon(LucideIcons.copy, size: 16),
           label: Text(AppLocalizations.of(context).eventQrCopyToken),
         ),
@@ -262,7 +291,9 @@ class EventQRCodeScreen extends ConsumerWidget {
         content: Text(AppLocalizations.of(context).eventQrTokenCopied),
         backgroundColor: context.colors.success,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KolabingRadius.md)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(KolabingRadius.md),
+        ),
         duration: const Duration(seconds: 2),
       ),
     );

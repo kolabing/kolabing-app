@@ -2421,7 +2421,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get attendeeMyQrSubtitle =>
-      'Mostra\'l a un amfitrió per registrar-te o connectar.';
+      'Deixa que algú l\'escanegi per fer-te check-in o emparellar-vos en un repte.';
 
   @override
   String get attendeeMyQrTooltip => 'El meu codi QR';
@@ -2873,9 +2873,6 @@ class AppLocalizationsCa extends AppLocalizations {
       'Els assistents poden escanejar aquest codi QR per registrar-se al teu esdeveniment';
 
   @override
-  String get eventQrViewCheckins => 'Mostra els registres';
-
-  @override
   String get eventQrGenerating => 'Generant el codi QR...';
 
   @override
@@ -2967,11 +2964,11 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get qrScannerInstructionTitle =>
-      'Apunta la càmera al codi QR de l\'esdeveniment';
+      'Apunta la càmera a un codi QR de Kolabing';
 
   @override
   String get qrScannerInstructionSubtitle =>
-      'L\'organitzador de l\'esdeveniment mostrarà el codi QR';
+      'El codi de check-in d\'un esdeveniment o el QR de perfil d\'un altre membre';
 
   @override
   String get rewardWalletTitle => 'Les meves recompenses';
@@ -7200,4 +7197,192 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get subscriptionManageAppleFailed =>
       'No s\'han pogut obrir les teves subscripcions de l\'App Store. Ves a Configuració › el teu nom › Subscripcions per gestionar-la o cancel·lar-la.';
+
+  @override
+  String get qrHubTitle => 'Escaneja o comparteix';
+
+  @override
+  String get qrHubScanTitle => 'Escaneja un codi';
+
+  @override
+  String get qrHubScanSubtitle =>
+      'Fes check-in en un esdeveniment o emparella\'t per jugar un repte';
+
+  @override
+  String get qrHubMyQrTitle => 'El meu codi QR';
+
+  @override
+  String get qrHubMyQrSubtitle =>
+      'Deixa que algú t\'escanegi per emparellar-vos';
+
+  @override
+  String get scannerUnknownCode => 'Aquest no és un codi QR de Kolabing.';
+
+  @override
+  String get scannerOwnCode =>
+      'Aquest és el teu propi codi: demana a l\'altra persona que mostri el seu.';
+
+  @override
+  String get scannerTorchTooltip => 'Activa o desactiva el flaix';
+
+  @override
+  String checkinSuccessBody(String eventName) {
+    return 'Has fet check-in a $eventName.';
+  }
+
+  @override
+  String checkinXpEarned(int points) {
+    return '+$points XP';
+  }
+
+  @override
+  String get checkinNextStep =>
+      'Ara escaneja el QR de perfil d\'algú per jugar un repte junts.';
+
+  @override
+  String get checkinScanPeer => 'ESCANEJA ALGÚ';
+
+  @override
+  String peerPairedTitle(String name) {
+    return 'Emparellat amb $name';
+  }
+
+  @override
+  String get peerPairedSubtitle => 'Tria un repte per jugar junts.';
+
+  @override
+  String peerPairedAtEvent(String eventName) {
+    return 'A $eventName';
+  }
+
+  @override
+  String get peerChallengesEmpty => 'Aquest esdeveniment encara no té reptes.';
+
+  @override
+  String get peerChallengePlay => 'JUGA';
+
+  @override
+  String get peerNoSessionTitle => 'Primer fes check-in';
+
+  @override
+  String get peerNoSessionBody =>
+      'Escaneja el codi QR de l\'esdeveniment per fer check-in i després emparella\'t per jugar els seus reptes.';
+
+  @override
+  String get peerNoSessionAction => 'ESCANEJA EL CODI DE L\'ESDEVENIMENT';
+
+  @override
+  String get peerInitiateBothCheckedIn =>
+      'No s\'ha pogut iniciar aquest repte. Assegureu-vos que tots dos heu fet check-in en aquest esdeveniment.';
+
+  @override
+  String get peerInitiateFailed => 'No s\'ha pogut iniciar el repte.';
+
+  @override
+  String get verifyQrTitle => 'Fes que t\'ho confirmin';
+
+  @override
+  String verifyQrBody(String name) {
+    return 'Demana a $name que escanegi aquest codi per confirmar que ho has fet.';
+  }
+
+  @override
+  String get verifyQrWaiting => 'Esperant la confirmació…';
+
+  @override
+  String get verifyQrVerifiedTitle => 'Repte completat!';
+
+  @override
+  String get verifyQrRejectedTitle => 'No confirmat';
+
+  @override
+  String get verifyQrRejectedBody =>
+      'Aquest no s\'ha confirmat. Pots provar un altre repte.';
+
+  @override
+  String get verifyQrTimeoutTitle => 'Encara esperant';
+
+  @override
+  String get verifyQrTimeoutBody =>
+      'Encara no hi ha confirmació. Mantén aquest codi obert o torna a mostrar-lo més tard des del teu historial de reptes.';
+
+  @override
+  String get verifyQrKeepWaiting => 'SEGUEIX ESPERANT';
+
+  @override
+  String get verifyScanTitle => 'Confirma un repte';
+
+  @override
+  String verifyScanQuestion(String name, String challenge) {
+    return '$name ha completat «$challenge»?';
+  }
+
+  @override
+  String verifyScanQuestionFallback(String name) {
+    return '$name ha completat el seu repte?';
+  }
+
+  @override
+  String get verifyScanNotForYou =>
+      'Aquest repte no espera la teva confirmació.';
+
+  @override
+  String get verifyScanConfirmedTitle => 'Confirmat';
+
+  @override
+  String verifyScanConfirmedBody(String name, int points) {
+    return '$name ha guanyat $points XP.';
+  }
+
+  @override
+  String get verifyScanRejectedTitle => 'Rebutjat';
+
+  @override
+  String get verifyScanFailed => 'No s\'ha pogut confirmar el repte.';
+
+  @override
+  String get eventHubShowCheckinQr => 'Mostra el QR de check-in';
+
+  @override
+  String get eventHubCheckIn => 'Fes check-in';
+
+  @override
+  String get checkinInvalidToken =>
+      'Aquest codi de check-in ja no és vàlid. Demana a l\'organitzador que el mostri de nou.';
+
+  @override
+  String get checkinNotAccepting =>
+      'Aquest esdeveniment no accepta check-ins ara mateix.';
+
+  @override
+  String get scannerCameraBlocked =>
+      'Kolabing necessita accés a la càmera per escanejar codis QR.';
+
+  @override
+  String get scannerAlreadyCheckedIn => 'Ja havies fet check-in: tot a punt.';
+
+  @override
+  String get peerPairedTitleFallback => 'Emparellats';
+
+  @override
+  String get verifyQrBodyFallback =>
+      'Demana-li que escanegi aquest codi per confirmar que ho has fet.';
+
+  @override
+  String get peerChallengesLoadFailed =>
+      'No s\'han pogut carregar els reptes d\'aquest esdeveniment.';
+
+  @override
+  String get eventQrNotAuthorized =>
+      'Només l\'organitzador d\'aquest esdeveniment pot mostrar el seu codi de check-in.';
+
+  @override
+  String get verifyScanErrorTitle => 'No s\'ha pogut confirmar';
+
+  @override
+  String get checkinAlreadyTitle => 'Ja tens el check-in fet';
+
+  @override
+  String get verifyScanUnreachable =>
+      'No s\'ha pogut connectar amb el servidor. Comprova la connexió i torna a escanejar.';
 }

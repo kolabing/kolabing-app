@@ -4351,7 +4351,7 @@ abstract class AppLocalizations {
   /// Attendee: helper text under the user's own profile QR code
   ///
   /// In en, this message translates to:
-  /// **'Show this to a host to check in or connect.'**
+  /// **'Let someone scan this to check you in or pair up for a challenge.'**
   String get attendeeMyQrSubtitle;
 
   /// Attendee app bar: tooltip for the my-profile-QR action
@@ -5164,12 +5164,6 @@ abstract class AppLocalizations {
   /// **'Attendees can scan this QR code to check in to your event'**
   String get eventQrInstructions;
 
-  /// Button to view event check-ins
-  ///
-  /// In en, this message translates to:
-  /// **'View Check-ins'**
-  String get eventQrViewCheckins;
-
   /// Loading message while the QR code is generated
   ///
   /// In en, this message translates to:
@@ -5335,13 +5329,13 @@ abstract class AppLocalizations {
   /// Primary instruction in the QR scanner
   ///
   /// In en, this message translates to:
-  /// **'Point your camera at the event QR code'**
+  /// **'Point your camera at a Kolabing QR code'**
   String get qrScannerInstructionTitle;
 
   /// Secondary instruction in the QR scanner
   ///
   /// In en, this message translates to:
-  /// **'The QR code will be displayed by the event organizer'**
+  /// **'An event\'s check-in code, or another member\'s profile QR'**
   String get qrScannerInstructionSubtitle;
 
   /// App bar title of the reward wallet screen
@@ -12559,6 +12553,318 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.'**
   String get subscriptionManageAppleFailed;
+
+  /// Title of the attendee QR hub sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan or share'**
+  String get qrHubTitle;
+
+  /// QR hub action that opens the camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a code'**
+  String get qrHubScanTitle;
+
+  /// Explains what the scanner can read.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in to an event, or pair up to play a challenge'**
+  String get qrHubScanSubtitle;
+
+  /// QR hub action that shows the member's own profile QR.
+  ///
+  /// In en, this message translates to:
+  /// **'My QR code'**
+  String get qrHubMyQrTitle;
+
+  /// Explains why a member would show their own QR.
+  ///
+  /// In en, this message translates to:
+  /// **'Let someone scan you to pair up'**
+  String get qrHubMyQrSubtitle;
+
+  /// Shown when a scanned code is not one the app understands.
+  ///
+  /// In en, this message translates to:
+  /// **'That isn\'t a Kolabing QR code.'**
+  String get scannerUnknownCode;
+
+  /// Shown when the member scans their own profile QR.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s your own code — ask the other person to show theirs.'**
+  String get scannerOwnCode;
+
+  /// Tooltip on the scanner's torch button.
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle flash'**
+  String get scannerTorchTooltip;
+
+  /// Confirmation after a successful event check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re checked in to {eventName}.'**
+  String checkinSuccessBody(String eventName);
+
+  /// XP earned badge. Points come from the server, never guessed locally.
+  ///
+  /// In en, this message translates to:
+  /// **'+{points} XP'**
+  String checkinXpEarned(int points);
+
+  /// Points the member at the next step of the loop after check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Now scan someone\'s profile QR to play a challenge together.'**
+  String get checkinNextStep;
+
+  /// Action that reopens the scanner to pair with another member.
+  ///
+  /// In en, this message translates to:
+  /// **'SCAN SOMEONE'**
+  String get checkinScanPeer;
+
+  /// Header of the pairing sheet after scanning another member.
+  ///
+  /// In en, this message translates to:
+  /// **'Paired with {name}'**
+  String peerPairedTitle(String name);
+
+  /// Subtitle of the pairing sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a challenge to play together.'**
+  String get peerPairedSubtitle;
+
+  /// Shows which event's challenges are listed.
+  ///
+  /// In en, this message translates to:
+  /// **'At {eventName}'**
+  String peerPairedAtEvent(String eventName);
+
+  /// Empty state when an event has no challenges.
+  ///
+  /// In en, this message translates to:
+  /// **'This event has no challenges yet.'**
+  String get peerChallengesEmpty;
+
+  /// Action that starts a challenge with the paired member.
+  ///
+  /// In en, this message translates to:
+  /// **'PLAY'**
+  String get peerChallengePlay;
+
+  /// Title shown when pairing without an active event check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in first'**
+  String get peerNoSessionTitle;
+
+  /// Explains why pairing needs a check-in first.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the event\'s QR code to check in, then pair up to play its challenges.'**
+  String get peerNoSessionBody;
+
+  /// Action that reopens the scanner for an event check-in code.
+  ///
+  /// In en, this message translates to:
+  /// **'SCAN EVENT CODE'**
+  String get peerNoSessionAction;
+
+  /// Backend 422 on /challenges/initiate — the pair are not both checked in.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t start this challenge. Make sure you\'re both checked in to this event.'**
+  String get peerInitiateBothCheckedIn;
+
+  /// Generic failure when starting a challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t start the challenge.'**
+  String get peerInitiateFailed;
+
+  /// Title of the screen showing the challenger's verification QR.
+  ///
+  /// In en, this message translates to:
+  /// **'Get it confirmed'**
+  String get verifyQrTitle;
+
+  /// Instruction on the verification QR screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask {name} to scan this code to confirm you did it.'**
+  String verifyQrBody(String name);
+
+  /// Status while polling for the verifier's confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for confirmation…'**
+  String get verifyQrWaiting;
+
+  /// Celebration title once the challenge is verified.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge complete!'**
+  String get verifyQrVerifiedTitle;
+
+  /// Title when the verifier rejected the challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Not confirmed'**
+  String get verifyQrRejectedTitle;
+
+  /// Body when the verifier rejected the challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'This one wasn\'t confirmed. You can try another challenge.'**
+  String get verifyQrRejectedBody;
+
+  /// Title when polling times out with no confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Still waiting'**
+  String get verifyQrTimeoutTitle;
+
+  /// Body when polling times out with no confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'No confirmation yet. Keep this code open, or show it again later from your challenge history.'**
+  String get verifyQrTimeoutBody;
+
+  /// Action that resumes polling after a timeout.
+  ///
+  /// In en, this message translates to:
+  /// **'KEEP WAITING'**
+  String get verifyQrKeepWaiting;
+
+  /// Title of the sheet shown after scanning a verification QR.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm a challenge'**
+  String get verifyScanTitle;
+
+  /// Asks the verifier to confirm a named challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Did {name} complete “{challenge}”?'**
+  String verifyScanQuestion(String name, String challenge);
+
+  /// Fallback when the challenge name is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Did {name} complete their challenge?'**
+  String verifyScanQuestionFallback(String name);
+
+  /// Shown when the scanned completion does not belong to this verifier.
+  ///
+  /// In en, this message translates to:
+  /// **'That challenge isn\'t waiting for your confirmation.'**
+  String get verifyScanNotForYou;
+
+  /// Title after the verifier confirms a challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get verifyScanConfirmedTitle;
+
+  /// Body after the verifier confirms a challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} earned {points} XP.'**
+  String verifyScanConfirmedBody(String name, int points);
+
+  /// Title after the verifier rejects a challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get verifyScanRejectedTitle;
+
+  /// Generic failure confirming a challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t confirm the challenge.'**
+  String get verifyScanFailed;
+
+  /// Organizer action that displays the event's check-in QR code.
+  ///
+  /// In en, this message translates to:
+  /// **'Show check-in QR'**
+  String get eventHubShowCheckinQr;
+
+  /// Member action that opens the scanner to check in to the event.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get eventHubCheckIn;
+
+  /// Shown when POST /checkin returns 404 for an unknown or rotated token.
+  ///
+  /// In en, this message translates to:
+  /// **'That check-in code isn\'t valid any more. Ask the organizer to show it again.'**
+  String get checkinInvalidToken;
+
+  /// Shown when POST /checkin returns 422 because the event is closed to check-ins.
+  ///
+  /// In en, this message translates to:
+  /// **'This event isn\'t taking check-ins right now.'**
+  String get checkinNotAccepting;
+
+  /// Shown in place of the camera preview when camera permission is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Kolabing needs camera access to scan QR codes.'**
+  String get scannerCameraBlocked;
+
+  /// Shown when POST /checkin returns 409. The response carries no event, so the message names none.
+  ///
+  /// In en, this message translates to:
+  /// **'You were already checked in — you\'re all set.'**
+  String get scannerAlreadyCheckedIn;
+
+  /// Pairing header when the other member's name is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Paired up'**
+  String get peerPairedTitleFallback;
+
+  /// Verification-QR instruction when the verifier's name is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask them to scan this code to confirm you did it.'**
+  String get verifyQrBodyFallback;
+
+  /// Error state on the pairing sheet's challenge list.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this event\'s challenges.'**
+  String get peerChallengesLoadFailed;
+
+  /// Shown when POST /events/{id}/generate-qr returns 403.
+  ///
+  /// In en, this message translates to:
+  /// **'Only this event\'s organizer can show its check-in code.'**
+  String get eventQrNotAuthorized;
+
+  /// Title for a failed challenge verification. Distinct from the check-in error title.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t confirm'**
+  String get verifyScanErrorTitle;
+
+  /// Title shown when POST /checkin returns 409 — informational, not a failure.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re checked in'**
+  String get checkinAlreadyTitle;
+
+  /// Shown when confirming a challenge fails for network reasons rather than because the code is foreign.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t reach the server. Check your connection and scan again.'**
+  String get verifyScanUnreachable;
 }
 
 class _AppLocalizationsDelegate

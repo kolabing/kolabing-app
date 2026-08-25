@@ -5,11 +5,28 @@
 /// flag) once the feature is ready to ship.
 library;
 
-/// Hides the in-app gamification surface that is not ready for users yet:
-/// the challenge-selection setup + QR check-in card on the collaboration detail
-/// screen, and the "Scan Check-Ins" action on the event hub. Set to `true` to
-/// bring the attendee-facing check-in / challenge flow back.
+/// Hides the **collaboration-detail** gamification block: `_ChallengesSection`
+/// and `_QRCodeSection`.
+///
+/// Still unfinished and deliberately still off. The challenge checkboxes write
+/// only to `challengeSelectionProvider`, a global (not `.family`) Notifier that
+/// nothing ever POSTs — ticks are discarded on navigation and bleed between
+/// collaborations — and "Add custom challenge" only shows a "coming soon"
+/// snackbar. The QR card there also pushes a hardcoded English event name.
+///
+/// This is NOT the flag for the event check-in loop; see
+/// [kEventCheckinQrEnabled]. They were one flag until #132, where flipping it
+/// for the event loop would have shipped this half too.
 const bool kGamificationSetupEnabled = false;
+
+/// Enables the **event** check-in QR loop (#132): the organizer's "Show
+/// check-in QR" action and the member's "Check in" button on the event hub.
+///
+/// On, because #132 made that flow work end to end for the first time — the
+/// organizer can display a check-in code, the member scans it, scanning another
+/// member lists that event's challenges, and the verification QR closes the
+/// loop into `point_ledger`.
+const bool kEventCheckinQrEnabled = true;
 
 /// Hides the **Members** tab on the community detail screen (leaving Rewards +
 /// Events) while the member-roster surface is on hold. Set to `true` to bring
