@@ -29,7 +29,16 @@ class DiscoveryService {
   /// Plus optional filters: `date` (`today` | `week` | `weekend` | `month`;
   /// omit for `upcoming` = all future) and `type` (a host community_type slug).
   ///
-  /// GET /api/v1/events/discover?lat&lng&radius_km&city_id&date&type&page&limit
+  /// [following] asks a different question: not "what is on near me" but "what
+  /// are the communities I follow doing" (#142). It needs no city — following is
+  /// an explicit relationship, where a city is only ever a guess at relevance —
+  /// so it is sent ALONE, without `city_id` or coordinates.
+  ///
+  /// Against a backend that has not deployed it yet this is a 422 (the old rules
+  /// require `lat` when there is no `city_id`) — an honest failure rather than a
+  /// silently unscoped list, but it does mean the backend half ships first.
+  ///
+  /// GET /api/v1/events/discover?lat&lng&radius_km&city_id&date&type&following&page&limit
   Future<DiscoveredEventsResponse> discoverEvents({
     double? latitude,
     double? longitude,
@@ -37,6 +46,7 @@ class DiscoveryService {
     String? cityId,
     String? date,
     String? typeSlug,
+    bool following = false,
     int page = 1,
     int limit = 10,
   }) async {
@@ -53,6 +63,9 @@ class DiscoveryService {
       if (cityId != null && cityId.isNotEmpty) 'city_id': cityId,
       if (date != null && date.isNotEmpty) 'date': date,
       if (typeSlug != null && typeSlug.isNotEmpty) 'type': typeSlug,
+      // Only sent when true: the backend strips a falsy `following` anyway, and
+      // sending `following=0` would say something we do not mean.
+      if (following) 'following': '1',
       'page': page.toString(),
       'limit': limit.toString(),
     };
