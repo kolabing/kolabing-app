@@ -30,6 +30,7 @@ import '../providers/community_rewards_providers.dart';
 import '../services/community_service.dart';
 import '../../../widgets/hero_circle_action.dart';
 import '../widgets/community_page_sections.dart';
+import '../../event/widgets/event_timeline.dart';
 import '../widgets/community_rewards_editor_sheets.dart';
 import 'roster_screen.dart';
 import 'tier_editor_screen.dart';
@@ -1342,7 +1343,7 @@ class _EventsSectionState extends ConsumerState<_EventsSection> {
         if (shown.isEmpty)
           _emptyLine(context, l10n.communityDetailNoEventsBody)
         else
-          CommunityEventTimeline(
+          EventTimeline(
             events: shown,
             onOpen: (event) => Navigator.of(context).push<void>(
               MaterialPageRoute<void>(

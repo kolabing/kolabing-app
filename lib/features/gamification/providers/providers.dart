@@ -6,3 +6,4 @@ export 'leaderboard_provider.dart';
 export 'me_rewards_provider.dart';
 export 'reward_provider.dart';
 export 'stats_provider.dart';
+export 'my_events_provider.dart';

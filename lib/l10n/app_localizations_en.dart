@@ -2400,9 +2400,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendeeMyQrUnavailable => 'Your profile QR isn\'t ready yet.';
 
   @override
-  String get attendeeHomeWelcomeBack => 'Welcome back';
-
-  @override
   String get attendeeHomeNearbyEvents => 'NEARBY EVENTS';
 
   @override
@@ -2428,15 +2425,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attendeeHomeLoadMore => 'Load More';
-
-  @override
-  String get attendeeHomeStatPoints => 'Points';
-
-  @override
-  String get attendeeHomeStatChallenges => 'Challenges';
-
-  @override
-  String get attendeeHomeStatEvents => 'Events';
 
   @override
   String get attendeeHomeLocationRequired => 'Location Required';
@@ -6430,9 +6418,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'No Kolabing account matches that email or handle.';
 
   @override
-  String get attendeeHomeEventsTitle => 'EVENTS';
-
-  @override
   String get attendeeHomeChooseCity => 'Choose city';
 
   @override
@@ -6501,12 +6486,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attendeeHomeFollowMore => 'Follow more communities';
-
-  @override
-  String get eventPartnerBusiness => 'Business';
-
-  @override
-  String get eventPartnerCommunity => 'Community';
 
   @override
   String get eventDateToday => 'Today';
@@ -7599,4 +7578,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String challengeTogetherPrompt(String challenge) {
     return 'You two: $challenge';
   }
+
+  @override
+  String eventWhenDayTime(String day, String time) {
+    return '$day, $time';
+  }
+
+  @override
+  String get attendeeFeedYourEvents => 'Your events';
+
+  @override
+  String get attendeeFeedViewAll => 'View all';
+
+  @override
+  String get attendeeFeedFollowing => 'Communities you follow';
+
+  @override
+  String get attendeeFeedWhatsOn => 'What\'s on';
+
+  @override
+  String attendeeFeedPointsStrip(String points, int events) {
+    String _temp0 = intl.Intl.pluralLogic(
+      events,
+      locale: localeName,
+      other: '$events events',
+      one: '1 event',
+    );
+    return '$points points · $_temp0';
+  }
+
+  @override
+  String get myEventsTitle => 'My events';
+
+  @override
+  String get myEventsEmpty => 'Nothing coming up';
+
+  @override
+  String get myEventsEmptyHint => 'Events you sign up for will show up here.';
 }

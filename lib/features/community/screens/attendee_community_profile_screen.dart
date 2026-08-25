@@ -17,6 +17,7 @@ import '../../event/models/event.dart';
 import '../../profile/providers/public_profile_provider.dart';
 import '../providers/community_media_provider.dart';
 import '../widgets/community_page_sections.dart';
+import '../../event/widgets/event_timeline.dart';
 import 'community_detail_screen.dart';
 
 /// Attendee-facing community profile, keyed by **community id**.
@@ -387,7 +388,7 @@ class _UpcomingEventsSectionState
           if (shown.isEmpty)
             _empty(l10n)
           else
-            CommunityEventTimeline(
+            EventTimeline(
               events: shown,
               onOpen: (event) => context.push('/event/${event.id}'),
               // Members-only and tier events are visible but shut until the

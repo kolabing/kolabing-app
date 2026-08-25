@@ -2431,9 +2431,6 @@ class AppLocalizationsCa extends AppLocalizations {
       'El teu QR de perfil encara no està a punt.';
 
   @override
-  String get attendeeHomeWelcomeBack => 'Benvingut de nou';
-
-  @override
   String get attendeeHomeNearbyEvents => 'ESDEVENIMENTS PROPERS';
 
   @override
@@ -2459,15 +2456,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get attendeeHomeLoadMore => 'Carregar més';
-
-  @override
-  String get attendeeHomeStatPoints => 'Punts';
-
-  @override
-  String get attendeeHomeStatChallenges => 'Reptes';
-
-  @override
-  String get attendeeHomeStatEvents => 'Esdeveniments';
 
   @override
   String get attendeeHomeLocationRequired => 'Cal la ubicació';
@@ -6531,9 +6519,6 @@ class AppLocalizationsCa extends AppLocalizations {
       'Cap compte de Kolabing coincideix amb aquest correu o nom d\'usuari.';
 
   @override
-  String get attendeeHomeEventsTitle => 'ESDEVENIMENTS';
-
-  @override
   String get attendeeHomeChooseCity => 'Tria ciutat';
 
   @override
@@ -6604,12 +6589,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get attendeeHomeFollowMore => 'Segueix més comunitats';
-
-  @override
-  String get eventPartnerBusiness => 'Negoci';
-
-  @override
-  String get eventPartnerCommunity => 'Comunitat';
 
   @override
   String get eventDateToday => 'Avui';
@@ -7709,4 +7688,42 @@ class AppLocalizationsCa extends AppLocalizations {
   String challengeTogetherPrompt(String challenge) {
     return 'Vosaltres dos: $challenge';
   }
+
+  @override
+  String eventWhenDayTime(String day, String time) {
+    return '$day, $time';
+  }
+
+  @override
+  String get attendeeFeedYourEvents => 'Els teus esdeveniments';
+
+  @override
+  String get attendeeFeedViewAll => 'Veure-ho tot';
+
+  @override
+  String get attendeeFeedFollowing => 'Comunitats que segueixes';
+
+  @override
+  String get attendeeFeedWhatsOn => 'Agenda';
+
+  @override
+  String attendeeFeedPointsStrip(String points, int events) {
+    String _temp0 = intl.Intl.pluralLogic(
+      events,
+      locale: localeName,
+      other: '$events esdeveniments',
+      one: '1 esdeveniment',
+    );
+    return '$points punts · $_temp0';
+  }
+
+  @override
+  String get myEventsTitle => 'Els meus esdeveniments';
+
+  @override
+  String get myEventsEmpty => 'Res a la vista';
+
+  @override
+  String get myEventsEmptyHint =>
+      'Els esdeveniments als quals t\'apuntis apareixeran aquí.';
 }

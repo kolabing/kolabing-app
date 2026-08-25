@@ -589,12 +589,7 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     automaticallyImplyLeading: false,
     leading: Padding(
       padding: const EdgeInsets.only(left: KolabingSpacing.xs),
-      child: Center(
-        child: HeroCircleAction(
-          icon: LucideIcons.arrowLeft,
-          onTap: () => Navigator.of(context).maybePop(),
-        ),
-      ),
+      child: const Center(child: HeroBackButton()),
     ),
     actions: [
       if (isHost)

@@ -11,26 +11,33 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../widgets/kolabing_button.dart';
-import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
-import '../../onboarding/models/city.dart';
-import '../../onboarding/models/community_type.dart';
-import '../../onboarding/providers/onboarding_provider.dart';
 import '../../community/providers/community_follow_provider.dart';
-import '../../onboarding/widgets/city_list_item.dart';
+import '../../event/widgets/event_timeline.dart';
+import '../../onboarding/models/city.dart';
 import '../providers/discovery_provider.dart';
-import '../widgets/discovered_event_card.dart';
-import '../widgets/stat_card.dart';
+import '../providers/my_events_provider.dart';
+import '../widgets/attendee_feed_filters.dart';
+import '../widgets/attendee_feed_sections.dart';
 
-/// Attendee home screen: stats summary + a CITY-BASED events feed (NF-19).
+/// The attendee feed: what you are going to, who you follow, what is on.
 ///
-/// The events section is driven by a city picker (defaulting to the attendee's
-/// own city), a `Today` toggle, and a community-type filter sheet
-/// (`communityTypesProvider`). The legacy GPS/radius placeholder is gone
-/// (FX-21). A persistent "Explore communities" CTA links to discovery (FX-23),
-/// and the stat icons use the on-brand UiIcon set (FX-22).
+/// Rebuilt in #161 along Luma's lines. Three sections, in order of how much the
+/// reader already cares about what each one holds:
+///
+///   1. **Your events** — the sign-ups the old page knew nothing about, so the
+///      one thing the attendee opened the app to check was the one thing it
+///      could not tell them.
+///   2. **Communities you follow** — the other half of the follow, which until
+///      now was recorded and then read by exactly one filter.
+///   3. **What's on** — city discovery, grouped under date headers.
+///
+/// What left the page: three stat cards duplicating the profile's own numbers,
+/// a "Welcome back" block, and the three fields the old event card carried that
+/// were noise or wrong — a distance badge that read "0 m" on every row because
+/// city discovery sends no coordinates, a partner-type badge that read
+/// "Community" on all of them, and the legacy showcase `attendee_count`.
 class AttendeeHomeScreen extends ConsumerStatefulWidget {
   const AttendeeHomeScreen({super.key});
 
@@ -62,7 +69,11 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     // empty state below invites them to do so.
   }
 
+  /// Pull to refresh reloads both sections — they are two answers to "what is
+  /// happening", and refreshing one while leaving the other stale would be
+  /// arbitrary.
   Future<void> _onRefresh() async {
+    ref.invalidate(myUpcomingEventsProvider);
     final state = ref.read(discoveryProvider);
     if (state.canQuery) {
       await ref.read(discoveryProvider.notifier).refresh();
@@ -83,7 +94,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           top: Radius.circular(KolabingRadius.xl),
         ),
       ),
-      builder: (_) => _CityPickerSheet(selectedCityId: state.cityId),
+      builder: (_) => FeedCityPickerSheet(selectedCityId: state.cityId),
     );
     if (result != null) {
       _initialized = true;
@@ -130,8 +141,6 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
   }
 
   /// Date range selector (#5) — ONE dropdown chip (styled like the city chip).
-  /// Opens a sheet to pick: Upcoming (default) / Today / This week / This
-  /// weekend / This month. Wires to `discovery_provider.setDateRange`.
   Future<void> _pickDateRange() async {
     final state = ref.read(discoveryProvider);
     final result = await showModalBottomSheet<String>(
@@ -142,7 +151,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           top: Radius.circular(KolabingRadius.xl),
         ),
       ),
-      builder: (_) => _DateRangeSheet(selected: state.dateRange),
+      builder: (_) => FeedDateRangeSheet(selected: state.dateRange),
     );
     if (result != null) {
       await ref.read(discoveryProvider.notifier).setDateRange(result);
@@ -151,7 +160,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
 
   Future<void> _pickType() async {
     final state = ref.read(discoveryProvider);
-    final result = await showModalBottomSheet<_TypeSelection>(
+    final result = await showModalBottomSheet<FeedTypeSelection>(
       context: context,
       isScrollControlled: true,
       backgroundColor: KolabingColors.surface,
@@ -160,7 +169,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           top: Radius.circular(KolabingRadius.xl),
         ),
       ),
-      builder: (_) => _TypeFilterSheet(selectedSlug: state.typeSlug),
+      builder: (_) => FeedTypeFilterSheet(selectedSlug: state.typeSlug),
     );
     if (result != null) {
       await ref
@@ -174,15 +183,9 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     final user = ref.watch(authProvider).user;
     final attendeeProfile = user?.attendeeProfile;
     final state = ref.watch(discoveryProvider);
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark
-        ? KolabingColors.textOnDark
-        : KolabingColors.onSurface;
-    final secondaryTextColor = isDark
-        ? KolabingColors.textTertiary
-        : KolabingColors.onSurfaceVariant;
     final l10n = AppLocalizations.of(context);
+
+    const hPad = EdgeInsets.symmetric(horizontal: KolabingSpacing.md);
 
     return SafeArea(
       child: RefreshIndicator(
@@ -190,67 +193,53 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
         color: KolabingColors.primary,
         child: CustomScrollView(
           slivers: [
-            // Header + Stats
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(KolabingSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.attendeeHomeWelcomeBack,
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                        color: secondaryTextColor,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      user?.displayName ?? l10n.attendeeRoleLabel,
-                      style: KolabingTextStyles.bodyLarge.copyWith(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: textColor,
-                      ),
-                    ),
-                    const SizedBox(height: KolabingSpacing.lg),
-                    _buildStatsSection(attendeeProfile),
-                    const SizedBox(height: KolabingSpacing.md),
-                    _ExploreCommunitiesCta(l10n: l10n),
-                  ],
-                ),
-              ),
-            ),
-
-            // Events section header + city picker (FX-21)
+            // Points, on one line. Everything else the old header carried is
+            // either on the profile already or was never worth the space.
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
                   KolabingSpacing.md,
-                  KolabingSpacing.sm,
+                  KolabingSpacing.md,
                   KolabingSpacing.md,
                   KolabingSpacing.sm,
                 ),
-                child: Row(
-                  children: [
-                    Text(
-                      l10n.attendeeHomeEventsTitle,
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: secondaryTextColor,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    // Hidden while Following: the results come from wherever
-                    // the followed communities are, and a chip reading
-                    // "Barcelona" over events in three cities would be a lie.
-                    if (!state.following)
-                      _CityPickerButton(
-                        cityName: state.cityName,
-                        onTap: _pickCity,
-                        l10n: l10n,
-                      ),
-                  ],
+                child: AttendeePointsStrip(
+                  points: attendeeProfile?.totalPoints ?? 0,
+                  eventsAttended: attendeeProfile?.totalEventsAttended ?? 0,
+                  onTap: () => context.push(KolabingRoutes.rewards),
+                ),
+              ),
+            ),
+
+            // 1. Your events.
+            const SliverToBoxAdapter(
+              child: Padding(padding: hPad, child: YourEventsSection()),
+            ),
+
+            // 2. What's on — the city discovery list, and the point of the
+            // page. A strip of the communities you follow used to sit above it,
+            // repeating what the Communities tab already shows and pushing the
+            // one thing this screen is for below the fold.
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  KolabingSpacing.md,
+                  KolabingSpacing.lg,
+                  KolabingSpacing.md,
+                  0,
+                ),
+                child: FeedSectionHeader(
+                  title: l10n.attendeeFeedWhatsOn,
+                  // Hidden while Following: the results come from wherever the
+                  // followed communities are, and a chip reading "Barcelona"
+                  // over events in three cities would be a lie.
+                  trailing: state.following
+                      ? null
+                      : FeedCityChip(
+                          cityName: state.cityName,
+                          onTap: _pickCity,
+                          l10n: l10n,
+                        ),
                 ),
               ),
             ),
@@ -259,10 +248,8 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
             // the follow — without it the tap has no consequence anywhere.
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: KolabingSpacing.md,
-                ),
-                child: _ScopeToggle(
+                padding: hPad,
+                child: FeedScopeToggle(
                   following: state.following,
                   onChanged: (following) => ref
                       .read(discoveryProvider.notifier)
@@ -272,9 +259,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
               ),
             ),
 
-            // Filter chips: date dropdown (#5) + Type (FX-21). The date filter is
-            // ONE dropdown chip styled exactly like the city chip (same
-            // shape/InkWell/chevron) — not a row of separate chips.
+            // Filter chips: date dropdown (#5) + Type (FX-21).
             SliverToBoxAdapter(
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -284,7 +269,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                 ),
                 child: Row(
                   children: [
-                    _DropdownChip(
+                    FeedDropdownChip(
                       icon: LucideIcons.calendar,
                       label: _dateRangeLabel(state.dateRange, l10n),
                       onTap: _pickDateRange,
@@ -293,7 +278,7 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                     // follow, so narrowing them by category answers nothing.
                     if (!state.following) ...[
                       const SizedBox(width: KolabingSpacing.sm),
-                      _DropdownChip(
+                      FeedDropdownChip(
                         icon: LucideIcons.tag,
                         label: state.typeName ?? l10n.attendeeHomeFilterType,
                         onTap: _pickType,
@@ -304,7 +289,6 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
               ),
             ),
 
-            // Events feed content
             ..._buildEventsContent(state, l10n),
 
             const SliverToBoxAdapter(
@@ -370,23 +354,24 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
       return [SliverToBoxAdapter(child: _buildEmptyEvents(l10n))];
     }
 
-    // Event list
+    // The list, grouped under date headers — the same timeline the community
+    // pages use, so an event looks like an event wherever you meet it.
     return [
-      SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-          final event = state.events[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: KolabingSpacing.xs,
-            ),
-            child: DiscoveredEventCard(
-              event: event,
-              onTap: () =>
-                  context.push(KolabingRoutes.buildEventDetailPath(event.id)),
-            ),
-          );
-        }, childCount: state.events.length),
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.md),
+          child: EventTimeline(
+            events: state.events,
+            // A city-wide list: whose event this is matters more than anything
+            // else on the row.
+            showHost: true,
+            // Discovery only ever returns public events, so a "Public" chip on
+            // every row would say nothing.
+            showVisibility: false,
+            onOpen: (event) =>
+                context.push(KolabingRoutes.buildEventDetailPath(event.id)),
+          ),
+        ),
       ),
       if (state.hasMore)
         SliverToBoxAdapter(
@@ -410,43 +395,6 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
           ),
         ),
     ];
-  }
-
-  Widget _buildStatsSection(dynamic attendeeProfile) {
-    final l10n = AppLocalizations.of(context);
-    return Row(
-      children: [
-        Expanded(
-          child: StatCard(
-            icon: LucideIcons.trophy,
-            iconSlug: UiIconSlug.trophy,
-            iconColor: KolabingColors.primaryDark,
-            label: l10n.attendeeHomeStatPoints,
-            value: '${attendeeProfile?.totalPoints ?? 0}',
-          ),
-        ),
-        const SizedBox(width: KolabingSpacing.sm),
-        Expanded(
-          child: StatCard(
-            icon: LucideIcons.flame,
-            iconSlug: UiIconSlug.flame,
-            iconColor: KolabingColors.success,
-            label: l10n.attendeeHomeStatChallenges,
-            value: '${attendeeProfile?.totalChallengesCompleted ?? 0}',
-          ),
-        ),
-        const SizedBox(width: KolabingSpacing.sm),
-        Expanded(
-          child: StatCard(
-            icon: LucideIcons.calendar,
-            iconSlug: UiIconSlug.calendar,
-            iconColor: KolabingColors.info,
-            label: l10n.attendeeHomeStatEvents,
-            value: '${attendeeProfile?.totalEventsAttended ?? 0}',
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildPickCityPrompt(AppLocalizations l10n) {
@@ -478,12 +426,17 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: KolabingSpacing.lg),
-          KolabingButton(
-            label: l10n.attendeeHomeChooseCity,
+          OutlinedButton.icon(
             onPressed: _pickCity,
-            variant: KolabingButtonVariant.primary,
-            size: KolabingButtonSize.compact,
-            icon: const Icon(LucideIcons.mapPin),
+            icon: const Icon(LucideIcons.mapPin, size: 16),
+            label: Text(l10n.attendeeHomeChooseCity),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: KolabingColors.onSurface,
+              side: const BorderSide(color: KolabingColors.outlineVariant),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(KolabingRadius.md),
+              ),
+            ),
           ),
         ],
       ),
@@ -638,538 +591,4 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
       ),
     );
   }
-}
-
-// =============================================================================
-// Feed scope toggle (#142) — All events / Following
-// =============================================================================
-
-/// Two segments, not a chip: the scope is a choice between two feeds, and a
-/// filter chip would read as one more optional narrowing of the same list.
-class _ScopeToggle extends StatelessWidget {
-  const _ScopeToggle({
-    required this.following,
-    required this.onChanged,
-    required this.l10n,
-  });
-
-  final bool following;
-  final ValueChanged<bool> onChanged;
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: KolabingColors.surfaceVariant,
-        borderRadius: BorderRadius.circular(KolabingRadius.md),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _Segment(
-              label: l10n.attendeeHomeScopeAll,
-              selected: !following,
-              onTap: () => onChanged(false),
-            ),
-          ),
-          Expanded(
-            child: _Segment(
-              label: l10n.attendeeHomeScopeFollowing,
-              selected: following,
-              onTap: () => onChanged(true),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Segment extends StatelessWidget {
-  const _Segment({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      selected: selected,
-      button: true,
-      child: InkWell(
-        onTap: selected ? null : onTap,
-        borderRadius: BorderRadius.circular(KolabingRadius.sm),
-        child: Container(
-          // 44 keeps the segment inside the 48dp touch target with its padding.
-          constraints: const BoxConstraints(minHeight: 44),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? KolabingColors.surface : Colors.transparent,
-            borderRadius: BorderRadius.circular(KolabingRadius.sm),
-          ),
-          child: Text(
-            label,
-            style: KolabingTextStyles.bodySmall.copyWith(
-              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-              color: selected
-                  ? KolabingColors.onSurface
-                  : KolabingColors.onSurfaceVariant,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// =============================================================================
-// Explore communities CTA (FX-23) — always visible
-// =============================================================================
-
-class _ExploreCommunitiesCta extends StatelessWidget {
-  const _ExploreCommunitiesCta({required this.l10n});
-
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    width: double.infinity,
-    child: OutlinedButton.icon(
-      onPressed: () => context.push(KolabingRoutes.discoverCommunities),
-      icon: const Icon(LucideIcons.compass, size: 18),
-      label: Text(l10n.attendeeHomeExploreCommunities),
-      style: OutlinedButton.styleFrom(
-        foregroundColor: KolabingColors.onSurface,
-        side: const BorderSide(color: KolabingColors.outlineVariant),
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(KolabingRadius.md),
-        ),
-      ),
-    ),
-  );
-}
-
-// =============================================================================
-// City picker button (FX-21) — dark/readable, in the events header corner
-// =============================================================================
-
-class _CityPickerButton extends StatelessWidget {
-  const _CityPickerButton({
-    required this.cityName,
-    required this.onTap,
-    required this.l10n,
-  });
-
-  final String? cityName;
-  final VoidCallback onTap;
-  final AppLocalizations l10n;
-
-  @override
-  Widget build(BuildContext context) => _DropdownChip(
-    icon: LucideIcons.mapPin,
-    label: cityName ?? l10n.attendeeHomeChooseCity,
-    onTap: onTap,
-  );
-}
-
-// =============================================================================
-// Dropdown chip — shared pill (leading icon · label · chevron) used by BOTH
-// the city picker and the date/type filters so they match exactly.
-// =============================================================================
-
-class _DropdownChip extends StatelessWidget {
-  const _DropdownChip({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: onTap,
-    borderRadius: BorderRadius.circular(KolabingRadius.round),
-    child: Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.sm,
-        vertical: KolabingSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: KolabingColors.surfaceVariant,
-        borderRadius: BorderRadius.circular(KolabingRadius.round),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: KolabingColors.onSurface),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: KolabingTextStyles.bodySmall.copyWith(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.onSurface,
-            ),
-          ),
-          const SizedBox(width: 2),
-          const Icon(
-            LucideIcons.chevronDown,
-            size: 14,
-            color: KolabingColors.onSurface,
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-// =============================================================================
-// Date range sheet (#5) — pick one of upcoming/today/week/weekend/month.
-// =============================================================================
-
-class _DateRangeSheet extends StatelessWidget {
-  const _DateRangeSheet({required this.selected});
-
-  final String selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final options = <(String, String)>[
-      (DiscoveryDateRange.upcoming, l10n.attendeeHomeFilterUpcoming),
-      (DiscoveryDateRange.today, l10n.attendeeHomeFilterToday),
-      (DiscoveryDateRange.week, l10n.attendeeHomeFilterThisWeek),
-      (DiscoveryDateRange.weekend, l10n.attendeeHomeFilterThisWeekend),
-      (DiscoveryDateRange.month, l10n.attendeeHomeFilterThisMonth),
-    ];
-    return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: KolabingSpacing.sm),
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: KolabingColors.outlineVariant,
-              borderRadius: BorderRadius.circular(KolabingRadius.round),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(KolabingSpacing.md),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                l10n.attendeeHomeFilterDate,
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.onSurface,
-                ),
-              ),
-            ),
-          ),
-          for (final opt in options)
-            _TypeRow(
-              label: opt.$2,
-              selected: selected == opt.$1,
-              onTap: () => Navigator.of(context).pop(opt.$1),
-            ),
-          const SizedBox(height: KolabingSpacing.sm),
-        ],
-      ),
-    );
-  }
-}
-
-// =============================================================================
-// City picker sheet — reuses citiesProvider + CityListItem
-// =============================================================================
-
-class _CityPickerSheet extends ConsumerStatefulWidget {
-  const _CityPickerSheet({this.selectedCityId});
-
-  final String? selectedCityId;
-
-  @override
-  ConsumerState<_CityPickerSheet> createState() => _CityPickerSheetState();
-}
-
-class _CityPickerSheetState extends ConsumerState<_CityPickerSheet> {
-  final _searchController = TextEditingController();
-  String _query = '';
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final filtered = ref.watch(filteredCitiesProvider(_query));
-
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.75,
-        child: Column(
-          children: [
-            const SizedBox(height: KolabingSpacing.sm),
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: KolabingColors.outlineVariant,
-                borderRadius: BorderRadius.circular(KolabingRadius.round),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(KolabingSpacing.md),
-              child: TextField(
-                controller: _searchController,
-                onChanged: (v) => setState(() => _query = v),
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  color: KolabingColors.onSurface,
-                ),
-                decoration: InputDecoration(
-                  hintText: l10n.editProfileCitySearchHint,
-                  prefixIcon: const Icon(LucideIcons.search, size: 20),
-                  filled: true,
-                  fillColor: KolabingColors.surfaceVariant,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(KolabingRadius.sm),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.md,
-                    vertical: KolabingSpacing.sm,
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: filtered.when(
-                data: (cities) {
-                  if (cities.isEmpty) {
-                    return Center(
-                      child: Text(
-                        l10n.editProfileNoCitiesFound,
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          color: KolabingColors.onSurfaceVariant,
-                        ),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: cities.length,
-                    itemBuilder: (_, i) {
-                      final city = cities[i];
-                      return CityListItem(
-                        id: city.id,
-                        name: city.name,
-                        country: city.country,
-                        isSelected: widget.selectedCityId == city.id,
-                        onTap: () => Navigator.of(context).pop(city),
-                      );
-                    },
-                  );
-                },
-                loading: () => const Center(
-                  child: CircularProgressIndicator(
-                    color: KolabingColors.primary,
-                  ),
-                ),
-                error: (_, _) => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        LucideIcons.alertCircle,
-                        color: KolabingColors.error,
-                        size: 40,
-                      ),
-                      const SizedBox(height: KolabingSpacing.sm),
-                      Text(
-                        l10n.editProfileCityLoadError,
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          color: KolabingColors.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: KolabingSpacing.md),
-                      TextButton(
-                        onPressed: () => ref.invalidate(citiesProvider),
-                        child: Text(l10n.commonRetry),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// =============================================================================
-// Community-type filter sheet — slugs ONLY from communityTypesProvider
-// =============================================================================
-
-class _TypeSelection {
-  const _TypeSelection({this.slug, this.name});
-  final String? slug;
-  final String? name;
-}
-
-class _TypeFilterSheet extends ConsumerWidget {
-  const _TypeFilterSheet({this.selectedSlug});
-
-  final String? selectedSlug;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final typesAsync = ref.watch(communityTypesProvider);
-
-    return SafeArea(
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.6,
-        child: Column(
-          children: [
-            const SizedBox(height: KolabingSpacing.sm),
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: KolabingColors.outlineVariant,
-                borderRadius: BorderRadius.circular(KolabingRadius.round),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(KolabingSpacing.md),
-              child: Text(
-                l10n.attendeeHomeFilterType,
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: KolabingColors.onSurface,
-                ),
-              ),
-            ),
-            Expanded(
-              child: typesAsync.when(
-                data: (types) => ListView(
-                  padding: EdgeInsets.zero,
-                  children: [
-                    _TypeRow(
-                      label: l10n.attendeeHomeFilterTypeAll,
-                      selected: selectedSlug == null,
-                      onTap: () =>
-                          Navigator.of(context).pop(const _TypeSelection()),
-                    ),
-                    for (final CommunityType t in types)
-                      _TypeRow(
-                        label: t.name,
-                        selected: selectedSlug == t.slug,
-                        onTap: () => Navigator.of(
-                          context,
-                        ).pop(_TypeSelection(slug: t.slug, name: t.name)),
-                      ),
-                  ],
-                ),
-                loading: () => const Center(
-                  child: CircularProgressIndicator(
-                    color: KolabingColors.primary,
-                  ),
-                ),
-                error: (_, _) => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        LucideIcons.alertCircle,
-                        color: KolabingColors.error,
-                        size: 40,
-                      ),
-                      const SizedBox(height: KolabingSpacing.sm),
-                      Text(
-                        l10n.attendeeHomeFailedToLoadEvents,
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          color: KolabingColors.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: KolabingSpacing.md),
-                      TextButton(
-                        onPressed: () => ref.invalidate(communityTypesProvider),
-                        child: Text(l10n.commonRetry),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TypeRow extends StatelessWidget {
-  const _TypeRow({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: onTap,
-    child: Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.md,
-        vertical: KolabingSpacing.sm + 4,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: KolabingTextStyles.bodyMedium.copyWith(
-                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                color: KolabingColors.onSurface,
-              ),
-            ),
-          ),
-          if (selected)
-            const Icon(
-              LucideIcons.check,
-              size: 18,
-              color: KolabingColors.primaryDark,
-            ),
-        ],
-      ),
-    ),
-  );
 }
