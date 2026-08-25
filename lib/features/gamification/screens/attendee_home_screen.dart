@@ -69,12 +69,11 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     // empty state below invites them to do so.
   }
 
-  /// Pull to refresh reloads all three sections — they are three answers to
-  /// "what is happening", and refreshing one while leaving the others stale
-  /// would be arbitrary.
+  /// Pull to refresh reloads both sections — they are two answers to "what is
+  /// happening", and refreshing one while leaving the other stale would be
+  /// arbitrary.
   Future<void> _onRefresh() async {
     ref.invalidate(myUpcomingEventsProvider);
-    ref.invalidate(followedCommunitiesProvider);
     final state = ref.read(discoveryProvider);
     if (state.canQuery) {
       await ref.read(discoveryProvider.notifier).refresh();
@@ -217,20 +216,10 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
               child: Padding(padding: hPad, child: YourEventsSection()),
             ),
 
-            // 2. The communities you follow.
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  KolabingSpacing.md,
-                  KolabingSpacing.md,
-                  KolabingSpacing.md,
-                  0,
-                ),
-                child: FollowedCommunitiesStrip(),
-              ),
-            ),
-
-            // 3. What's on — the city discovery list.
+            // 2. What's on — the city discovery list, and the point of the
+            // page. A strip of the communities you follow used to sit above it,
+            // repeating what the Communities tab already shows and pushing the
+            // one thing this screen is for below the fold.
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(

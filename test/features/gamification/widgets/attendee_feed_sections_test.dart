@@ -12,8 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kolabing_app/config/theme/theme.dart';
-import 'package:kolabing_app/features/community/models/community.dart';
-import 'package:kolabing_app/features/community/providers/community_follow_provider.dart';
 import 'package:kolabing_app/features/event/models/event.dart';
 import 'package:kolabing_app/features/event/widgets/event_timeline.dart';
 import 'package:kolabing_app/features/gamification/providers/my_events_provider.dart';
@@ -40,21 +38,10 @@ Event _event({
   createdAt: DateTime(2026, 1, 1),
 );
 
-Community _community(String id, String name) => Community(
-  id: id,
-  ownerProfileId: 'owner-$id',
-  name: name,
-  slug: id,
-  type: CommunityType.running,
-  createdAt: DateTime(2026, 1, 1),
-  updatedAt: DateTime(2026, 1, 1),
-);
-
 Future<void> _pump(
   WidgetTester tester,
   Widget child, {
   List<Event>? myEvents,
-  List<Community>? followed,
 }) async {
   tester.view.physicalSize = const Size(1179, 2556); // iPhone @3x
   tester.view.devicePixelRatio = 3.0;
@@ -66,8 +53,6 @@ Future<void> _pump(
       overrides: [
         if (myEvents != null)
           myUpcomingEventsProvider.overrideWith((ref) async => myEvents),
-        if (followed != null)
-          followedCommunitiesProvider.overrideWith((ref) async => followed),
       ],
       child: MaterialApp(
         theme: KolabingTheme.lightTheme,
@@ -162,30 +147,12 @@ void main() {
   ) async {
     await _pump(
       tester,
-      const Column(children: [YourEventsSection(), FollowedCommunitiesStrip()]),
+      const Column(children: [YourEventsSection()]),
       myEvents: const [],
-      followed: const [],
     );
 
     expect(find.text('YOUR EVENTS'), findsNothing);
-    expect(find.text('COMMUNITIES YOU FOLLOW'), findsNothing);
     expect(find.byType(EventTimelineRow), findsNothing);
-  });
-
-  testWidgets('the followed strip shows a tile per community', (tester) async {
-    await _pump(
-      tester,
-      const FollowedCommunitiesStrip(),
-      followed: [
-        _community('c1', 'Real Run Club'),
-        _community('c2', 'BCN Digital Nomads'),
-      ],
-    );
-
-    expect(tester.takeException(), isNull);
-    expect(find.text('COMMUNITIES YOU FOLLOW'), findsOneWidget);
-    expect(find.text('Real Run Club'), findsOneWidget);
-    expect(find.text('BCN Digital Nomads'), findsOneWidget);
   });
 
   testWidgets('a standalone row carries its own day, and names the host', (
