@@ -12686,6 +12686,18 @@ abstract class AppLocalizations {
   /// **'Couldn\'t start the challenge.'**
   String get peerInitiateFailed;
 
+  /// Primary action after checking in: opens this event's challenge list.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a challenge'**
+  String get challengeFirstChoose;
+
+  /// Button on a challenge's details: opens the scanner with that challenge already chosen.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the person you\'re doing it with'**
+  String get challengeFirstScanThem;
+
   /// Title of the leader screen for choosing which challenges the community plays.
   ///
   /// In en, this message translates to:

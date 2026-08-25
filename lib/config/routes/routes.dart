@@ -331,13 +331,13 @@ abstract final class KolabingRoutes {
   /// Event challenges list
   static const String eventChallenges = '/attendee/events/:eventId/challenges';
 
+  /// Path to [eventChallenges] for [eventId].
+  static String buildEventChallengesPath(String eventId) =>
+      '/attendee/events/$eventId/challenges';
+
   /// Create challenge (for organizers)
   static const String createChallenge =
       '/attendee/events/:eventId/challenges/create';
-
-  /// Initiate challenge
-  static const String initiateChallenge =
-      '/attendee/events/:eventId/challenges/:challengeId/initiate';
 
   // ---------------------------------------------------------------------------
   /// Permission request screen
@@ -997,21 +997,6 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final eventId = state.pathParameters['eventId'] ?? '';
         return CreateChallengeScreen(eventId: eventId);
-      },
-    ),
-
-    GoRoute(
-      path: KolabingRoutes.initiateChallenge,
-      name: 'initiateChallenge',
-      builder: (BuildContext context, GoRouterState state) {
-        final eventId = state.pathParameters['eventId'] ?? '';
-        final challengeId = state.pathParameters['challengeId'] ?? '';
-        final challenge = state.extra as Challenge?;
-        return InitiateChallengeScreen(
-          eventId: eventId,
-          challengeId: challengeId,
-          challenge: challenge,
-        );
       },
     ),
   ],
