@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../config/constants/spacing.dart';
-import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolabing_segmented_control.dart';
@@ -12,6 +10,7 @@ import '../../../widgets/page_title.dart';
 import '../../application/screens/applications_screen.dart';
 import '../../collaboration/providers/collaborations_list_provider.dart';
 import '../../collaboration/widgets/collaborations_list_tab.dart';
+import '../widgets/create_kolab_choice_sheet.dart';
 
 /// Hub for the merged "My Kolabs" bottom-nav destination.
 ///
@@ -125,6 +124,10 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
+                  // Multi-Kolab has no entry point of its own here: organizer
+                  // events are ordinary cards inside these lists (see
+                  // MyMultiKolabCard), and creation lives on the same "+"
+                  // action as an ordinary Kolab.
                   widget.offersTab,
                   ApplicationsScreen(
                     embedded: true,
@@ -149,7 +152,7 @@ class _MyKolabsHubScreenState extends ConsumerState<MyKolabsHubScreen>
       ),
       floatingActionButton: _tabController.index == 0
           ? KolabingFAB(
-              onPressed: () => context.push(KolabingRoutes.kolabNew),
+              onPressed: () => showCreateKolabChoiceSheet(context),
               tooltip: l10n.myKolabsHubCreateTooltip,
               heroTag: 'my_kolabs_hub_fab',
             )

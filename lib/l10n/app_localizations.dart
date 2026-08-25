@@ -13435,6 +13435,1248 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Step {current} of {total}'**
   String onboardingStepOf(int current, int total);
+
+  /// Attendee home greeting above the user name
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get attendeeHomeWelcomeBack;
+
+  /// Attendee home stat card label: points
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get attendeeHomeStatPoints;
+
+  /// Attendee home stat card label: challenges
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges'**
+  String get attendeeHomeStatChallenges;
+
+  /// Attendee home stat card label: events
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get attendeeHomeStatEvents;
+
+  /// Attendee home events section header.
+  ///
+  /// In en, this message translates to:
+  /// **'EVENTS'**
+  String get attendeeHomeEventsTitle;
+
+  /// Event card badge for a business-hosted event.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get eventPartnerBusiness;
+
+  /// Event card badge for a community-hosted event.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get eventPartnerCommunity;
+
+  /// Explore offer-card line naming the specific partner type a Multi-Kolab role wants.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for {partnerType}'**
+  String multiKolabRoleLookingFor(String partnerType);
+
+  /// Explore offer-card line for a business-eligible Multi-Kolab role with no specific partner type requested.
+  ///
+  /// In en, this message translates to:
+  /// **'Open to any business'**
+  String get multiKolabRoleOpenToAnyBusiness;
+
+  /// Explore offer-card line for a community-eligible Multi-Kolab role with no specific partner type requested.
+  ///
+  /// In en, this message translates to:
+  /// **'Open to any community'**
+  String get multiKolabRoleOpenToAnyCommunity;
+
+  /// Explore offer-card line for an either-eligible Multi-Kolab role with no specific partner type requested.
+  ///
+  /// In en, this message translates to:
+  /// **'Open to any partner'**
+  String get multiKolabRoleOpenToAnyPartner;
+
+  /// Chip showing how many positions of a Multi-Kolab role are still unfilled.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 spot open} other{{count} spots open}}'**
+  String multiKolabRoleSpotsOpen(int count);
+
+  /// Chip on a Multi-Kolab role card when the viewer has already applied to that role.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied'**
+  String get multiKolabRoleAppliedChip;
+
+  /// Compensation label for a paid Multi-Kolab role.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get multiKolabCompensationPaid;
+
+  /// Compensation label for a sponsored-in-kind Multi-Kolab role.
+  ///
+  /// In en, this message translates to:
+  /// **'Sponsored in kind'**
+  String get multiKolabCompensationSponsoredInKind;
+
+  /// Compensation label for a value-exchange Multi-Kolab role.
+  ///
+  /// In en, this message translates to:
+  /// **'Value exchange'**
+  String get multiKolabCompensationValueExchange;
+
+  /// Compensation label for a negotiable Multi-Kolab role.
+  ///
+  /// In en, this message translates to:
+  /// **'Negotiable'**
+  String get multiKolabCompensationNegotiable;
+
+  /// Small badge on a Multi-Kolab Explore card distinguishing it from an ordinary Kolab card.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Kolab'**
+  String get multiKolabExploreCardBadge;
+
+  /// Error state body shown when the Multi-Kolab Explore/detail request fails.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load Multi-Kolab Events. Please try again.'**
+  String get multiKolabExploreErrorBody;
+
+  /// Multi-Kolab event detail screen app bar title.
+  ///
+  /// In en, this message translates to:
+  /// **'Event details'**
+  String get multiKolabEventDetailTitle;
+
+  /// Section heading listing a Multi-Kolab event's partner roles.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner roles'**
+  String get multiKolabEventDetailRolesHeading;
+
+  /// Button to open the short application form for a role.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to this role'**
+  String get multiKolabEventDetailApplyButton;
+
+  /// Compact role-capacity label, e.g. '2 open · 1 filled'.
+  ///
+  /// In en, this message translates to:
+  /// **'{open} open · {filled} filled'**
+  String multiKolabRoleProgressLabel(int open, int filled);
+
+  /// Screen-reader label for the role-capacity indicator.
+  ///
+  /// In en, this message translates to:
+  /// **'{open} of {total} roles open, {filled} filled'**
+  String multiKolabRoleProgressSemanticLabel(int open, int filled, int total);
+
+  /// Chip label for a required Multi-Kolab role.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get multiKolabRoleRequiredLabel;
+
+  /// Chip label for an optional Multi-Kolab role.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get multiKolabRoleOptionalLabel;
+
+  /// Chip label describing which account type may apply to a role (type is the raw wire value business/community/either).
+  ///
+  /// In en, this message translates to:
+  /// **'Open to: {type}'**
+  String multiKolabRoleEligibilityLabel(String type);
+
+  /// Banner shown on the event detail screen when the viewer has already applied to a role.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve applied — status: {status}'**
+  String multiKolabAlreadyAppliedLabel(String status);
+
+  /// Button opening the organizer's external RSVP link (HTTPS only).
+  ///
+  /// In en, this message translates to:
+  /// **'RSVP'**
+  String get multiKolabRsvpButtonLabel;
+
+  /// Short-application sheet title.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to {role}'**
+  String multiKolabApplyFormTitle(String role);
+
+  /// Label for the required pitch field on the short application form.
+  ///
+  /// In en, this message translates to:
+  /// **'Your pitch'**
+  String get multiKolabApplyFormPitchLabel;
+
+  /// Placeholder text for the pitch field.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell the organizer why you\'d be a great fit'**
+  String get multiKolabApplyFormPitchHint;
+
+  /// Validation message when the pitch field is left empty.
+  ///
+  /// In en, this message translates to:
+  /// **'A pitch is required to apply.'**
+  String get multiKolabApplyFormPitchRequired;
+
+  /// Label for the optional availability field on the short application form.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability (optional)'**
+  String get multiKolabApplyFormAvailabilityLabel;
+
+  /// Placeholder text for the availability field.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Any Saturday in September'**
+  String get multiKolabApplyFormAvailabilityHint;
+
+  /// Submit button on the short application form.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit application'**
+  String get multiKolabApplyFormSubmit;
+
+  /// Snackbar shown after a successful application.
+  ///
+  /// In en, this message translates to:
+  /// **'Application sent!'**
+  String get multiKolabApplyFormSuccess;
+
+  /// Error shown for the role_ineligible stable error code.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account type can\'t apply to this role.'**
+  String get multiKolabApplyFormErrorIneligible;
+
+  /// Error shown for the event_not_recruiting stable error code.
+  ///
+  /// In en, this message translates to:
+  /// **'This event isn\'t accepting applications right now.'**
+  String get multiKolabApplyFormErrorEventNotRecruiting;
+
+  /// Error shown for the role_not_open stable error code.
+  ///
+  /// In en, this message translates to:
+  /// **'This role is no longer open.'**
+  String get multiKolabApplyFormErrorRoleNotOpen;
+
+  /// Error shown for the duplicate_application stable error code.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve already applied to this role.'**
+  String get multiKolabApplyFormErrorDuplicate;
+
+  /// Fallback error message for an unrecognized application-rejection code.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get multiKolabApplyFormErrorGeneric;
+
+  /// Small chip marking a My Kolabs card as a Multi-Kolab event.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Kolab'**
+  String get multiKolabCardBadge;
+
+  /// Title of the sheet shown by the My Kolabs create action.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you want to create?'**
+  String get createKolabChoiceTitle;
+
+  /// Option that starts the ordinary kolab creation flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Kolab'**
+  String get createKolabChoiceKolabTitle;
+
+  /// Subtitle of the ordinary kolab creation option.
+  ///
+  /// In en, this message translates to:
+  /// **'One collaboration with one partner'**
+  String get createKolabChoiceKolabSubtitle;
+
+  /// Option that starts the Multi-Kolab event creation flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Multi-Kolab event'**
+  String get createKolabChoiceMultiKolabTitle;
+
+  /// Subtitle of the Multi-Kolab creation option.
+  ///
+  /// In en, this message translates to:
+  /// **'One event, several partners'**
+  String get createKolabChoiceMultiKolabSubtitle;
+
+  /// Organizer Multi-Kolab events overview title.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Kolab events'**
+  String get multiKolabOrganizerDashboardTitle;
+
+  /// Primary CTA to start a new Multi-Kolab event.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Multi-Kolab event'**
+  String get multiKolabOrganizerCreateCta;
+
+  /// Empty organizer dashboard title.
+  ///
+  /// In en, this message translates to:
+  /// **'No Multi-Kolab events yet'**
+  String get multiKolabOrganizerEmptyTitle;
+
+  /// Empty organizer dashboard body.
+  ///
+  /// In en, this message translates to:
+  /// **'Create one event and invite several partners to fill different roles.'**
+  String get multiKolabOrganizerEmptyBody;
+
+  /// Retry button on an organizer error state.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get multiKolabOrganizerRetry;
+
+  /// Organizer dashboard status filter: all events.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get multiKolabOrganizerFilterAll;
+
+  /// Organizer dashboard status filter: drafts.
+  ///
+  /// In en, this message translates to:
+  /// **'Drafts'**
+  String get multiKolabOrganizerFilterDrafts;
+
+  /// Organizer dashboard status filter: recruiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Recruiting'**
+  String get multiKolabOrganizerFilterRecruiting;
+
+  /// Organizer dashboard status filter: confirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get multiKolabOrganizerFilterConfirmed;
+
+  /// Organizer dashboard status filter: completed, cancelled and expired events.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished'**
+  String get multiKolabOrganizerFilterFinished;
+
+  /// Shown when the selected organizer status filter matches no events.
+  ///
+  /// In en, this message translates to:
+  /// **'No events in this group'**
+  String get multiKolabOrganizerFilterEmpty;
+
+  /// Clears the organizer dashboard status filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Show all events'**
+  String get multiKolabOrganizerFilterClear;
+
+  /// Chip on an organizer event card that still needs work.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs attention'**
+  String get multiKolabOrganizerNeedsAttention;
+
+  /// Opens the event management screen from a dashboard card.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get multiKolabOrganizerManageCta;
+
+  /// Multi-Kolab event status: draft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get multiKolabEventStatusDraft;
+
+  /// Multi-Kolab event status: recruiting partners.
+  ///
+  /// In en, this message translates to:
+  /// **'Recruiting partners'**
+  String get multiKolabEventStatusRecruiting;
+
+  /// Multi-Kolab event status: confirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get multiKolabEventStatusConfirmed;
+
+  /// Multi-Kolab event status: completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get multiKolabEventStatusCompleted;
+
+  /// Multi-Kolab event status: cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get multiKolabEventStatusCancelled;
+
+  /// Multi-Kolab event status: expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get multiKolabEventStatusExpired;
+
+  /// Multi-Kolab role status: open for applications.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get multiKolabRoleStatusOpen;
+
+  /// Multi-Kolab role status: all positions filled.
+  ///
+  /// In en, this message translates to:
+  /// **'Filled'**
+  String get multiKolabRoleStatusFilled;
+
+  /// Multi-Kolab role status: closed by the organizer.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get multiKolabRoleStatusClosed;
+
+  /// Multi-Kolab application status: pending review.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get multiKolabApplicationStatusPending;
+
+  /// Multi-Kolab application status: shortlisted.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortlisted'**
+  String get multiKolabApplicationStatusShortlisted;
+
+  /// Multi-Kolab application status: accepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get multiKolabApplicationStatusAccepted;
+
+  /// Multi-Kolab application status: declined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get multiKolabApplicationStatusDeclined;
+
+  /// Multi-Kolab application status: withdrawn by the applicant.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn'**
+  String get multiKolabApplicationStatusWithdrawn;
+
+  /// Title of the gate shown to a profile without Event Creator access.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Kolab events need Event Creator access'**
+  String get multiKolabEntitlementGateTitle;
+
+  /// Body of the Event Creator gate. Must make clear it is separate from the Business subscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Creator lets you run one event with several partner roles. It is separate from your Kolabing subscription.'**
+  String get multiKolabEntitlementGateBody;
+
+  /// CTA on the Event Creator gate.
+  ///
+  /// In en, this message translates to:
+  /// **'Request access'**
+  String get multiKolabEntitlementGateCta;
+
+  /// Quiet supporting copy under the Event Creator request-access CTA.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll review your request and get back to you.'**
+  String get multiKolabEntitlementGateCtaHint;
+
+  /// Subject line of the mailto: request sent to Kolabing support.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Creator access request'**
+  String get multiKolabEntitlementGateEmailSubject;
+
+  /// Body of the mailto: request. Non-sensitive account context is appended separately.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi Kolabing,\n\nI\'d like to request Event Creator access for my account.\n\nThanks!'**
+  String get multiKolabEntitlementGateEmailBody;
+
+  /// Shown when the mailto: link cannot be opened. Includes the public support address so the user can write to us manually.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open your email app. Contact us at {email} instead.'**
+  String multiKolabEntitlementGateLaunchError(String email);
+
+  /// App bar title when creating a Multi-Kolab event.
+  ///
+  /// In en, this message translates to:
+  /// **'New Multi-Kolab event'**
+  String get multiKolabEventFormCreateTitle;
+
+  /// App bar title when editing a Multi-Kolab event draft.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit event'**
+  String get multiKolabEventFormEditTitle;
+
+  /// Event title field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Event name'**
+  String get multiKolabEventFormNameLabel;
+
+  /// Validation error when the event title is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Give your event a name'**
+  String get multiKolabEventFormNameRequired;
+
+  /// Event description field label.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the event?'**
+  String get multiKolabEventFormDescriptionLabel;
+
+  /// value_summary field label, in partner-facing language.
+  ///
+  /// In en, this message translates to:
+  /// **'What partners get'**
+  String get multiKolabEventFormValueLabel;
+
+  /// venue_needed switch label.
+  ///
+  /// In en, this message translates to:
+  /// **'I still need a venue'**
+  String get multiKolabEventFormVenueNeededLabel;
+
+  /// date_mode selector label.
+  ///
+  /// In en, this message translates to:
+  /// **'When is it?'**
+  String get multiKolabEventFormDateModeLabel;
+
+  /// date_mode option: a single exact date.
+  ///
+  /// In en, this message translates to:
+  /// **'A specific date'**
+  String get multiKolabEventFormDateModeExact;
+
+  /// date_mode option: a range of possible dates.
+  ///
+  /// In en, this message translates to:
+  /// **'A range of dates'**
+  String get multiKolabEventFormDateModeRange;
+
+  /// event_date field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get multiKolabEventFormDateLabel;
+
+  /// date_range_start field label.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get multiKolabEventFormDateFromLabel;
+
+  /// date_range_end field label.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get multiKolabEventFormDateToLabel;
+
+  /// Placeholder shown on an empty date field.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get multiKolabEventFormDatePick;
+
+  /// Validation error when the range end precedes its start.
+  ///
+  /// In en, this message translates to:
+  /// **'The end date must be on or after the start date'**
+  String get multiKolabEventFormDateRangeInvalid;
+
+  /// City field label.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get multiKolabEventFormCityLabel;
+
+  /// Category field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get multiKolabEventFormCategoryLabel;
+
+  /// rsvp_url field label.
+  ///
+  /// In en, this message translates to:
+  /// **'RSVP link'**
+  String get multiKolabEventFormRsvpLabel;
+
+  /// Helper under the RSVP field clarifying Kolabing does not sell tickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendees sign up on your own page (Luma, Eventbrite...). Kolabing does not sell tickets.'**
+  String get multiKolabEventFormRsvpHelper;
+
+  /// Validation error for a non-HTTPS or malformed RSVP link.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid https:// link'**
+  String get multiKolabEventFormRsvpInvalid;
+
+  /// eligible_account_type field label, in product language.
+  ///
+  /// In en, this message translates to:
+  /// **'Who can apply?'**
+  String get multiKolabEventFormEligibilityLabel;
+
+  /// eligible_account_type option: business only.
+  ///
+  /// In en, this message translates to:
+  /// **'Businesses'**
+  String get multiKolabEligibilityBusiness;
+
+  /// eligible_account_type option: community only.
+  ///
+  /// In en, this message translates to:
+  /// **'Communities'**
+  String get multiKolabEligibilityCommunity;
+
+  /// eligible_account_type option: either account type.
+  ///
+  /// In en, this message translates to:
+  /// **'Businesses and communities'**
+  String get multiKolabEligibilityEither;
+
+  /// Saves the Multi-Kolab event draft.
+  ///
+  /// In en, this message translates to:
+  /// **'Save draft'**
+  String get multiKolabEventFormSaveDraft;
+
+  /// Confirmation after a draft is saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft saved'**
+  String get multiKolabEventFormSaved;
+
+  /// Unsaved-changes dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes?'**
+  String get multiKolabEventFormDiscardTitle;
+
+  /// Unsaved-changes dialog body.
+  ///
+  /// In en, this message translates to:
+  /// **'Your unsaved changes will be lost.'**
+  String get multiKolabEventFormDiscardBody;
+
+  /// Confirms discarding unsaved changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get multiKolabEventFormDiscardConfirm;
+
+  /// Nudge shown after a draft is created.
+  ///
+  /// In en, this message translates to:
+  /// **'Next, add the partner roles you are looking for.'**
+  String get multiKolabEventFormAddRolesNudge;
+
+  /// Neutral dismiss action in a Multi-Kolab dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get multiKolabDismissCta;
+
+  /// Returns to the previous Multi-Kolab screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get multiKolabBackCta;
+
+  /// App bar title when adding a partner role.
+  ///
+  /// In en, this message translates to:
+  /// **'New partner role'**
+  String get multiKolabRoleFormCreateTitle;
+
+  /// App bar title when editing a partner role.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit role'**
+  String get multiKolabRoleFormEditTitle;
+
+  /// Role title field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Role name'**
+  String get multiKolabRoleFormTitleLabel;
+
+  /// Role title placeholder giving concrete examples.
+  ///
+  /// In en, this message translates to:
+  /// **'Run club partner, venue partner, coffee partner...'**
+  String get multiKolabRoleFormTitleHint;
+
+  /// Validation error when the role title is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Give the role a name'**
+  String get multiKolabRoleFormTitleRequired;
+
+  /// Explains where a community-only role will appear.
+  ///
+  /// In en, this message translates to:
+  /// **'Communities will see this role in their Explore feed.'**
+  String get multiKolabRoleFormVisibilityCommunity;
+
+  /// Explains where a business-only role will appear.
+  ///
+  /// In en, this message translates to:
+  /// **'Businesses will see this role in their Explore feed.'**
+  String get multiKolabRoleFormVisibilityBusiness;
+
+  /// Explains where an either-eligible role will appear.
+  ///
+  /// In en, this message translates to:
+  /// **'Businesses and communities will both see this role in their Explore feed.'**
+  String get multiKolabRoleFormVisibilityEither;
+
+  /// positions_needed field label.
+  ///
+  /// In en, this message translates to:
+  /// **'How many partners for this role?'**
+  String get multiKolabRoleFormPositionsLabel;
+
+  /// Helper explaining one role can hold several partners.
+  ///
+  /// In en, this message translates to:
+  /// **'One role can take several partners. Do not create duplicates.'**
+  String get multiKolabRoleFormPositionsHelper;
+
+  /// Helper when positions_needed is clamped by already-confirmed partners.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot go below the {count} already confirmed.'**
+  String multiKolabRoleFormPositionsMinConfirmed(int count);
+
+  /// required flag switch label.
+  ///
+  /// In en, this message translates to:
+  /// **'This role is essential for the event'**
+  String get multiKolabRoleFormRequiredLabel;
+
+  /// need field label.
+  ///
+  /// In en, this message translates to:
+  /// **'What you need from them'**
+  String get multiKolabRoleFormNeedLabel;
+
+  /// receive field label.
+  ///
+  /// In en, this message translates to:
+  /// **'What they get in return'**
+  String get multiKolabRoleFormReceiveLabel;
+
+  /// compensation_type field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Type of exchange'**
+  String get multiKolabRoleFormCompensationLabel;
+
+  /// requirements field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Requirements'**
+  String get multiKolabRoleFormRequirementsLabel;
+
+  /// details field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra details'**
+  String get multiKolabRoleFormDetailsLabel;
+
+  /// Saves a partner role.
+  ///
+  /// In en, this message translates to:
+  /// **'Save role'**
+  String get multiKolabRoleFormSave;
+
+  /// Adds a new partner role to the event.
+  ///
+  /// In en, this message translates to:
+  /// **'Add role'**
+  String get multiKolabRoleFormAddCta;
+
+  /// Empty state when an event has no roles yet.
+  ///
+  /// In en, this message translates to:
+  /// **'No partner roles yet'**
+  String get multiKolabRoleFormEmptyTitle;
+
+  /// Empty roles state body.
+  ///
+  /// In en, this message translates to:
+  /// **'Each role you add becomes its own offer in Explore.'**
+  String get multiKolabRoleFormEmptyBody;
+
+  /// Closes a role so it stops appearing in Explore.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop recruiting'**
+  String get multiKolabRoleCloseCta;
+
+  /// Reopens a previously closed role.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopen role'**
+  String get multiKolabRoleReopenCta;
+
+  /// Confirmation dialog title for closing a role.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop recruiting for this role?'**
+  String get multiKolabRoleCloseConfirmTitle;
+
+  /// Confirmation body clarifying nothing is deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'It disappears from Explore. Applications you already received are kept, and you can reopen it later.'**
+  String get multiKolabRoleCloseConfirmBody;
+
+  /// Role fill progress, in product language.
+  ///
+  /// In en, this message translates to:
+  /// **'{filled} of {needed} partners confirmed'**
+  String multiKolabRolePartnersConfirmed(int filled, int needed);
+
+  /// Pre-publish review screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Review & publish'**
+  String get multiKolabReviewTitle;
+
+  /// Review screen section heading for event details.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get multiKolabReviewEventSection;
+
+  /// Review screen section heading for the roles.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner roles'**
+  String get multiKolabReviewRolesSection;
+
+  /// Heading of the list of things still missing before publishing.
+  ///
+  /// In en, this message translates to:
+  /// **'Still needed'**
+  String get multiKolabReviewMissingTitle;
+
+  /// Missing-requirement line: no roles yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one partner role'**
+  String get multiKolabReviewMissingRoles;
+
+  /// Missing-requirement line: no date.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a date'**
+  String get multiKolabReviewMissingDate;
+
+  /// Missing-requirement line: no city.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a city'**
+  String get multiKolabReviewMissingCity;
+
+  /// Review line when the organizer still needs a venue.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue still needed'**
+  String get multiKolabReviewVenueNeeded;
+
+  /// Review line when the venue is already sorted.
+  ///
+  /// In en, this message translates to:
+  /// **'Venue sorted'**
+  String get multiKolabReviewVenueSecured;
+
+  /// Publishes the Multi-Kolab event.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish event'**
+  String get multiKolabPublishCta;
+
+  /// Title of the post-publish confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'You are recruiting!'**
+  String get multiKolabPublishSuccessTitle;
+
+  /// Explains what publishing did, in product language.
+  ///
+  /// In en, this message translates to:
+  /// **'Each open role is now an offer in the Explore feed of the profiles that can apply to it.'**
+  String get multiKolabPublishSuccessBody;
+
+  /// Returns to the event after publishing.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to event'**
+  String get multiKolabPublishSuccessCta;
+
+  /// Shown when the backend refuses to publish the event.
+  ///
+  /// In en, this message translates to:
+  /// **'This event cannot be published yet'**
+  String get multiKolabPublishFailedTitle;
+
+  /// Event management screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage event'**
+  String get multiKolabManageTitle;
+
+  /// Event management tab: overview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get multiKolabManageTabOverview;
+
+  /// Event management tab: roles.
+  ///
+  /// In en, this message translates to:
+  /// **'Roles'**
+  String get multiKolabManageTabRoles;
+
+  /// Event management tab: applicants.
+  ///
+  /// In en, this message translates to:
+  /// **'Applicants'**
+  String get multiKolabManageTabApplicants;
+
+  /// Aggregate role fill progress on the overview tab.
+  ///
+  /// In en, this message translates to:
+  /// **'{filled} of {total} roles filled'**
+  String multiKolabManageRolesProgress(int filled, int total);
+
+  /// Event-level capacity: partner positions filled across every role (summed positions_filled of summed positions_needed) — NOT a count of role records.
+  ///
+  /// In en, this message translates to:
+  /// **'{filled} of {total} partner spots filled'**
+  String multiKolabPartnerSpotsFilled(int filled, int total);
+
+  /// How many roles are still recruiting (status open with capacity left). A role needing several partners counts once.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No open roles} one{{count} open role} other{{count} open roles}}'**
+  String multiKolabOpenRolesCount(int count);
+
+  /// Overview section listing the Kolabs created by acceptances.
+  ///
+  /// In en, this message translates to:
+  /// **'Kolabs created'**
+  String get multiKolabManageChildKolabsTitle;
+
+  /// Empty state for the created-Kolabs section.
+  ///
+  /// In en, this message translates to:
+  /// **'No partners confirmed yet.'**
+  String get multiKolabManageChildKolabsEmpty;
+
+  /// Opens the event editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit event'**
+  String get multiKolabManageEditCta;
+
+  /// Opens the pre-publish review screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Review & publish'**
+  String get multiKolabManageReviewCta;
+
+  /// Confirms the event (recruiting to confirmed).
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm event'**
+  String get multiKolabConfirmEventCta;
+
+  /// Confirm-event dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm this event?'**
+  String get multiKolabConfirmEventTitle;
+
+  /// Confirm-event dialog body.
+  ///
+  /// In en, this message translates to:
+  /// **'Your partners will be told it is going ahead, and you stop recruiting.'**
+  String get multiKolabConfirmEventBody;
+
+  /// Marks a confirmed event as completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as completed'**
+  String get multiKolabCompleteEventCta;
+
+  /// Complete-event dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark this event as completed?'**
+  String get multiKolabCompleteEventTitle;
+
+  /// Complete-event dialog body.
+  ///
+  /// In en, this message translates to:
+  /// **'This cannot be undone.'**
+  String get multiKolabCompleteEventBody;
+
+  /// Cancels the event.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel event'**
+  String get multiKolabCancelEventCta;
+
+  /// Cancel-event dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this event?'**
+  String get multiKolabCancelEventTitle;
+
+  /// Cancel-event dialog body, clarifying nothing is deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your partners will be told. The event and its roles are kept, not deleted.'**
+  String get multiKolabCancelEventBody;
+
+  /// Cancellation reason field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Why are you cancelling?'**
+  String get multiKolabCancelEventReasonLabel;
+
+  /// Validation error when no cancellation reason is given.
+  ///
+  /// In en, this message translates to:
+  /// **'Please give a reason'**
+  String get multiKolabCancelEventReasonRequired;
+
+  /// Generic confirm action in a Multi-Kolab dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get multiKolabConfirmGenericCta;
+
+  /// Applicant review screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Applicants'**
+  String get multiKolabApplicantsTitle;
+
+  /// Subtitle naming which role the applications belong to.
+  ///
+  /// In en, this message translates to:
+  /// **'For {role}'**
+  String multiKolabApplicantsForRole(String role);
+
+  /// Empty applicant list title.
+  ///
+  /// In en, this message translates to:
+  /// **'No applications yet'**
+  String get multiKolabApplicantsEmptyTitle;
+
+  /// Empty applicant list body.
+  ///
+  /// In en, this message translates to:
+  /// **'As soon as someone applies to this role you will see them here.'**
+  String get multiKolabApplicantsEmptyBody;
+
+  /// Collapsible applicant section heading with its count.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} ({count})'**
+  String multiKolabApplicantsSectionLabel(String label, int count);
+
+  /// Label above the applicant pitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Their pitch'**
+  String get multiKolabApplicantPitchLabel;
+
+  /// Label above the applicant availability.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability'**
+  String get multiKolabApplicantAvailabilityLabel;
+
+  /// Opens the applicant public profile.
+  ///
+  /// In en, this message translates to:
+  /// **'View profile'**
+  String get multiKolabApplicantViewProfileCta;
+
+  /// Account-type label on an applicant from a business profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get multiKolabApplicantBusinessLabel;
+
+  /// Account-type label on an applicant from a community profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get multiKolabApplicantCommunityLabel;
+
+  /// Shortlists an application.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortlist'**
+  String get multiKolabShortlistCta;
+
+  /// Declines an application.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get multiKolabDeclineCta;
+
+  /// Accepts an application, creating the child Kolab.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get multiKolabAcceptCta;
+
+  /// Decline confirmation dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this application?'**
+  String get multiKolabDeclineConfirmTitle;
+
+  /// Decline confirmation dialog body.
+  ///
+  /// In en, this message translates to:
+  /// **'They will be told they were not selected for {role}.'**
+  String multiKolabDeclineConfirmBody(String role);
+
+  /// Accept confirmation sheet title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm this partner?'**
+  String get multiKolabAcceptConfirmTitle;
+
+  /// Accept confirmation line naming the role.
+  ///
+  /// In en, this message translates to:
+  /// **'Role: {role}'**
+  String multiKolabAcceptConfirmRole(String role);
+
+  /// Accept confirmation line showing remaining capacity after this acceptance.
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} of {needed} places left after this'**
+  String multiKolabAcceptConfirmCapacity(int remaining, int needed);
+
+  /// Accept confirmation section heading for the value exchange.
+  ///
+  /// In en, this message translates to:
+  /// **'The exchange'**
+  String get multiKolabAcceptConfirmExchange;
+
+  /// Accept confirmation line explaining the child Kolab is created.
+  ///
+  /// In en, this message translates to:
+  /// **'A Kolab and a collaboration will be created between you and this partner.'**
+  String get multiKolabAcceptConfirmCreatesKolab;
+
+  /// Post-acceptance success title.
+  ///
+  /// In en, this message translates to:
+  /// **'Partner confirmed'**
+  String get multiKolabAcceptSuccessTitle;
+
+  /// Post-acceptance success body.
+  ///
+  /// In en, this message translates to:
+  /// **'A Kolab has been created. Agree the details in the collaboration.'**
+  String get multiKolabAcceptSuccessBody;
+
+  /// Opens the collaboration created by an acceptance.
+  ///
+  /// In en, this message translates to:
+  /// **'Open collaboration'**
+  String get multiKolabOpenCollaborationCta;
+
+  /// Opens the child Kolab created by an acceptance.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Kolab'**
+  String get multiKolabOpenKolabCta;
+
+  /// Label on an accepted application row pointing at the created Kolab.
+  ///
+  /// In en, this message translates to:
+  /// **'Kolab created'**
+  String get multiKolabApplicantChildKolabLabel;
+
+  /// Localized message for the not_owner backend code.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the organizer can do this.'**
+  String get multiKolabErrorNotOwner;
+
+  /// Localized message for the invalid_transition backend code.
+  ///
+  /// In en, this message translates to:
+  /// **'That is no longer possible for this event.'**
+  String get multiKolabErrorInvalidTransition;
+
+  /// Localized message for the role_capacity_exceeded backend code.
+  ///
+  /// In en, this message translates to:
+  /// **'This role is already full.'**
+  String get multiKolabErrorRoleCapacity;
+
+  /// Fallback message for an unrecognised Multi-Kolab error.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get multiKolabErrorGeneric;
 }
 
 class _AppLocalizationsDelegate

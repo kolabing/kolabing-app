@@ -10,6 +10,7 @@ import 'package:kolabing_app/features/business/providers/profile_provider.dart';
 import 'package:kolabing_app/features/business/screens/explore_screen.dart';
 import 'package:kolabing_app/features/discovery/models/discovery_filters.dart';
 import 'package:kolabing_app/features/discovery/models/discovery_item.dart';
+import 'package:kolabing_app/features/discovery/models/explore_feed_item.dart';
 import 'package:kolabing_app/features/discovery/providers/discovery_provider.dart';
 import 'package:kolabing_app/features/notification/providers/notification_provider.dart';
 import 'package:kolabing_app/widgets/blurred_identity.dart';
@@ -383,47 +384,50 @@ class _FakeDiscoveryFiltersNotifier extends DiscoveryFiltersNotifier {
 }
 
 class _FakeDiscoveryListNotifier extends DiscoveryListNotifier {
-  _FakeDiscoveryListNotifier({this.items});
+  _FakeDiscoveryListNotifier({this.items, this.feedItems});
 
+  /// Ordinary offers, wrapped into feed items for convenience.
   final List<DiscoveryItem>? items;
+
+  /// Raw feed items, for tests that need a MIXED feed.
+  final List<ExploreFeedItem>? feedItems;
 
   @override
   DiscoveryListState build() => DiscoveryListState(
     items:
-        items ??
-        <DiscoveryItem>[
-          DiscoveryItem(
-            id: 'business-1',
-            creatorType: 'business',
-            intentType: 'venue_promotion',
-            title: 'Sunset rooftop collab',
-            description: 'Host your creator event on our rooftop',
-            preferredCity: 'Barcelona',
-            availability: DiscoveryAvailability(
-              mode: 'one_time',
-              start: DateTime(2026, 5, 20),
-              end: DateTime(2026, 5, 20),
-            ),
-            creatorProfile: const DiscoveryCreatorProfile(
-              id: 'creator-1',
-              displayName: 'Casa Sol',
-            ),
-            businessOffer: const BusinessOfferSummary(
-              offerTypes: <String>['venue', 'food_drink'],
-              venueType: 'rooftop',
-              expectedDeliverables: <String>['social_media'],
-            ),
-            match: const DiscoveryMatch(
-              feed: 'recommended',
-              score: 92,
-              reasons: <String>['city_match'],
-            ),
-          ),
-        ],
-    currentPage: 1,
-    lastPage: 1,
-    total: items?.length ?? 1,
+        feedItems ??
+        (items ?? _defaultOffers).map(ExploreOfferItem.new).toList(),
   );
+
+  static final List<DiscoveryItem> _defaultOffers = <DiscoveryItem>[
+    DiscoveryItem(
+      id: 'business-1',
+      creatorType: 'business',
+      intentType: 'venue_promotion',
+      title: 'Sunset rooftop collab',
+      description: 'Host your creator event on our rooftop',
+      preferredCity: 'Barcelona',
+      availability: DiscoveryAvailability(
+        mode: 'one_time',
+        start: DateTime(2026, 5, 20),
+        end: DateTime(2026, 5, 20),
+      ),
+      creatorProfile: const DiscoveryCreatorProfile(
+        id: 'creator-1',
+        displayName: 'Casa Sol',
+      ),
+      businessOffer: const BusinessOfferSummary(
+        offerTypes: <String>['venue', 'food_drink'],
+        venueType: 'rooftop',
+        expectedDeliverables: <String>['social_media'],
+      ),
+      match: const DiscoveryMatch(
+        feed: 'recommended',
+        score: 92,
+        reasons: <String>['city_match'],
+      ),
+    ),
+  ];
 
   @override
   Future<void> refresh() async {}
