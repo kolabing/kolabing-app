@@ -35,12 +35,15 @@ class DiscoveredEvent {
       locationLng: (json['location_lng'] as num?)?.toDouble() ?? 0,
       address: json['address'] as String?,
       // Photos may be plain URL strings or photo objects ({id, url}). Handle both.
-      photos: (json['photos'] as List<dynamic>?)
-              ?.map((e) => e is String
-                  ? e
-                  : (e is Map<String, dynamic>
-                      ? (e['url'] ?? e['photo_url'] ?? '').toString()
-                      : ''))
+      photos:
+          (json['photos'] as List<dynamic>?)
+              ?.map(
+                (e) => e is String
+                    ? e
+                    : (e is Map<String, dynamic>
+                          ? (e['url'] ?? e['photo_url'] ?? '').toString()
+                          : ''),
+              )
               .where((u) => u.isNotEmpty)
               .toList() ??
           [],
@@ -74,10 +77,9 @@ class DiscoveredEvent {
   final String? communityType;
 
   /// The host name to render on the card.
-  String get hostName =>
-      (communityName != null && communityName!.isNotEmpty)
-          ? communityName!
-          : partnerName;
+  String get hostName => (communityName != null && communityName!.isNotEmpty)
+      ? communityName!
+      : partnerName;
 
   /// Check if organized by a business
   bool get isBusiness => partnerType == 'business';
@@ -97,22 +99,22 @@ class DiscoveredEvent {
   DateTime get eventDate => DateTime.parse(date);
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'partner_name': partnerName,
-        'partner_type': partnerType,
-        'date': date,
-        'attendee_count': attendeeCount,
-        'location_lat': locationLat,
-        'location_lng': locationLng,
-        if (address != null) 'address': address,
-        'photos': photos,
-        'distance_km': distanceKm,
-        'created_at': createdAt.toIso8601String(),
-        'updated_at': updatedAt.toIso8601String(),
-        if (communityName != null) 'community_name': communityName,
-        if (communityType != null) 'community_type': communityType,
-      };
+    'id': id,
+    'name': name,
+    'partner_name': partnerName,
+    'partner_type': partnerType,
+    'date': date,
+    'attendee_count': attendeeCount,
+    'location_lat': locationLat,
+    'location_lng': locationLng,
+    if (address != null) 'address': address,
+    'photos': photos,
+    'distance_km': distanceKm,
+    'created_at': createdAt.toIso8601String(),
+    'updated_at': updatedAt.toIso8601String(),
+    if (communityName != null) 'community_name': communityName,
+    if (communityType != null) 'community_type': communityType,
+  };
 }
 
 /// Response for discovered events with pagination

@@ -318,23 +318,26 @@ abstract final class KolabingRoutes {
   /// Event QR code display (for organizers)
   static const String eventQRCode = '/attendee/events/:eventId/qr';
 
-  /// Event check-ins list (for organizers)
-  static const String eventCheckins = '/attendee/events/:eventId/checkins';
+  /// Path to the check-in QR for [eventId].
+  ///
+  /// [name] rides along as a query parameter (which is what the route's builder
+  /// reads) so the screen can title itself without a second fetch.
+  static String buildEventQRCodePath(String eventId, {String? name}) {
+    final path = '/attendee/events/$eventId/qr';
+    if (name == null || name.isEmpty) return path;
+    return '$path?name=${Uri.encodeQueryComponent(name)}';
+  }
 
   /// Event challenges list
   static const String eventChallenges = '/attendee/events/:eventId/challenges';
 
+  /// Path to [eventChallenges] for [eventId].
+  static String buildEventChallengesPath(String eventId) =>
+      '/attendee/events/$eventId/challenges';
+
   /// Create challenge (for organizers)
   static const String createChallenge =
       '/attendee/events/:eventId/challenges/create';
-
-  /// Edit challenge (for organizers)
-  static const String editChallenge =
-      '/attendee/events/:eventId/challenges/:challengeId/edit';
-
-  /// Initiate challenge
-  static const String initiateChallenge =
-      '/attendee/events/:eventId/challenges/:challengeId/initiate';
 
   // ---------------------------------------------------------------------------
   /// Permission request screen
@@ -994,21 +997,6 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final eventId = state.pathParameters['eventId'] ?? '';
         return CreateChallengeScreen(eventId: eventId);
-      },
-    ),
-
-    GoRoute(
-      path: KolabingRoutes.initiateChallenge,
-      name: 'initiateChallenge',
-      builder: (BuildContext context, GoRouterState state) {
-        final eventId = state.pathParameters['eventId'] ?? '';
-        final challengeId = state.pathParameters['challengeId'] ?? '';
-        final challenge = state.extra as Challenge?;
-        return InitiateChallengeScreen(
-          eventId: eventId,
-          challengeId: challengeId,
-          challenge: challenge,
-        );
       },
     ),
   ],

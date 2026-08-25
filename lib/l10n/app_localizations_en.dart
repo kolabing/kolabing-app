@@ -7097,4 +7097,400 @@ class AppLocalizationsEn extends AppLocalizations {
   String onboardingStepOf(int current, int total) {
     return 'Step $current of $total';
   }
+
+  @override
+  String get challengeCompletionStatusCancelled => 'Cancelled';
+
+  @override
+  String get challengeCompletionStatusExpired => 'Expired';
+
+  @override
+  String get challengeTogetherCancel => 'Cancel this request';
+
+  @override
+  String get challengeTogetherCancelled => 'Request cancelled.';
+
+  @override
+  String get challengeTogetherCancelFailed =>
+      'Couldn\'t cancel that — they may have already answered.';
+
+  @override
+  String get qrHubTitle => 'Scan or share';
+
+  @override
+  String get qrHubScanTitle => 'Scan a code';
+
+  @override
+  String get qrHubScanSubtitle =>
+      'Check in to an event, or pair up to play a challenge';
+
+  @override
+  String get qrHubMyQrTitle => 'My QR code';
+
+  @override
+  String get qrHubMyQrSubtitle => 'Let someone scan you to pair up';
+
+  @override
+  String get scannerUnknownCode => 'That isn\'t a Kolabing QR code.';
+
+  @override
+  String get scannerOwnCode =>
+      'That\'s your own code — ask the other person to show theirs.';
+
+  @override
+  String get scannerTorchTooltip => 'Toggle flash';
+
+  @override
+  String checkinSuccessBody(String eventName) {
+    return 'You\'re checked in to $eventName.';
+  }
+
+  @override
+  String checkinXpEarned(int points) {
+    return '+$points XP';
+  }
+
+  @override
+  String get checkinNextStep =>
+      'Now scan someone\'s profile QR to play a challenge together.';
+
+  @override
+  String get checkinScanPeer => 'SCAN SOMEONE';
+
+  @override
+  String peerPairedTitle(String name) {
+    return 'Paired with $name';
+  }
+
+  @override
+  String get peerPairedSubtitle => 'Pick a challenge to play together.';
+
+  @override
+  String peerPairedAtEvent(String eventName) {
+    return 'At $eventName';
+  }
+
+  @override
+  String get peerChallengesEmpty => 'This event has no challenges yet.';
+
+  @override
+  String get peerChallengePlay => 'PLAY';
+
+  @override
+  String get peerNoSessionTitle => 'Check in first';
+
+  @override
+  String get peerNoSessionBody =>
+      'Scan the event\'s QR code to check in, then pair up to play its challenges.';
+
+  @override
+  String get peerNoSessionAction => 'SCAN EVENT CODE';
+
+  @override
+  String get peerInitiateBothCheckedIn =>
+      'Couldn\'t start this challenge. Make sure you\'re both checked in to this event.';
+
+  @override
+  String get peerInitiateFailed => 'Couldn\'t start the challenge.';
+
+  @override
+  String get challengeFirstChoose => 'Choose a challenge';
+
+  @override
+  String get challengeFirstScanThem => 'Scan the person you\'re doing it with';
+
+  @override
+  String get communityChallengesTitle => 'Challenges';
+
+  @override
+  String get communityChallengesHubSubtitle => 'Choose what your events play';
+
+  @override
+  String get communityChallengesDefaultHint =>
+      'Nothing chosen, so your events play every Kolabing challenge. Tick some to narrow it down.';
+
+  @override
+  String get communityChallengesCuratedHint =>
+      'Your events play only what\'s ticked here, plus anything you add to a single event.';
+
+  @override
+  String get communityChallengesAllowRepeat =>
+      'Let the same two people repeat it';
+
+  @override
+  String get communityChallengesRequiresNewPerson =>
+      'Only with someone they haven\'t played with';
+
+  @override
+  String get communityChallengesSaved => 'Saved.';
+
+  @override
+  String get communityChallengesSaveFailed => 'Couldn\'t save that. Try again.';
+
+  @override
+  String get communityChallengesUnavailable =>
+      'The challenge library isn\'t available yet.';
+
+  @override
+  String get communityChallengesEmptyLibrary =>
+      'There are no challenges to choose from yet.';
+
+  @override
+  String get peerInitiateAlreadyPending =>
+      'You\'ve already asked them to confirm this one.';
+
+  @override
+  String get peerInitiateAlreadyCompleted =>
+      'You two have already done this one. Try another.';
+
+  @override
+  String get peerInitiateNeedsNewPerson =>
+      'This one\'s for someone you haven\'t played with yet.';
+
+  @override
+  String get peerInitiateEventLimit =>
+      'You\'ve done all the challenges you can at this event.';
+
+  @override
+  String get verifyQrTitle => 'Get it confirmed';
+
+  @override
+  String verifyQrBody(String name) {
+    return 'Ask $name to scan this code to confirm you did it.';
+  }
+
+  @override
+  String get verifyQrWaiting => 'Waiting for confirmation…';
+
+  @override
+  String get verifyQrVerifiedTitle => 'Challenge complete!';
+
+  @override
+  String get verifyQrRejectedTitle => 'Not confirmed';
+
+  @override
+  String get verifyQrRejectedBody =>
+      'This one wasn\'t confirmed. You can try another challenge.';
+
+  @override
+  String get verifyQrTimeoutTitle => 'Still waiting';
+
+  @override
+  String get verifyQrTimeoutBody =>
+      'No confirmation yet. Keep this code open, or show it again later from your challenge history.';
+
+  @override
+  String get verifyQrKeepWaiting => 'KEEP WAITING';
+
+  @override
+  String get verifyScanTitle => 'Confirm a challenge';
+
+  @override
+  String verifyScanQuestion(String name, String challenge) {
+    return 'Did $name complete “$challenge”?';
+  }
+
+  @override
+  String verifyScanQuestionFallback(String name) {
+    return 'Did $name complete their challenge?';
+  }
+
+  @override
+  String get verifyScanNotForYou =>
+      'That challenge isn\'t waiting for your confirmation.';
+
+  @override
+  String get verifyScanConfirmedTitle => 'Confirmed';
+
+  @override
+  String verifyScanConfirmedBody(String name, int points) {
+    return '$name earned $points XP.';
+  }
+
+  @override
+  String get verifyScanRejectedTitle => 'Rejected';
+
+  @override
+  String get verifyScanFailed => 'Couldn\'t confirm the challenge.';
+
+  @override
+  String get eventHubShowCheckinQr => 'Show check-in QR';
+
+  @override
+  String get eventCheckinImHere => 'I\'m here';
+
+  @override
+  String get eventCheckinScanOrganizerQr => 'Scan the organizer\'s QR instead';
+
+  @override
+  String get eventCheckinScanSomeone => 'Scan someone';
+
+  @override
+  String get eventCheckinYoureIn =>
+      'You\'re in. Find someone to play a challenge with.';
+
+  @override
+  String get eventCheckinPickEvent => 'Which event are you at?';
+
+  @override
+  String get eventCheckinPickEventEmpty =>
+      'You\'re not going to anything today.';
+
+  @override
+  String get eventCheckinNoEventYet => 'Check in to an event first';
+
+  @override
+  String get eventHubCheckIn => 'Check in';
+
+  @override
+  String get checkinInvalidToken =>
+      'That check-in code isn\'t valid any more. Ask the organizer to show it again.';
+
+  @override
+  String get checkinNotAccepting =>
+      'This event isn\'t taking check-ins right now.';
+
+  @override
+  String get scannerCameraBlocked =>
+      'Kolabing needs camera access to scan QR codes.';
+
+  @override
+  String get scannerAlreadyCheckedIn =>
+      'You were already checked in — you\'re all set.';
+
+  @override
+  String get peerPairedTitleFallback => 'Paired up';
+
+  @override
+  String get verifyQrBodyFallback =>
+      'Ask them to scan this code to confirm you did it.';
+
+  @override
+  String get peerChallengesLoadFailed =>
+      'Couldn\'t load this event\'s challenges.';
+
+  @override
+  String get eventQrNotAuthorized =>
+      'Only this event\'s organizer can show its check-in code.';
+
+  @override
+  String get verifyScanErrorTitle => 'Couldn\'t confirm';
+
+  @override
+  String get checkinAlreadyTitle => 'You\'re checked in';
+
+  @override
+  String get verifyScanUnreachable =>
+      'Couldn\'t reach the server. Check your connection and scan again.';
+
+  @override
+  String get communityFollow => 'Follow';
+
+  @override
+  String get communityFollowing => 'Following';
+
+  @override
+  String get communityFollowedSnack =>
+      'Following. Their events will show up in your feed.';
+
+  @override
+  String get communityUnfollowedSnack => 'Unfollowed.';
+
+  @override
+  String get communityFollowFailed => 'Couldn\'t update that. Try again.';
+
+  @override
+  String get communityBecomeMember => 'Become a member';
+
+  @override
+  String membershipPromptTitle(String community) {
+    return 'You\'re at $community';
+  }
+
+  @override
+  String get membershipPromptBody =>
+      'Members get the community chat, member-only events and its rewards.';
+
+  @override
+  String get membershipPromptNotNow => 'Not now';
+
+  @override
+  String get communityMemberBadge => 'Member';
+
+  @override
+  String get communityApplicationTitle => 'Become a member';
+
+  @override
+  String communityApplicationIntro(String community) {
+    return '$community asks a few questions before adding new members.';
+  }
+
+  @override
+  String get communityApplicationOptional => 'Optional';
+
+  @override
+  String get communityApplicationRequiredError => 'Please answer this';
+
+  @override
+  String get communityApplicationSubmit => 'SEND APPLICATION';
+
+  @override
+  String get communityApplicationSentSnack =>
+      'Application sent. The organiser will review it.';
+
+  @override
+  String get communityApplicationJoinedSnack => 'You\'re a member now.';
+
+  @override
+  String get communityApplicationFailed =>
+      'Couldn\'t send your application. Try again.';
+
+  @override
+  String get challengeTogetherTitle => 'Together';
+
+  @override
+  String challengeTogetherWaiting(String name) {
+    return 'Waiting for $name to confirm…';
+  }
+
+  @override
+  String challengeTogetherEachEarns(int points) {
+    return '$points XP each';
+  }
+
+  @override
+  String get challengeTogetherRevealTitle => 'Nice one!';
+
+  @override
+  String challengeTogetherRevealBody(String name) {
+    return 'You and $name both earned it.';
+  }
+
+  @override
+  String challengeTogetherPrompt(String challenge) {
+    return 'You two: $challenge';
+  }
+
+  @override
+  String get attendeeHomeScopeAll => 'All events';
+
+  @override
+  String get attendeeHomeScopeFollowing => 'Following';
+
+  @override
+  String get attendeeHomeNoFollowsTitle => 'You don\'t follow anyone yet';
+
+  @override
+  String get attendeeHomeNoFollowsHint =>
+      'Follow a community and everything it puts on shows up here.';
+
+  @override
+  String get attendeeHomeNoFollowedEventsTitle => 'Nothing coming up';
+
+  @override
+  String get attendeeHomeNoFollowedEventsHint =>
+      'The communities you follow haven\'t announced anything yet.';
+
+  @override
+  String get attendeeHomeFollowMore => 'Follow more communities';
 }

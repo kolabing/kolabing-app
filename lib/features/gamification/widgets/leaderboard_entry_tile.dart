@@ -58,9 +58,12 @@ class LeaderboardEntryTile extends StatelessWidget {
             width: 40,
             child: Text(
               '#${entry.rank}',
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: isCurrentUser
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w700,
+                color: isCurrentUser
                     ? context.colors.primary
-                    : context.colors.onSurfaceVariant),
+                    : context.colors.onSurfaceVariant,
+              ),
             ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
@@ -77,7 +80,10 @@ class LeaderboardEntryTile extends StatelessWidget {
                     entry.displayName.isNotEmpty
                         ? entry.displayName[0].toUpperCase()
                         : '?',
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.primary),
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.primary,
+                    ),
                   )
                 : null,
           ),
@@ -93,7 +99,10 @@ class LeaderboardEntryTile extends StatelessWidget {
                     Flexible(
                       child: Text(
                         entry.displayName,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.onSurface,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -111,7 +120,11 @@ class LeaderboardEntryTile extends StatelessWidget {
                         ),
                         child: Text(
                           l10n.leaderboardEntryYou,
-                          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: context.colors.onPrimary),
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: context.colors.onPrimary,
+                          ),
                         ),
                       ),
                     ],
@@ -123,8 +136,11 @@ class LeaderboardEntryTile extends StatelessWidget {
                   Row(
                     children: [
                       if (entry.tier != null) ...[
-                        Icon(LucideIcons.award,
-                            size: 12, color: context.colors.onSurfaceVariant),
+                        Icon(
+                          LucideIcons.award,
+                          size: 12,
+                          color: context.colors.onSurfaceVariant,
+                        ),
                         const SizedBox(width: 3),
                         Flexible(
                           child: Text(
@@ -132,8 +148,9 @@ class LeaderboardEntryTile extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: KolabingTextStyles.bodySmall.copyWith(
-                                fontSize: 11,
-                                color: context.colors.onSurfaceVariant),
+                              fontSize: 11,
+                              color: context.colors.onSurfaceVariant,
+                            ),
                           ),
                         ),
                       ],
@@ -141,14 +158,18 @@ class LeaderboardEntryTile extends StatelessWidget {
                           entry.badgeCount! > 0) ...[
                         if (entry.tier != null)
                           const SizedBox(width: KolabingSpacing.sm),
-                        Icon(LucideIcons.medal,
-                            size: 12, color: context.colors.onSurfaceVariant),
+                        Icon(
+                          LucideIcons.medal,
+                          size: 12,
+                          color: context.colors.onSurfaceVariant,
+                        ),
                         const SizedBox(width: 3),
                         Text(
                           l10n.leaderboardEntryBadgeCount(entry.badgeCount!),
                           style: KolabingTextStyles.bodySmall.copyWith(
-                              fontSize: 11,
-                              color: context.colors.onSurfaceVariant),
+                            fontSize: 11,
+                            color: context.colors.onSurfaceVariant,
+                          ),
                         ),
                       ],
                     ],
@@ -162,20 +183,22 @@ class LeaderboardEntryTile extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                LucideIcons.star,
-                size: 16,
-                color: context.colors.primary,
-              ),
+              Icon(LucideIcons.star, size: 16, color: context.colors.primary),
               const SizedBox(width: 4),
               Text(
                 '${entry.displayPoints}',
-                style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.onSurface,
+                ),
               ),
               if (onTap != null && isCurrentUser) ...[
                 const SizedBox(width: 4),
-                Icon(LucideIcons.chevronRight,
-                    size: 16, color: context.colors.onSurfaceVariant),
+                Icon(
+                  LucideIcons.chevronRight,
+                  size: 16,
+                  color: context.colors.onSurfaceVariant,
+                ),
               ],
             ],
           ),

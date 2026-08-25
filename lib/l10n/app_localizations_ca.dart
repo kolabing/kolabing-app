@@ -7205,4 +7205,401 @@ class AppLocalizationsCa extends AppLocalizations {
   String onboardingStepOf(int current, int total) {
     return 'Pas $current de $total';
   }
+
+  @override
+  String get challengeCompletionStatusCancelled => 'Cancel·lat';
+
+  @override
+  String get challengeCompletionStatusExpired => 'Caducat';
+
+  @override
+  String get challengeTogetherCancel => 'Cancel·la la sol·licitud';
+
+  @override
+  String get challengeTogetherCancelled => 'Sol·licitud cancel·lada.';
+
+  @override
+  String get challengeTogetherCancelFailed =>
+      'No s\'ha pogut cancel·lar; potser ja han respost.';
+
+  @override
+  String get qrHubTitle => 'Escaneja o comparteix';
+
+  @override
+  String get qrHubScanTitle => 'Escaneja un codi';
+
+  @override
+  String get qrHubScanSubtitle =>
+      'Fes check-in en un esdeveniment o emparella\'t per jugar un repte';
+
+  @override
+  String get qrHubMyQrTitle => 'El meu codi QR';
+
+  @override
+  String get qrHubMyQrSubtitle =>
+      'Deixa que algú t\'escanegi per emparellar-vos';
+
+  @override
+  String get scannerUnknownCode => 'Aquest no és un codi QR de Kolabing.';
+
+  @override
+  String get scannerOwnCode =>
+      'Aquest és el teu propi codi: demana a l\'altra persona que mostri el seu.';
+
+  @override
+  String get scannerTorchTooltip => 'Activa o desactiva el flaix';
+
+  @override
+  String checkinSuccessBody(String eventName) {
+    return 'Has fet check-in a $eventName.';
+  }
+
+  @override
+  String checkinXpEarned(int points) {
+    return '+$points XP';
+  }
+
+  @override
+  String get checkinNextStep =>
+      'Ara escaneja el QR de perfil d\'algú per jugar un repte junts.';
+
+  @override
+  String get checkinScanPeer => 'ESCANEJA ALGÚ';
+
+  @override
+  String peerPairedTitle(String name) {
+    return 'Emparellat amb $name';
+  }
+
+  @override
+  String get peerPairedSubtitle => 'Tria un repte per jugar junts.';
+
+  @override
+  String peerPairedAtEvent(String eventName) {
+    return 'A $eventName';
+  }
+
+  @override
+  String get peerChallengesEmpty => 'Aquest esdeveniment encara no té reptes.';
+
+  @override
+  String get peerChallengePlay => 'JUGA';
+
+  @override
+  String get peerNoSessionTitle => 'Primer fes check-in';
+
+  @override
+  String get peerNoSessionBody =>
+      'Escaneja el codi QR de l\'esdeveniment per fer check-in i després emparella\'t per jugar els seus reptes.';
+
+  @override
+  String get peerNoSessionAction => 'ESCANEJA EL CODI DE L\'ESDEVENIMENT';
+
+  @override
+  String get peerInitiateBothCheckedIn =>
+      'No s\'ha pogut iniciar aquest repte. Assegureu-vos que tots dos heu fet check-in en aquest esdeveniment.';
+
+  @override
+  String get peerInitiateFailed => 'No s\'ha pogut iniciar el repte.';
+
+  @override
+  String get challengeFirstChoose => 'Tria un repte';
+
+  @override
+  String get challengeFirstScanThem => 'Escaneja la persona amb qui ho faràs';
+
+  @override
+  String get communityChallengesTitle => 'Reptes';
+
+  @override
+  String get communityChallengesHubSubtitle =>
+      'Tria què fan servir els teus esdeveniments';
+
+  @override
+  String get communityChallengesDefaultHint =>
+      'No has triat cap, així que els teus esdeveniments fan servir tots els reptes de Kolabing. Marca\'n alguns per acotar-ho.';
+
+  @override
+  String get communityChallengesCuratedHint =>
+      'Els teus esdeveniments només fan servir el que es marca aquí, més el que afegeixis a un esdeveniment concret.';
+
+  @override
+  String get communityChallengesAllowRepeat =>
+      'Permetre que les mateixes dues persones el repeteixin';
+
+  @override
+  String get communityChallengesRequiresNewPerson =>
+      'Només amb algú amb qui no hagin jugat';
+
+  @override
+  String get communityChallengesSaved => 'Guardat.';
+
+  @override
+  String get communityChallengesSaveFailed =>
+      'No s\'ha pogut guardar. Torna-ho a provar.';
+
+  @override
+  String get communityChallengesUnavailable =>
+      'La biblioteca de reptes encara no està disponible.';
+
+  @override
+  String get communityChallengesEmptyLibrary =>
+      'Encara no hi ha reptes per triar.';
+
+  @override
+  String get peerInitiateAlreadyPending =>
+      'Ja els has demanat que confirmin aquest repte.';
+
+  @override
+  String get peerInitiateAlreadyCompleted =>
+      'Ja heu fet aquest repte. Prova un altre.';
+
+  @override
+  String get peerInitiateNeedsNewPerson =>
+      'Aquest repte és per a algú amb qui encara no has jugat.';
+
+  @override
+  String get peerInitiateEventLimit =>
+      'Ja has fet tots els reptes possibles en aquest esdeveniment.';
+
+  @override
+  String get verifyQrTitle => 'Fes que t\'ho confirmin';
+
+  @override
+  String verifyQrBody(String name) {
+    return 'Demana a $name que escanegi aquest codi per confirmar que ho has fet.';
+  }
+
+  @override
+  String get verifyQrWaiting => 'Esperant la confirmació…';
+
+  @override
+  String get verifyQrVerifiedTitle => 'Repte completat!';
+
+  @override
+  String get verifyQrRejectedTitle => 'No confirmat';
+
+  @override
+  String get verifyQrRejectedBody =>
+      'Aquest no s\'ha confirmat. Pots provar un altre repte.';
+
+  @override
+  String get verifyQrTimeoutTitle => 'Encara esperant';
+
+  @override
+  String get verifyQrTimeoutBody =>
+      'Encara no hi ha confirmació. Mantén aquest codi obert o torna a mostrar-lo més tard des del teu historial de reptes.';
+
+  @override
+  String get verifyQrKeepWaiting => 'SEGUEIX ESPERANT';
+
+  @override
+  String get verifyScanTitle => 'Confirma un repte';
+
+  @override
+  String verifyScanQuestion(String name, String challenge) {
+    return '$name ha completat «$challenge»?';
+  }
+
+  @override
+  String verifyScanQuestionFallback(String name) {
+    return '$name ha completat el seu repte?';
+  }
+
+  @override
+  String get verifyScanNotForYou =>
+      'Aquest repte no espera la teva confirmació.';
+
+  @override
+  String get verifyScanConfirmedTitle => 'Confirmat';
+
+  @override
+  String verifyScanConfirmedBody(String name, int points) {
+    return '$name ha guanyat $points XP.';
+  }
+
+  @override
+  String get verifyScanRejectedTitle => 'Rebutjat';
+
+  @override
+  String get verifyScanFailed => 'No s\'ha pogut confirmar el repte.';
+
+  @override
+  String get eventHubShowCheckinQr => 'Mostra el QR de check-in';
+
+  @override
+  String get eventCheckinImHere => 'Sóc aquí';
+
+  @override
+  String get eventCheckinScanOrganizerQr => 'Escaneja el QR de l\'organitzador';
+
+  @override
+  String get eventCheckinScanSomeone => 'Escaneja algú';
+
+  @override
+  String get eventCheckinYoureIn => 'Ja hi ets. Busca algú per fer un repte.';
+
+  @override
+  String get eventCheckinPickEvent => 'A quin esdeveniment ets?';
+
+  @override
+  String get eventCheckinPickEventEmpty => 'Avui no vas a cap esdeveniment.';
+
+  @override
+  String get eventCheckinNoEventYet => 'Primer registra\'t en un esdeveniment';
+
+  @override
+  String get eventHubCheckIn => 'Fes check-in';
+
+  @override
+  String get checkinInvalidToken =>
+      'Aquest codi de check-in ja no és vàlid. Demana a l\'organitzador que el mostri de nou.';
+
+  @override
+  String get checkinNotAccepting =>
+      'Aquest esdeveniment no accepta check-ins ara mateix.';
+
+  @override
+  String get scannerCameraBlocked =>
+      'Kolabing necessita accés a la càmera per escanejar codis QR.';
+
+  @override
+  String get scannerAlreadyCheckedIn => 'Ja havies fet check-in: tot a punt.';
+
+  @override
+  String get peerPairedTitleFallback => 'Emparellats';
+
+  @override
+  String get verifyQrBodyFallback =>
+      'Demana-li que escanegi aquest codi per confirmar que ho has fet.';
+
+  @override
+  String get peerChallengesLoadFailed =>
+      'No s\'han pogut carregar els reptes d\'aquest esdeveniment.';
+
+  @override
+  String get eventQrNotAuthorized =>
+      'Només l\'organitzador d\'aquest esdeveniment pot mostrar el seu codi de check-in.';
+
+  @override
+  String get verifyScanErrorTitle => 'No s\'ha pogut confirmar';
+
+  @override
+  String get checkinAlreadyTitle => 'Ja tens el check-in fet';
+
+  @override
+  String get verifyScanUnreachable =>
+      'No s\'ha pogut connectar amb el servidor. Comprova la connexió i torna a escanejar.';
+
+  @override
+  String get communityFollow => 'Segueix';
+
+  @override
+  String get communityFollowing => 'Seguint';
+
+  @override
+  String get communityFollowedSnack =>
+      'Ja la segueixes. Els seus esdeveniments apareixeran al teu feed.';
+
+  @override
+  String get communityUnfollowedSnack => 'Has deixat de seguir-la.';
+
+  @override
+  String get communityFollowFailed =>
+      'No s\'ha pogut actualitzar. Torna-ho a provar.';
+
+  @override
+  String get communityBecomeMember => 'Fes-te membre';
+
+  @override
+  String membershipPromptTitle(String community) {
+    return 'Ets a $community';
+  }
+
+  @override
+  String get membershipPromptBody =>
+      'Els membres tenen el xat de la comunitat, esdeveniments exclusius i les seves recompenses.';
+
+  @override
+  String get membershipPromptNotNow => 'Ara no';
+
+  @override
+  String get communityMemberBadge => 'Membre';
+
+  @override
+  String get communityApplicationTitle => 'Fes-te membre';
+
+  @override
+  String communityApplicationIntro(String community) {
+    return '$community fa unes preguntes abans d\'afegir nous membres.';
+  }
+
+  @override
+  String get communityApplicationOptional => 'Opcional';
+
+  @override
+  String get communityApplicationRequiredError => 'Respon a això, si us plau';
+
+  @override
+  String get communityApplicationSubmit => 'ENVIA LA SOL·LICITUD';
+
+  @override
+  String get communityApplicationSentSnack =>
+      'Sol·licitud enviada. L\'organitzador la revisarà.';
+
+  @override
+  String get communityApplicationJoinedSnack => 'Ja ets membre.';
+
+  @override
+  String get communityApplicationFailed =>
+      'No s\'ha pogut enviar la teva sol·licitud. Torna-ho a provar.';
+
+  @override
+  String get challengeTogetherTitle => 'Junts';
+
+  @override
+  String challengeTogetherWaiting(String name) {
+    return 'Esperant que $name ho confirmi…';
+  }
+
+  @override
+  String challengeTogetherEachEarns(int points) {
+    return '$points XP per a cadascú';
+  }
+
+  @override
+  String get challengeTogetherRevealTitle => 'Ben fet!';
+
+  @override
+  String challengeTogetherRevealBody(String name) {
+    return 'Tu i $name ho heu guanyat tots dos.';
+  }
+
+  @override
+  String challengeTogetherPrompt(String challenge) {
+    return 'Vosaltres dos: $challenge';
+  }
+
+  @override
+  String get attendeeHomeScopeAll => 'Tots els esdeveniments';
+
+  @override
+  String get attendeeHomeScopeFollowing => 'Seguint';
+
+  @override
+  String get attendeeHomeNoFollowsTitle => 'Encara no segueixes ningú';
+
+  @override
+  String get attendeeHomeNoFollowsHint =>
+      'Segueix una comunitat i tot el que organitzi apareixerà aquí.';
+
+  @override
+  String get attendeeHomeNoFollowedEventsTitle => 'Res de pròxim';
+
+  @override
+  String get attendeeHomeNoFollowedEventsHint =>
+      'Les comunitats que segueixes encara no han anunciat res.';
+
+  @override
+  String get attendeeHomeFollowMore => 'Segueix més comunitats';
 }

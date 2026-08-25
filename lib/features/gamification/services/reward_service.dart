@@ -13,11 +13,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for handling reward operations
 class RewardService {
-  RewardService({
-    required AuthService authService,
-    http.Client? httpClient,
-  })  : _authService = authService,
-        _httpClient = httpClient ?? http.Client();
+  RewardService({required AuthService authService, http.Client? httpClient})
+    : _authService = authService,
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -248,9 +246,7 @@ class RewardService {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({
-          'challenge_completion_id': challengeCompletionId,
-        }),
+        body: jsonEncode({'challenge_completion_id': challengeCompletionId}),
       );
 
       debugPrint('Spin Wheel response status: ${response.statusCode}');
@@ -260,9 +256,7 @@ class RewardService {
         return SpinResult.fromJson(json['data'] as Map<String, dynamic>);
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        throw RewardException(
-          json['message'] as String? ?? 'Failed to spin',
-        );
+        throw RewardException(json['message'] as String? ?? 'Failed to spin');
       }
     } on RewardException {
       rethrow;
@@ -304,7 +298,9 @@ class RewardService {
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        return RewardWalletResponse.fromJson(json['data'] as Map<String, dynamic>);
+        return RewardWalletResponse.fromJson(
+          json['data'] as Map<String, dynamic>,
+        );
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         throw RewardException(
@@ -379,9 +375,7 @@ class RewardService {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({
-          'token': redeemToken,
-        }),
+        body: jsonEncode({'token': redeemToken}),
       );
 
       debugPrint('Confirm Redeem response status: ${response.statusCode}');

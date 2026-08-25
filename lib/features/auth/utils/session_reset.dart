@@ -6,6 +6,7 @@ import '../../business/providers/profile_provider.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../community/providers/community_providers.dart';
 import '../../discovery/providers/discovery_provider.dart';
+import '../../gamification/providers/active_event_session_provider.dart';
 import '../../gamification/providers/badge_provider.dart';
 import '../../gamification/providers/checkin_provider.dart';
 import '../../gamification/providers/discovery_provider.dart';
@@ -117,6 +118,12 @@ void invalidateUserScopedProviders(Ref ref) {
   inv(() => ref.invalidate(redeemQRProvider));
   inv(() => ref.invalidate(confirmRedeemProvider));
   inv(() => ref.invalidate(checkinProvider));
+
+  // The "which event am I at" session is per-account and persisted on disk, so
+  // invalidating the notifier is not enough — clear the stored value too, or
+  // the next account inherits the previous one's active event.
+  inv(() => ref.read(activeEventSessionProvider.notifier).clear());
+  inv(() => ref.invalidate(activeEventSessionProvider));
 
   // Public profile previews keyed by id (family)
   inv(() => ref.invalidate(publicProfileProvider));

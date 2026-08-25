@@ -24,12 +24,15 @@ class ChallengeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surfaceColor =
-        isDark ? context.colors.darkSurface : context.colors.surface;
-    final textColor =
-        isDark ? context.colors.textOnDark : context.colors.onSurface;
-    final secondaryTextColor =
-        isDark ? context.colors.textTertiary : context.colors.onSurfaceVariant;
+    final surfaceColor = isDark
+        ? context.colors.darkSurface
+        : context.colors.surface;
+    final textColor = isDark
+        ? context.colors.textOnDark
+        : context.colors.onSurface;
+    final secondaryTextColor = isDark
+        ? context.colors.textTertiary
+        : context.colors.onSurfaceVariant;
 
     return Material(
       color: surfaceColor,
@@ -42,7 +45,9 @@ class ChallengeCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
+              color: isDark
+                  ? context.colors.darkBorder
+                  : context.colors.darkBorder,
             ),
           ),
           child: Row(
@@ -74,7 +79,11 @@ class ChallengeCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             challenge.name,
-                            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: textColor),
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: textColor,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -87,12 +96,19 @@ class ChallengeCard extends StatelessWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: context.colors.info.withValues(alpha: 0.15),
+                              color: context.colors.info.withValues(
+                                alpha: 0.15,
+                              ),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               'SYSTEM',
-                              style: KolabingTextStyles.labelSmall.copyWith(fontSize: 9, fontWeight: FontWeight.w700, color: context.colors.info, letterSpacing: 0.5),
+                              style: KolabingTextStyles.labelSmall.copyWith(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                                color: context.colors.info,
+                                letterSpacing: 0.5,
+                              ),
                             ),
                           ),
                       ],
@@ -102,7 +118,9 @@ class ChallengeCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         challenge.description!,
-                        style: KolabingTextStyles.captionSecondary.copyWith(color: secondaryTextColor),
+                        style: KolabingTextStyles.captionSecondary.copyWith(
+                          color: secondaryTextColor,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

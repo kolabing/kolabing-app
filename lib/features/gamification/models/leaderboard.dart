@@ -60,15 +60,15 @@ class LeaderboardEntry {
   bool get isPodium => rank <= 3;
 
   Map<String, dynamic> toJson() => {
-        'profile_id': profileId,
-        'display_name': displayName,
-        if (profilePhoto != null) 'profile_photo': profilePhoto,
-        'total_points': totalPoints,
-        'rank': rank,
-        if (tier != null) 'tier': tier,
-        if (badgeCount != null) 'badge_count': badgeCount,
-        if (points != null) 'points': points,
-      };
+    'profile_id': profileId,
+    'display_name': displayName,
+    if (profilePhoto != null) 'profile_photo': profilePhoto,
+    'total_points': totalPoints,
+    'rank': rank,
+    if (tier != null) 'tier': tier,
+    if (badgeCount != null) 'badge_count': badgeCount,
+    if (points != null) 'points': points,
+  };
 }
 
 /// User's own rank in the leaderboard
@@ -95,19 +95,16 @@ class MyRank {
   final int rank;
 
   Map<String, dynamic> toJson() => {
-        'profile_id': profileId,
-        'display_name': displayName,
-        'total_points': totalPoints,
-        'rank': rank,
-      };
+    'profile_id': profileId,
+    'display_name': displayName,
+    'total_points': totalPoints,
+    'rank': rank,
+  };
 }
 
 /// Leaderboard response containing entries and user's rank
 class LeaderboardResponse {
-  const LeaderboardResponse({
-    required this.leaderboard,
-    this.myRank,
-  });
+  const LeaderboardResponse({required this.leaderboard, this.myRank});
 
   factory LeaderboardResponse.fromJson(Map<String, dynamic> json) {
     final leaderboardJson = json['leaderboard'] as List<dynamic>;

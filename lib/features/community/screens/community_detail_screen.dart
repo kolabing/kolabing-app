@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/feature_flags.dart';
@@ -66,10 +67,16 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
   Community get _community => widget.membership.community;
   bool get _canManage => widget.membership.canManage;
 
+  /// Members is a **manager** surface: `GET /communities/{id}/members` is gated
+  /// on the `manage` ability and 403s for an ordinary member. Showing the tab
+  /// to one only ever produced "You are not authorized to manage this
+  /// community."
+  bool get _showMembersTab => kCommunityMembersTabEnabled && _canManage;
+
   @override
   void initState() {
     super.initState();
-    final tabCount = kCommunityMembersTabEnabled ? 3 : 2;
+    final tabCount = _showMembersTab ? 3 : 2;
     _tabs = TabController(
       length: tabCount,
       vsync: this,
@@ -79,9 +86,15 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
     // event / goal) appears without a manual pull-to-refresh.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(communityUpcomingEventsProvider(_community.id).notifier).reload();
+      ref
+          .read(communityUpcomingEventsProvider(_community.id).notifier)
+          .reload();
       ref.read(communityRewardsHubProvider(_community.id).notifier).reload();
-      ref.read(communityMembersByIdProvider(_community.id).notifier).reload();
+      // Only a manager may read the roster; firing this as a member is a
+      // guaranteed 403.
+      if (_showMembersTab) {
+        ref.read(communityMembersByIdProvider(_community.id).notifier).reload();
+      }
       if (_canManage) {
         ref
             .read(communityRewardsAdminProvider(_community.id).notifier)
@@ -111,8 +124,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
     if (url == null) return;
     final message = l10n.communityShareInviteMessage(c.name, url);
     final box = context.findRenderObject() as RenderBox?;
-    final origin =
-        box == null ? null : box.localToGlobal(Offset.zero) & box.size;
+    final origin = box == null
+        ? null
+        : box.localToGlobal(Offset.zero) & box.size;
     try {
       final result = await Share.share(message, sharePositionOrigin: origin);
       if (result.status == ShareResultStatus.unavailable && mounted) {
@@ -165,14 +179,11 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
           // App bar is yellow; force dark labels/indicator so the SELECTED tab
           // isn't yellow-on-yellow (brand rule: black text on yellow).
           labelColor: context.colors.onSurface,
-          unselectedLabelColor:
-              context.colors.onSurface.withValues(alpha: 0.6),
+          unselectedLabelColor: context.colors.onSurface.withValues(alpha: 0.6),
           indicatorColor: context.colors.onSurface,
           tabs: [
             Tab(text: l10n.communityDetailTabRewards),
-            // Members tab hidden for now (see kCommunityMembersTabEnabled).
-            if (kCommunityMembersTabEnabled)
-              Tab(text: l10n.communityDetailTabMembers),
+            if (_showMembersTab) Tab(text: l10n.communityDetailTabMembers),
             Tab(text: l10n.communityDetailTabEvents),
           ],
         ),
@@ -185,10 +196,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
               controller: _tabs,
               children: [
                 _RewardsTab(communityId: c.id, canManage: _canManage),
-                // Members tab hidden for now (see kCommunityMembersTabEnabled).
-                if (kCommunityMembersTabEnabled)
+                if (_showMembersTab)
                   _MembersTab(community: c, canManage: _canManage),
-                _EventsTab(communityId: c.id),
+                _EventsTab(communityId: c.id, canManage: _canManage),
               ],
             ),
           ),
@@ -224,8 +234,9 @@ class _Header extends StatelessWidget {
           CircleAvatar(
             radius: 28,
             backgroundColor: context.colors.primary.withValues(alpha: 0.2),
-            backgroundImage:
-                c.avatarUrl != null ? NetworkImage(c.avatarUrl!) : null,
+            backgroundImage: c.avatarUrl != null
+                ? NetworkImage(c.avatarUrl!)
+                : null,
             child: c.avatarUrl == null
                 ? Icon(LucideIcons.flag, color: context.colors.onSurface)
                 : null,
@@ -237,15 +248,20 @@ class _Header extends StatelessWidget {
               children: [
                 Text(
                   c.name,
-                  style: KolabingTextStyles.bodyLarge
-                      .copyWith(fontSize: 18, fontWeight: FontWeight.w800),
+                  style: KolabingTextStyles.bodyLarge.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   l10n.communityDetailTypeAndMembers(
-                      c.type.displayName, c.memberCount ?? 0),
-                  style: KolabingTextStyles.bodySmall
-                      .copyWith(color: context.colors.onSurfaceVariant),
+                    c.type.displayName,
+                    c.memberCount ?? 0,
+                  ),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -302,13 +318,13 @@ class _RewardsMemberView extends ConsumerWidget {
         // Self-gated: null hub = endpoint not deployed yet.
         if (hub == null) return _comingSoon(context, l10n);
         return RefreshIndicator(
-          onRefresh: () =>
-              ref.read(communityRewardsHubProvider(communityId).notifier).reload(),
+          onRefresh: () => ref
+              .read(communityRewardsHubProvider(communityId).notifier)
+              .reload(),
           child: ListView(
             padding: const EdgeInsets.all(KolabingSpacing.md),
             children: [
-              _PointsCard(
-                  points: hub.myPoints, tierName: hub.myTierName),
+              _PointsCard(points: hub.myPoints, tierName: hub.myTierName),
               const SizedBox(height: KolabingSpacing.lg),
               _SectionLabel(l10n.communityRewardsGoalsTitle),
               if (hub.goals.isEmpty)
@@ -336,15 +352,15 @@ class _RewardsMemberView extends ConsumerWidget {
   }
 
   Widget _comingSoon(BuildContext context, AppLocalizations l10n) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: EmptyStateCard(
-            icon: LucideIcons.gift,
-            title: l10n.communityRewardsComingSoonTitle,
-            message: l10n.communityRewardsComingSoonBody,
-          ),
-        ),
-      );
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: EmptyStateCard(
+        icon: LucideIcons.gift,
+        title: l10n.communityRewardsComingSoonTitle,
+        message: l10n.communityRewardsComingSoonBody,
+      ),
+    ),
+  );
 }
 
 class _PointsCard extends StatelessWidget {
@@ -361,7 +377,9 @@ class _PointsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.colors.primary.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(KolabingRadius.lg),
-        border: Border.all(color: context.colors.primary.withValues(alpha: 0.4)),
+        border: Border.all(
+          color: context.colors.primary.withValues(alpha: 0.4),
+        ),
       ),
       child: Row(
         children: [
@@ -371,13 +389,18 @@ class _PointsCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.communityRewardsPointsLabel,
-                    style: KolabingTextStyles.bodySmall
-                        .copyWith(color: context.colors.onSurfaceVariant)),
+                Text(
+                  l10n.communityRewardsPointsLabel,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
                 Text(
                   l10n.communityMembersPoints(points),
-                  style: KolabingTextStyles.bodyLarge
-                      .copyWith(fontSize: 22, fontWeight: FontWeight.w800),
+                  style: KolabingTextStyles.bodyLarge.copyWith(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ],
             ),
@@ -385,13 +408,17 @@ class _PointsCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(l10n.communityRewardsTierLabel,
-                  style: KolabingTextStyles.bodySmall
-                      .copyWith(color: context.colors.onSurfaceVariant)),
+              Text(
+                l10n.communityRewardsTierLabel,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
               Text(
                 tierName ?? l10n.communityRewardsNoTier,
-                style: KolabingTextStyles.bodyMedium
-                    .copyWith(fontWeight: FontWeight.w700),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ],
           ),
@@ -418,14 +445,20 @@ class _MemberGoalTile extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Text(goal.title,
-                      style: KolabingTextStyles.bodyMedium
-                          .copyWith(fontWeight: FontWeight.w700)),
+                  child: Text(
+                    goal.title,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
-                Text(l10n.communityRewardsGoalReward(goal.rewardPoints),
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: context.colors.onSurface)),
+                Text(
+                  l10n.communityRewardsGoalReward(goal.rewardPoints),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.onSurface,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: KolabingSpacing.xs),
@@ -434,8 +467,9 @@ class _MemberGoalTile extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: goal.progressRatio,
                 minHeight: 8,
-                backgroundColor:
-                    context.colors.onSurfaceVariant.withValues(alpha: 0.15),
+                backgroundColor: context.colors.onSurfaceVariant.withValues(
+                  alpha: 0.15,
+                ),
                 color: goal.isCompleted
                     ? context.colors.success
                     : context.colors.primary,
@@ -443,9 +477,13 @@ class _MemberGoalTile extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              l10n.communityRewardsGoalProgress(goal.progress ?? 0, goal.target),
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: context.colors.onSurfaceVariant),
+              l10n.communityRewardsGoalProgress(
+                goal.progress ?? 0,
+                goal.target,
+              ),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -478,7 +516,9 @@ class _BadgeChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final earned = badge.isEarned;
-    final color = earned ? context.colors.onSurface : context.colors.onSurfaceVariant;
+    final color = earned
+        ? context.colors.onSurface
+        : context.colors.onSurfaceVariant;
     return SizedBox(
       width: 88,
       child: Column(
@@ -492,26 +532,34 @@ class _BadgeChip extends StatelessWidget {
                   ? context.colors.primary.withValues(alpha: 0.2)
                   : context.colors.onSurfaceVariant.withValues(alpha: 0.1),
             ),
-            child: Icon(earned ? LucideIcons.award : LucideIcons.lock,
-                color: color),
+            child: Icon(
+              earned ? LucideIcons.award : LucideIcons.lock,
+              color: color,
+            ),
           ),
           const SizedBox(height: 4),
-          Text(badge.title,
-              maxLines: 2,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(fontSize: 11, color: color)),
           Text(
-              earned
-                  ? l10n.communityRewardsBadgeEarned
-                  : l10n.communityRewardsBadgeLocked,
-              style: KolabingTextStyles.bodySmall.copyWith(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: earned
-                      ? context.colors.success
-                      : context.colors.onSurfaceVariant)),
+            badge.title,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 11,
+              color: color,
+            ),
+          ),
+          Text(
+            earned
+                ? l10n.communityRewardsBadgeEarned
+                : l10n.communityRewardsBadgeLocked,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: earned
+                  ? context.colors.success
+                  : context.colors.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
@@ -539,14 +587,17 @@ class _MemberRewardTileState extends ConsumerState<_MemberRewardTile> {
       builder: (_) => AlertDialog(
         title: Text(l10n.communityRewardsRedeemConfirmTitle),
         content: Text(
-            l10n.communityRewardsRedeemConfirmBody(r.costPoints, r.title)),
+          l10n.communityRewardsRedeemConfirmBody(r.costPoints, r.title),
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.commonCancel)),
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
           TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(l10n.communityRewardsRedeem)),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.communityRewardsRedeem),
+          ),
         ],
       ),
     );
@@ -561,12 +612,14 @@ class _MemberRewardTileState extends ConsumerState<_MemberRewardTile> {
           .reload();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.communityRewardsRedeemedSnack)));
+          SnackBar(content: Text(l10n.communityRewardsRedeemedSnack)),
+        );
       }
     } on CommunityException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -588,19 +641,26 @@ class _MemberRewardTileState extends ConsumerState<_MemberRewardTile> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(r.title,
-                      style: KolabingTextStyles.bodyMedium
-                          .copyWith(fontWeight: FontWeight.w700)),
+                  Text(
+                    r.title,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   if (r.description != null && r.description!.isNotEmpty)
-                    Text(r.description!,
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                            color: context.colors.onSurfaceVariant)),
+                    Text(
+                      r.description!,
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
+                    ),
                   Text(
                     r.stock == null
                         ? l10n.communityRewardsRewardCost(r.costPoints)
                         : '${l10n.communityRewardsRewardCost(r.costPoints)} · ${l10n.communityRewardsRewardStock(r.stock!)}',
-                    style: KolabingTextStyles.bodySmall
-                        .copyWith(color: context.colors.onSurfaceVariant),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -608,16 +668,31 @@ class _MemberRewardTileState extends ConsumerState<_MemberRewardTile> {
             const SizedBox(width: KolabingSpacing.sm),
             FilledButton(
               onPressed: canRedeem ? _redeem : null,
+              // The app's FilledButtonTheme sets minimumSize.width = infinity
+              // (full-width form buttons). A Row measures its non-flex children
+              // with an unbounded width, so that infinity claimed the whole row
+              // and left the Expanded title 0px wide — the reward name then
+              // wrapped one letter per line. Bound the button here.
               style: FilledButton.styleFrom(
                 backgroundColor: context.colors.primary,
                 foregroundColor: context.colors.onPrimary,
+                minimumSize: const Size(
+                  0,
+                  KolabingLayout.buttonHeightSecondary,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.md,
+                ),
               ),
               child: _busy
                   ? SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: context.colors.onSurface))
+                        strokeWidth: 2,
+                        color: context.colors.onSurface,
+                      ),
+                    )
                   : Text(l10n.communityRewardsRedeem),
             ),
           ],
@@ -641,8 +716,9 @@ class _RewardsLeaderView extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final state = ref.watch(communityRewardsAdminProvider(communityId));
     return RefreshIndicator(
-      onRefresh: () =>
-          ref.read(communityRewardsAdminProvider(communityId).notifier).reloadAll(),
+      onRefresh: () => ref
+          .read(communityRewardsAdminProvider(communityId).notifier)
+          .reloadAll(),
       child: ListView(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         children: [
@@ -731,8 +807,11 @@ class _RewardsLeaderView extends ConsumerWidget {
 }
 
 class _AddButton extends StatelessWidget {
-  const _AddButton(
-      {required this.icon, required this.label, required this.onTap});
+  const _AddButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   final IconData icon;
   final String label;
@@ -750,9 +829,12 @@ class _AddButton extends StatelessWidget {
         children: [
           Icon(icon, size: 18),
           const SizedBox(height: 2),
-          Text('+ $label',
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(fontWeight: FontWeight.w700)),
+          Text(
+            '+ $label',
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ],
       ),
     );
@@ -784,12 +866,18 @@ class _LeaderRowShell extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,
-                      style: KolabingTextStyles.bodyMedium
-                          .copyWith(fontWeight: FontWeight.w700)),
-                  Text(subtitle,
-                      style: KolabingTextStyles.bodySmall.copyWith(
-                          color: context.colors.onSurfaceVariant)),
+                  Text(
+                    title,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -798,7 +886,11 @@ class _LeaderRowShell extends StatelessWidget {
               onPressed: onEdit,
             ),
             IconButton(
-              icon: Icon(LucideIcons.trash2, size: 16, color: context.colors.error),
+              icon: Icon(
+                LucideIcons.trash2,
+                size: 16,
+                color: context.colors.error,
+              ),
               onPressed: onDelete,
             ),
           ],
@@ -823,17 +915,12 @@ class _LeaderGoalRow extends ConsumerWidget {
           '${l10n.communityRewardsGoalReward(goal.rewardPoints)} · ${l10n.communityRewardsGoalProgress(0, goal.target)}',
       onEdit: () =>
           showGoalEditor(context, communityId: communityId, goal: goal),
-      onDelete: () => _confirmDelete(
-        context,
-        l10n,
-        goal.title,
-        () async {
-          await ref.read(communityRewardsServiceProvider).deleteGoal(goal.id);
-          ref
-              .read(communityRewardsAdminProvider(communityId).notifier)
-              .reloadGoals();
-        },
-      ),
+      onDelete: () => _confirmDelete(context, l10n, goal.title, () async {
+        await ref.read(communityRewardsServiceProvider).deleteGoal(goal.id);
+        ref
+            .read(communityRewardsAdminProvider(communityId).notifier)
+            .reloadGoals();
+      }),
     );
   }
 }
@@ -852,19 +939,12 @@ class _LeaderRewardRow extends ConsumerWidget {
       subtitle: l10n.communityRewardsRewardCost(reward.costPoints),
       onEdit: () =>
           showRewardEditor(context, communityId: communityId, reward: reward),
-      onDelete: () => _confirmDelete(
-        context,
-        l10n,
-        reward.title,
-        () async {
-          await ref
-              .read(communityRewardsServiceProvider)
-              .deleteReward(reward.id);
-          ref
-              .read(communityRewardsAdminProvider(communityId).notifier)
-              .reloadRewards();
-        },
-      ),
+      onDelete: () => _confirmDelete(context, l10n, reward.title, () async {
+        await ref.read(communityRewardsServiceProvider).deleteReward(reward.id);
+        ref
+            .read(communityRewardsAdminProvider(communityId).notifier)
+            .reloadRewards();
+      }),
     );
   }
 }
@@ -883,19 +963,12 @@ class _LeaderBadgeRow extends ConsumerWidget {
       subtitle: l10n.communityBadgeValueLabel,
       onEdit: () =>
           showBadgeEditor(context, communityId: communityId, badge: badge),
-      onDelete: () => _confirmDelete(
-        context,
-        l10n,
-        badge.title,
-        () async {
-          await ref
-              .read(communityRewardsServiceProvider)
-              .deleteBadge(badge.id);
-          ref
-              .read(communityRewardsAdminProvider(communityId).notifier)
-              .reloadBadges();
-        },
-      ),
+      onDelete: () => _confirmDelete(context, l10n, badge.title, () async {
+        await ref.read(communityRewardsServiceProvider).deleteBadge(badge.id);
+        ref
+            .read(communityRewardsAdminProvider(communityId).notifier)
+            .reloadBadges();
+      }),
     );
   }
 }
@@ -913,11 +986,13 @@ Future<void> _confirmDelete(
       content: Text(l10n.communityRewardsDeleteBody(title)),
       actions: [
         TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.commonCancel)),
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(l10n.commonCancel),
+        ),
         TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.rosterRemove)),
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(l10n.rosterRemove),
+        ),
       ],
     ),
   );
@@ -926,8 +1001,9 @@ Future<void> _confirmDelete(
     await onConfirm();
   } on CommunityException catch (e) {
     if (context.mounted) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message)));
     }
   }
 }
@@ -955,7 +1031,10 @@ class _MembersTab extends ConsumerWidget {
   }
 
   Future<void> _editMember(
-      BuildContext context, WidgetRef ref, CommunityMember member) async {
+    BuildContext context,
+    WidgetRef ref,
+    CommunityMember member,
+  ) async {
     final changed = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -979,15 +1058,22 @@ class _MembersTab extends ConsumerWidget {
     // attendee profileId marks the ★ You row in member view.
     final membersAsync = ref.watch(communityMembersByIdProvider(community.id));
     final tiersAsync = ref.watch(communityTiersProvider(community.id));
-    final myProfileId =
-        ref.watch(authProvider).user?.attendeeProfile?.profileId;
+    final myProfileId = ref
+        .watch(authProvider)
+        .user
+        ?.attendeeProfile
+        ?.profileId;
 
     return Column(
       children: [
         if (canManage)
           Padding(
-            padding: const EdgeInsets.fromLTRB(KolabingSpacing.md,
-                KolabingSpacing.sm, KolabingSpacing.md, 0),
+            padding: const EdgeInsets.fromLTRB(
+              KolabingSpacing.md,
+              KolabingSpacing.sm,
+              KolabingSpacing.md,
+              0,
+            ),
             child: Align(
               alignment: Alignment.centerRight,
               child: TextButton.icon(
@@ -995,7 +1081,8 @@ class _MembersTab extends ConsumerWidget {
                 icon: const Icon(LucideIcons.settings, size: 16),
                 label: Text(l10n.communityDetailTiersAction),
                 style: TextButton.styleFrom(
-                    foregroundColor: context.colors.onSurface),
+                  foregroundColor: context.colors.onSurface,
+                ),
               ),
             ),
           ),
@@ -1005,7 +1092,12 @@ class _MembersTab extends ConsumerWidget {
             error: (e, _) => _TabMessage(
               icon: LucideIcons.alertCircle,
               title: l10n.communityMembersLoadError,
-              subtitle: e.toString(),
+              // The backend message, when there is one — never the exception's
+              // toString(), which rendered as
+              // "CommunityException(null: You are not authorized...)".
+              subtitle: e is CommunityException
+                  ? e.message
+                  : l10n.commonErrorGeneric,
             ),
             data: (members) {
               if (members.isEmpty) {
@@ -1023,19 +1115,22 @@ class _MembersTab extends ConsumerWidget {
                     .reload(),
                 child: ListView(
                   padding: const EdgeInsets.symmetric(
-                      vertical: KolabingSpacing.sm),
+                    vertical: KolabingSpacing.sm,
+                  ),
                   children: [
                     for (final group in groups) ...[
                       _TierSectionHeader(
-                          name: group.tierName ??
-                              l10n.communityMembersGroupNoTier,
-                          count: group.members.length,
-                          color: group.color),
+                        name:
+                            group.tierName ?? l10n.communityMembersGroupNoTier,
+                        count: group.members.length,
+                        color: group.color,
+                      ),
                       for (final m in group.members)
                         _MemberRow(
                           member: m,
                           canManage: canManage,
-                          isSelf: !canManage &&
+                          isSelf:
+                              !canManage &&
                               myProfileId != null &&
                               m.profileId == myProfileId,
                           onTap: canManage
@@ -1056,15 +1151,18 @@ class _MembersTab extends ConsumerWidget {
   /// Group [members] by their tier, ordered by tier rank (high→low), with the
   /// "no tier" bucket (null tier OR a tier the roster doesn't know) last.
   List<_TierGroup> _groupByTier(
-      List<CommunityMember> members, List<CommunityTier> tiers) {
+    List<CommunityMember> members,
+    List<CommunityTier> tiers,
+  ) {
     final byId = {for (final t in tiers) t.id: t};
     final ordered = <_TierGroup>[];
     final sortedTiers = [...tiers]..sort((a, b) => b.rank.compareTo(a.rank));
     for (final t in sortedTiers) {
       final list = members.where((m) => m.tierId == t.id).toList();
       if (list.isNotEmpty) {
-        ordered.add(_TierGroup(
-            tierName: t.name, color: _tierColor(t), members: list));
+        ordered.add(
+          _TierGroup(tierName: t.name, color: _tierColor(t), members: list),
+        );
       }
     }
     final untiered = members
@@ -1099,8 +1197,11 @@ class _TierGroup {
 }
 
 class _TierSectionHeader extends StatelessWidget {
-  const _TierSectionHeader(
-      {required this.name, required this.count, this.color});
+  const _TierSectionHeader({
+    required this.name,
+    required this.count,
+    this.color,
+  });
 
   final String name;
   final int count;
@@ -1111,7 +1212,9 @@ class _TierSectionHeader extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.md, vertical: KolabingSpacing.sm),
+        horizontal: KolabingSpacing.md,
+        vertical: KolabingSpacing.sm,
+      ),
       color: context.colors.surfaceContainerLow,
       child: Row(
         children: [
@@ -1119,17 +1222,25 @@ class _TierSectionHeader extends StatelessWidget {
             width: 10,
             height: 10,
             decoration: BoxDecoration(
-                color: color ?? context.colors.primary,
-                shape: BoxShape.circle),
+              color: color ?? context.colors.primary,
+              shape: BoxShape.circle,
+            ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
-          Text(name.toUpperCase(),
-              style: KolabingTextStyles.bodySmall.copyWith(
-                  fontWeight: FontWeight.w800, letterSpacing: 0.8)),
+          Text(
+            name.toUpperCase(),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.8,
+            ),
+          ),
           const Spacer(),
-          Text(l10n.communityMembersTierCount(count),
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: context.colors.onSurfaceVariant)),
+          Text(
+            l10n.communityMembersTierCount(count),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
@@ -1171,22 +1282,29 @@ class _MemberRow extends StatelessWidget {
               member.memberName ?? l10n.rosterMemberFallback,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: KolabingTextStyles.bodyMedium
-                  .copyWith(fontWeight: FontWeight.w600),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           if (isSelf) ...[
             const SizedBox(width: KolabingSpacing.xs),
-            Text(l10n.communityMembersYou,
-                style: KolabingTextStyles.bodySmall.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: context.colors.onSurface)),
+            Text(
+              l10n.communityMembersYou,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w700,
+                color: context.colors.onSurface,
+              ),
+            ),
           ],
         ],
       ),
       trailing: canManage
-          ? Icon(LucideIcons.chevronRight,
-              size: 16, color: context.colors.onSurfaceVariant)
+          ? Icon(
+              LucideIcons.chevronRight,
+              size: 16,
+              color: context.colors.onSurfaceVariant,
+            )
           : null,
     );
   }
@@ -1197,9 +1315,15 @@ class _MemberRow extends StatelessWidget {
 // =============================================================================
 
 class _EventsTab extends ConsumerWidget {
-  const _EventsTab({required this.communityId});
+  const _EventsTab({required this.communityId, required this.canManage});
 
   final String communityId;
+
+  /// Whether the viewer manages this community. Decides whether tapping an
+  /// event opens the hub in leader mode — without it a leader reaching their
+  /// own event from here got the member view, with no way to show the event's
+  /// check-in QR.
+  final bool canManage;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1240,7 +1364,8 @@ class _EventsTab extends ConsumerWidget {
           child: ListView.builder(
             padding: const EdgeInsets.all(KolabingSpacing.md),
             itemCount: events.length,
-            itemBuilder: (_, i) => _EventCard(event: events[i]),
+            itemBuilder: (_, i) =>
+                _EventCard(event: events[i], canManage: canManage),
           ),
         );
       },
@@ -1249,9 +1374,11 @@ class _EventsTab extends ConsumerWidget {
 }
 
 class _EventCard extends StatelessWidget {
-  const _EventCard({required this.event});
+  const _EventCard({required this.event, required this.canManage});
 
   final Event event;
+
+  final bool canManage;
 
   @override
   Widget build(BuildContext context) {
@@ -1264,12 +1391,14 @@ class _EventCard extends StatelessWidget {
       child: CompactListCard(
         onTap: locked
             ? () => ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.communityDetailEventLockedSnack)),
-                )
+                SnackBar(content: Text(l10n.communityDetailEventLockedSnack)),
+              )
             : () => Navigator.of(context).push<void>(
-                  MaterialPageRoute<void>(
-                      builder: (_) => EventHubScreen(event: event)),
+                MaterialPageRoute<void>(
+                  builder: (_) =>
+                      EventHubScreen(event: event, isLeader: canManage),
                 ),
+              ),
         child: Row(
           children: [
             ClipRRect(
@@ -1292,26 +1421,32 @@ class _EventCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(event.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: KolabingTextStyles.bodyMedium.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: locked ? muted : context.colors.onSurface)),
+                  Text(
+                    event.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: locked ? muted : context.colors.onSurface,
+                    ),
+                  ),
                   const SizedBox(height: 2),
                   Text(
-                      locked
-                          ? l10n.communityDetailEventLockedSubtitle
-                          : event.formattedDate,
-                      style:
-                          KolabingTextStyles.bodySmall.copyWith(color: muted)),
+                    locked
+                        ? l10n.communityDetailEventLockedSubtitle
+                        : event.formattedDate,
+                    style: KolabingTextStyles.bodySmall.copyWith(color: muted),
+                  ),
                   const SizedBox(height: KolabingSpacing.xs),
                   _VisibilityBadge(visibility: event.visibility),
                 ],
               ),
             ),
-            Icon(locked ? LucideIcons.lock : LucideIcons.chevronRight,
-                size: 18, color: locked ? muted : null),
+            Icon(
+              locked ? LucideIcons.lock : LucideIcons.chevronRight,
+              size: 18,
+              color: locked ? muted : null,
+            ),
           ],
         ),
       ),
@@ -1319,10 +1454,13 @@ class _EventCard extends StatelessWidget {
   }
 
   Widget _eventPlaceholder(BuildContext context, bool locked) => Container(
-        color: context.colors.surfaceContainerHigh,
-        child: Icon(locked ? LucideIcons.lock : LucideIcons.calendar,
-            size: 20, color: context.colors.onSurfaceVariant),
-      );
+    color: context.colors.surfaceContainerHigh,
+    child: Icon(
+      locked ? LucideIcons.lock : LucideIcons.calendar,
+      size: 20,
+      color: context.colors.onSurfaceVariant,
+    ),
+  );
 }
 
 class _VisibilityBadge extends StatelessWidget {
@@ -1341,8 +1479,7 @@ class _VisibilityBadge extends StatelessWidget {
       _ => (l10n.communityEventVisibilityMembers, LucideIcons.users),
     };
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(999),
@@ -1352,11 +1489,14 @@ class _VisibilityBadge extends StatelessWidget {
         children: [
           Icon(icon, size: 12, color: context.colors.onSurfaceVariant),
           const SizedBox(width: 4),
-          Text(label,
-              style: KolabingTextStyles.bodySmall.copyWith(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  color: context.colors.onSurfaceVariant)),
+          Text(
+            label,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
@@ -1372,35 +1512,42 @@ class _SectionLabel extends StatelessWidget {
   final String text;
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-        child: Text(text.toUpperCase(),
-            style: KolabingTextStyles.bodySmall.copyWith(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.1,
-                color: context.colors.onSurfaceVariant)),
-      );
+    padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+    child: Text(
+      text.toUpperCase(),
+      style: KolabingTextStyles.bodySmall.copyWith(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 1.1,
+        color: context.colors.onSurfaceVariant,
+      ),
+    ),
+  );
 }
 
 Widget _emptyLine(BuildContext context, String text) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
-      child: Text(text,
-          style: KolabingTextStyles.bodySmall
-              .copyWith(color: context.colors.onSurfaceVariant)),
-    );
+  padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+  child: Text(
+    text,
+    style: KolabingTextStyles.bodySmall.copyWith(
+      color: context.colors.onSurfaceVariant,
+    ),
+  ),
+);
 
 class _InlineLoader extends StatelessWidget {
   const _InlineLoader();
   @override
   Widget build(BuildContext context) => const Padding(
-        padding: EdgeInsets.symmetric(vertical: KolabingSpacing.md),
-        child: Center(
-          child: SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2)),
-        ),
-      );
+    padding: EdgeInsets.symmetric(vertical: KolabingSpacing.md),
+    child: Center(
+      child: SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      ),
+    ),
+  );
 }
 
 class _TabMessage extends StatelessWidget {
@@ -1416,13 +1563,9 @@ class _TabMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(KolabingSpacing.xl),
-          child: EmptyStateCard(
-            icon: icon,
-            title: title,
-            message: subtitle,
-          ),
-        ),
-      );
+    child: Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: EmptyStateCard(icon: icon, title: title, message: subtitle),
+    ),
+  );
 }

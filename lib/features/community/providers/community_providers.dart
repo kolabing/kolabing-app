@@ -59,12 +59,11 @@ class CommunityManageState {
     AsyncValue<List<Community>>? communities,
     AsyncValue<List<CommunityTier>>? tiers,
     AsyncValue<List<CommunityMember>>? members,
-  }) =>
-      CommunityManageState(
-        communities: communities ?? this.communities,
-        tiers: tiers ?? this.tiers,
-        members: members ?? this.members,
-      );
+  }) => CommunityManageState(
+    communities: communities ?? this.communities,
+    tiers: tiers ?? this.tiers,
+    members: members ?? this.members,
+  );
 }
 
 class CommunityManageNotifier extends Notifier<CommunityManageState> {
@@ -112,7 +111,9 @@ class CommunityManageNotifier extends Notifier<CommunityManageState> {
   Future<void> reloadMembers() async {
     final id = state.primaryCommunity?.id;
     if (id == null) return;
-    state = state.copyWith(members: const AsyncLoading<List<CommunityMember>>());
+    state = state.copyWith(
+      members: const AsyncLoading<List<CommunityMember>>(),
+    );
     state = state.copyWith(
       members: await AsyncValue.guard(() => _svc.getMembers(id)),
     );
@@ -122,7 +123,8 @@ class CommunityManageNotifier extends Notifier<CommunityManageState> {
 /// The Community Leader's management state (community + tiers + roster).
 final communityManageProvider =
     NotifierProvider<CommunityManageNotifier, CommunityManageState>(
-        CommunityManageNotifier.new);
+      CommunityManageNotifier.new,
+    );
 
 // =============================================================================
 // Member-side reads (separate concern; loaded fresh each time the view opens).
@@ -130,7 +132,8 @@ final communityManageProvider =
 
 /// Communities the current member belongs to + their tier in each
 /// (`GET /me/memberships`). Drives the Community Member's "my communities" view.
-class MyMembershipsNotifier extends Notifier<AsyncValue<List<CommunityMembership>>> {
+class MyMembershipsNotifier
+    extends Notifier<AsyncValue<List<CommunityMembership>>> {
   @override
   AsyncValue<List<CommunityMembership>> build() {
     Future.microtask(reload);
@@ -140,12 +143,16 @@ class MyMembershipsNotifier extends Notifier<AsyncValue<List<CommunityMembership
   Future<void> reload() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-        () => ref.read(communityServiceProvider).getMyMemberships());
+      () => ref.read(communityServiceProvider).getMyMemberships(),
+    );
   }
 }
 
-final myMembershipsProvider = NotifierProvider<MyMembershipsNotifier,
-    AsyncValue<List<CommunityMembership>>>(MyMembershipsNotifier.new);
+final myMembershipsProvider =
+    NotifierProvider<
+      MyMembershipsNotifier,
+      AsyncValue<List<CommunityMembership>>
+    >(MyMembershipsNotifier.new);
 
 /// Discoverable communities the current attendee can join
 /// (`GET /communities/discover`), optionally filtered by [CommunityType] wire
@@ -153,8 +160,10 @@ final myMembershipsProvider = NotifierProvider<MyMembershipsNotifier,
 /// list when the endpoint is not deployed yet (404), so the discovery surface
 /// shows a friendly "coming soon" state rather than crashing.
 final discoverCommunitiesProvider =
-    FutureProvider.family<List<Community>, String?>((ref, type) =>
-        ref.read(communityServiceProvider).getDiscoverCommunities(type: type));
+    FutureProvider.family<List<Community>, String?>(
+      (ref, type) =>
+          ref.read(communityServiceProvider).getDiscoverCommunities(type: type),
+    );
 
 /// A single community by id (`GET /communities/{id}`), keyed by id. Drives the
 /// attendee-facing community profile screen. A Notifier (not FutureProvider) so
@@ -174,7 +183,8 @@ class CommunityByIdNotifier extends Notifier<AsyncValue<Community>> {
   Future<void> reload() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-        () => ref.read(communityServiceProvider).getCommunity(communityId));
+      () => ref.read(communityServiceProvider).getCommunity(communityId),
+    );
   }
 
   /// Optimistically replace the held community (e.g. after a successful join)
@@ -182,15 +192,21 @@ class CommunityByIdNotifier extends Notifier<AsyncValue<Community>> {
   void setCommunity(Community community) => state = AsyncData(community);
 }
 
-final communityByIdProvider = NotifierProvider.family<CommunityByIdNotifier,
-    AsyncValue<Community>, String>(CommunityByIdNotifier.new);
+final communityByIdProvider =
+    NotifierProvider.family<
+      CommunityByIdNotifier,
+      AsyncValue<Community>,
+      String
+    >(CommunityByIdNotifier.new);
 
 /// Resolves a raw community-type slug to its human label using the dynamic
 /// `/community-types` taxonomy (NEVER the placeholder `CommunityType` enum, per
 /// CANONICAL-LISTS). Returns null while the taxonomy is loading or when the slug
 /// is unknown, so callers can fall back to a generic label.
-final communityTypeLabelProvider =
-    Provider.family<String?, String?>((ref, slug) {
+final communityTypeLabelProvider = Provider.family<String?, String?>((
+  ref,
+  slug,
+) {
   if (slug == null || slug.isEmpty) return null;
   final types = ref.watch(communityTypesProvider).value;
   if (types == null) return null;
@@ -204,10 +220,15 @@ final communityTypeLabelProvider =
 /// Used by surfaces that need tiers for a community other than the leader's
 /// primary (e.g. the event create/edit tier-gate picker). Highest rank first.
 final communityTiersProvider =
-    FutureProvider.family<List<CommunityTier>, String>((ref, communityId) async {
-  final tiers = await ref.read(communityServiceProvider).getTiers(communityId);
-  return [...tiers]..sort((a, b) => b.rank.compareTo(a.rank));
-});
+    FutureProvider.family<List<CommunityTier>, String>((
+      ref,
+      communityId,
+    ) async {
+      final tiers = await ref
+          .read(communityServiceProvider)
+          .getTiers(communityId);
+      return [...tiers]..sort((a, b) => b.rank.compareTo(a.rank));
+    });
 
 /// A specific community's roster (`GET /communities/{id}/members`), keyed by id.
 /// Used by the community detail Members tab for ANY community the viewer is in
@@ -228,11 +249,14 @@ class CommunityMembersByIdNotifier
   Future<void> reload() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-        () => ref.read(communityServiceProvider).getMembers(communityId));
+      () => ref.read(communityServiceProvider).getMembers(communityId),
+    );
   }
 }
 
-final communityMembersByIdProvider = NotifierProvider.family<
-    CommunityMembersByIdNotifier, AsyncValue<List<CommunityMember>>, String>(
-  CommunityMembersByIdNotifier.new,
-);
+final communityMembersByIdProvider =
+    NotifierProvider.family<
+      CommunityMembersByIdNotifier,
+      AsyncValue<List<CommunityMember>>,
+      String
+    >(CommunityMembersByIdNotifier.new);

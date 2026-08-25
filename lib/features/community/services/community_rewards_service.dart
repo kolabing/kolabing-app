@@ -23,8 +23,8 @@ class CommunityRewardsService {
   CommunityRewardsService({
     required AuthService authService,
     http.Client? httpClient,
-  })  : _authService = authService,
-        _httpClient = httpClient ?? http.Client();
+  }) : _authService = authService,
+       _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -32,8 +32,10 @@ class CommunityRewardsService {
   Future<Map<String, String>> _headers() async {
     final token = await _authService.getToken();
     if (token == null) {
-      throw const CommunityException('Not authenticated',
-          code: 'unauthenticated');
+      throw const CommunityException(
+        'Not authenticated',
+        code: 'unauthenticated',
+      );
     }
     return {
       'Authorization': 'Bearer $token',
@@ -98,13 +100,14 @@ class CommunityRewardsService {
   /// `GET /communities/{id}/rewards-hub`. Returns null when the route isn't
   /// deployed yet (404/405) so the Rewards tab renders a disabled/coming-soon
   /// state instead of crashing.
-  Future<CommunityRewardsHub?> getRewardsHub(String communityId) =>
-      _guard(() async {
-        final res = await _get('/communities/$communityId/rewards-hub');
-        if (_notDeployed(res.statusCode)) return null;
-        return CommunityRewardsHub.fromJson(
-            _unwrap(res) as Map<String, dynamic>);
-      }, 'getRewardsHub');
+  Future<CommunityRewardsHub?> getRewardsHub(String communityId) => _guard(
+    () async {
+      final res = await _get('/communities/$communityId/rewards-hub');
+      if (_notDeployed(res.statusCode)) return null;
+      return CommunityRewardsHub.fromJson(_unwrap(res) as Map<String, dynamic>);
+    },
+    'getRewardsHub',
+  );
 
   // ---------------------------------------------------------------------------
   // Leader reads (self-gated → [] when not deployed)
@@ -112,10 +115,10 @@ class CommunityRewardsService {
 
   /// `GET /communities/{id}/goals` (leader CRUD list).
   Future<List<CommunityGoal>> getGoals(String communityId) => _guard(() async {
-        final res = await _get('/communities/$communityId/goals');
-        if (_notDeployed(res.statusCode)) return const <CommunityGoal>[];
-        return _asList(_unwrap(res)).map(CommunityGoal.fromJson).toList();
-      }, 'getGoals');
+    final res = await _get('/communities/$communityId/goals');
+    if (_notDeployed(res.statusCode)) return const <CommunityGoal>[];
+    return _asList(_unwrap(res)).map(CommunityGoal.fromJson).toList();
+  }, 'getGoals');
 
   /// `GET /communities/{id}/rewards` (leader CRUD list).
   Future<List<CommunityReward>> getRewards(String communityId) =>
@@ -158,46 +161,48 @@ class CommunityRewardsService {
       }, 'updateGoal');
 
   Future<void> deleteGoal(String goalId) => _guard(() async {
-        final res = await _httpClient.delete(
-          Uri.parse('$_baseUrl/goals/$goalId'),
-          headers: await _headers(),
-        );
-        _unwrap(res);
-      }, 'deleteGoal');
+    final res = await _httpClient.delete(
+      Uri.parse('$_baseUrl/goals/$goalId'),
+      headers: await _headers(),
+    );
+    _unwrap(res);
+  }, 'deleteGoal');
 
   // ---------------------------------------------------------------------------
   // Reward CRUD + redeem
   // ---------------------------------------------------------------------------
 
   Future<CommunityReward> createReward(
-          String communityId, CommunityReward reward) =>
-      _guard(() async {
-        final res = await _httpClient.post(
-          Uri.parse('$_baseUrl/communities/$communityId/rewards'),
-          headers: await _headers(),
-          body: jsonEncode(reward.toCreateJson()),
-        );
-        return CommunityReward.fromJson(_unwrap(res) as Map<String, dynamic>);
-      }, 'createReward');
+    String communityId,
+    CommunityReward reward,
+  ) => _guard(() async {
+    final res = await _httpClient.post(
+      Uri.parse('$_baseUrl/communities/$communityId/rewards'),
+      headers: await _headers(),
+      body: jsonEncode(reward.toCreateJson()),
+    );
+    return CommunityReward.fromJson(_unwrap(res) as Map<String, dynamic>);
+  }, 'createReward');
 
   Future<CommunityReward> updateReward(
-          String rewardId, CommunityReward reward) =>
-      _guard(() async {
-        final res = await _httpClient.put(
-          Uri.parse('$_baseUrl/rewards/$rewardId'),
-          headers: await _headers(),
-          body: jsonEncode(reward.toCreateJson()),
-        );
-        return CommunityReward.fromJson(_unwrap(res) as Map<String, dynamic>);
-      }, 'updateReward');
+    String rewardId,
+    CommunityReward reward,
+  ) => _guard(() async {
+    final res = await _httpClient.put(
+      Uri.parse('$_baseUrl/rewards/$rewardId'),
+      headers: await _headers(),
+      body: jsonEncode(reward.toCreateJson()),
+    );
+    return CommunityReward.fromJson(_unwrap(res) as Map<String, dynamic>);
+  }, 'updateReward');
 
   Future<void> deleteReward(String rewardId) => _guard(() async {
-        final res = await _httpClient.delete(
-          Uri.parse('$_baseUrl/rewards/$rewardId'),
-          headers: await _headers(),
-        );
-        _unwrap(res);
-      }, 'deleteReward');
+    final res = await _httpClient.delete(
+      Uri.parse('$_baseUrl/rewards/$rewardId'),
+      headers: await _headers(),
+    );
+    _unwrap(res);
+  }, 'deleteReward');
 
   /// `POST /communities/{id}/rewards/{rewardId}/redeem` — deduct points, create
   /// a redemption. Throws [CommunityException] (e.g. `insufficient_points`,
@@ -206,7 +211,8 @@ class CommunityRewardsService {
       _guard(() async {
         final res = await _httpClient.post(
           Uri.parse(
-              '$_baseUrl/communities/$communityId/rewards/$rewardId/redeem'),
+            '$_baseUrl/communities/$communityId/rewards/$rewardId/redeem',
+          ),
           headers: await _headers(),
         );
         _unwrap(res);
@@ -217,15 +223,16 @@ class CommunityRewardsService {
   // ---------------------------------------------------------------------------
 
   Future<CommunityBadge> createBadge(
-          String communityId, CommunityBadge badge) =>
-      _guard(() async {
-        final res = await _httpClient.post(
-          Uri.parse('$_baseUrl/communities/$communityId/badges'),
-          headers: await _headers(),
-          body: jsonEncode(badge.toCreateJson()),
-        );
-        return CommunityBadge.fromJson(_unwrap(res) as Map<String, dynamic>);
-      }, 'createBadge');
+    String communityId,
+    CommunityBadge badge,
+  ) => _guard(() async {
+    final res = await _httpClient.post(
+      Uri.parse('$_baseUrl/communities/$communityId/badges'),
+      headers: await _headers(),
+      body: jsonEncode(badge.toCreateJson()),
+    );
+    return CommunityBadge.fromJson(_unwrap(res) as Map<String, dynamic>);
+  }, 'createBadge');
 
   Future<CommunityBadge> updateBadge(String badgeId, CommunityBadge badge) =>
       _guard(() async {
@@ -238,10 +245,10 @@ class CommunityRewardsService {
       }, 'updateBadge');
 
   Future<void> deleteBadge(String badgeId) => _guard(() async {
-        final res = await _httpClient.delete(
-          Uri.parse('$_baseUrl/badges/$badgeId'),
-          headers: await _headers(),
-        );
-        _unwrap(res);
-      }, 'deleteBadge');
+    final res = await _httpClient.delete(
+      Uri.parse('$_baseUrl/badges/$badgeId'),
+      headers: await _headers(),
+    );
+    _unwrap(res);
+  }, 'deleteBadge');
 }

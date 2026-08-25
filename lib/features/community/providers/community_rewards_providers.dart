@@ -12,8 +12,9 @@ import '../services/community_rewards_service.dart';
 const Duration _kRewardsReadTimeout = Duration(seconds: 12);
 
 /// DI for [CommunityRewardsService].
-final communityRewardsServiceProvider =
-    Provider<CommunityRewardsService>((ref) {
+final communityRewardsServiceProvider = Provider<CommunityRewardsService>((
+  ref,
+) {
   final authService = ref.watch(authServiceProvider);
   return CommunityRewardsService(authService: authService);
 });
@@ -48,20 +49,23 @@ class CommunityRewardsHubNotifier
     state = const AsyncLoading();
     try {
       state = await AsyncValue.guard(
-          () => ref
-              .read(communityRewardsServiceProvider)
-              .getRewardsHub(communityId)
-              .timeout(_kRewardsReadTimeout, onTimeout: () => null));
+        () => ref
+            .read(communityRewardsServiceProvider)
+            .getRewardsHub(communityId)
+            .timeout(_kRewardsReadTimeout, onTimeout: () => null),
+      );
     } finally {
       _reloading = false;
     }
   }
 }
 
-final communityRewardsHubProvider = NotifierProvider.family<
-    CommunityRewardsHubNotifier, AsyncValue<CommunityRewardsHub?>, String>(
-  CommunityRewardsHubNotifier.new,
-);
+final communityRewardsHubProvider =
+    NotifierProvider.family<
+      CommunityRewardsHubNotifier,
+      AsyncValue<CommunityRewardsHub?>,
+      String
+    >(CommunityRewardsHubNotifier.new);
 
 // =============================================================================
 // Leader view — goals / rewards / badges CRUD lists. One Notifier per community
@@ -89,12 +93,11 @@ class CommunityRewardsAdminState {
     AsyncValue<List<CommunityGoal>>? goals,
     AsyncValue<List<CommunityReward>>? rewards,
     AsyncValue<List<CommunityBadge>>? badges,
-  }) =>
-      CommunityRewardsAdminState(
-        goals: goals ?? this.goals,
-        rewards: rewards ?? this.rewards,
-        badges: badges ?? this.badges,
-      );
+  }) => CommunityRewardsAdminState(
+    goals: goals ?? this.goals,
+    rewards: rewards ?? this.rewards,
+    badges: badges ?? this.badges,
+  );
 }
 
 class CommunityRewardsAdminNotifier
@@ -103,8 +106,7 @@ class CommunityRewardsAdminNotifier
 
   final String communityId;
 
-  CommunityRewardsService get _svc =>
-      ref.read(communityRewardsServiceProvider);
+  CommunityRewardsService get _svc => ref.read(communityRewardsServiceProvider);
 
   @override
   CommunityRewardsAdminState build() {
@@ -137,32 +139,47 @@ class CommunityRewardsAdminNotifier
   // `state` AFTER the await (below) always merges into the latest state.
   Future<void> reloadGoals() async {
     state = state.copyWith(goals: const AsyncLoading());
-    final goals = await AsyncValue.guard(() => _svc
-        .getGoals(communityId)
-        .timeout(_kRewardsReadTimeout, onTimeout: () => const <CommunityGoal>[]));
+    final goals = await AsyncValue.guard(
+      () => _svc
+          .getGoals(communityId)
+          .timeout(
+            _kRewardsReadTimeout,
+            onTimeout: () => const <CommunityGoal>[],
+          ),
+    );
     state = state.copyWith(goals: goals);
   }
 
   Future<void> reloadRewards() async {
     state = state.copyWith(rewards: const AsyncLoading());
-    final rewards = await AsyncValue.guard(() => _svc
-        .getRewards(communityId)
-        .timeout(_kRewardsReadTimeout,
-            onTimeout: () => const <CommunityReward>[]));
+    final rewards = await AsyncValue.guard(
+      () => _svc
+          .getRewards(communityId)
+          .timeout(
+            _kRewardsReadTimeout,
+            onTimeout: () => const <CommunityReward>[],
+          ),
+    );
     state = state.copyWith(rewards: rewards);
   }
 
   Future<void> reloadBadges() async {
     state = state.copyWith(badges: const AsyncLoading());
-    final badges = await AsyncValue.guard(() => _svc
-        .getBadges(communityId)
-        .timeout(_kRewardsReadTimeout,
-            onTimeout: () => const <CommunityBadge>[]));
+    final badges = await AsyncValue.guard(
+      () => _svc
+          .getBadges(communityId)
+          .timeout(
+            _kRewardsReadTimeout,
+            onTimeout: () => const <CommunityBadge>[],
+          ),
+    );
     state = state.copyWith(badges: badges);
   }
 }
 
-final communityRewardsAdminProvider = NotifierProvider.family<
-    CommunityRewardsAdminNotifier, CommunityRewardsAdminState, String>(
-  CommunityRewardsAdminNotifier.new,
-);
+final communityRewardsAdminProvider =
+    NotifierProvider.family<
+      CommunityRewardsAdminNotifier,
+      CommunityRewardsAdminState,
+      String
+    >(CommunityRewardsAdminNotifier.new);

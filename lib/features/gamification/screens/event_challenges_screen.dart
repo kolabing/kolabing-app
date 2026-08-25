@@ -11,6 +11,7 @@ import '../../../widgets/kolabing_button.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
 import '../widgets/challenge_card.dart';
+import 'attendee_scanner_screen.dart';
 
 /// Screen showing challenges for a specific event
 class EventChallengesScreen extends ConsumerStatefulWidget {
@@ -57,29 +58,41 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      backgroundColor:
-          isDark ? context.colors.surface : context.colors.background,
+      backgroundColor: isDark
+          ? context.colors.surface
+          : context.colors.background,
       appBar: AppBar(
-        backgroundColor:
-            isDark ? context.colors.surface : context.colors.background,
+        backgroundColor: isDark
+            ? context.colors.surface
+            : context.colors.background,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             LucideIcons.arrowLeft,
-            color: isDark ? context.colors.textOnDark : context.colors.onSurface,
+            color: isDark
+                ? context.colors.textOnDark
+                : context.colors.onSurface,
           ),
           onPressed: () => context.pop(),
         ),
         title: Text(
           widget.eventName ?? l10n.eventChallengesTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: isDark ? context.colors.textOnDark : context.colors.onSurface),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: isDark
+                ? context.colors.textOnDark
+                : context.colors.onSurface,
+          ),
         ),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: context.colors.primary,
           labelColor: context.colors.primary,
           unselectedLabelColor: context.colors.textTertiary,
-          labelStyle: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
+          labelStyle: KolabingTextStyles.bodySmall.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
           tabs: [
             Tab(text: l10n.eventChallengesTabAll),
             Tab(text: l10n.eventChallengesTabCustom),
@@ -128,7 +141,9 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
               const SizedBox(height: KolabingSpacing.md),
               Text(
                 error.toString(),
-                style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: KolabingSpacing.md),
@@ -177,10 +192,8 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => _ChallengeDetailsSheet(
-        challenge: challenge,
-        eventId: widget.eventId,
-      ),
+      builder: (context) =>
+          _ChallengeDetailsSheet(challenge: challenge, eventId: widget.eventId),
     );
   }
 }
@@ -223,7 +236,9 @@ class _ChallengesListView extends StatelessWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               error!,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),
@@ -250,7 +265,9 @@ class _ChallengesListView extends StatelessWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               emptyMessage,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.textTertiary,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -292,10 +309,12 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surfaceColor =
-        isDark ? context.colors.darkSurface : context.colors.surface;
-    final textColor =
-        isDark ? context.colors.textOnDark : context.colors.onSurface;
+    final surfaceColor = isDark
+        ? context.colors.darkSurface
+        : context.colors.surface;
+    final textColor = isDark
+        ? context.colors.textOnDark
+        : context.colors.onSurface;
 
     return Container(
       decoration: BoxDecoration(
@@ -326,7 +345,11 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                 // Challenge name
                 Text(
                   challenge.name,
-                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: textColor),
+                  style: KolabingTextStyles.bodyLarge.copyWith(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: textColor,
+                  ),
                 ),
 
                 const SizedBox(height: KolabingSpacing.sm),
@@ -354,7 +377,11 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                           const SizedBox(width: 4),
                           Text(
                             l10n.eventChallengesPointsAwarded(challenge.points),
-                            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: context.colors.onPrimary),
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: context.colors.onPrimary,
+                            ),
                           ),
                         ],
                       ),
@@ -366,13 +393,16 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: _getDifficultyColor(challenge.difficulty)
-                            .withValues(alpha: 0.15),
+                        color: _getDifficultyColor(
+                          challenge.difficulty,
+                        ).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         challenge.difficulty.label,
-                        style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: _getDifficultyColor(challenge.difficulty),
+                        style: KolabingTextStyles.captionSecondary.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: _getDifficultyColor(challenge.difficulty),
                         ),
                       ),
                     ),
@@ -389,7 +419,10 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                         ),
                         child: Text(
                           l10n.eventChallengesSystemBadge,
-                          style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w600, color: context.colors.info),
+                          style: KolabingTextStyles.captionSecondary.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: context.colors.info,
+                          ),
                         ),
                       ),
                     ],
@@ -401,23 +434,31 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                   const SizedBox(height: KolabingSpacing.md),
                   Text(
                     challenge.description!,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant, height: 1.5),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                      height: 1.5,
+                    ),
                   ),
                 ],
 
                 const SizedBox(height: KolabingSpacing.xl),
 
-                // Initiate button
+                // Choose first, THEN scan (#152). This used to push a screen
+                // asking the person to type the other attendee's profile UUID
+                // into a text field, which is not a flow anyone can complete
+                // standing in a room.
                 KolabingButton(
-                  label: l10n.eventChallengesStartChallenge,
+                  label: l10n.challengeFirstScanThem,
                   onPressed: () {
                     Navigator.of(context).pop();
-                    context.push(
-                      '/attendee/events/$eventId/challenges/${challenge.id}/initiate',
+                    AttendeeScannerScreen.open(
+                      context,
+                      eventId: eventId,
+                      challenge: challenge,
                     );
                   },
                   variant: KolabingButtonVariant.primary,
-                  icon: const Icon(LucideIcons.userPlus),
+                  icon: const Icon(LucideIcons.scanLine),
                 ),
 
                 const SizedBox(height: KolabingSpacing.md),

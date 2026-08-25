@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
 import '../../../config/feature_flags.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
 import '../../chat/services/chat_service.dart';
-import '../../gamification/screens/qr_scanner_screen.dart';
+import '../../gamification/screens/attendee_scanner_screen.dart';
 import '../models/event.dart';
 import '../models/event_signup.dart';
 import '../providers/event_provider.dart';
@@ -97,7 +99,9 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
       if (!mounted) return;
       setState(() => _openingChat = false);
       await Navigator.of(context).push<void>(
-        MaterialPageRoute<void>(builder: (_) => ChatThreadScreen(thread: thread)),
+        MaterialPageRoute<void>(
+          builder: (_) => ChatThreadScreen(thread: thread),
+        ),
       );
       // Returning may have moved the read pointer / created the thread.
       ref.read(chatThreadsProvider.notifier).reload();
@@ -113,19 +117,32 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
     }
   }
 
-  // Leader: scan attendee check-in QR codes ---------------------------------
+  // Check-in ------------------------------------------------------------------
 
-  /// Open the QR scanner so the leader can scan attendee check-in codes.
-  /// (The scanner left the attendee bottom nav; it stays reachable here.)
-  Future<void> _scanCheckIns() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const QRScannerScreen(),
+  /// Leader: display this event's check-in QR for members to scan.
+  ///
+  /// This is the entry point `EventQRCodeScreen` never had — its route existed
+  /// but nothing pushed it, so no organizer could ever show a check-in code and
+  /// step 1 of the gamification loop was unreachable.
+  void _showCheckinQr() {
+    context.push(
+      KolabingRoutes.buildEventQRCodePath(_event.id, name: _event.name),
     );
   }
+
+  /// Member: open the scanner to read the organizer's check-in QR.
+  ///
+  /// `POST /checkin` checks in **the caller**, so the member has to be the one
+  /// scanning — the previous wiring had the leader scanning members, which
+  /// would have recorded the leader's own check-in.
+  Future<void> _checkIn() => AttendeeScannerScreen.open(
+    context,
+    // Hand the event through: if the scan comes back 409 ("already checked
+    // in") the response may not say which event, and without it the member
+    // is left checked in server-side but unable to pair up.
+    eventId: _event.id,
+    eventName: _event.name,
+  );
 
   // Leader: edit + add photos ------------------------------------------------
 
@@ -171,7 +188,9 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
 
     final remaining = kEventGalleryMaxTotal - existing;
     if (toUpload.length > remaining) {
-      _snack(_l10n.eventPhotosTotalCapPartial(remaining, kEventGalleryMaxTotal));
+      _snack(
+        _l10n.eventPhotosTotalCapPartial(remaining, kEventGalleryMaxTotal),
+      );
       toUpload = toUpload.take(remaining).toList();
     }
     if (toUpload.isEmpty) return;
@@ -228,11 +247,13 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.of(dialogContext).pop(false),
-                child: Text(_l10n.commonCancel)),
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(_l10n.commonCancel),
+            ),
             TextButton(
-                onPressed: () => Navigator.of(dialogContext).pop(true),
-                child: Text(_l10n.commonDelete)),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(_l10n.commonDelete),
+            ),
           ],
         ),
       ),
@@ -259,16 +280,19 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
     final seriesId = _event.seriesId;
     if (seriesId == null) return;
     try {
-      final created =
-          await ref.read(eventServiceProvider).extendSeries(seriesId);
+      final created = await ref
+          .read(eventServiceProvider)
+          .extendSeries(seriesId);
       final cid = _event.communityId;
       if (cid != null) {
         ref.read(communityUpcomingEventsProvider(cid).notifier).reload();
       }
       if (!mounted) return;
-      _snack(created > 0
-          ? _l10n.eventHubExtended(created)
-          : _l10n.eventHubExtendedNone);
+      _snack(
+        created > 0
+            ? _l10n.eventHubExtended(created)
+            : _l10n.eventHubExtendedNone,
+      );
     } catch (e) {
       if (!mounted) return;
       _snack(e.toString().replaceFirst('Exception: ', ''));
@@ -296,20 +320,21 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
               onSelected: (v) {
                 if (v == 'delete') _delete();
                 if (v == 'extend') _extend();
-                if (v == 'scan') _scanCheckIns();
+                if (v == 'scan') _showCheckinQr();
               },
               itemBuilder: (context) => [
-                // QR check-in scanning is hidden for now
-                // (see kGamificationSetupEnabled) until the attendee flow ships.
-                if (kGamificationSetupEnabled)
+                if (kEventCheckinQrEnabled)
                   PopupMenuItem<String>(
                     value: 'scan',
                     child: Row(
                       children: [
-                        const Icon(LucideIcons.qrCode,
-                            size: 18, color: KolabingColors.onSurface),
+                        const Icon(
+                          LucideIcons.qrCode,
+                          size: 18,
+                          color: KolabingColors.onSurface,
+                        ),
                         const SizedBox(width: KolabingSpacing.sm),
-                        Text(_l10n.eventHubScanCheckIns),
+                        Text(_l10n.eventHubShowCheckinQr),
                       ],
                     ),
                   ),
@@ -318,8 +343,11 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
                     value: 'extend',
                     child: Row(
                       children: [
-                        const Icon(LucideIcons.repeat,
-                            size: 18, color: KolabingColors.onSurface),
+                        const Icon(
+                          LucideIcons.repeat,
+                          size: 18,
+                          color: KolabingColors.onSurface,
+                        ),
                         const SizedBox(width: KolabingSpacing.sm),
                         Text(_l10n.eventHubExtendSeries),
                       ],
@@ -329,8 +357,11 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
                   value: 'delete',
                   child: Row(
                     children: [
-                      Icon(LucideIcons.trash2,
-                          size: 18, color: context.colors.error),
+                      Icon(
+                        LucideIcons.trash2,
+                        size: 18,
+                        color: context.colors.error,
+                      ),
                       const SizedBox(width: KolabingSpacing.sm),
                       Text(_l10n.eventHubDelete),
                     ],
@@ -366,8 +397,10 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
           ],
           Text(
             e.name,
-            style: KolabingTextStyles.bodyLarge
-                .copyWith(fontSize: 22, fontWeight: FontWeight.w800),
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           _InfoRow(LucideIcons.calendar, _fmt(e.startsAt ?? e.date)),
@@ -387,14 +420,29 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
               Center(
                 child: Text(
                   _l10n.eventHubWaitlistPosition(e.waitlistPosition!),
-                  style: KolabingTextStyles.bodySmall
-                      .copyWith(color: context.colors.onSurfaceVariant),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
               ),
             ],
             const SizedBox(height: KolabingSpacing.sm),
+            // Checking in is only meaningful once they have said they are
+            // coming, and it is what unlocks the event's challenges.
+            if (kEventCheckinQrEnabled && e.isGoing) ...[
+              _checkInButton(),
+              const SizedBox(height: KolabingSpacing.sm),
+            ],
           ],
           // Open event chat: always for the leader; for members once going.
+          // The leader's check-in QR, as a button rather than a popup-menu item
+          // (#144). It was reachable in exactly one place in the whole app —
+          // behind a ⋮ on this screen — and the report was, fairly, "I can't
+          // find the event QR code".
+          if (widget.isLeader && kEventCheckinQrEnabled) ...[
+            _showQrButton(),
+            const SizedBox(height: KolabingSpacing.sm),
+          ],
           if (widget.isLeader || e.isGoing) _chatButton(),
           if (widget.isLeader) ...[
             const SizedBox(height: KolabingSpacing.xl),
@@ -415,86 +463,122 @@ class _EventHubScreenState extends ConsumerState<EventHubScreen> {
         '${_l10n.eventHubCapacity(e.capacity!)} · ${_l10n.eventHubSpotsLeft(left)}';
   }
 
+  Widget _showQrButton() => SizedBox(
+    width: double.infinity,
+    height: 52,
+    child: OutlinedButton.icon(
+      onPressed: _showCheckinQr,
+      icon: const Icon(LucideIcons.qrCode, size: 18),
+      label: Text(_l10n.eventHubShowCheckinQr),
+    ),
+  );
+
+  Widget _checkInButton() => SizedBox(
+    width: double.infinity,
+    height: 52,
+    child: OutlinedButton.icon(
+      onPressed: _checkIn,
+      icon: const Icon(LucideIcons.qrCode, size: 18),
+      label: Text(_l10n.eventHubCheckIn),
+    ),
+  );
+
   Widget _chatButton() => SizedBox(
-        width: double.infinity,
-        height: 52,
-        child: FilledButton.icon(
-          onPressed: _openingChat ? null : _openChat,
-          style: FilledButton.styleFrom(
-            backgroundColor: context.colors.surfaceContainerHigh,
-            foregroundColor: context.colors.onSurface,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-          icon: _openingChat
-              ? const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2))
-              : const Icon(LucideIcons.messageCircle, size: 18),
-          label: Text(
-            _l10n.eventHubOpenChat,
-            style: KolabingTextStyles.bodyMedium
-                .copyWith(fontWeight: FontWeight.w700),
-          ),
+    width: double.infinity,
+    height: 52,
+    child: FilledButton.icon(
+      onPressed: _openingChat ? null : _openChat,
+      style: FilledButton.styleFrom(
+        backgroundColor: context.colors.surfaceContainerHigh,
+        foregroundColor: context.colors.onSurface,
+        // No shape override: buttons inherit StadiumBorder from the theme
+        // (enforced by test/lints/button_style_lint_test.dart). The radius-12
+        // override predates this PR — it was wrapped across two lines, which
+        // the lint's single-line pattern missed, and reformatting this file
+        // joined it and surfaced it.
+      ),
+      icon: _openingChat
+          ? const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Icon(LucideIcons.messageCircle, size: 18),
+      label: Text(
+        _l10n.eventHubOpenChat,
+        style: KolabingTextStyles.bodyMedium.copyWith(
+          fontWeight: FontWeight.w700,
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _rsvpButton(Event e) {
     final (String label, IconData icon, Color bg, Color fg) = switch (e) {
       _ when e.isGoing => (
-          _l10n.eventHubGoingTapToLeave,
-          LucideIcons.check,
-          // Active/confirmed state — light mint bg + dark green text (readable).
-          // `success` (deprecated dark olive) made the dark label unreadable.
-          KolabingColors.activeBg,
-          KolabingColors.activeText,
-        ),
+        _l10n.eventHubGoingTapToLeave,
+        LucideIcons.check,
+        // Active/confirmed state — light mint bg + dark green text (readable).
+        // `success` (deprecated dark olive) made the dark label unreadable.
+        KolabingColors.activeBg,
+        KolabingColors.activeText,
+      ),
       _ when e.isWaitlisted => (
-          _l10n.eventHubOnWaitlistTapToLeave,
-          LucideIcons.clock,
-          context.colors.surfaceContainerHigh,
-          context.colors.onSurface,
-        ),
+        _l10n.eventHubOnWaitlistTapToLeave,
+        LucideIcons.clock,
+        context.colors.surfaceContainerHigh,
+        context.colors.onSurface,
+      ),
       _ when e.isFull => (
-          _l10n.eventHubJoinWaitlist,
-          LucideIcons.userPlus,
-          context.colors.surfaceContainerHigh,
-          context.colors.onSurface,
-        ),
+        _l10n.eventHubJoinWaitlist,
+        LucideIcons.userPlus,
+        context.colors.surfaceContainerHigh,
+        context.colors.onSurface,
+      ),
       _ => (
-          _l10n.eventHubImGoing,
-          LucideIcons.check,
-          context.colors.primary,
-          context.colors.onPrimary,
-        ),
+        _l10n.eventHubImGoing,
+        LucideIcons.check,
+        context.colors.primary,
+        context.colors.onPrimary,
+      ),
     };
     return SizedBox(
       width: double.infinity,
       height: 52,
       child: FilledButton.icon(
         onPressed: _busy ? null : _toggleRsvp,
-        style: FilledButton.styleFrom(
-          backgroundColor: bg,
-          foregroundColor: fg,
-        ),
+        style: FilledButton.styleFrom(backgroundColor: bg, foregroundColor: fg),
         icon: _busy
             ? const SizedBox(
                 width: 18,
                 height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2))
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
             : Icon(icon, size: 18),
-        label: Text(label,
-            style: KolabingTextStyles.bodyMedium
-                .copyWith(fontWeight: FontWeight.w700)),
+        label: Text(
+          label,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
     );
   }
 
   static String _fmt(DateTime d) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     final h = d.hour.toString().padLeft(2, '0');
     final m = d.minute.toString().padLeft(2, '0');
@@ -521,16 +605,18 @@ class _AttendeesSection extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.md),
         child: Text(
           l10n.eventHubNoAttendees,
-          style: KolabingTextStyles.bodySmall
-              .copyWith(color: context.colors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
       ),
       data: (signups) {
         if (signups.isEmpty) {
           return Text(
             l10n.eventHubNoAttendees,
-            style: KolabingTextStyles.bodySmall
-                .copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           );
         }
         return Column(
@@ -564,25 +650,33 @@ class _AttendeeTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       leading: CircleAvatar(
         backgroundColor: context.colors.primary.withValues(alpha: 0.2),
-        backgroundImage:
-            signup.avatarUrl != null ? NetworkImage(signup.avatarUrl!) : null,
+        backgroundImage: signup.avatarUrl != null
+            ? NetworkImage(signup.avatarUrl!)
+            : null,
         child: signup.avatarUrl == null
-            ? Text(initial,
-                style: KolabingTextStyles.bodySmall
-                    .copyWith(fontWeight: FontWeight.w700))
+            ? Text(
+                initial,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              )
             : null,
       ),
       title: Text(
         signup.name,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: KolabingTextStyles.bodyMedium
-            .copyWith(fontWeight: FontWeight.w600),
+        style: KolabingTextStyles.bodyMedium.copyWith(
+          fontWeight: FontWeight.w600,
+        ),
       ),
       trailing: signup.isWaitlisted && signup.waitlistPosition != null
-          ? Text('#${signup.waitlistPosition}',
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: context.colors.onSurfaceVariant))
+          ? Text(
+              '#${signup.waitlistPosition}',
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            )
           : null,
     );
   }
@@ -594,17 +688,17 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
-        child: Text(
-          text.toUpperCase(),
-          style: KolabingTextStyles.bodySmall.copyWith(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.2,
-            color: context.colors.onSurfaceVariant,
-          ),
-        ),
-      );
+    padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+    child: Text(
+      text.toUpperCase(),
+      style: KolabingTextStyles.bodySmall.copyWith(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 1.2,
+        color: context.colors.onSurfaceVariant,
+      ),
+    ),
+  );
 }
 
 class _Gallery extends StatelessWidget {
@@ -633,8 +727,10 @@ class _Gallery extends StatelessWidget {
                 width: 96,
                 height: 96,
                 color: context.colors.surfaceVariant,
-                child: Icon(LucideIcons.image,
-                    color: context.colors.textTertiary),
+                child: Icon(
+                  LucideIcons.image,
+                  color: context.colors.textTertiary,
+                ),
               ),
             ),
           );
@@ -651,13 +747,13 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
-        child: Row(
-          children: [
-            Icon(icon, size: 18, color: context.colors.onSurfaceVariant),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(child: Text(text, style: KolabingTextStyles.bodyMedium)),
-          ],
-        ),
-      );
+    padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),
+    child: Row(
+      children: [
+        Icon(icon, size: 18, color: context.colors.onSurfaceVariant),
+        const SizedBox(width: KolabingSpacing.sm),
+        Expanded(child: Text(text, style: KolabingTextStyles.bodyMedium)),
+      ],
+    ),
+  );
 }

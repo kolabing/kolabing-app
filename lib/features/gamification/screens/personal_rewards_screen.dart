@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/color_tokens.dart';
@@ -39,8 +40,9 @@ class PersonalRewardsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           l10n.personalRewardsTitle,
-          style: KolabingTextStyles.bodyMedium
-              .copyWith(fontWeight: FontWeight.w600),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
       ),
@@ -74,10 +76,7 @@ class _Content extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       children: [
-        _RedeemXpCard(
-          xp: overview.xp,
-          partnerRewards: overview.partnerRewards,
-        ),
+        _RedeemXpCard(xp: overview.xp, partnerRewards: overview.partnerRewards),
         const SizedBox(height: KolabingSpacing.lg),
         if (!overview.hasCommunities)
           _CommunitiesEmpty(l10n: l10n)
@@ -123,7 +122,11 @@ class _RedeemXpCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(LucideIcons.sparkles, size: 20, color: context.colors.onPrimary),
+              Icon(
+                LucideIcons.sparkles,
+                size: 20,
+                color: context.colors.onPrimary,
+              ),
               const SizedBox(width: KolabingSpacing.xs),
               Expanded(
                 child: Text(
@@ -170,12 +173,16 @@ class _RedeemXpCard extends StatelessWidget {
               icon: const Icon(LucideIcons.lock, size: 16),
               label: Text(l10n.personalRewardsComingSoon),
               style: FilledButton.styleFrom(
-                backgroundColor: context.colors.onPrimary.withValues(alpha: 0.25),
+                backgroundColor: context.colors.onPrimary.withValues(
+                  alpha: 0.25,
+                ),
                 foregroundColor: context.colors.onPrimary,
-                disabledBackgroundColor:
-                    context.colors.onPrimary.withValues(alpha: 0.18),
-                disabledForegroundColor:
-                    context.colors.onPrimary.withValues(alpha: 0.7),
+                disabledBackgroundColor: context.colors.onPrimary.withValues(
+                  alpha: 0.18,
+                ),
+                disabledForegroundColor: context.colors.onPrimary.withValues(
+                  alpha: 0.7,
+                ),
               ),
             ),
           ),
@@ -276,8 +283,11 @@ class _CommunitySection extends StatelessWidget {
                   ? CachedNetworkImageProvider(section.communityLogoUrl!)
                   : null,
               child: section.communityLogoUrl == null
-                  ? Icon(LucideIcons.users,
-                      size: 16, color: context.colors.primary)
+                  ? Icon(
+                      LucideIcons.users,
+                      size: 16,
+                      color: context.colors.primary,
+                    )
                   : null,
             ),
             const SizedBox(width: KolabingSpacing.sm),
@@ -310,8 +320,9 @@ class _CommunitySection extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(
               l10n.personalRewardsNoRewards,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           )
         else
@@ -329,10 +340,7 @@ class _CommunitySection extends StatelessWidget {
 /// `CommunityRewardsService.redeemReward`; on success it reloads the personal
 /// overview so balances refresh.
 class _CommunityRewardTile extends ConsumerStatefulWidget {
-  const _CommunityRewardTile({
-    required this.communityId,
-    required this.reward,
-  });
+  const _CommunityRewardTile({required this.communityId, required this.reward});
 
   final String communityId;
   final CommunityReward reward;
@@ -352,8 +360,9 @@ class _CommunityRewardTileState extends ConsumerState<_CommunityRewardTile> {
       context: context,
       builder: (_) => AlertDialog(
         title: Text(l10n.communityRewardsRedeemConfirmTitle),
-        content:
-            Text(l10n.communityRewardsRedeemConfirmBody(r.costPoints, r.title)),
+        content: Text(
+          l10n.communityRewardsRedeemConfirmBody(r.costPoints, r.title),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -374,9 +383,11 @@ class _CommunityRewardTileState extends ConsumerState<_CommunityRewardTile> {
           .redeemReward(widget.communityId, r.id);
       // Refresh balances on both the personal overview and the community hub.
       unawaited(ref.read(meRewardsOverviewProvider.notifier).reload());
-      unawaited(ref
-          .read(communityRewardsHubProvider(widget.communityId).notifier)
-          .reload());
+      unawaited(
+        ref
+            .read(communityRewardsHubProvider(widget.communityId).notifier)
+            .reload(),
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(l10n.communityRewardsRedeemedSnack)),
@@ -384,8 +395,9 @@ class _CommunityRewardTileState extends ConsumerState<_CommunityRewardTile> {
       }
     } on CommunityException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -423,15 +435,17 @@ class _CommunityRewardTileState extends ConsumerState<_CommunityRewardTile> {
                   if (r.description != null && r.description!.isNotEmpty)
                     Text(
                       r.description!,
-                      style: KolabingTextStyles.bodySmall
-                          .copyWith(color: context.colors.onSurfaceVariant),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                   Text(
                     r.stock == null
                         ? l10n.communityRewardsRewardCost(r.costPoints)
                         : '${l10n.communityRewardsRewardCost(r.costPoints)} · ${l10n.communityRewardsRewardStock(r.stock!)}',
-                    style: KolabingTextStyles.bodySmall
-                        .copyWith(color: context.colors.onSurfaceVariant),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -439,9 +453,21 @@ class _CommunityRewardTileState extends ConsumerState<_CommunityRewardTile> {
             const SizedBox(width: KolabingSpacing.sm),
             FilledButton(
               onPressed: canRedeem ? _redeem : null,
+              // The app's FilledButtonTheme sets minimumSize.width = infinity
+              // (full-width form buttons). A Row measures its non-flex children
+              // with an unbounded width, so that infinity claimed the whole row
+              // and left the Expanded title 0px wide — the reward name then
+              // wrapped one letter per line. Bound the button here.
               style: FilledButton.styleFrom(
                 backgroundColor: context.colors.primary,
                 foregroundColor: context.colors.onPrimary,
+                minimumSize: const Size(
+                  0,
+                  KolabingLayout.buttonHeightSecondary,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.md,
+                ),
               ),
               child: _busy
                   ? SizedBox(
@@ -472,36 +498,40 @@ class _CommunitiesEmpty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(KolabingSpacing.lg),
-        decoration: BoxDecoration(
-          color: context.colors.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(KolabingRadius.lg),
-          border: Border.all(color: context.colors.outlineVariant),
+    width: double.infinity,
+    padding: const EdgeInsets.all(KolabingSpacing.lg),
+    decoration: BoxDecoration(
+      color: context.colors.surfaceContainerLow,
+      borderRadius: BorderRadius.circular(KolabingRadius.lg),
+      border: Border.all(color: context.colors.outlineVariant),
+    ),
+    child: Column(
+      children: [
+        Icon(
+          LucideIcons.gift,
+          size: 36,
+          color: context.colors.onSurfaceVariant,
         ),
-        child: Column(
-          children: [
-            Icon(LucideIcons.gift,
-                size: 36, color: context.colors.onSurfaceVariant),
-            const SizedBox(height: KolabingSpacing.sm),
-            Text(
-              l10n.personalRewardsEmptyTitle,
-              textAlign: TextAlign.center,
-              style: KolabingTextStyles.bodyMedium.copyWith(
-                fontWeight: FontWeight.w700,
-                color: context.colors.onSurface,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              l10n.personalRewardsEmptyBody,
-              textAlign: TextAlign.center,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: context.colors.onSurfaceVariant),
-            ),
-          ],
+        const SizedBox(height: KolabingSpacing.sm),
+        Text(
+          l10n.personalRewardsEmptyTitle,
+          textAlign: TextAlign.center,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.colors.onSurface,
+          ),
         ),
-      );
+        const SizedBox(height: 4),
+        Text(
+          l10n.personalRewardsEmptyBody,
+          textAlign: TextAlign.center,
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 class _ErrorState extends StatelessWidget {
@@ -519,8 +549,11 @@ class _ErrorState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(LucideIcons.alertCircle,
-                size: 48, color: context.colors.error.withValues(alpha: 0.7)),
+            Icon(
+              LucideIcons.alertCircle,
+              size: 48,
+              color: context.colors.error.withValues(alpha: 0.7),
+            ),
             const SizedBox(height: KolabingSpacing.md),
             Text(
               l10n.personalRewardsFailedToLoad,
@@ -533,8 +566,9 @@ class _ErrorState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.md),
             TextButton.icon(

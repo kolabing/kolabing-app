@@ -23,31 +23,28 @@ Future<void> showGoalEditor(
   BuildContext context, {
   required String communityId,
   CommunityGoal? goal,
-}) =>
-    _showSheet(
-      context,
-      (_) => _GoalEditorSheet(communityId: communityId, goal: goal),
-    );
+}) => _showSheet(
+  context,
+  (_) => _GoalEditorSheet(communityId: communityId, goal: goal),
+);
 
 Future<void> showRewardEditor(
   BuildContext context, {
   required String communityId,
   CommunityReward? reward,
-}) =>
-    _showSheet(
-      context,
-      (_) => _RewardEditorSheet(communityId: communityId, reward: reward),
-    );
+}) => _showSheet(
+  context,
+  (_) => _RewardEditorSheet(communityId: communityId, reward: reward),
+);
 
 Future<void> showBadgeEditor(
   BuildContext context, {
   required String communityId,
   CommunityBadge? badge,
-}) =>
-    _showSheet(
-      context,
-      (_) => _BadgeEditorSheet(communityId: communityId, badge: badge),
-    );
+}) => _showSheet(
+  context,
+  (_) => _BadgeEditorSheet(communityId: communityId, badge: badge),
+);
 
 Future<void> _showSheet(BuildContext context, WidgetBuilder builder) =>
     showModalBottomSheet<void>(
@@ -83,8 +80,10 @@ class _SheetShell extends StatelessWidget {
           children: [
             Text(
               title,
-              style: KolabingTextStyles.bodyLarge
-                  .copyWith(fontSize: 18, fontWeight: FontWeight.w700),
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.md),
             ...children,
@@ -96,38 +95,42 @@ class _SheetShell extends StatelessWidget {
 }
 
 Widget _label(BuildContext context, String text) => Padding(
-      padding: const EdgeInsets.only(
-          top: KolabingSpacing.md, bottom: KolabingSpacing.xs),
-      child: Text(text,
-          style:
-              KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700)),
-    );
+  padding: const EdgeInsets.only(
+    top: KolabingSpacing.md,
+    bottom: KolabingSpacing.xs,
+  ),
+  child: Text(
+    text,
+    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700),
+  ),
+);
 
 Widget _saveButton(
   BuildContext context, {
   required bool busy,
   required String label,
   required VoidCallback? onPressed,
-}) =>
-    Padding(
-      padding: const EdgeInsets.only(top: KolabingSpacing.lg),
-      child: FilledButton(
-        onPressed: busy ? null : onPressed,
-        style: FilledButton.styleFrom(
-          backgroundColor: context.colors.primary,
-          foregroundColor: context.colors.onPrimary,
-          minimumSize: const Size.fromHeight(52),
-        ),
-        child: busy
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2, color: context.colors.onSurface),
-              )
-            : Text(label),
-      ),
-    );
+}) => Padding(
+  padding: const EdgeInsets.only(top: KolabingSpacing.lg),
+  child: FilledButton(
+    onPressed: busy ? null : onPressed,
+    style: FilledButton.styleFrom(
+      backgroundColor: context.colors.primary,
+      foregroundColor: context.colors.onPrimary,
+      minimumSize: const Size.fromHeight(52),
+    ),
+    child: busy
+        ? SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: context.colors.onSurface,
+            ),
+          )
+        : Text(label),
+  ),
+);
 
 // -----------------------------------------------------------------------------
 // Goal editor
@@ -157,8 +160,9 @@ class _GoalEditorSheetState extends ConsumerState<_GoalEditorSheet> {
     final g = widget.goal;
     _title = TextEditingController(text: g?.title ?? '');
     _target = TextEditingController(text: g?.target.toString() ?? '');
-    _rewardPoints =
-        TextEditingController(text: g?.rewardPoints.toString() ?? '');
+    _rewardPoints = TextEditingController(
+      text: g?.rewardPoints.toString() ?? '',
+    );
     _earnType = g?.earnType ?? GoalEarnType.eventCheckIns;
   }
 
@@ -205,8 +209,9 @@ class _GoalEditorSheetState extends ConsumerState<_GoalEditorSheet> {
       if (mounted) Navigator.of(context).pop();
     } on CommunityException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -237,8 +242,12 @@ class _GoalEditorSheetState extends ConsumerState<_GoalEditorSheet> {
             initialValue: _earnType,
             decoration: const InputDecoration(border: OutlineInputBorder()),
             items: GoalEarnType.values
-                .map((t) => DropdownMenuItem(
-                    value: t, child: Text(_earnTypeLabel(l10n, t))))
+                .map(
+                  (t) => DropdownMenuItem(
+                    value: t,
+                    child: Text(_earnTypeLabel(l10n, t)),
+                  ),
+                )
                 .toList(),
             onChanged: (v) => setState(() => _earnType = v ?? _earnType),
           ),
@@ -264,8 +273,12 @@ class _GoalEditorSheetState extends ConsumerState<_GoalEditorSheet> {
                 ? l10n.communityGoalRewardPointsRequired
                 : null,
           ),
-          _saveButton(context,
-              busy: _busy, label: l10n.rosterSave, onPressed: _save),
+          _saveButton(
+            context,
+            busy: _busy,
+            label: l10n.rosterSave,
+            onPressed: _save,
+          ),
         ],
       ),
     );
@@ -338,8 +351,9 @@ class _RewardEditorSheetState extends ConsumerState<_RewardEditorSheet> {
       if (mounted) Navigator.of(context).pop();
     } on CommunityException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -389,8 +403,12 @@ class _RewardEditorSheetState extends ConsumerState<_RewardEditorSheet> {
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: const InputDecoration(border: OutlineInputBorder()),
           ),
-          _saveButton(context,
-              busy: _busy, label: l10n.rosterSave, onPressed: _save),
+          _saveButton(
+            context,
+            busy: _busy,
+            label: l10n.rosterSave,
+            onPressed: _save,
+          ),
         ],
       ),
     );
@@ -471,8 +489,9 @@ class _BadgeEditorSheetState extends ConsumerState<_BadgeEditorSheet> {
       if (mounted) Navigator.of(context).pop();
     } on CommunityException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -482,8 +501,7 @@ class _BadgeEditorSheetState extends ConsumerState<_BadgeEditorSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final showChallenges =
-        _criteria == BadgeCriteriaType.challengesCompleted;
+    final showChallenges = _criteria == BadgeCriteriaType.challengesCompleted;
     return Form(
       key: _formKey,
       child: _SheetShell(
@@ -505,8 +523,12 @@ class _BadgeEditorSheetState extends ConsumerState<_BadgeEditorSheet> {
             initialValue: _criteria,
             decoration: const InputDecoration(border: OutlineInputBorder()),
             items: BadgeCriteriaType.values
-                .map((t) => DropdownMenuItem(
-                    value: t, child: Text(_criteriaLabel(l10n, t))))
+                .map(
+                  (t) => DropdownMenuItem(
+                    value: t,
+                    child: Text(_criteriaLabel(l10n, t)),
+                  ),
+                )
                 .toList(),
             onChanged: (v) => setState(() => _criteria = v ?? _criteria),
           ),
@@ -527,12 +549,17 @@ class _BadgeEditorSheetState extends ConsumerState<_BadgeEditorSheet> {
             _label(context, l10n.communityBadgeChallengesLabel),
             Text(
               l10n.communityBadgeChallengesEmpty,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ],
-          _saveButton(context,
-              busy: _busy, label: l10n.rosterSave, onPressed: _save),
+          _saveButton(
+            context,
+            busy: _busy,
+            label: l10n.rosterSave,
+            onPressed: _save,
+          ),
         ],
       ),
     );

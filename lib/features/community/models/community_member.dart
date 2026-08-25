@@ -64,10 +64,13 @@ class CommunityMember {
       id: json['id'] as String,
       communityId: json['community_id'] as String,
       profileId: json['profile_id'] as String,
-      tierId: json['tier_id'] as String? ??
+      tierId:
+          json['tier_id'] as String? ??
           (json['tier'] as Map<String, dynamic>?)?['id'] as String?,
       canManage: json['can_manage'] as bool? ?? false,
-      status: MembershipStatus.fromString(json['status'] as String? ?? 'active'),
+      status: MembershipStatus.fromString(
+        json['status'] as String? ?? 'active',
+      ),
       joinedAt: DateTime.parse(json['joined_at'] as String),
       tierAssignedAt: json['tier_assigned_at'] != null
           ? DateTime.parse(json['tier_assigned_at'] as String)
@@ -102,20 +105,20 @@ class CommunityMember {
   bool get isActive => status == MembershipStatus.active;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'community_id': communityId,
-        'profile_id': profileId,
-        if (tierId != null) 'tier_id': tierId,
-        'can_manage': canManage,
-        'status': status.toApiValue(),
-        'joined_at': joinedAt.toIso8601String(),
-        if (tierAssignedAt != null)
-          'tier_assigned_at': tierAssignedAt!.toIso8601String(),
-        if (memberName != null) 'name': memberName,
-        if (memberAvatarUrl != null) 'avatar_url': memberAvatarUrl,
-        'created_at': createdAt.toIso8601String(),
-        'updated_at': updatedAt.toIso8601String(),
-      };
+    'id': id,
+    'community_id': communityId,
+    'profile_id': profileId,
+    if (tierId != null) 'tier_id': tierId,
+    'can_manage': canManage,
+    'status': status.toApiValue(),
+    'joined_at': joinedAt.toIso8601String(),
+    if (tierAssignedAt != null)
+      'tier_assigned_at': tierAssignedAt!.toIso8601String(),
+    if (memberName != null) 'name': memberName,
+    if (memberAvatarUrl != null) 'avatar_url': memberAvatarUrl,
+    'created_at': createdAt.toIso8601String(),
+    'updated_at': updatedAt.toIso8601String(),
+  };
 
   CommunityMember copyWith({
     String? id,
@@ -130,19 +133,18 @@ class CommunityMember {
     String? memberAvatarUrl,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) =>
-      CommunityMember(
-        id: id ?? this.id,
-        communityId: communityId ?? this.communityId,
-        profileId: profileId ?? this.profileId,
-        tierId: tierId ?? this.tierId,
-        canManage: canManage ?? this.canManage,
-        status: status ?? this.status,
-        joinedAt: joinedAt ?? this.joinedAt,
-        tierAssignedAt: tierAssignedAt ?? this.tierAssignedAt,
-        memberName: memberName ?? this.memberName,
-        memberAvatarUrl: memberAvatarUrl ?? this.memberAvatarUrl,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
+  }) => CommunityMember(
+    id: id ?? this.id,
+    communityId: communityId ?? this.communityId,
+    profileId: profileId ?? this.profileId,
+    tierId: tierId ?? this.tierId,
+    canManage: canManage ?? this.canManage,
+    status: status ?? this.status,
+    joinedAt: joinedAt ?? this.joinedAt,
+    tierAssignedAt: tierAssignedAt ?? this.tierAssignedAt,
+    memberName: memberName ?? this.memberName,
+    memberAvatarUrl: memberAvatarUrl ?? this.memberAvatarUrl,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
 }

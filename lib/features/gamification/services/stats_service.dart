@@ -12,11 +12,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for handling gamification stats and game card operations
 class StatsService {
-  StatsService({
-    required AuthService authService,
-    http.Client? httpClient,
-  })  : _authService = authService,
-        _httpClient = httpClient ?? http.Client();
+  StatsService({required AuthService authService, http.Client? httpClient})
+    : _authService = authService,
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;

@@ -18,9 +18,9 @@ final challengeServiceProvider = Provider<ChallengeService>((ref) {
 /// Provider for event challenges (simple FutureProvider)
 final eventChallengesProvider =
     FutureProvider.family<ChallengesResponse, String>((ref, eventId) async {
-  final service = ref.watch(challengeServiceProvider);
-  return service.getEventChallenges(eventId);
-});
+      final service = ref.watch(challengeServiceProvider);
+      return service.getEventChallenges(eventId);
+    });
 
 // =============================================================================
 // Challenge Completion Providers
@@ -32,26 +32,37 @@ class InitiateChallengeState {
     this.completion,
     this.isLoading = false,
     this.error,
+    this.failure,
     this.isSuccess = false,
   });
 
   final ChallengeCompletion? completion;
   final bool isLoading;
+
+  /// Raw message from the service. May be backend English — prefer [failure]
+  /// for anything shown to the user.
   final String? error;
+
+  /// Classified reason the call failed, for localized messaging. The important
+  /// one is [ChallengeFailure.bothMustCheckIn]: the 422 the backend returns
+  /// when the pair are not both checked in to the event.
+  final ChallengeFailure? failure;
+
   final bool isSuccess;
 
   InitiateChallengeState copyWith({
     ChallengeCompletion? completion,
     bool? isLoading,
     String? error,
+    ChallengeFailure? failure,
     bool? isSuccess,
-  }) =>
-      InitiateChallengeState(
-        completion: completion ?? this.completion,
-        isLoading: isLoading ?? this.isLoading,
-        error: error,
-        isSuccess: isSuccess ?? this.isSuccess,
-      );
+  }) => InitiateChallengeState(
+    completion: completion ?? this.completion,
+    isLoading: isLoading ?? this.isLoading,
+    error: error,
+    failure: failure,
+    isSuccess: isSuccess ?? this.isSuccess,
+  );
 }
 
 /// Notifier for initiating challenges
@@ -77,12 +88,17 @@ class InitiateChallengeNotifier extends Notifier<InitiateChallengeState> {
       state = InitiateChallengeState(completion: completion, isSuccess: true);
       return completion;
     } on ChallengeException catch (e) {
-      state = state.copyWith(isLoading: false, error: e.message);
+      state = state.copyWith(
+        isLoading: false,
+        error: e.message,
+        failure: e.kind,
+      );
       return null;
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         error: 'Failed to initiate challenge',
+        failure: ChallengeFailure.unknown,
       );
       return null;
     }
@@ -96,8 +112,8 @@ class InitiateChallengeNotifier extends Notifier<InitiateChallengeState> {
 /// Provider for initiating challenges
 final initiateChallengeProvider =
     NotifierProvider<InitiateChallengeNotifier, InitiateChallengeState>(
-  InitiateChallengeNotifier.new,
-);
+      InitiateChallengeNotifier.new,
+    );
 
 // =============================================================================
 // My Challenge Completions Provider
@@ -140,15 +156,14 @@ class MyChallengeCompletionsState {
     String? error,
     int? currentPage,
     bool? hasMore,
-  }) =>
-      MyChallengeCompletionsState(
-        completions: completions ?? this.completions,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        error: error,
-        currentPage: currentPage ?? this.currentPage,
-        hasMore: hasMore ?? this.hasMore,
-      );
+  }) => MyChallengeCompletionsState(
+    completions: completions ?? this.completions,
+    isLoading: isLoading ?? this.isLoading,
+    isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    error: error,
+    currentPage: currentPage ?? this.currentPage,
+    hasMore: hasMore ?? this.hasMore,
+  );
 }
 
 /// Notifier for my challenge completions
@@ -239,9 +254,10 @@ class MyChallengeCompletionsNotifier
 
 /// Provider for my challenge completions
 final myChallengeCompletionsProvider =
-    NotifierProvider<MyChallengeCompletionsNotifier, MyChallengeCompletionsState>(
-  MyChallengeCompletionsNotifier.new,
-);
+    NotifierProvider<
+      MyChallengeCompletionsNotifier,
+      MyChallengeCompletionsState
+    >(MyChallengeCompletionsNotifier.new);
 
 // =============================================================================
 // Challenge CRUD for Organizers

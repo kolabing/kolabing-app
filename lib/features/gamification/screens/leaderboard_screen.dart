@@ -51,9 +51,11 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
         : ref.watch(globalLeaderboardProvider);
 
     final title = eventId != null
-        ? (widget.eventName ?? AppLocalizations.of(context).leaderboardScreenTitle)
+        ? (widget.eventName ??
+              AppLocalizations.of(context).leaderboardScreenTitle)
         : communityId != null
-        ? (widget.communityName ?? AppLocalizations.of(context).leaderboardScreenTitle)
+        ? (widget.communityName ??
+              AppLocalizations.of(context).leaderboardScreenTitle)
         : AppLocalizations.of(context).leaderboardScreenGlobalTitle;
 
     return Scaffold(
@@ -117,7 +119,12 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                 ),
                 child: Text(
                   AppLocalizations.of(context).leaderboardScreenRankings,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.2),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.onSurfaceVariant,
+                    letterSpacing: 1.2,
+                  ),
                 ),
               ),
             ),
@@ -132,9 +139,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                 isCurrentUser: isMe,
                 // Tapping YOUR OWN row opens the Personal Rewards Screen.
                 // Other rows are no-op (kept minimal per P3).
-                onTap: isMe
-                    ? () => context.push(KolabingRoutes.rewards)
-                    : null,
+                onTap: isMe ? () => context.push(KolabingRoutes.rewards) : null,
               );
             }, childCount: rest.length),
           ),
@@ -151,91 +156,95 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
       // Your own rank card → open the Personal Rewards Screen (P3).
       onTap: () => context.push(KolabingRoutes.rewards),
       child: Container(
-      margin: const EdgeInsets.all(KolabingSpacing.md),
-      padding: const EdgeInsets.all(KolabingSpacing.md),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            context.colors.primary,
-            context.colors.primary.withValues(alpha: 0.8),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: context.colors.primary.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+        margin: const EdgeInsets.all(KolabingSpacing.md),
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              context.colors.primary,
+              context.colors.primary.withValues(alpha: 0.8),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Rank
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: context.colors.primary.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-            child: Center(
-              child: Text(
-                '#${myRank.rank}',
-                style: KolabingTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: context.colors.onPrimary,
+          ],
+        ),
+        child: Row(
+          children: [
+            // Rank
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  '#${myRank.rank}',
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.onPrimary,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: KolabingSpacing.md),
+            const SizedBox(width: KolabingSpacing.md),
 
-          // Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            // Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppLocalizations.of(context).leaderboardScreenYourRanking,
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      fontSize: 12,
+                      color: context.colors.onPrimary.withValues(alpha: 0.8),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    myRank.displayName,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.onPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Points
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  AppLocalizations.of(context).leaderboardScreenYourRanking,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onPrimary.withValues(alpha: 0.8),
+                  '${myRank.totalPoints}',
+                  style: KolabingTextStyles.bodyLarge.copyWith(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.onPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
                 Text(
-                  myRank.displayName,
-                  style: KolabingTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: context.colors.onPrimary,
+                  AppLocalizations.of(context).leaderboardScreenPoints,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    color: context.colors.onPrimary.withValues(alpha: 0.8),
                   ),
                 ),
               ],
             ),
-          ),
-
-          // Points
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '${myRank.totalPoints}',
-                style: KolabingTextStyles.bodyLarge.copyWith(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: context.colors.onPrimary,
-                ),
-              ),
-              Text(
-                AppLocalizations.of(context).leaderboardScreenPoints,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onPrimary.withValues(alpha: 0.8),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
@@ -255,12 +264,18 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             const SizedBox(height: KolabingSpacing.lg),
             Text(
               AppLocalizations.of(context).leaderboardScreenNoRankings,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               AppLocalizations.of(context).leaderboardScreenNoRankingsHint,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -284,7 +299,10 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).leaderboardScreenFailedToLoad,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(

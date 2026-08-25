@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import '../../auth/services/auth_service.dart';
 import '../models/challenge.dart';
+import '../models/community_challenge.dart';
 import '../models/challenge_completion.dart';
 import '../../../config/constants/api.dart';
 
@@ -13,11 +14,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for handling challenge operations
 class ChallengeService {
-  ChallengeService({
-    required AuthService authService,
-    http.Client? httpClient,
-  })  : _authService = authService,
-        _httpClient = httpClient ?? http.Client();
+  ChallengeService({required AuthService authService, http.Client? httpClient})
+    : _authService = authService,
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -28,6 +27,142 @@ class ChallengeService {
 
   /// Get challenges for an event (system + custom)
   ///
+  /// The challenger takes back a request nobody answered yet (#154).
+  ///
+  /// Needed because the flow reversed (#152): choosing a challenge and then
+  /// scanning means a mis-scan sends a real request to the wrong person.
+  ///
+  /// POST /api/v1/challenge-completions/{id}/cancel
+  Future<void> cancelChallenge(String completionId) async {
+    final token = await _authService.getToken();
+    if (token == null) throw const AuthException('Not authenticated');
+
+    final url = '$_baseUrl/challenge-completions/$completionId/cancel';
+    debugPrint('🎯 Cancel: POST $url');
+
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) return;
+
+    // 404 means the route is not deployed; 409 means they answered first. Both
+    // are "you cannot take it back", and neither is worth two messages.
+    throw ChallengeException(
+      'Could not cancel that.',
+      kind: response.statusCode == 409
+          ? ChallengeFailure.conflict
+          : ChallengeFailure.notFound,
+    );
+  }
+
+  /// The challenge library — what a leader picks from (#150).
+  ///
+  /// GET /api/v1/challenge-library
+  Future<ChallengesResponse> getLibrary({int page = 1, int limit = 50}) async {
+    final token = await _authService.getToken();
+    if (token == null) throw const AuthException('Not authenticated');
+
+    final url = '$_baseUrl/challenge-library?page=$page&limit=$limit';
+    debugPrint('🎯 Library: GET $url');
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      return ChallengesResponse.fromJson(json['data'] as Map<String, dynamic>);
+    }
+
+    // 404 = not deployed yet. Typed, so the screen can say "not available"
+    // rather than showing an error for a backend that simply predates it.
+    throw ChallengeException(
+      'Could not load the challenge library.',
+      kind: response.statusCode == 404
+          ? ChallengeFailure.notFound
+          : ChallengeFailure.unknown,
+    );
+  }
+
+  /// What a community has chosen, and how strictly (#150).
+  ///
+  /// GET /api/v1/communities/{id}/challenges
+  Future<CommunityChallengeSet> getCommunityChallenges(
+    String communityId,
+  ) async {
+    final token = await _authService.getToken();
+    if (token == null) throw const AuthException('Not authenticated');
+
+    final url = '$_baseUrl/communities/$communityId/challenges';
+    debugPrint('🎯 Community challenges: GET $url');
+
+    final response = await _httpClient.get(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      return CommunityChallengeSet.fromJson(
+        json['data'] as Map<String, dynamic>,
+      );
+    }
+
+    throw ChallengeException(
+      'Could not load this community\'s challenges.',
+      kind: response.statusCode == 404
+          ? ChallengeFailure.notFound
+          : ChallengeFailure.unknown,
+    );
+  }
+
+  /// Replace a community's whole set (#150).
+  ///
+  /// An empty [selections] is meaningful and allowed: it turns curation off and
+  /// returns the community to the whole library.
+  ///
+  /// PUT /api/v1/communities/{id}/challenges
+  Future<CommunityChallengeSet> syncCommunityChallenges(
+    String communityId,
+    List<CommunityChallengeSelection> selections,
+  ) async {
+    final token = await _authService.getToken();
+    if (token == null) throw const AuthException('Not authenticated');
+
+    final url = '$_baseUrl/communities/$communityId/challenges';
+    debugPrint('🎯 Community challenges: PUT $url (${selections.length})');
+
+    final response = await _httpClient.put(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: jsonEncode({
+        'challenges': selections.map((s) => s.toJson()).toList(),
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      return CommunityChallengeSet.fromJson(
+        json['data'] as Map<String, dynamic>,
+      );
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    throw ChallengeException(
+      json['message'] as String? ?? 'Could not save.',
+      kind: response.statusCode == 403
+          ? ChallengeFailure.forbidden
+          : ChallengeFailure.unknown,
+    );
+  }
+
   /// GET /api/v1/events/{event_id}/challenges
   Future<ChallengesResponse> getEventChallenges(
     String eventId, {
@@ -55,7 +190,9 @@ class ChallengeService {
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        return ChallengesResponse.fromJson(json['data'] as Map<String, dynamic>);
+        return ChallengesResponse.fromJson(
+          json['data'] as Map<String, dynamic>,
+        );
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         throw ChallengeException(
@@ -67,7 +204,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Get Challenges error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -128,7 +268,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Create Challenge error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -187,7 +330,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Update Challenge error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -231,7 +377,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Delete Challenge error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -272,7 +421,9 @@ class ChallengeService {
         body: jsonEncode(body),
       );
 
-      debugPrint('🎯 Initiate Challenge response status: ${response.statusCode}');
+      debugPrint(
+        '🎯 Initiate Challenge response status: ${response.statusCode}',
+      );
 
       if (response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -284,10 +435,21 @@ class ChallengeService {
         final message = json['message'] as String?;
 
         if (response.statusCode == 422) {
-          throw ChallengeException(message ?? 'Validation failed');
+          throw ChallengeException(
+            message ?? 'Validation failed',
+            kind: ChallengeFailure.bothMustCheckIn,
+          );
         } else if (response.statusCode == 409) {
+          // The backend names WHICH rule refused it (#150). Falling back to the
+          // generic conflict keeps an older backend working — it just says less.
           throw ChallengeException(
             message ?? 'Challenge already initiated or limit exceeded',
+            kind: challengeFailureForReason(json['error'] as String?),
+          );
+        } else if (response.statusCode == 404) {
+          throw ChallengeException(
+            message ?? 'Challenge or event not found',
+            kind: ChallengeFailure.notFound,
           );
         } else {
           throw ChallengeException(message ?? 'Failed to initiate challenge');
@@ -298,7 +460,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Initiate Challenge error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -331,12 +496,14 @@ class ChallengeService {
           json['data'] as Map<String, dynamic>,
         );
       } else if (response.statusCode == 403) {
-        throw ChallengeException(
+        throw const ChallengeException(
           'You are not the designated verifier for this challenge.',
+          kind: ChallengeFailure.forbidden,
         );
       } else if (response.statusCode == 409) {
-        throw ChallengeException(
+        throw const ChallengeException(
           'This challenge completion has already been processed.',
+          kind: ChallengeFailure.conflict,
         );
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -349,7 +516,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Verify Challenge error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -382,12 +552,14 @@ class ChallengeService {
           json['data'] as Map<String, dynamic>,
         );
       } else if (response.statusCode == 403) {
-        throw ChallengeException(
+        throw const ChallengeException(
           'You are not the designated verifier for this challenge.',
+          kind: ChallengeFailure.forbidden,
         );
       } else if (response.statusCode == 409) {
-        throw ChallengeException(
+        throw const ChallengeException(
           'This challenge completion has already been processed.',
+          kind: ChallengeFailure.conflict,
         );
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -400,7 +572,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Reject Challenge error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 
@@ -428,7 +603,9 @@ class ChallengeService {
         },
       );
 
-      debugPrint('🎯 Get My Completions response status: ${response.statusCode}');
+      debugPrint(
+        '🎯 Get My Completions response status: ${response.statusCode}',
+      );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -446,7 +623,10 @@ class ChallengeService {
         rethrow;
       }
       debugPrint('🎯 Get My Completions error: $e');
-      throw ChallengeException('Failed to connect to server: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
   }
 }
@@ -528,11 +708,61 @@ class ChallengeCompletionsResponse {
 }
 
 /// Exception for challenge operations
+/// Why a challenge call failed.
+///
+/// The UI localizes off this rather than showing [ChallengeException.message],
+/// which may be raw backend English. [bothMustCheckIn] is the 422 the backend
+/// returns when the challenger and the verifier are not both checked in to the
+/// event — the most common failure in the peer flow, and the one that needs a
+/// helpful message rather than a generic one.
+/// Maps the backend's refusal reason onto something the app can localize.
+///
+/// An unknown or absent reason falls back to [ChallengeFailure.conflict], which
+/// is what every 409 used to be — so a backend without #150 still behaves, it
+/// just cannot be specific.
+ChallengeFailure challengeFailureForReason(String? reason) => switch (reason) {
+  'already_pending' => ChallengeFailure.alreadyPending,
+  'already_completed' => ChallengeFailure.alreadyCompleted,
+  'needs_new_person' => ChallengeFailure.needsNewPerson,
+  'event_limit_reached' => ChallengeFailure.eventLimitReached,
+  _ => ChallengeFailure.conflict,
+};
+
+enum ChallengeFailure {
+  bothMustCheckIn,
+  conflict,
+
+  /// You have already asked this person to confirm this challenge (#150).
+  alreadyPending,
+
+  /// The two of you have already completed this one — and this community does
+  /// not allow repeating it.
+  alreadyCompleted,
+
+  /// The challenge is for meeting someone you have not played with before.
+  needsNewPerson,
+
+  /// You have used up this event's allowance.
+  eventLimitReached,
+
+  forbidden,
+  notFound,
+  network,
+  unknown,
+}
+
 class ChallengeException implements Exception {
-  const ChallengeException(this.message);
+  const ChallengeException(
+    this.message, {
+    this.kind = ChallengeFailure.unknown,
+  });
 
   final String message;
 
+  /// Classified reason, so callers can localize and branch without string
+  /// matching on [message].
+  final ChallengeFailure kind;
+
   @override
-  String toString() => 'ChallengeException: $message';
+  String toString() => 'ChallengeException($kind): $message';
 }

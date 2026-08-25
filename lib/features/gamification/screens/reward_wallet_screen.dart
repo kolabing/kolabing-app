@@ -24,7 +24,9 @@ class RewardWalletScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context).rewardWalletTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
       ),
@@ -33,11 +35,8 @@ class RewardWalletScreen extends ConsumerWidget {
         loading: () => Center(
           child: CircularProgressIndicator(color: context.colors.primary),
         ),
-        error: (error, stack) => _buildErrorState(
-          context,
-          ref,
-          error.toString(),
-        ),
+        error: (error, stack) =>
+            _buildErrorState(context, ref, error.toString()),
       ),
     );
   }
@@ -87,12 +86,18 @@ class RewardWalletScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.lg),
             Text(
               AppLocalizations.of(context).rewardWalletEmptyTitle,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               AppLocalizations.of(context).rewardWalletEmptyBody,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -116,12 +121,17 @@ class RewardWalletScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).rewardWalletErrorTitle,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),

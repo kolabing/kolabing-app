@@ -25,13 +25,13 @@ class PartnerReward {
   });
 
   factory PartnerReward.fromJson(Map<String, dynamic> json) => PartnerReward(
-        id: json['id'].toString(),
-        title: json['title'] as String? ?? '',
-        description: json['description'] as String?,
-        partner: json['partner'] as String?,
-        costXp: (json['cost_xp'] as num?)?.toInt() ?? 0,
-        isActive: json['is_active'] as bool? ?? true,
-      );
+    id: json['id'].toString(),
+    title: json['title'] as String? ?? '',
+    description: json['description'] as String?,
+    partner: json['partner'] as String?,
+    costXp: (json['cost_xp'] as num?)?.toInt() ?? 0,
+    isActive: json['is_active'] as bool? ?? true,
+  );
 
   final String id;
   final String title;
@@ -59,23 +59,26 @@ class CommunityRewardsSection {
   factory CommunityRewardsSection.fromJson(Map<String, dynamic> json) {
     // `community` may be a nested object or the section may carry flat fields.
     final community = json['community'];
-    final communityMap =
-        community is Map<String, dynamic> ? community : const <String, dynamic>{};
+    final communityMap = community is Map<String, dynamic>
+        ? community
+        : const <String, dynamic>{};
     final id = (communityMap['id'] ?? json['community_id'] ?? '').toString();
-    final name = (communityMap['name'] ??
-            json['community_name'] ??
-            json['name'] ??
-            '') as String;
-    final logo = (communityMap['avatar_url'] ??
-            communityMap['logo_url'] ??
-            json['community_logo_url']) as String?;
+    final name =
+        (communityMap['name'] ?? json['community_name'] ?? json['name'] ?? '')
+            as String;
+    final logo =
+        (communityMap['avatar_url'] ??
+                communityMap['logo_url'] ??
+                json['community_logo_url'])
+            as String?;
 
     return CommunityRewardsSection(
       communityId: id,
       communityName: name,
       communityLogoUrl: logo,
       myPoints: (json['my_points'] as num?)?.toInt() ?? 0,
-      rewards: (json['rewards'] as List<dynamic>?)
+      rewards:
+          (json['rewards'] as List<dynamic>?)
               ?.map((e) => CommunityReward.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
@@ -101,13 +104,18 @@ class MeRewardsOverview {
   factory MeRewardsOverview.fromJson(Map<String, dynamic> json) =>
       MeRewardsOverview(
         xp: (json['xp'] as num?)?.toInt() ?? 0,
-        partnerRewards: (json['partner_rewards'] as List<dynamic>?)
+        partnerRewards:
+            (json['partner_rewards'] as List<dynamic>?)
                 ?.map((e) => PartnerReward.fromJson(e as Map<String, dynamic>))
                 .toList() ??
             const [],
-        communities: (json['communities'] as List<dynamic>?)
-                ?.map((e) =>
-                    CommunityRewardsSection.fromJson(e as Map<String, dynamic>))
+        communities:
+            (json['communities'] as List<dynamic>?)
+                ?.map(
+                  (e) => CommunityRewardsSection.fromJson(
+                    e as Map<String, dynamic>,
+                  ),
+                )
                 .toList() ??
             const [],
       );
