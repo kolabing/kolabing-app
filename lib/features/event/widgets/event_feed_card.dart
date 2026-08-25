@@ -20,6 +20,10 @@ import 'event_timeline.dart';
 /// reason for an event to be a 72px thumbnail row while a Kolab was a
 /// photograph.
 ///
+/// The photo area is the one part that can be absent: an event with no picture
+/// at all gets the content block on its own rather than a full-bleed grey
+/// rectangle. See [_buildPhotoSection].
+///
 /// **What is not copied:** Explore's card body is unconditionally white, which
 /// forces its chips to `forceLightSurface` or dark mode puts near-black pills on
 /// a white card. This one paints `context.colors.surface`, so it is theme-correct
@@ -63,8 +67,9 @@ class _EventFeedCardState extends State<EventFeedCard> {
 
   bool get _locked => !_event.canAccess;
 
-  /// Every photo, falling back to the host's logo so a photoless event is still
-  /// a card rather than a grey rectangle.
+  /// Every photo the event has, falling back to the host's logo — a community's
+  /// mark is a real picture of whose event this is, so it earns the photo area.
+  /// Empty means the card has no photo area at all.
   List<String> get _imageUrls {
     final urls = <String>[
       for (final photo in _event.photos)
@@ -123,26 +128,37 @@ class _EventFeedCardState extends State<EventFeedCard> {
   // Photo section
   // ---------------------------------------------------------------------------
 
-  Widget _buildPhotoSection() => AspectRatio(
-    aspectRatio: 16 / 10,
-    child: Stack(
-      fit: StackFit.expand,
-      children: [
-        _buildImageArea(),
-        if (_imageUrls.length > 1)
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: KolabingSpacing.xs,
-            child: Center(child: _buildDotIndicators()),
-          ),
-      ],
-    ),
-  );
+  /// Nothing at all when there is no picture — not a 16:10 placeholder.
+  ///
+  /// The events feed's own rule (see [EventTimeline]'s header): where a field is
+  /// absent the line is absent. A photoless event given a full-bleed grey
+  /// rectangle with a calendar glyph in it reads as a broken image, takes ~40% of
+  /// the screen to say nothing, and pushes the next event below the fold. The
+  /// content block alone is still a card, and still says more than the row did.
+  Widget _buildPhotoSection() {
+    if (_imageUrls.isEmpty) return const SizedBox.shrink();
+
+    return AspectRatio(
+      aspectRatio: 16 / 10,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          _buildImageArea(),
+          if (_imageUrls.length > 1)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: KolabingSpacing.xs,
+              child: Center(child: _buildDotIndicators()),
+            ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildImageArea() {
+    // Never empty: [_buildPhotoSection] returns nothing at all in that case.
     final urls = _imageUrls;
-    if (urls.isEmpty) return EventThumbPlaceholder(locked: _locked);
 
     return PageView.builder(
       controller: _imagePageController,
@@ -315,7 +331,11 @@ class _EventFeedCardState extends State<EventFeedCard> {
         ],
         if (startsAt != null && hasVenue) Text(' · ', style: style),
         if (hasVenue) ...[
-          Icon(LucideIcons.mapPin, size: 12, color: context.colors.textTertiary),
+          Icon(
+            LucideIcons.mapPin,
+            size: 12,
+            color: context.colors.textTertiary,
+          ),
           const SizedBox(width: 4),
           Flexible(
             child: Text(

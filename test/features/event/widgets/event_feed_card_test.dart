@@ -98,6 +98,32 @@ void main() {
     expect(find.textContaining('·'), findsNothing);
   });
 
+  testWidgets('an event with no picture gets no photo area at all', (
+    tester,
+  ) async {
+    // A full-bleed 16:10 grey rectangle with a calendar glyph in it reads as a
+    // broken image and costs ~40% of the screen to say nothing. The feed's own
+    // rule: where a field is absent, the line is absent.
+    await _pump(
+      tester,
+      EventFeedCard(
+        event: _event(
+          id: 'e1',
+          name: 'No photos yet',
+          startsAt: DateTime(2026, 8, 25, 18),
+        ),
+        locale: 'en',
+        onTap: () {},
+      ),
+    );
+
+    expect(find.byType(AspectRatio), findsNothing);
+    expect(find.byType(PageView), findsNothing);
+    // The card itself is still there and still says the useful things.
+    expect(find.text('No photos yet'), findsOneWidget);
+    expect(find.text('View Details'), findsOneWidget);
+  });
+
   testWidgets('a locked event says why instead of showing when and where', (
     tester,
   ) async {
