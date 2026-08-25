@@ -18,6 +18,7 @@ import '../../business/providers/profile_provider.dart';
 import '../../onboarding/models/city.dart';
 import '../../onboarding/models/community_type.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
+import '../../community/providers/community_follow_provider.dart';
 import '../../onboarding/widgets/city_list_item.dart';
 import '../providers/discovery_provider.dart';
 import '../widgets/discovered_event_card.dart';
@@ -240,12 +241,33 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                         letterSpacing: 1.2,
                       ),
                     ),
-                    _CityPickerButton(
-                      cityName: state.cityName,
-                      onTap: _pickCity,
-                      l10n: l10n,
-                    ),
+                    // Hidden while Following: the results come from wherever
+                    // the followed communities are, and a chip reading
+                    // "Barcelona" over events in three cities would be a lie.
+                    if (!state.following)
+                      _CityPickerButton(
+                        cityName: state.cityName,
+                        onTap: _pickCity,
+                        l10n: l10n,
+                      ),
                   ],
+                ),
+              ),
+            ),
+
+            // Scope: All events / Following (#142). Following is the payoff for
+            // the follow — without it the tap has no consequence anywhere.
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.md,
+                ),
+                child: _ScopeToggle(
+                  following: state.following,
+                  onChanged: (following) => ref
+                      .read(discoveryProvider.notifier)
+                      .setFollowing(following),
+                  l10n: l10n,
                 ),
               ),
             ),
@@ -267,12 +289,16 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
                       label: _dateRangeLabel(state.dateRange, l10n),
                       onTap: _pickDateRange,
                     ),
-                    const SizedBox(width: KolabingSpacing.sm),
-                    _DropdownChip(
-                      icon: LucideIcons.tag,
-                      label: state.typeName ?? l10n.attendeeHomeFilterType,
-                      onTap: _pickType,
-                    ),
+                    // No type filter while Following: you already know who you
+                    // follow, so narrowing them by category answers nothing.
+                    if (!state.following) ...[
+                      const SizedBox(width: KolabingSpacing.sm),
+                      _DropdownChip(
+                        icon: LucideIcons.tag,
+                        label: state.typeName ?? l10n.attendeeHomeFilterType,
+                        onTap: _pickType,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -330,6 +356,17 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
 
     // Empty
     if (state.events.isEmpty) {
+      if (state.following) {
+        // Two different problems, two different answers: nobody followed yet vs
+        // followed communities with nothing announced. Telling them apart is
+        // the difference between a dead end and a next step.
+        final followsNobody = ref.read(communityFollowsProvider).isEmpty;
+        return [
+          SliverToBoxAdapter(
+            child: _buildEmptyFollowing(l10n, followsNobody: followsNobody),
+          ),
+        ];
+      }
       return [SliverToBoxAdapter(child: _buildEmptyEvents(l10n))];
     }
 
@@ -499,6 +536,69 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
     );
   }
 
+  /// The Following feed with nothing in it (#142).
+  ///
+  /// [followsNobody] separates the two reasons, because they need different
+  /// answers: someone who follows nobody needs to find a community, and
+  /// someone whose communities have announced nothing needs to know it is not
+  /// their fault. One empty state for both would be wrong for both.
+  Widget _buildEmptyFollowing(
+    AppLocalizations l10n, {
+    required bool followsNobody,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(KolabingSpacing.xl),
+      child: Column(
+        children: [
+          Icon(
+            followsNobody ? LucideIcons.compass : LucideIcons.calendarOff,
+            size: 64,
+            color: KolabingColors.textTertiary.withValues(alpha: 0.5),
+          ),
+          const SizedBox(height: KolabingSpacing.md),
+          Text(
+            followsNobody
+                ? l10n.attendeeHomeNoFollowsTitle
+                : l10n.attendeeHomeNoFollowedEventsTitle,
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: KolabingColors.onSurfaceVariant,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          Text(
+            followsNobody
+                ? l10n.attendeeHomeNoFollowsHint
+                : l10n.attendeeHomeNoFollowedEventsHint,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.textTertiary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: KolabingSpacing.lg),
+          OutlinedButton.icon(
+            onPressed: () => context.push(KolabingRoutes.discoverCommunities),
+            icon: const Icon(LucideIcons.compass, size: 16),
+            label: Text(
+              followsNobody
+                  ? l10n.attendeeHomeExploreCommunities
+                  : l10n.attendeeHomeFollowMore,
+            ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: KolabingColors.onSurface,
+              side: const BorderSide(color: KolabingColors.outlineVariant),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(KolabingRadius.md),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDiscoveryError(String error, AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.all(KolabingSpacing.xl),
@@ -535,6 +635,95 @@ class _AttendeeHomeScreenState extends ConsumerState<AttendeeHomeScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// Feed scope toggle (#142) — All events / Following
+// =============================================================================
+
+/// Two segments, not a chip: the scope is a choice between two feeds, and a
+/// filter chip would read as one more optional narrowing of the same list.
+class _ScopeToggle extends StatelessWidget {
+  const _ScopeToggle({
+    required this.following,
+    required this.onChanged,
+    required this.l10n,
+  });
+
+  final bool following;
+  final ValueChanged<bool> onChanged;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: KolabingColors.surfaceVariant,
+        borderRadius: BorderRadius.circular(KolabingRadius.md),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _Segment(
+              label: l10n.attendeeHomeScopeAll,
+              selected: !following,
+              onTap: () => onChanged(false),
+            ),
+          ),
+          Expanded(
+            child: _Segment(
+              label: l10n.attendeeHomeScopeFollowing,
+              selected: following,
+              onTap: () => onChanged(true),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Segment extends StatelessWidget {
+  const _Segment({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      selected: selected,
+      button: true,
+      child: InkWell(
+        onTap: selected ? null : onTap,
+        borderRadius: BorderRadius.circular(KolabingRadius.sm),
+        child: Container(
+          // 44 keeps the segment inside the 48dp touch target with its padding.
+          constraints: const BoxConstraints(minHeight: 44),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected ? KolabingColors.surface : Colors.transparent,
+            borderRadius: BorderRadius.circular(KolabingRadius.sm),
+          ),
+          child: Text(
+            label,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+              color: selected
+                  ? KolabingColors.onSurface
+                  : KolabingColors.onSurfaceVariant,
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -7443,4 +7443,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String challengeTogetherPrompt(String challenge) {
     return 'You two: $challenge';
   }
+
+  @override
+  String get attendeeHomeScopeAll => 'All events';
+
+  @override
+  String get attendeeHomeScopeFollowing => 'Following';
+
+  @override
+  String get attendeeHomeNoFollowsTitle => 'You don\'t follow anyone yet';
+
+  @override
+  String get attendeeHomeNoFollowsHint =>
+      'Follow a community and everything it puts on shows up here.';
+
+  @override
+  String get attendeeHomeNoFollowedEventsTitle => 'Nothing coming up';
+
+  @override
+  String get attendeeHomeNoFollowedEventsHint =>
+      'The communities you follow haven\'t announced anything yet.';
+
+  @override
+  String get attendeeHomeFollowMore => 'Follow more communities';
 }

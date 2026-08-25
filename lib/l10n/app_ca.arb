@@ -2193,5 +2193,12 @@
   "challengeTogetherEachEarns": "{points} XP per a cadascú",
   "challengeTogetherRevealTitle": "Ben fet!",
   "challengeTogetherRevealBody": "Tu i {name} ho heu guanyat tots dos.",
-  "challengeTogetherPrompt": "Vosaltres dos: {challenge}"
+  "challengeTogetherPrompt": "Vosaltres dos: {challenge}",
+  "attendeeHomeScopeAll": "Tots els esdeveniments",
+  "attendeeHomeScopeFollowing": "Seguint",
+  "attendeeHomeNoFollowsTitle": "Encara no segueixes ningú",
+  "attendeeHomeNoFollowsHint": "Segueix una comunitat i tot el que organitzi apareixerà aquí.",
+  "attendeeHomeNoFollowedEventsTitle": "Res de pròxim",
+  "attendeeHomeNoFollowedEventsHint": "Les comunitats que segueixes encara no han anunciat res.",
+  "attendeeHomeFollowMore": "Segueix més comunitats"
 }

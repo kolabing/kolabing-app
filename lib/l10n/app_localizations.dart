@@ -13141,6 +13141,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You two: {challenge}'**
   String challengeTogetherPrompt(String challenge);
+
+  /// Feed scope tab: every public event in the selected city.
+  ///
+  /// In en, this message translates to:
+  /// **'All events'**
+  String get attendeeHomeScopeAll;
+
+  /// Feed scope tab: only events from communities the attendee follows.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get attendeeHomeScopeFollowing;
+
+  /// Empty state in the Following feed when the attendee follows no community.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t follow anyone yet'**
+  String get attendeeHomeNoFollowsTitle;
+
+  /// Hint under the no-follows empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow a community and everything it puts on shows up here.'**
+  String get attendeeHomeNoFollowsHint;
+
+  /// Empty state in the Following feed when followed communities have no upcoming events.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing coming up'**
+  String get attendeeHomeNoFollowedEventsTitle;
+
+  /// Hint under the no-followed-events empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'The communities you follow haven\'t announced anything yet.'**
+  String get attendeeHomeNoFollowedEventsHint;
+
+  /// Button in the Following feed's empty state, opens community discovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow more communities'**
+  String get attendeeHomeFollowMore;
 }
 
 class _AppLocalizationsDelegate
