@@ -66,10 +66,16 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
   Community get _community => widget.membership.community;
   bool get _canManage => widget.membership.canManage;
 
+  /// Members is a **manager** surface: `GET /communities/{id}/members` is gated
+  /// on the `manage` ability and 403s for an ordinary member. Showing the tab
+  /// to one only ever produced "You are not authorized to manage this
+  /// community."
+  bool get _showMembersTab => kCommunityMembersTabEnabled && _canManage;
+
   @override
   void initState() {
     super.initState();
-    final tabCount = kCommunityMembersTabEnabled ? 3 : 2;
+    final tabCount = _showMembersTab ? 3 : 2;
     _tabs = TabController(
       length: tabCount,
       vsync: this,
@@ -83,7 +89,11 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
           .read(communityUpcomingEventsProvider(_community.id).notifier)
           .reload();
       ref.read(communityRewardsHubProvider(_community.id).notifier).reload();
-      ref.read(communityMembersByIdProvider(_community.id).notifier).reload();
+      // Only a manager may read the roster; firing this as a member is a
+      // guaranteed 403.
+      if (_showMembersTab) {
+        ref.read(communityMembersByIdProvider(_community.id).notifier).reload();
+      }
       if (_canManage) {
         ref
             .read(communityRewardsAdminProvider(_community.id).notifier)
@@ -172,9 +182,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
           indicatorColor: context.colors.onSurface,
           tabs: [
             Tab(text: l10n.communityDetailTabRewards),
-            // Members tab hidden for now (see kCommunityMembersTabEnabled).
-            if (kCommunityMembersTabEnabled)
-              Tab(text: l10n.communityDetailTabMembers),
+            if (_showMembersTab) Tab(text: l10n.communityDetailTabMembers),
             Tab(text: l10n.communityDetailTabEvents),
           ],
         ),
@@ -187,8 +195,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen>
               controller: _tabs,
               children: [
                 _RewardsTab(communityId: c.id, canManage: _canManage),
-                // Members tab hidden for now (see kCommunityMembersTabEnabled).
-                if (kCommunityMembersTabEnabled)
+                if (_showMembersTab)
                   _MembersTab(community: c, canManage: _canManage),
                 _EventsTab(communityId: c.id, canManage: _canManage),
               ],
@@ -1072,7 +1079,12 @@ class _MembersTab extends ConsumerWidget {
             error: (e, _) => _TabMessage(
               icon: LucideIcons.alertCircle,
               title: l10n.communityMembersLoadError,
-              subtitle: e.toString(),
+              // The backend message, when there is one — never the exception's
+              // toString(), which rendered as
+              // "CommunityException(null: You are not authorized...)".
+              subtitle: e is CommunityException
+                  ? e.message
+                  : l10n.commonErrorGeneric,
             ),
             data: (members) {
               if (members.isEmpty) {
