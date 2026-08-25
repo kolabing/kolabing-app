@@ -66,6 +66,41 @@ class _MultiKolabEventDetailScreenState
     });
   }
 
+  /// The RSVP link, only if it is genuinely openable.
+  ///
+  /// A bare `startsWith('https://')` also accepts `https:///x`, which parses to
+  /// a hostless URI, and `Uri.parse` on a malformed stored value throws from
+  /// inside the button callback. Mirrors `MultiKolabRoleOffer.safeRsvpUrl`.
+  static Uri? _safeRsvpUri(String? raw) {
+    final value = raw?.trim();
+    if (value == null || !value.startsWith('https://')) return null;
+    final parsed = Uri.tryParse(value);
+    if (parsed == null || parsed.host.isEmpty) return null;
+    return parsed;
+  }
+
+  /// Opens the RSVP page, and says so when the device cannot.
+  ///
+  /// The previous call dropped the future, so a device with no handler failed
+  /// in silence.
+  static Future<void> _openRsvp(BuildContext context, String? raw) async {
+    final uri = _safeRsvpUri(raw);
+    if (uri == null) return;
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    var opened = false;
+    try {
+      opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } on Object {
+      opened = false;
+    }
+    if (!opened && context.mounted) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.multiKolabErrorGeneric)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ref = this.ref;
@@ -129,13 +164,12 @@ class _MultiKolabEventDetailScreenState
                     ).textTheme.bodyMedium?.copyWith(color: colors.onSurface),
                   ),
                 ],
-                if (event.rsvpUrl != null &&
-                    event.rsvpUrl!.startsWith('https://')) ...[
+                if (_safeRsvpUri(event.rsvpUrl) != null) ...[
                   const SizedBox(height: KolabingSpacing.md),
                   KolabingButton(
                     label: l10n.multiKolabRsvpButtonLabel,
                     variant: KolabingButtonVariant.secondary,
-                    onPressed: () => launchUrl(Uri.parse(event.rsvpUrl!)),
+                    onPressed: () => _openRsvp(context, event.rsvpUrl),
                   ),
                 ],
                 const SizedBox(height: KolabingSpacing.lg),
@@ -384,6 +418,12 @@ class _ApplySheetBodyState extends ConsumerState<_ApplySheetBody> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(message)));
+    } on NetworkException {
+      // Was unhandled: the applicant saw the spinner stop and nothing else.
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.networkOfflineBannerMessage)));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }

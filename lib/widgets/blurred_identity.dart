@@ -108,7 +108,11 @@ class BlurredIdentity extends StatelessWidget {
                     hintLabel,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                    style: KolabingTextStyles.labelSmall.copyWith(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],

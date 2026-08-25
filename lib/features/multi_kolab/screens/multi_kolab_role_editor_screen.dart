@@ -116,6 +116,8 @@ class _MultiKolabRoleEditorScreenState
               compensationType: _compensation,
               requirements: _nullIfBlank(_requirements),
               details: _nullIfBlank(_details),
+              // Whole form: clearing "What you need" must erase it.
+              isWholeForm: true,
             ),
           )
         : await actions.addRole(

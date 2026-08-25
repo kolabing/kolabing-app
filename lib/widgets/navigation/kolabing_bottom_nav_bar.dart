@@ -96,10 +96,12 @@ class _NavBarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor =
-        isSelected ? context.colors.ink : context.colors.navInactive;
-    final labelColor =
-        isSelected ? context.colors.ink : context.colors.navInactive;
+    final iconColor = isSelected
+        ? context.colors.ink
+        : context.colors.navInactive;
+    final labelColor = isSelected
+        ? context.colors.ink
+        : context.colors.navInactive;
 
     return Expanded(
       child: GestureDetector(
@@ -114,11 +116,7 @@ class _NavBarItem extends StatelessWidget {
                 clipBehavior: Clip.none,
                 children: [
                   if (item.iconSlug != null)
-                    UiIcon(
-                      icon: item.iconSlug!,
-                      size: 22,
-                      color: iconColor,
-                    )
+                    UiIcon(icon: item.iconSlug!, size: 22, color: iconColor)
                   else
                     Icon(
                       isSelected ? item.activeIcon : item.icon,
@@ -132,11 +130,7 @@ class _NavBarItem extends StatelessWidget {
                       child: _NumericBadge(count: item.badgeCount!),
                     ),
                   if (item.showDot && item.badgeCount == null)
-                    Positioned(
-                      right: -2,
-                      top: -2,
-                      child: _DotBadge(),
-                    ),
+                    Positioned(right: -2, top: -2, child: _DotBadge()),
                 ],
               ),
               const SizedBox(height: 4),
@@ -146,8 +140,7 @@ class _NavBarItem extends StatelessWidget {
                   item.label.toUpperCase(),
                   style: KolabingTextStyles.labelSmall.copyWith(
                     fontSize: 9,
-                    fontWeight:
-                        isSelected ? FontWeight.w700 : FontWeight.w500,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                     color: labelColor,
                     letterSpacing: 0.4,
                   ),
@@ -200,10 +193,7 @@ class _DotBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.colors.error,
         shape: BoxShape.circle,
-        border: Border.all(
-          color: context.colors.navBarBackground,
-          width: 1.5,
-        ),
+        border: Border.all(color: context.colors.navBarBackground, width: 1.5),
       ),
     );
   }

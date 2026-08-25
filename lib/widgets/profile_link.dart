@@ -92,14 +92,9 @@ class ProfileLink extends ConsumerWidget {
     }
 
     return InkWell(
-      onTap: () => open(
-        context,
-        ref,
-        profileId: profileId,
-        communityId: communityId,
-      ),
-      borderRadius:
-          borderRadius ?? BorderRadius.circular(KolabingRadius.md),
+      onTap: () =>
+          open(context, ref, profileId: profileId, communityId: communityId),
+      borderRadius: borderRadius ?? BorderRadius.circular(KolabingRadius.md),
       child: child,
     );
   }

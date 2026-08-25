@@ -21,21 +21,17 @@ class PhotoViewerDialog extends StatefulWidget {
     BuildContext context, {
     required List<GalleryPhoto> photos,
     required int initialIndex,
-  }) =>
-      Navigator.of(context).push(
-        PageRouteBuilder<void>(
-          opaque: false,
-          barrierColor: Colors.black,
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              PhotoViewerDialog(
-            photos: photos,
-            initialIndex: initialIndex,
-          ),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-              FadeTransition(opacity: animation, child: child),
-          transitionDuration: const Duration(milliseconds: 200),
-        ),
-      );
+  }) => Navigator.of(context).push(
+    PageRouteBuilder<void>(
+      opaque: false,
+      barrierColor: Colors.black,
+      pageBuilder: (context, animation, secondaryAnimation) =>
+          PhotoViewerDialog(photos: photos, initialIndex: initialIndex),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+          FadeTransition(opacity: animation, child: child),
+      transitionDuration: const Duration(milliseconds: 200),
+    ),
+  );
 
   @override
   State<PhotoViewerDialog> createState() => _PhotoViewerDialogState();
@@ -94,7 +90,9 @@ class _PhotoViewerDialogState extends State<PhotoViewerDialog> {
                         );
                       },
                       errorBuilder: (_, error, __) {
-                        debugPrint('PhotoViewer error for ${photo.url}: $error');
+                        debugPrint(
+                          'PhotoViewer error for ${photo.url}: $error',
+                        );
                         return const Icon(
                           LucideIcons.imageOff,
                           size: 64,
@@ -152,7 +150,9 @@ class _PhotoViewerDialogState extends State<PhotoViewerDialog> {
                           ),
                           child: Text(
                             '${_currentIndex + 1} / ${widget.photos.length}',
-                            style: KolabingTextStyles.button.copyWith(color: Colors.white),
+                            style: KolabingTextStyles.button.copyWith(
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                     ],

@@ -21,22 +21,22 @@ class GlassButton extends StatelessWidget {
   final IconData? icon;
 
   Color _fill(KolabingColorTokens c) => switch (intent) {
-        GlassButtonIntent.primary => c.primaryTint,
-        GlassButtonIntent.neutral => c.surfaceVariant,
-        GlassButtonIntent.destructive => c.errorBg,
-      };
+    GlassButtonIntent.primary => c.primaryTint,
+    GlassButtonIntent.neutral => c.surfaceVariant,
+    GlassButtonIntent.destructive => c.errorBg,
+  };
 
   Color _border(KolabingColorTokens c) => switch (intent) {
-        GlassButtonIntent.primary => c.primary,
-        GlassButtonIntent.neutral => c.hairline,
-        GlassButtonIntent.destructive => c.error,
-      };
+    GlassButtonIntent.primary => c.primary,
+    GlassButtonIntent.neutral => c.hairline,
+    GlassButtonIntent.destructive => c.error,
+  };
 
   Color _ink(KolabingColorTokens c) => switch (intent) {
-        GlassButtonIntent.primary => c.amber,
-        GlassButtonIntent.neutral => c.inkBody,
-        GlassButtonIntent.destructive => c.errorText,
-      };
+    GlassButtonIntent.primary => c.amber,
+    GlassButtonIntent.neutral => c.inkBody,
+    GlassButtonIntent.destructive => c.errorText,
+  };
 
   @override
   Widget build(BuildContext context) {

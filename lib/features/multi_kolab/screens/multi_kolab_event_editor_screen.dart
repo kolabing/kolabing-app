@@ -166,6 +166,9 @@ class _MultiKolabEventEditorScreenState
       city: _nullIfBlank(_city),
       category: _nullIfBlank(_category),
       rsvpUrl: _nullIfBlank(_rsvpUrl),
+      // The editor submits the whole form, so an emptied field must be sent as
+      // null and actually cleared rather than silently kept.
+      isWholeForm: true,
       // `eligible_account_type` is deliberately NOT sent. Eligibility is a
       // property of a ROLE, not of an event: one event can carry a
       // community-only role, a business-only role and an open-to-either role
@@ -216,6 +219,13 @@ class _MultiKolabEventEditorScreenState
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(_messageFor(e, l10n))));
+    } on NetworkException {
+      // Was unhandled: the spinner stopped and no snackbar appeared, so the
+      // organizer could not tell whether the draft had saved.
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.networkOfflineBannerMessage)));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -262,11 +272,20 @@ class _MultiKolabEventEditorScreenState
     ValueChanged<DateTime> onPicked,
   ) async {
     final now = DateTime.now();
+    final firstDate = DateTime(now.year - 1);
+    final lastDate = DateTime(now.year + 5);
+    // Clamped, not passed through: showDatePicker asserts
+    // firstDate <= initialDate <= lastDate, and a draft saved with a date
+    // older than a year (or beyond the window) would trip it the moment the
+    // organizer tapped the field.
+    final seed = current ?? now;
     final picked = await showDatePicker(
       context: context,
-      initialDate: current ?? now,
-      firstDate: DateTime(now.year - 1),
-      lastDate: DateTime(now.year + 5),
+      initialDate: seed.isBefore(firstDate)
+          ? firstDate
+          : (seed.isAfter(lastDate) ? lastDate : seed),
+      firstDate: firstDate,
+      lastDate: lastDate,
     );
     if (picked != null) {
       setState(() {

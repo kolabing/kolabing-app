@@ -196,6 +196,7 @@ class CreateMultiKolabEventInput {
     this.category,
     this.rsvpUrl,
     this.eligibleAccountType,
+    this.isWholeForm = false,
   });
 
   final String? title;
@@ -211,24 +212,38 @@ class CreateMultiKolabEventInput {
   final String? rsvpUrl;
   final MultiKolabEligibleAccountType? eligibleAccountType;
 
-  Map<String, dynamic> toJson() => {
-    if (title != null) 'title': title,
-    if (description != null) 'description': description,
-    if (valueSummary != null) 'value_summary': valueSummary,
-    if (venueNeeded != null) 'venue_needed': venueNeeded,
-    if (dateMode != null) 'date_mode': dateMode!.toApiValue(),
-    if (eventDate != null)
-      'event_date': eventDate!.toIso8601String().split('T').first,
-    if (dateRangeStart != null)
-      'date_range_start': dateRangeStart!.toIso8601String().split('T').first,
-    if (dateRangeEnd != null)
-      'date_range_end': dateRangeEnd!.toIso8601String().split('T').first,
-    if (city != null) 'city': city,
-    if (category != null) 'category': category,
-    if (rsvpUrl != null) 'rsvp_url': rsvpUrl,
-    if (eligibleAccountType != null)
-      'eligible_account_type': eligibleAccountType!.toApiValue(),
-  };
+  /// True when this input is the editor's **whole form**, not a partial patch.
+  ///
+  /// A partial patch must omit what it does not mention. A whole-form save must
+  /// do the opposite: send every clearable key, `null` included, or a field the
+  /// organizer emptied is silently kept. Omitting nulls made "delete the city
+  /// and save" a no-op — reopen the draft and the old value was back. It also
+  /// left `date_range_start/end` on the record after switching to an exact
+  /// date, so the publish review could disagree with the editor.
+  final bool isWholeForm;
+
+  Map<String, dynamic> toJson() {
+    String? day(DateTime? value) => value?.toIso8601String().split('T').first;
+    // Present-or-absent: identity and enum fields the form never clears.
+    return {
+      if (title != null) 'title': title,
+      if (venueNeeded != null) 'venue_needed': venueNeeded,
+      if (dateMode != null) 'date_mode': dateMode!.toApiValue(),
+      if (eligibleAccountType != null)
+        'eligible_account_type': eligibleAccountType!.toApiValue(),
+      // Clearable: always sent on a whole-form save.
+      if (isWholeForm || description != null) 'description': description,
+      if (isWholeForm || valueSummary != null) 'value_summary': valueSummary,
+      if (isWholeForm || city != null) 'city': city,
+      if (isWholeForm || category != null) 'category': category,
+      if (isWholeForm || rsvpUrl != null) 'rsvp_url': rsvpUrl,
+      if (isWholeForm || eventDate != null) 'event_date': day(eventDate),
+      if (isWholeForm || dateRangeStart != null)
+        'date_range_start': day(dateRangeStart),
+      if (isWholeForm || dateRangeEnd != null)
+        'date_range_end': day(dateRangeEnd),
+    };
+  }
 }
 
 typedef UpdateMultiKolabEventInput = CreateMultiKolabEventInput;
@@ -290,6 +305,7 @@ class UpdateMultiKolabRoleInput {
     this.requirements,
     this.details,
     this.status,
+    this.isWholeForm = false,
   });
 
   final String? title;
@@ -303,19 +319,25 @@ class UpdateMultiKolabRoleInput {
   final String? details;
   final MultiKolabRoleStatus? status;
 
+  /// See [CreateMultiKolabEventInput.isWholeForm]. Left false by the
+  /// status-only patch (`open`/`close` a role), which must not touch anything
+  /// the organizer wrote.
+  final bool isWholeForm;
+
   Map<String, dynamic> toJson() => {
     if (title != null) 'title': title,
     if (eligibleAccountType != null)
       'eligible_account_type': eligibleAccountType!.toApiValue(),
     if (positionsNeeded != null) 'positions_needed': positionsNeeded,
     if (required_ != null) 'required': required_,
-    if (need != null) 'need': need,
-    if (receive != null) 'receive': receive,
     if (compensationType != null)
       'compensation_type': compensationType!.toApiValue(),
-    if (requirements != null) 'requirements': requirements,
-    if (details != null) 'details': details,
     if (status != null) 'status': status!.toApiValue(),
+    // Clearable free text.
+    if (isWholeForm || need != null) 'need': need,
+    if (isWholeForm || receive != null) 'receive': receive,
+    if (isWholeForm || requirements != null) 'requirements': requirements,
+    if (isWholeForm || details != null) 'details': details,
   };
 }
 

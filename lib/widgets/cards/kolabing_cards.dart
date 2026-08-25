@@ -134,16 +134,18 @@ class EmptyStateCard extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: KolabingTextStyles.bodyLarge
-                .copyWith(fontWeight: FontWeight.w700),
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
           ),
           if (message != null) ...[
             const SizedBox(height: KolabingSpacing.sm),
             Text(
               message!,
               textAlign: TextAlign.center,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ],
           if (action != null) ...[

@@ -458,64 +458,58 @@ class _FilterTextField extends StatelessWidget {
   final VoidCallback onClear;
 
   @override
-  Widget build(BuildContext context) =>
-      ValueListenableBuilder<TextEditingValue>(
-        valueListenable: controller,
-        builder: (BuildContext context, TextEditingValue value, _) {
-          final hasText = value.text.isNotEmpty;
+  Widget build(
+    BuildContext context,
+  ) => ValueListenableBuilder<TextEditingValue>(
+    valueListenable: controller,
+    builder: (BuildContext context, TextEditingValue value, _) {
+      final hasText = value.text.isNotEmpty;
 
-          return TextField(
-            controller: controller,
-            focusNode: focusNode,
-            onChanged: onChanged,
-            style: KolabingTextStyles.bodySmall.copyWith(
-              color: context.colors.onSurface,
-            ),
-            decoration: InputDecoration(
-              hintText: hintText,
-              hintStyle: KolabingTextStyles.bodySmall.copyWith(
-                color: context.colors.textTertiary,
-              ),
-              prefixIcon: Icon(
-                icon,
-                size: 18,
-                color: context.colors.textTertiary,
-              ),
-              suffixIcon: hasText
-                  ? GestureDetector(
-                      onTap: onClear,
-                      child: Icon(
-                        LucideIcons.x,
-                        size: 18,
-                        color: context.colors.textTertiary,
-                      ),
-                    )
-                  : null,
-              filled: true,
-              fillColor: context.colors.surfaceVariant,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: KolabingSpacing.md,
-                vertical: KolabingSpacing.sm,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: BorderSide(color: context.colors.darkBorder),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: BorderSide(color: context.colors.darkBorder),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: KolabingRadius.borderRadiusMd,
-                borderSide: BorderSide(
-                  color: context.colors.primary,
-                  width: 1.5,
-                ),
-              ),
-            ),
-          );
-        },
+      return TextField(
+        controller: controller,
+        focusNode: focusNode,
+        onChanged: onChanged,
+        style: KolabingTextStyles.bodySmall.copyWith(
+          color: context.colors.onSurface,
+        ),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.textTertiary,
+          ),
+          prefixIcon: Icon(icon, size: 18, color: context.colors.textTertiary),
+          suffixIcon: hasText
+              ? GestureDetector(
+                  onTap: onClear,
+                  child: Icon(
+                    LucideIcons.x,
+                    size: 18,
+                    color: context.colors.textTertiary,
+                  ),
+                )
+              : null,
+          filled: true,
+          fillColor: context.colors.surfaceVariant,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: KolabingSpacing.md,
+            vertical: KolabingSpacing.sm,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: KolabingRadius.borderRadiusMd,
+            borderSide: BorderSide(color: context.colors.darkBorder),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: KolabingRadius.borderRadiusMd,
+            borderSide: BorderSide(color: context.colors.darkBorder),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: KolabingRadius.borderRadiusMd,
+            borderSide: BorderSide(color: context.colors.primary, width: 1.5),
+          ),
+        ),
       );
+    },
+  );
 }
 
 class _CityAutocompleteResults extends ConsumerWidget {
@@ -604,10 +598,9 @@ class _CityAutocompleteResults extends ConsumerWidget {
           ),
         ),
       ),
-      error: (Object error, StackTrace stackTrace) =>
-          _CityAutocompleteMessage(
-            message: AppLocalizations.of(context).exploreFilterCitySuggestionsError,
-          ),
+      error: (Object error, StackTrace stackTrace) => _CityAutocompleteMessage(
+        message: AppLocalizations.of(context).exploreFilterCitySuggestionsError,
+      ),
     );
   }
 }
@@ -740,7 +733,9 @@ class _SheetChip extends StatelessWidget {
         color: isSelected ? context.colors.primary : Colors.white,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
         border: Border.all(
-          color: isSelected ? context.colors.primaryDark : context.colors.hairline,
+          color: isSelected
+              ? context.colors.primaryDark
+              : context.colors.hairline,
         ),
       ),
       child: Text(

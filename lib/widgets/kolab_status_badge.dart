@@ -36,24 +36,19 @@ class KolabStatusBadge extends StatelessWidget {
   static (Color, Color, String) _resolve(
     String status,
     KolabingColorTokens c,
-  ) =>
-      switch (status.toLowerCase()) {
-        'published' => (c.orangeTint, c.orange, 'PUBLISHED'),
-        'draft' => (c.surfaceVariant, c.muted, 'DRAFT'),
-        'closed' => (c.surfaceVariant, c.muted, 'CLOSED'),
-        'completed' => (c.completedBg, c.completedText, 'COMPLETED'),
-        'scheduled' => (c.primaryTint, c.amber, 'SCHEDULED'),
-        'in_progress' || 'active' => (c.activeBg, c.activeText, 'ACTIVE'),
-        'pending_confirmation' => (
-          c.pendingBg,
-          c.pendingText,
-          'WAITING CONFIRM',
-        ),
-        'pending' => (c.pendingBg, c.pendingText, 'PENDING'),
-        'accepted' => (c.activeBg, c.activeText, 'ACCEPTED'),
-        'declined' => (c.errorBg, c.errorText, 'DECLINED'),
-        'withdrawn' => (c.surfaceVariant, c.textTertiary, 'WITHDRAWN'),
-        'cancelled' => (c.errorBg, c.errorText, 'CANCELLED'),
-        _ => (c.surfaceVariant, c.textTertiary, status.toUpperCase()),
-      };
+  ) => switch (status.toLowerCase()) {
+    'published' => (c.orangeTint, c.orange, 'PUBLISHED'),
+    'draft' => (c.surfaceVariant, c.muted, 'DRAFT'),
+    'closed' => (c.surfaceVariant, c.muted, 'CLOSED'),
+    'completed' => (c.completedBg, c.completedText, 'COMPLETED'),
+    'scheduled' => (c.primaryTint, c.amber, 'SCHEDULED'),
+    'in_progress' || 'active' => (c.activeBg, c.activeText, 'ACTIVE'),
+    'pending_confirmation' => (c.pendingBg, c.pendingText, 'WAITING CONFIRM'),
+    'pending' => (c.pendingBg, c.pendingText, 'PENDING'),
+    'accepted' => (c.activeBg, c.activeText, 'ACCEPTED'),
+    'declined' => (c.errorBg, c.errorText, 'DECLINED'),
+    'withdrawn' => (c.surfaceVariant, c.textTertiary, 'WITHDRAWN'),
+    'cancelled' => (c.errorBg, c.errorText, 'CANCELLED'),
+    _ => (c.surfaceVariant, c.textTertiary, status.toUpperCase()),
+  };
 }

@@ -61,19 +61,44 @@ class MultiKolabOrganizerActions extends Notifier<MultiKolabActionState> {
   MultiKolabRepository get _repository =>
       ref.read(multiKolabRepositoryProvider);
 
+  /// The run in flight per `kind:targetId`, so a repeat tap can join it.
+  final Map<String, Future<Object?>> _pending = <String, Future<Object?>>{};
+
   Future<T?> _run<T>(
     String kind,
     String targetId,
     Future<T> Function(MultiKolabRepository repository) action, {
     void Function()? onSuccess,
-  }) async {
-    if (state.isBusy(kind, targetId)) return null;
+  }) {
+    final key = '$kind:$targetId';
+
+    // A repeat tap now RIDES the first request instead of being told `null`.
+    // `null` also means "failed", so callers — which all do
+    // `if (result != null) return; showError(lastErrorCode)` — used to raise a
+    // phantom error on the second tap of Accept/Confirm/Cancel while the first
+    // call was quietly succeeding.
+    final existing = _pending[key];
+    if (existing != null) return existing.then((value) => value as T?);
 
     state = state.copyWith(
-      inFlight: <String>{...state.inFlight, '$kind:$targetId'},
+      inFlight: <String>{...state.inFlight, key},
       clearError: true,
     );
 
+    final future = _execute<T>(action, onSuccess);
+    _pending[key] = future;
+    return future.whenComplete(() {
+      _pending.remove(key);
+      state = state.copyWith(
+        inFlight: <String>{...state.inFlight}..remove(key),
+      );
+    });
+  }
+
+  Future<T?> _execute<T>(
+    Future<T> Function(MultiKolabRepository repository) action,
+    void Function()? onSuccess,
+  ) async {
     try {
       final result = await action(_repository);
       onSuccess?.call();
@@ -84,10 +109,6 @@ class MultiKolabOrganizerActions extends Notifier<MultiKolabActionState> {
     } on NetworkException {
       state = state.copyWith(lastErrorCode: 'network');
       return null;
-    } finally {
-      state = state.copyWith(
-        inFlight: <String>{...state.inFlight}..remove('$kind:$targetId'),
-      );
     }
   }
 

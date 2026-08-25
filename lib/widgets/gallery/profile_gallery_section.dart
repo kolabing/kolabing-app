@@ -74,11 +74,7 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
           // Header row
           Row(
             children: [
-              Icon(
-                LucideIcons.image,
-                size: 20,
-                color: context.colors.primary,
-              ),
+              Icon(LucideIcons.image, size: 20, color: context.colors.primary),
               const SizedBox(width: KolabingSpacing.xs),
               Text(
                 l10n.profileGallerySectionTitle,
@@ -124,9 +120,13 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                         const SizedBox(width: 4),
                         Text(
                           l10n.profileGallerySectionAdd,
-                          style: KolabingTextStyles.labelSmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: isDark
+                          style: KolabingTextStyles.labelSmall.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
                                 ? context.colors.textOnDark
-                                : context.colors.onSurface),
+                                : context.colors.onSurface,
+                          ),
                         ),
                       ],
                     ),
@@ -215,8 +215,14 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                     color: context.colors.primary,
                   ),
                 ),
-                title: Text(AppLocalizations.of(context).profileGallerySheetTakePhoto),
-                subtitle: Text(AppLocalizations.of(context).profileGallerySheetTakePhotoSubtitle),
+                title: Text(
+                  AppLocalizations.of(context).profileGallerySheetTakePhoto,
+                ),
+                subtitle: Text(
+                  AppLocalizations.of(
+                    context,
+                  ).profileGallerySheetTakePhotoSubtitle,
+                ),
                 onTap: () => Navigator.pop(context, ImageSource.camera),
               ),
               ListTile(
@@ -227,13 +233,16 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
                     color: context.colors.info.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    LucideIcons.image,
-                    color: context.colors.info,
-                  ),
+                  child: Icon(LucideIcons.image, color: context.colors.info),
                 ),
-                title: Text(AppLocalizations.of(context).profileGallerySheetChooseGallery),
-                subtitle: Text(AppLocalizations.of(context).profileGallerySheetChooseGallerySubtitle),
+                title: Text(
+                  AppLocalizations.of(context).profileGallerySheetChooseGallery,
+                ),
+                subtitle: Text(
+                  AppLocalizations.of(
+                    context,
+                  ).profileGallerySheetChooseGallerySubtitle,
+                ),
                 onTap: () => Navigator.pop(context, ImageSource.gallery),
               ),
               const SizedBox(height: KolabingSpacing.md),
@@ -341,8 +350,12 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
               const SizedBox(height: KolabingSpacing.sm),
               Text(
                 isBusinessProfile
-                    ? AppLocalizations.of(context).profileGalleryEmptyTitleBusiness
-                    : AppLocalizations.of(context).profileGalleryEmptyTitleCommunity,
+                    ? AppLocalizations.of(
+                        context,
+                      ).profileGalleryEmptyTitleBusiness
+                    : AppLocalizations.of(
+                        context,
+                      ).profileGalleryEmptyTitleCommunity,
                 textAlign: TextAlign.center,
                 style: KolabingTextStyles.titleSmall.copyWith(
                   color: isDark
@@ -353,8 +366,12 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
               const SizedBox(height: KolabingSpacing.xs),
               Text(
                 isBusinessProfile
-                    ? AppLocalizations.of(context).profileGalleryEmptyBodyBusiness
-                    : AppLocalizations.of(context).profileGalleryEmptyBodyCommunity,
+                    ? AppLocalizations.of(
+                        context,
+                      ).profileGalleryEmptyBodyBusiness
+                    : AppLocalizations.of(
+                        context,
+                      ).profileGalleryEmptyBodyCommunity,
                 textAlign: TextAlign.center,
                 style: KolabingTextStyles.bodyMedium.copyWith(
                   color: isDark
@@ -433,7 +450,9 @@ class _ProfileGallerySectionState extends ConsumerState<ProfileGallerySection> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: context.colors.error),
-            child: Text(AppLocalizations.of(context).profileGalleryDeleteConfirm),
+            child: Text(
+              AppLocalizations.of(context).profileGalleryDeleteConfirm,
+            ),
           ),
         ],
       ),

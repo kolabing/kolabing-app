@@ -678,9 +678,20 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           // creator identity to hide.
           final isCommunityRequest =
               item is ExploreOfferItem && item.offer.isCommunityRequest;
+          // A Multi-Kolab role card is blurred for a free business too. The
+          // Explore payload's `creator_profile` carries no profile TYPE, so the
+          // app cannot tell a community organizer from a business one — and the
+          // contract says `image_url` always falls back to the organizer's
+          // avatar (a Multi-Kolab event has no cover-photo column). Left
+          // unblurred, a free business saw a community's logo on every
+          // community-organized role, which is the disclosure §2.6 forbids.
+          // Over-blurring a business-organized role is the safe side of that
+          // trade; the precise fix is a `creator_profile.type` on the role
+          // payload.
+          final isMultiKolabRole = item is ExploreMultiKolabRoleItem;
           final hideCreatorIdentity =
               !_isCommunityViewer &&
-              isCommunityRequest &&
+              (isCommunityRequest || isMultiKolabRole) &&
               !hasBusinessSubscription;
 
           // Saving is backed by `GET/POST /kolabs?saved=1`, which is keyed by

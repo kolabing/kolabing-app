@@ -676,11 +676,19 @@ class _ChildKolabsSection extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final colors = context.colors;
 
-    // Accepted applications carry the child Kolab id; they are read from
-    // each role's application list, which is already cached for any role
-    // the organizer has opened.
+    // Accepted applications carry the child Kolab id, and they live on each
+    // role's application list.
+    //
+    // Only roles that have actually filled a position are read. The provider is
+    // an autoDispose family, so watching it *starts* a request rather than
+    // reading a cache — the previous version issued one
+    // `GET /multi-kolab-roles/{role}/applications` per role every time the
+    // Overview tab built (eight roles, eight requests, again after every
+    // refresh), which is the fan-out `MultiKolabOrganizerEventCard` avoids on
+    // purpose. A role with nothing filled cannot have an accepted application,
+    // so on a fresh event this now issues none at all.
     final accepted = <String>[];
-    for (final role in roles) {
+    for (final role in roles.where((r) => r.positionsFilled > 0)) {
       final applications = ref
           .watch(multiKolabRoleApplicationsProvider(role.id))
           .value;

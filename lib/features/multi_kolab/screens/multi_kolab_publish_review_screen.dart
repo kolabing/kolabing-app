@@ -65,6 +65,18 @@ class _MultiKolabPublishReviewScreenState
     ];
   }
 
+  /// Which review section a backend rejection belongs to.
+  ///
+  /// Role-scoped codes must land on the roles section; anything else is about
+  /// the event itself.
+  static String _sectionForCode(String? code) => switch (code) {
+    'role_capacity_exceeded' ||
+    'role_has_accepted_application' ||
+    'roles_required' ||
+    'role_invalid' => 'roles',
+    _ => 'event',
+  };
+
   void _scrollToFirstFailingSection() {
     final target = _publishErrors.keys.any((k) => k == 'roles')
         ? _rolesSectionKey
@@ -99,8 +111,13 @@ class _MultiKolabPublishReviewScreenState
         return;
       }
       setState(() {
+        // Route the rejection to the section it is actually about. Everything
+        // used to be filed under 'event', so `_publishErrors['roles']` was
+        // always empty: the roles section could never turn red and
+        // `_scrollToFirstFailingSection` always scrolled to the event section
+        // even when the backend had rejected a role.
         _publishErrors = {
-          'event': [multiKolabErrorCopy(code, l10n)],
+          _sectionForCode(code): [multiKolabErrorCopy(code, l10n)],
         };
       });
       WidgetsBinding.instance.addPostFrameCallback(

@@ -5,11 +5,7 @@ import 'profile_avatar_button.dart';
 
 /// Kolabing standard app bar — yellow background, charcoal text/icons.
 class KolabingAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const KolabingAppBar({
-    super.key,
-    this.showBackButton = false,
-    this.actions,
-  });
+  const KolabingAppBar({super.key, this.showBackButton = false, this.actions});
 
   final bool showBackButton;
   final List<Widget>? actions;
