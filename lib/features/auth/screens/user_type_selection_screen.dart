@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../config/feature_flags.dart';
 import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
@@ -232,9 +233,14 @@ class _UserTypeSelectionScreenState
                     child: SelectionCard(
                       userType: SelectionUserType.attendee,
                       isSelected: _selectedType == SelectionUserType.attendee,
-                      isEnabled: false,
-                      badgeLabel: AppLocalizations.of(context)
-                          .selectionCardComingSoonBadge,
+                      // See kAttendeeSignupEnabled — off shows the card greyed
+                      // out with a "coming soon" badge and swallows the tap.
+                      isEnabled: kAttendeeSignupEnabled,
+                      badgeLabel: kAttendeeSignupEnabled
+                          ? null
+                          : AppLocalizations.of(
+                              context,
+                            ).selectionCardComingSoonBadge,
                       onTap: () => _handleCardTap(SelectionUserType.attendee),
                     ),
                   ),
