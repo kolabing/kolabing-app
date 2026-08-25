@@ -59,6 +59,12 @@ class MultiKolabEventSummary {
   final DateTime? eventDate;
   final MultiKolabDateMode? dateMode;
   final MultiKolabRoleCounts roleCounts;
+
+  /// **Event-level eligibility is deliberately inert (#171).** Who may apply is a
+  /// property of the ROLE, never of the event: `MultiKolabRole.eligibleAccountType`
+  /// is the only one that decides eligibility, Explore visibility or the Apply CTA.
+  /// This field only mirrors a legacy backend column so the payload round-trips.
+  /// Nothing sets it and nothing renders it — verified — and nothing may start to.
   final MultiKolabEligibleAccountType eligibleAccountType;
   final MultiKolabCreatorSummary? creatorProfile;
 
