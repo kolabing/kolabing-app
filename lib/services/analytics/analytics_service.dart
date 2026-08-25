@@ -34,6 +34,10 @@ class AnalyticsEvents {
   // ── Community ─────────────────────────────────────────────────────
   static const String communityCreated = 'community_created';
   static const String communityJoined = 'community_joined';
+
+  /// Following is the low-commitment step; tracked separately from joining so
+  /// the funnel between them is visible (#138).
+  static const String communityFollowed = 'community_followed';
   static const String tierCreated = 'tier_created';
 
   // ── Events / attendee ─────────────────────────────────────────────

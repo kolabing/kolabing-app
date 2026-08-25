@@ -17,11 +17,7 @@ import '../services/community_service.dart';
 /// Permissions (content/chat/perks) are stored on the model but not edited
 /// here yet — that UI lands with the gating phase.
 class TierEditorScreen extends ConsumerStatefulWidget {
-  const TierEditorScreen({
-    super.key,
-    required this.communityId,
-    this.tier,
-  });
+  const TierEditorScreen({super.key, required this.communityId, this.tier});
 
   final String communityId;
   final CommunityTier? tier;
@@ -43,7 +39,12 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
 
   /// Preset swatches (hex). Null color falls back to the theme primary.
   static const _swatches = [
-    '#FFE28C', '#7AE7A3', '#E14D76', '#6C8CFF', '#B388FF', '#FF9F45',
+    '#FFE28C',
+    '#7AE7A3',
+    '#E14D76',
+    '#6C8CFF',
+    '#B388FF',
+    '#FF9F45',
   ];
 
   @override
@@ -52,8 +53,9 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
     final t = widget.tier;
     _nameController = TextEditingController(text: t?.name ?? '');
     _rankController = TextEditingController(text: (t?.rank ?? 1).toString());
-    _thresholdController =
-        TextEditingController(text: t?.threshold?.toString() ?? '');
+    _thresholdController = TextEditingController(
+      text: t?.threshold?.toString() ?? '',
+    );
     _rule = t?.assignmentRule ?? TierAssignmentRule.manual;
     _color = t?.color;
   }
@@ -98,8 +100,9 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -115,11 +118,13 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
         content: Text(l10n.tierEditorDeleteBody(widget.tier!.name)),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.commonCancel)),
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
           TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(l10n.tierEditorDelete)),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.tierEditorDelete),
+          ),
         ],
       ),
     );
@@ -130,8 +135,9 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
       if (mounted) Navigator.of(context).pop(true);
     } on CommunityException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -145,7 +151,8 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
       backgroundColor: context.colors.background,
       appBar: AppBar(
         title: Text(
-            widget.isEditing ? l10n.tierEditorEditTitle : l10n.tierEditorNewTitle),
+          widget.isEditing ? l10n.tierEditorEditTitle : l10n.tierEditorNewTitle,
+        ),
         actions: [
           if (widget.isEditing)
             IconButton(
@@ -191,9 +198,7 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
             const SizedBox(height: KolabingSpacing.xs),
             Wrap(
               spacing: KolabingSpacing.sm,
-              children: [
-                for (final hex in _swatches) _swatch(hex),
-              ],
+              children: [for (final hex in _swatches) _swatch(hex)],
             ),
             const SizedBox(height: KolabingSpacing.lg),
             _label(l10n.tierEditorRuleLabel),
@@ -202,10 +207,10 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
               initialValue: _rule,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: TierAssignmentRule.values
-                  .map((r) => DropdownMenuItem(
-                        value: r,
-                        child: Text(r.displayName),
-                      ))
+                  .map(
+                    (r) =>
+                        DropdownMenuItem(value: r, child: Text(r.displayName)),
+                  )
                   .toList(),
               onChanged: (v) => setState(() => _rule = v ?? _rule),
             ),
@@ -238,11 +243,15 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: context.colors.onSurface),
+                        strokeWidth: 2,
+                        color: context.colors.onSurface,
+                      ),
                     )
-                  : Text(widget.isEditing
-                      ? l10n.tierEditorSave
-                      : l10n.tierEditorCreate),
+                  : Text(
+                      widget.isEditing
+                          ? l10n.tierEditorSave
+                          : l10n.tierEditorCreate,
+                    ),
             ),
           ],
         ),
@@ -251,11 +260,12 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
   }
 
   Widget _label(String text) => Padding(
-        padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
-        child: Text(text,
-            style: KolabingTextStyles.bodySmall
-                .copyWith(fontWeight: FontWeight.w700)),
-      );
+    padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+    child: Text(
+      text,
+      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700),
+    ),
+  );
 
   Widget _swatch(String hex) {
     final selected = _color == hex;
@@ -274,7 +284,9 @@ class _TierEditorScreenState extends ConsumerState<TierEditorScreen> {
           color: c,
           shape: BoxShape.circle,
           border: Border.all(
-            color: selected ? context.colors.onSurface : context.colors.outlineVariant,
+            color: selected
+                ? context.colors.onSurface
+                : context.colors.outlineVariant,
             width: selected ? 2.5 : 1,
           ),
         ),

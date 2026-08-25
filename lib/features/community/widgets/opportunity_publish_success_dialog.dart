@@ -53,14 +53,20 @@ class OpportunityPublishSuccessDialog extends StatelessWidget {
             isDraft
                 ? l10n.opportunityPublishSuccessDraftTitle
                 : l10n.opportunityPublishSuccessPublishedTitle,
-            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+            style: KolabingTextStyles.bodyLarge.copyWith(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurface,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             isDraft
                 ? l10n.opportunityPublishSuccessDraftBody
                 : l10n.opportunityPublishSuccessPublishedBody,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
         ],

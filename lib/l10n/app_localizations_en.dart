@@ -2391,7 +2391,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attendeeMyQrSubtitle =>
-      'Let someone scan this to check you in or pair up for a challenge.';
+      'Show this to a host to check in or connect.';
 
   @override
   String get attendeeMyQrTooltip => 'My QR code';
@@ -2834,6 +2834,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Attendees can scan this QR code to check in to your event';
 
   @override
+  String get eventQrViewCheckins => 'View Check-ins';
+
+  @override
   String get eventQrGenerating => 'Generating QR Code...';
 
   @override
@@ -2923,11 +2926,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get qrScannerInstructionTitle =>
-      'Point your camera at a Kolabing QR code';
+      'Point your camera at the event QR code';
 
   @override
   String get qrScannerInstructionSubtitle =>
-      'An event\'s check-in code, or another member\'s profile QR';
+      'The QR code will be displayed by the event organizer';
 
   @override
   String get rewardWalletTitle => 'My Rewards';
@@ -7089,6 +7092,56 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get subscriptionManageAppleFailed =>
       'Couldn\'t open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.';
+
+  @override
+  String get communityFollow => 'Follow';
+
+  @override
+  String get communityFollowing => 'Following';
+
+  @override
+  String get communityFollowedSnack =>
+      'Following. Their events will show up in your feed.';
+
+  @override
+  String get communityUnfollowedSnack => 'Unfollowed.';
+
+  @override
+  String get communityFollowFailed => 'Couldn\'t update that. Try again.';
+
+  @override
+  String get communityBecomeMember => 'Become a member';
+
+  @override
+  String get communityMemberBadge => 'Member';
+
+  @override
+  String get communityApplicationTitle => 'Become a member';
+
+  @override
+  String communityApplicationIntro(String community) {
+    return '$community asks a few questions before adding new members.';
+  }
+
+  @override
+  String get communityApplicationOptional => 'Optional';
+
+  @override
+  String get communityApplicationRequiredError => 'Please answer this';
+
+  @override
+  String get communityApplicationSubmit => 'SEND APPLICATION';
+
+  @override
+  String get communityApplicationSentSnack =>
+      'Application sent. The organiser will review it.';
+
+  @override
+  String get communityApplicationJoinedSnack => 'You\'re a member now.';
+
+  @override
+  String get communityApplicationFailed =>
+      'Couldn\'t send your application. Try again.';
 
   @override
   String get qrHubTitle => 'Scan or share';

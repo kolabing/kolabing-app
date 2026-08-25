@@ -2410,7 +2410,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get attendeeMyQrSubtitle =>
-      'Deja que alguien lo escanee para hacerte check-in o emparejaros en un reto.';
+      'Muéstralo a un organizador para registrarte o conectar.';
 
   @override
   String get attendeeMyQrTooltip => 'Mi código QR';
@@ -2859,6 +2859,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Los asistentes pueden escanear este código QR para registrarse en tu evento';
 
   @override
+  String get eventQrViewCheckins => 'Ver registros';
+
+  @override
   String get eventQrGenerating => 'Generando código QR...';
 
   @override
@@ -2950,11 +2953,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get qrScannerInstructionTitle =>
-      'Apunta la cámara a un código QR de Kolabing';
+      'Apunta la cámara al código QR del evento';
 
   @override
   String get qrScannerInstructionSubtitle =>
-      'El código de check-in de un evento o el QR de perfil de otro miembro';
+      'El organizador del evento mostrará el código QR';
 
   @override
   String get rewardWalletTitle => 'Mis recompensas';
@@ -7158,6 +7161,57 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get subscriptionManageAppleFailed =>
       'No se han podido abrir tus suscripciones de la App Store. Ve a Ajustes › tu nombre › Suscripciones para gestionarla o cancelarla.';
+
+  @override
+  String get communityFollow => 'Seguir';
+
+  @override
+  String get communityFollowing => 'Siguiendo';
+
+  @override
+  String get communityFollowedSnack =>
+      'Ya la sigues. Sus eventos aparecerán en tu feed.';
+
+  @override
+  String get communityUnfollowedSnack => 'Has dejado de seguirla.';
+
+  @override
+  String get communityFollowFailed =>
+      'No se pudo actualizar. Inténtalo de nuevo.';
+
+  @override
+  String get communityBecomeMember => 'Hazte miembro';
+
+  @override
+  String get communityMemberBadge => 'Miembro';
+
+  @override
+  String get communityApplicationTitle => 'Hazte miembro';
+
+  @override
+  String communityApplicationIntro(String community) {
+    return '$community hace algunas preguntas antes de añadir nuevos miembros.';
+  }
+
+  @override
+  String get communityApplicationOptional => 'Opcional';
+
+  @override
+  String get communityApplicationRequiredError => 'Responde a esto, por favor';
+
+  @override
+  String get communityApplicationSubmit => 'ENVIAR SOLICITUD';
+
+  @override
+  String get communityApplicationSentSnack =>
+      'Solicitud enviada. El organizador la revisará.';
+
+  @override
+  String get communityApplicationJoinedSnack => 'Ya eres miembro.';
+
+  @override
+  String get communityApplicationFailed =>
+      'No se pudo enviar tu solicitud. Inténtalo de nuevo.';
 
   @override
   String get qrHubTitle => 'Escanear o compartir';

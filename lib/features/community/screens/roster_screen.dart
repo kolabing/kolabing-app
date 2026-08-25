@@ -272,13 +272,17 @@ class _EmptyRoster extends StatelessWidget {
 // -----------------------------------------------------------------------------
 
 class MemberRosterEditSheet extends ConsumerStatefulWidget {
-  const MemberRosterEditSheet({required this.communityId, required this.member});
+  const MemberRosterEditSheet({
+    required this.communityId,
+    required this.member,
+  });
 
   final String communityId;
   final CommunityMember member;
 
   @override
-  ConsumerState<MemberRosterEditSheet> createState() => MemberRosterEditSheetState();
+  ConsumerState<MemberRosterEditSheet> createState() =>
+      MemberRosterEditSheetState();
 }
 
 class MemberRosterEditSheetState extends ConsumerState<MemberRosterEditSheet> {

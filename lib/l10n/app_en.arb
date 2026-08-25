@@ -3009,7 +3009,7 @@
   "@attendeeMyQrTitle": {
     "description": "Attendee: title of the sheet showing the user's own profile QR code"
   },
-  "attendeeMyQrSubtitle": "Let someone scan this to check you in or pair up for a challenge.",
+  "attendeeMyQrSubtitle": "Show this to a host to check in or connect.",
   "@attendeeMyQrSubtitle": {
     "description": "Attendee: helper text under the user's own profile QR code"
   },
@@ -3556,6 +3556,10 @@
   "@eventQrInstructions": {
     "description": "Instructions under the QR code"
   },
+  "eventQrViewCheckins": "View Check-ins",
+  "@eventQrViewCheckins": {
+    "description": "Button to view event check-ins"
+  },
   "eventQrGenerating": "Generating QR Code...",
   "@eventQrGenerating": {
     "description": "Loading message while the QR code is generated"
@@ -3669,11 +3673,11 @@
   "@qrScannerCheckingIn": {
     "description": "Loading message while checking in"
   },
-  "qrScannerInstructionTitle": "Point your camera at a Kolabing QR code",
+  "qrScannerInstructionTitle": "Point your camera at the event QR code",
   "@qrScannerInstructionTitle": {
     "description": "Primary instruction in the QR scanner"
   },
-  "qrScannerInstructionSubtitle": "An event's check-in code, or another member's profile QR",
+  "qrScannerInstructionSubtitle": "The QR code will be displayed by the event organizer",
   "@qrScannerInstructionSubtitle": {
     "description": "Secondary instruction in the QR scanner"
   },
@@ -7647,6 +7651,36 @@
   "@permissionDeniedDialogOpenSettings": { "description": "Action that opens the system settings from the permission-denied dialog." },
   "subscriptionManageAppleFailed": "Couldn't open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.",
   "@subscriptionManageAppleFailed": { "description": "Shown when the App Store subscription management page cannot be opened from the app." },
+  "communityFollow": "Follow",
+  "@communityFollow": {"description": "Action that follows a community — one tap, no approval."},
+  "communityFollowing": "Following",
+  "@communityFollowing": {"description": "State shown when the viewer already follows a community."},
+  "communityFollowedSnack": "Following. Their events will show up in your feed.",
+  "@communityFollowedSnack": {"description": "Confirmation after following a community."},
+  "communityUnfollowedSnack": "Unfollowed.",
+  "@communityUnfollowedSnack": {"description": "Confirmation after unfollowing."},
+  "communityFollowFailed": "Couldn't update that. Try again.",
+  "@communityFollowFailed": {"description": "Shown when following or unfollowing fails."},
+  "communityBecomeMember": "Become a member",
+  "@communityBecomeMember": {"description": "Action that starts the membership application."},
+  "communityMemberBadge": "Member",
+  "@communityMemberBadge": {"description": "Shown when the viewer is already a member of the community."},
+  "communityApplicationTitle": "Become a member",
+  "@communityApplicationTitle": {"description": "Title of the membership application sheet."},
+  "communityApplicationIntro": "{community} asks a few questions before adding new members.",
+  "@communityApplicationIntro": {"description": "Explains why the application form is being shown.", "placeholders": {"community": {"type": "String", "example": "Eixample Runners"}}},
+  "communityApplicationOptional": "Optional",
+  "@communityApplicationOptional": {"description": "Marks a question that may be left blank."},
+  "communityApplicationRequiredError": "Please answer this",
+  "@communityApplicationRequiredError": {"description": "Validation message on a required application question."},
+  "communityApplicationSubmit": "SEND APPLICATION",
+  "@communityApplicationSubmit": {"description": "Submits the membership application."},
+  "communityApplicationSentSnack": "Application sent. The organiser will review it.",
+  "@communityApplicationSentSnack": {"description": "Confirmation after an application that needs approval."},
+  "communityApplicationJoinedSnack": "You're a member now.",
+  "@communityApplicationJoinedSnack": {"description": "Confirmation when the application was accepted immediately."},
+  "communityApplicationFailed": "Couldn't send your application. Try again.",
+  "@communityApplicationFailed": {"description": "Shown when submitting the application fails."},
   "qrHubTitle": "Scan or share",
   "@qrHubTitle": {"description": "Title of the attendee QR hub sheet."},
   "qrHubScanTitle": "Scan a code",
