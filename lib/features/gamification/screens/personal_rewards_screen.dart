@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../config/constants/layout.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/color_tokens.dart';
@@ -452,9 +453,21 @@ class _CommunityRewardTileState extends ConsumerState<_CommunityRewardTile> {
             const SizedBox(width: KolabingSpacing.sm),
             FilledButton(
               onPressed: canRedeem ? _redeem : null,
+              // The app's FilledButtonTheme sets minimumSize.width = infinity
+              // (full-width form buttons). A Row measures its non-flex children
+              // with an unbounded width, so that infinity claimed the whole row
+              // and left the Expanded title 0px wide — the reward name then
+              // wrapped one letter per line. Bound the button here.
               style: FilledButton.styleFrom(
                 backgroundColor: context.colors.primary,
                 foregroundColor: context.colors.onPrimary,
+                minimumSize: const Size(
+                  0,
+                  KolabingLayout.buttonHeightSecondary,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: KolabingSpacing.md,
+                ),
               ),
               child: _busy
                   ? SizedBox(
