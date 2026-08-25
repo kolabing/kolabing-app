@@ -7,6 +7,7 @@ import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/profile_link.dart';
 import '../models/community.dart';
 import '../providers/community_follow_provider.dart';
 import '../providers/community_providers.dart';
@@ -162,60 +163,70 @@ class _DiscoverCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CircleAvatar(
-                radius: 26,
-                backgroundColor: KolabingColors.primary.withValues(alpha: 0.2),
-                backgroundImage: community.avatarUrl != null
-                    ? NetworkImage(community.avatarUrl!)
-                    : null,
-                child: community.avatarUrl == null
-                    ? const Icon(
-                        LucideIcons.users,
-                        color: KolabingColors.onSurface,
-                      )
-                    : null,
-              ),
-              const SizedBox(width: KolabingSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      community.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: KolabingTextStyles.bodyLarge.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Wrap(
-                      spacing: KolabingSpacing.xs,
-                      runSpacing: KolabingSpacing.xxs,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        _Badge(label: community.type.displayName),
-                        if (community.memberCount != null)
-                          Text(
-                            l10n.discoverCommunitiesMembers(
-                              community.memberCount!,
-                            ),
-                            style: KolabingTextStyles.bodySmall.copyWith(
-                              fontSize: 12,
-                              color: KolabingColors.onSurfaceVariant,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ],
+          // Tapping the community opens it. The row had no tap target at all,
+          // so Discover could name a community and offer no way in except
+          // following it sight unseen. `community.id` is a `communities.id`,
+          // which is why it goes in as [communityId] and never as a profile id.
+          ProfileLink(
+            communityId: community.id,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 26,
+                  backgroundColor: KolabingColors.primary.withValues(
+                    alpha: 0.2,
+                  ),
+                  backgroundImage: community.avatarUrl != null
+                      ? NetworkImage(community.avatarUrl!)
+                      : null,
+                  child: community.avatarUrl == null
+                      ? const Icon(
+                          LucideIcons.users,
+                          color: KolabingColors.onSurface,
+                        )
+                      : null,
                 ),
-              ),
-            ],
+                const SizedBox(width: KolabingSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        community.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: KolabingTextStyles.bodyLarge.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Wrap(
+                        spacing: KolabingSpacing.xs,
+                        runSpacing: KolabingSpacing.xxs,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          _Badge(label: community.type.displayName),
+                          if (community.memberCount != null)
+                            Text(
+                              l10n.discoverCommunitiesMembers(
+                                community.memberCount!,
+                              ),
+                              style: KolabingTextStyles.bodySmall.copyWith(
+                                fontSize: 12,
+                                color: KolabingColors.onSurfaceVariant,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
+
           if (community.description != null &&
               community.description!.isNotEmpty) ...[
             const SizedBox(height: KolabingSpacing.sm),

@@ -14,6 +14,7 @@ import '../models/application.dart';
 import '../providers/application_provider.dart';
 import '../../../widgets/category_icon.dart';
 import '../../../widgets/kolabing_button.dart';
+import '../../../widgets/profile_link.dart';
 
 /// Application review screen — shown when tapping a received application.
 /// Displays the applicant's profile like a "CV card" with their message,
@@ -325,7 +326,7 @@ class _ApplicationReviewScreenState
             onTap: () {
               final profileId = profile?.id ?? application.applicantId;
               if (profileId.isNotEmpty) {
-                context.push('/profile/$profileId');
+                ProfileLink.open(context, ref, profileId: profileId);
               }
             },
             child: Text(

@@ -15,6 +15,7 @@ import '../../gamification/models/challenge.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../../widgets/blurred_identity.dart';
 import '../../../widgets/kolabing_button.dart';
+import '../../../widgets/profile_link.dart';
 import '../models/collaboration.dart';
 import '../providers/collaboration_detail_provider.dart';
 import '../providers/collaborations_list_provider.dart';
@@ -559,18 +560,15 @@ class _PartnerInfoCard extends StatelessWidget {
       title: partner.isBusiness
           ? l10n.collaborationDetailBusinessPartner
           : l10n.collaborationDetailCommunityPartner,
-      child: InkWell(
-        // "View business/creator profile" opens the public profile route
-        // `/profile/:id`, whose `:id` MUST be a `profiles.id` (the route binds
-        // to a Profile -> PublicProfileResource). `partner.id` is sourced from
-        // the collaboration's `business_partner`/`community_partner` object,
-        // which carries the partner's `profiles.id` (mirrors the backend's
+      child: ProfileLink(
+        // `:id` MUST be a `profiles.id` (the route binds to a Profile ->
+        // PublicProfileResource). `partner.id` is sourced from the
+        // collaboration's `business_partner`/`community_partner` object, which
+        // carries the partner's `profiles.id` (mirrors the backend's
         // ProfileSummaryResource `id`), NOT a business/community-profile id.
-        // Guard against an empty id so we never push `/profile/` (which would
-        // 404 and look like the link is broken).
-        onTap: partner.id.isEmpty
-            ? null
-            : () => context.push('/profile/${partner.id}'),
+        // An empty id renders the block untapped rather than pushing
+        // `/profile/` and 404ing, which would look like a broken link.
+        profileId: partner.id,
         borderRadius: KolabingRadius.borderRadiusMd,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.xs),

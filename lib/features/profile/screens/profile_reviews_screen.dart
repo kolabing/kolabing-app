@@ -8,6 +8,7 @@ import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/cards/kolabing_cards.dart';
+import '../../../widgets/profile_link.dart';
 import '../../moderation/providers/blocked_profiles_provider.dart';
 import '../../moderation/services/moderation_service.dart';
 import '../../moderation/widgets/moderation_menu.dart';
@@ -217,27 +218,40 @@ class _ProfileReviewListCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            _ReviewAvatar(reviewer: review.reviewer),
-            const SizedBox(width: KolabingSpacing.sm),
+            // ROLES §4.2: inside the app a review carries "the reviewer's name,
+            // avatar and a link to their profile". The link was the missing
+            // third — who vouched for whom is the network's value, and it is
+            // worth following.
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    review.reviewer.displayName,
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: context.colors.onSurface,
+              child: ProfileLink(
+                profileId: review.reviewer.id,
+                child: Row(
+                  children: [
+                    _ReviewAvatar(reviewer: review.reviewer),
+                    const SizedBox(width: KolabingSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            review.reviewer.displayName,
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: context.colors.onSurface,
+                            ),
+                          ),
+                          Text(
+                            _formatReviewDate(review.createdAt),
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                              color: context.colors.textTertiary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Text(
-                    _formatReviewDate(review.createdAt),
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                      color: context.colors.textTertiary,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             // UGC moderation (App Review 1.2): report this review.
