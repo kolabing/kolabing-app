@@ -15,7 +15,7 @@ import '../../../config/theme/color_tokens.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/hero_circle_action.dart';
-import '../../auth/models/user_model.dart';
+import '../../../widgets/profile_link.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../chat/providers/chat_providers.dart';
 import '../../chat/screens/chat_thread_screen.dart';
@@ -771,23 +771,18 @@ class _EventDetailScreenState extends ConsumerState<EventDetailScreen> {
     ];
   }
 
-  /// Open the host. The destination is viewer-scoped: a BUSINESS viewer keeps
-  /// the profile-id-keyed `PublicProfileScreen` (Send-Kolab flow); everyone else
-  /// gets the community-keyed page. `communityId` is a `communities.id`, so
-  /// pushing it into `/profile/{id}` would 404 the profile endpoints (F1).
+  /// Open the host.
+  ///
+  /// The viewer-scoped destination rule used to live here and is now
+  /// [ProfileLink.open], because every other identity in the app needs the same
+  /// answer and two copies of it would eventually disagree.
   void _openHost(Event event) {
-    final communityId = event.communityId;
-    final hostProfileId = event.hostProfileId;
-    final isBusiness =
-        ref.read(authProvider).user?.userType == UserType.business;
-
-    if (isBusiness && hostProfileId != null && hostProfileId.isNotEmpty) {
-      context.push('/profile/$hostProfileId');
-      return;
-    }
-    if (communityId != null && communityId.isNotEmpty) {
-      context.push(KolabingRoutes.buildCommunityProfilePath(communityId));
-    }
+    ProfileLink.open(
+      context,
+      ref,
+      profileId: event.hostProfileId,
+      communityId: event.communityId,
+    );
   }
 
   Widget _photos(Event event) => Padding(

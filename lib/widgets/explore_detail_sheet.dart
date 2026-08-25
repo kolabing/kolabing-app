@@ -18,8 +18,8 @@ import '../features/opportunity/models/opportunity.dart';
 import '../features/opportunity/opportunity_l10n.dart';
 import '../l10n/app_localizations.dart';
 import 'blurred_identity.dart';
-import 'kolabing_button.dart';
 import 'category_icon.dart';
+import 'kolabing_button.dart';
 
 /// Modal bottom sheet displaying full opportunity details.
 ///
@@ -180,50 +180,69 @@ class ExploreDetailSheet extends ConsumerWidget {
     final avatarUrl = creator?.avatarUrl;
     final userType = creator?.userType ?? '';
 
+    // The identity block is the way into the profile — tapping the name or the
+    // logo does what the pinned "view profile" button does. Null when the
+    // paywall blurred the identity (§2.5): the blur must not be a hint that a
+    // profile is one tap away.
+    final openProfile = hideCreatorIdentity ? null : onViewCreatorProfile;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Creator avatar (logo) — Gaussian-blurred when identity is hidden.
-        BlurredIdentity(
-          enabled: hideCreatorIdentity,
-          sigma: 14,
-          borderRadius: BorderRadius.circular(32),
-          child: _buildAvatar(context, avatarUrl, initial),
-        ),
-        const SizedBox(width: KolabingSpacing.sm),
-
-        // Creator name + type badge
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              BlurredIdentity(
-                enabled: hideCreatorIdentity,
-                sigma: 8,
-                child: Text(
-                  displayName,
-                  style: KolabingTextStyles.bodyLarge.copyWith(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: context.colors.onSurface,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+          child: InkWell(
+            onTap: openProfile,
+            borderRadius: BorderRadius.circular(KolabingRadius.md),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Creator avatar (logo) — Gaussian-blurred when identity is hidden.
+                BlurredIdentity(
+                  enabled: hideCreatorIdentity,
+                  sigma: 14,
+                  borderRadius: BorderRadius.circular(32),
+                  child: _buildAvatar(context, avatarUrl, initial),
                 ),
-              ),
-              if (hideCreatorIdentity) ...[
-                const SizedBox(height: KolabingSpacing.xxs),
-                Text(
-                  AppLocalizations.of(context).exploreDetailSubscribeToReveal,
-                  style: KolabingTextStyles.labelMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: context.colors.textTertiary,
+                const SizedBox(width: KolabingSpacing.sm),
+
+                // Creator name + type badge
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BlurredIdentity(
+                        enabled: hideCreatorIdentity,
+                        sigma: 8,
+                        child: Text(
+                          displayName,
+                          style: KolabingTextStyles.bodyLarge.copyWith(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: context.colors.onSurface,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (hideCreatorIdentity) ...[
+                        const SizedBox(height: KolabingSpacing.xxs),
+                        Text(
+                          AppLocalizations.of(
+                            context,
+                          ).exploreDetailSubscribeToReveal,
+                          style: KolabingTextStyles.labelMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: context.colors.textTertiary,
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: KolabingSpacing.xxs),
+                      _buildTypeBadge(context, userType),
+                    ],
                   ),
                 ),
               ],
-              const SizedBox(height: KolabingSpacing.xxs),
-              _buildTypeBadge(context, userType),
-            ],
+            ),
           ),
         ),
 

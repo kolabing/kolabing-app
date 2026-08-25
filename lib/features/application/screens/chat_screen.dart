@@ -13,6 +13,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/blurred_identity.dart';
 import '../../../widgets/keyboard_avoiding_content.dart';
 import '../../../widgets/kolabing_button.dart';
+import '../../../widgets/profile_link.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/application.dart';
@@ -163,6 +164,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         return _buildScaffold(
           application: application,
           counterpartyName: _counterpartyName(application),
+          canOpenCounterpartyProfile: !mustResubscribe,
           body: Column(
             children: [
               _buildApplicationHeader(application),
@@ -260,11 +262,30 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     return application.recipientName;
   }
 
+  /// The counterparty's `profiles.id`, resolved the same way as
+  /// [_counterpartyName] so the header's name and the profile it opens can never
+  /// be two different people.
+  ///
+  /// Null when the viewer's own id is unavailable: the fallback in
+  /// [_counterpartyName] guesses at a *name*, and guessing at a link would take
+  /// you to the wrong profile rather than merely label the header oddly.
+  String? _counterpartyId(Application application) {
+    final myId = ref.read(authProvider).user?.id ?? '';
+    if (myId.isEmpty) return null;
+    if (application.applicantId == myId) return application.recipientId;
+    if (application.recipientId == myId) return application.applicantId;
+    return null;
+  }
+
   Widget _buildScaffold({
     required Widget body,
     Application? application,
     String? counterpartyName,
     bool isLoading = false,
+    // §2.8: a lapsed business is re-gated to the free state, and a free business
+    // cannot open a community's full profile (§2.5). The header keeps the name —
+    // the counterparty is never blurred here — but stops being a door.
+    bool canOpenCounterpartyProfile = true,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final displayName = counterpartyName ?? application?.recipientName ?? '';
@@ -285,41 +306,45 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           color: isDark ? context.colors.textOnDark : context.colors.onSurface,
         ),
         title: application != null
-            ? Row(
-                children: [
-                  _buildAvatar(displayName, isDark: isDark),
-                  const SizedBox(width: KolabingSpacing.sm),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          displayName,
-                          style: KolabingTextStyles.bodyMedium.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: isDark
-                                ? context.colors.textOnDark
-                                : context.colors.onSurface,
+            ? ProfileLink(
+                profileId: _counterpartyId(application),
+                enabled: canOpenCounterpartyProfile,
+                child: Row(
+                  children: [
+                    _buildAvatar(displayName, isDark: isDark),
+                    const SizedBox(width: KolabingSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            displayName,
+                            style: KolabingTextStyles.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: isDark
+                                  ? context.colors.textOnDark
+                                  : context.colors.onSurface,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          application.status.displayName,
-                          style: KolabingTextStyles.bodySmall.copyWith(
-                            fontSize: 12,
-                            color: isDark
-                                ? context.colors.textOnDark.withValues(
-                                    alpha: 0.5,
-                                  )
-                                : context.colors.textTertiary,
+                          Text(
+                            application.status.displayName,
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                              fontSize: 12,
+                              color: isDark
+                                  ? context.colors.textOnDark.withValues(
+                                      alpha: 0.5,
+                                    )
+                                  : context.colors.textTertiary,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               )
             : isLoading
             ? Text(

@@ -21,6 +21,7 @@ import '../../friends/models/friendship.dart';
 import '../../friends/providers/friends_provider.dart';
 import '../../identity/widgets/handle_field.dart';
 import '../../../widgets/kolabing_button.dart';
+import '../../../widgets/profile_link.dart';
 
 /// Attendee profile — a Flaire-style social hub.
 ///
@@ -948,7 +949,11 @@ class _FriendsPreviewSection extends ConsumerWidget {
                 _FriendAvatar(
                   avatarUrl: friend.avatarUrl,
                   initial: friend.initial,
-                  onTap: () => context.push('/profile/${friend.profileId}'),
+                  onTap: () => ProfileLink.open(
+                    context,
+                    ref,
+                    profileId: friend.profileId,
+                  ),
                 ),
                 const SizedBox(width: KolabingSpacing.sm),
               ],
