@@ -13,11 +13,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for handling challenge operations
 class ChallengeService {
-  ChallengeService({
-    required AuthService authService,
-    http.Client? httpClient,
-  })  : _authService = authService,
-        _httpClient = httpClient ?? http.Client();
+  ChallengeService({required AuthService authService, http.Client? httpClient})
+    : _authService = authService,
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -55,7 +53,9 @@ class ChallengeService {
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        return ChallengesResponse.fromJson(json['data'] as Map<String, dynamic>);
+        return ChallengesResponse.fromJson(
+          json['data'] as Map<String, dynamic>,
+        );
       } else {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
         throw ChallengeException(
@@ -284,7 +284,9 @@ class ChallengeService {
         body: jsonEncode(body),
       );
 
-      debugPrint('🎯 Initiate Challenge response status: ${response.statusCode}');
+      debugPrint(
+        '🎯 Initiate Challenge response status: ${response.statusCode}',
+      );
 
       if (response.statusCode == 201) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -462,7 +464,9 @@ class ChallengeService {
         },
       );
 
-      debugPrint('🎯 Get My Completions response status: ${response.statusCode}');
+      debugPrint(
+        '🎯 Get My Completions response status: ${response.statusCode}',
+      );
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;

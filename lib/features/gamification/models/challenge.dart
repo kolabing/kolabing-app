@@ -88,16 +88,16 @@ class Challenge {
   bool get isCustom => !isSystem;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        if (description != null) 'description': description,
-        'difficulty': difficulty.toApiValue(),
-        'points': points,
-        'is_system': isSystem,
-        if (eventId != null) 'event_id': eventId,
-        'created_at': createdAt.toIso8601String(),
-        'updated_at': updatedAt.toIso8601String(),
-      };
+    'id': id,
+    'name': name,
+    if (description != null) 'description': description,
+    'difficulty': difficulty.toApiValue(),
+    'points': points,
+    'is_system': isSystem,
+    if (eventId != null) 'event_id': eventId,
+    'created_at': createdAt.toIso8601String(),
+    'updated_at': updatedAt.toIso8601String(),
+  };
 
   Challenge copyWith({
     String? id,
@@ -109,16 +109,15 @@ class Challenge {
     String? eventId,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) =>
-      Challenge(
-        id: id ?? this.id,
-        name: name ?? this.name,
-        description: description ?? this.description,
-        difficulty: difficulty ?? this.difficulty,
-        points: points ?? this.points,
-        isSystem: isSystem ?? this.isSystem,
-        eventId: eventId ?? this.eventId,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
+  }) => Challenge(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    description: description ?? this.description,
+    difficulty: difficulty ?? this.difficulty,
+    points: points ?? this.points,
+    isSystem: isSystem ?? this.isSystem,
+    eventId: eventId ?? this.eventId,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
 }

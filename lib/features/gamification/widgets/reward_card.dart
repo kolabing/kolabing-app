@@ -8,11 +8,7 @@ import '../models/reward_claim.dart';
 
 /// Card displaying a reward claim in the wallet
 class RewardCard extends StatelessWidget {
-  const RewardCard({
-    super.key,
-    required this.rewardClaim,
-    this.onTap,
-  });
+  const RewardCard({super.key, required this.rewardClaim, this.onTap});
 
   final RewardClaim rewardClaim;
   final VoidCallback? onTap;
@@ -27,10 +23,7 @@ class RewardCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: context.colors.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: _getBorderColor(context),
-            width: 1.5,
-          ),
+          border: Border.all(color: _getBorderColor(context), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -60,14 +53,20 @@ class RewardCard extends StatelessWidget {
                 children: [
                   Text(
                     rewardClaim.eventReward?.name ?? 'Mystery Reward',
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.onSurface,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Won ${_formatDate(rewardClaim.wonAt)}',
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      fontSize: 12,
+                      color: context.colors.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -111,7 +110,11 @@ class RewardCard extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: color),
+        style: KolabingTextStyles.bodySmall.copyWith(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
       ),
     );
   }

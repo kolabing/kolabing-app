@@ -20,8 +20,7 @@ import '../services/checkin_service.dart';
 import '../widgets/peer_challenge_sheet.dart';
 import '../widgets/qr_scan_frame.dart';
 import '../widgets/scan_outcome_sheet.dart';
-import '../widgets/verify_completion_sheet.dart';
-import 'challenge_verify_qr_screen.dart';
+import 'challenge_together_screen.dart';
 
 /// The one scanner a member ever needs.
 ///
@@ -128,8 +127,13 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
         await _checkIn(token);
       case QrPeerProfile(:final profileRef):
         await _pair(profileRef);
-      case QrVerifyCompletion(:final completionId):
-        await _verify(completionId);
+      case QrVerifyCompletion():
+        // Retired in #140 — a challenge is agreed with one scan and confirmed
+        // on the partner's own device, so nothing shows a verify QR any more.
+        // Still parsed so an old screenshot of one reads as "not ours" rather
+        // than as a check-in token.
+        _snack(AppLocalizations.of(context).scannerUnknownCode);
+        await _resume();
       case QrUnknown():
         break; // handled above
     }
@@ -304,13 +308,16 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
 
     if (result.outcome == PeerSheetOutcome.challengeStarted &&
         result.completionId != null) {
-      await Navigator.of(context).push<void>(
-        MaterialPageRoute<void>(
-          builder: (_) => ChallengeVerifyQrScreen(
-            completionId: result.completionId!,
-            verifierName: result.verifierName,
-          ),
-        ),
+      // No second QR: the other phone finds out on its own and opens this same
+      // screen. One scan between two people, and the app holds the moment
+      // instead of the paperwork (#140).
+      await ChallengeTogetherScreen.open(
+        context,
+        completionId: result.completionId!,
+        role: TogetherRole.starter,
+        challengeName: result.challengeName,
+        otherName: result.verifierName,
+        points: result.points,
       );
     }
 
@@ -322,67 +329,6 @@ class _AttendeeScannerScreenState extends ConsumerState<AttendeeScannerScreen> {
   // ---------------------------------------------------------------------------
   // Step 4 — confirm someone else's challenge
   // ---------------------------------------------------------------------------
-
-  Future<void> _verify(String completionId) async {
-    final l10n = AppLocalizations.of(context);
-    final outcome = await VerifyCompletionSheet.show(
-      context,
-      completionId: completionId,
-    );
-    if (!mounted) return;
-
-    switch (outcome.result) {
-      case VerifyResult.confirmed:
-        final name =
-            outcome.challengerName ?? l10n.challengeCompletionDefaultChallenger;
-        await _showVerifyResult(
-          ScanOutcomeTone.success,
-          l10n.verifyScanConfirmedTitle,
-          l10n.verifyScanConfirmedBody(name, outcome.points ?? 0),
-        );
-      case VerifyResult.rejected:
-        await _showVerifyResult(
-          ScanOutcomeTone.info,
-          l10n.verifyScanRejectedTitle,
-          null,
-        );
-      case VerifyResult.notForYou:
-        await _showVerifyResult(
-          ScanOutcomeTone.failure,
-          l10n.verifyScanErrorTitle,
-          l10n.verifyScanNotForYou,
-        );
-      case VerifyResult.unreachable:
-        await _showVerifyResult(
-          ScanOutcomeTone.failure,
-          l10n.verifyScanErrorTitle,
-          l10n.verifyScanUnreachable,
-        );
-      case VerifyResult.failed:
-        await _showVerifyResult(
-          ScanOutcomeTone.failure,
-          l10n.verifyScanErrorTitle,
-          l10n.verifyScanFailed,
-        );
-      case VerifyResult.dismissed:
-        // Nothing was decided; the completion is still pending server-side.
-        await _resume();
-    }
-  }
-
-  Future<void> _showVerifyResult(
-    ScanOutcomeTone tone,
-    String title,
-    String? body,
-  ) async {
-    final action = await ScanOutcomeSheet.show(
-      context,
-      tone: tone,
-      title: title,
-      body: body,
-    );
-    await _afterOutcome(action);
-  }
 
   // ---------------------------------------------------------------------------
 

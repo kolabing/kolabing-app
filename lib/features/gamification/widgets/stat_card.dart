@@ -32,12 +32,15 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor =
-        isDark ? context.colors.textOnDark : context.colors.onSurface;
-    final secondaryTextColor =
-        isDark ? context.colors.textTertiary : context.colors.onSurfaceVariant;
-    final surfaceColor =
-        isDark ? context.colors.darkSurface : context.colors.surface;
+    final textColor = isDark
+        ? context.colors.textOnDark
+        : context.colors.onSurface;
+    final secondaryTextColor = isDark
+        ? context.colors.textTertiary
+        : context.colors.onSurfaceVariant;
+    final surfaceColor = isDark
+        ? context.colors.darkSurface
+        : context.colors.surface;
 
     final content = Column(
       mainAxisSize: MainAxisSize.min,
@@ -57,22 +60,26 @@ class StatCard extends StatelessWidget {
                     variant: iconVariant,
                     color: iconColor,
                   )
-                : Icon(
-                    icon,
-                    size: 20,
-                    color: iconColor,
-                  ),
+                : Icon(icon, size: 20, color: iconColor),
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
           value,
-          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: textColor),
+          style: KolabingTextStyles.bodyLarge.copyWith(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: textColor,
+          ),
         ),
         const SizedBox(height: 2),
         Text(
           label,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: secondaryTextColor),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: secondaryTextColor,
+          ),
           textAlign: TextAlign.center,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -87,7 +94,9 @@ class StatCard extends StatelessWidget {
           color: surfaceColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
+            color: isDark
+                ? context.colors.darkBorder
+                : context.colors.darkBorder,
           ),
         ),
         child: content,

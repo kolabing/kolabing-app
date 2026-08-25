@@ -708,7 +708,7 @@
   "attendeeNavScan": "Escanejar",
   "attendeeNavProfile": "Perfil",
   "attendeeMyQrTitle": "El meu QR de perfil",
-  "attendeeMyQrSubtitle": "Mostra'l a un amfitrió per registrar-te o connectar.",
+  "attendeeMyQrSubtitle": "Deixa que algú l'escanegi per fer-te check-in o emparellar-vos en un repte.",
   "attendeeMyQrTooltip": "El meu codi QR",
   "attendeeMyQrUnavailable": "El teu QR de perfil encara no està a punt.",
   "attendeeHomeWelcomeBack": "Benvingut de nou",
@@ -844,7 +844,6 @@
   "eventDiscoveryApply": "Aplica",
   "eventQrTitle": "Registre de l'esdeveniment",
   "eventQrInstructions": "Els assistents poden escanejar aquest codi QR per registrar-se al teu esdeveniment",
-  "eventQrViewCheckins": "Mostra els registres",
   "eventQrGenerating": "Generant el codi QR...",
   "eventQrErrorTitle": "No s'ha pogut generar el codi QR",
   "eventQrCopyToken": "Copia el testimoni",
@@ -872,8 +871,8 @@
   "qrScannerClose": "Tanca",
   "qrScannerTitle": "Escaneja el codi QR",
   "qrScannerCheckingIn": "Registrant...",
-  "qrScannerInstructionTitle": "Apunta la càmera al codi QR de l'esdeveniment",
-  "qrScannerInstructionSubtitle": "L'organitzador de l'esdeveniment mostrarà el codi QR",
+  "qrScannerInstructionTitle": "Apunta la càmera a un codi QR de Kolabing",
+  "qrScannerInstructionSubtitle": "El codi de check-in d'un esdeveniment o el QR de perfil d'un altre membre",
   "rewardWalletTitle": "Les meves recompenses",
   "rewardWalletEmptyTitle": "Encara no hi ha recompenses",
   "rewardWalletEmptyBody": "Completa reptes i fes girar la ruleta\nper guanyar recompenses increïbles!",
@@ -1529,7 +1528,6 @@
   "dashboardGrowViewKolabsSubtitle": "{active} actius · {completed} completats",
   "dashboardEmptyUpcomingSubtitle": "Crea un Kolab per començar a omplir el teu calendari",
   "dashboardHeroCreateKolabButton": "+ CREAR UN KOLAB",
-
   "eventHubOpenChat": "Obrir xat de l'esdeveniment",
   "eventHubAttendeesTitle": "Assistents",
   "eventHubWaitlistTitle": "Llista d'espera",
@@ -1559,7 +1557,6 @@
   "eventHubExtended": "Sèrie ampliada: {count} dates noves",
   "eventHubExtendedNone": "No hi ha dates noves per afegir",
   "eventHubAddPhotos": "Afegir fotos",
-
   "eventFormNewTitle": "Nou esdeveniment",
   "eventFormEditTitle": "Edita l'esdeveniment",
   "eventFormSave": "Desa",
@@ -1630,7 +1627,6 @@
   "communityShareInvite": "Comparteix invitació",
   "communityShareInviteMessage": "Uneix-te a {name} a Kolabing: {url}",
   "communityShareInviteCopied": "Enllaç d'invitació copiat.",
-
   "notifSettingsTitle": "Notificacions",
   "notifSettingsMessages": "Missatges",
   "notifSettingsMessagesSubtitle": "Nous missatges de xat a les teves comunitats i esdeveniments",
@@ -1641,7 +1637,6 @@
   "notifSettingsMarketing": "Consells i novetats",
   "notifSettingsMarketingSubtitle": "Consells de producte i notícies ocasionals",
   "notifSettingsSaveError": "No s'ha pogut desar la teva preferència. Torna-ho a provar.",
-
   "chatsTitle": "Xats",
   "chatInboxTooltip": "Xats",
   "chatThreadFallbackTitle": "Xat",
@@ -1656,7 +1651,6 @@
   "chatSectionKolabs": "Kolabs",
   "chatComposerHint": "Missatge",
   "chatThreadEmptyMessage": "Encara no hi ha missatges. Saluda 👋",
-
   "chatManageNewChatTitle": "Nou xat",
   "chatManageRenameTitle": "Reanomena el xat",
   "chatManageNameLabel": "Nom del xat",
@@ -1683,7 +1677,6 @@
   "chatMemberRemoveBody": "Perdrà l'accés a aquest xat i no s'hi podrà tornar a unir.",
   "chatMemberRemoved": "S'ha tret {name}",
   "chatThreadManageMembers": "Administra els membres",
-
   "communityDetailTabChats": "Xats",
   "communityDetailTabEvents": "Esdeveniments",
   "communityDetailTabMembers": "Membres",
@@ -1709,12 +1702,10 @@
   "communityDetailGalleryLabel": "Galeria i esdeveniments passats",
   "communityDetailGalleryBody": "Les fotos i els esdeveniments passats seran aquí quan es llanci el cicle de vida d'esdeveniments (Fase 3).",
   "communityDetailGalleryEmpty": "Encara no hi ha esdeveniments passats per mostrar.",
-
   "myCommunitiesNoTier": "Encara sense nivell",
   "myCommunitiesAdminBadge": "ADMIN",
   "myCommunitiesEmptyTitle": "Encara no pertanys a cap comunitat",
   "myCommunitiesEmptyBody": "Uneix-te a una comunitat per guanyar-te el teu lloc als seus nivells i veure esdeveniments i avantatges exclusius per a membres.",
-
   "communityHubEmptyTitle": "Crea la teva comunitat",
   "communityHubEmptyBody": "Crea una comunitat per formar una llista de membres i configurar els teus propis nivells. La teva primera comunitat és gratuïta.",
   "communityHubCreateCommunity": "CREA COMUNITAT",
@@ -1768,7 +1759,6 @@
   "communityHubMemberFallback": "Membre",
   "communityHubChipAdmin": "ADMIN",
   "communityHubLoadError": "No s'ha pogut carregar la teva comunitat",
-
   "createCommunityPremiumTitle": "Community Premium",
   "createCommunityPremiumBody": "El teu pla gratuït inclou una comunitat. Gestionar-ne més d'una forma part de Community Premium — properament.",
   "createCommunityTitle": "Nova comunitat",
@@ -1780,7 +1770,6 @@
   "createCommunityJoinAnyone": "Qualsevol",
   "createCommunityJoinInviteOnly": "Només amb invitació",
   "createCommunitySubmit": "CREA COMUNITAT",
-
   "tierEditorEditTitle": "Edita nivell",
   "tierEditorNewTitle": "Nou nivell",
   "tierEditorDeleteTooltip": "Elimina nivell",
@@ -1798,7 +1787,6 @@
   "tierEditorThresholdRequired": "Introdueix un llindar de {unit}",
   "tierEditorSave": "DESA",
   "tierEditorCreate": "CREA NIVELL",
-
   "rosterTitle": "Membres",
   "rosterInviteTooltip": "Convida membre",
   "rosterInviteTitle": "Convida membre",
@@ -1838,7 +1826,6 @@
   "friendUnknownName": "Membre",
   "friendCountOne": "1 amic",
   "friendCountOther": "{count} amics",
-
   "discoverCommunitiesTitle": "Descobreix comunitats",
   "discoverCommunitiesCta": "Descobreix comunitats",
   "discoverCommunitiesJoin": "Uneix-te",
@@ -1851,9 +1838,7 @@
   "discoverCommunitiesEmptyTitle": "Encara no hi ha res per descobrir",
   "discoverCommunitiesEmptyBody": "El descobriment de comunitats arribarà aviat. Torna per trobar i unir-te a comunitats a prop teu.",
   "discoverCommunitiesError": "No s'han pogut carregar les comunitats. Torna-ho a provar.",
-
   "commonSkip": "Omet",
-
   "handleFieldPlaceholder": "elteunom",
   "handleFieldHint": "3-20 caràcters: minúscules, números i guions baixos.",
   "handleFieldFormatError": "Fes servir 3-20 minúscules, números o guions baixos.",
@@ -1862,7 +1847,6 @@
   "handleFieldTaken": "Aquest nom d'usuari no està disponible.",
   "handleFieldTakenWithSuggestion": "No disponible. Prova @{suggestion}",
   "handleFieldYours": "Aquest és el teu nom d'usuari actual.",
-
   "attendeeOnboardingStepCounter": "Pas {step} de {total}",
   "attendeeOnboardingStep1Title": "Et configurem",
   "attendeeOnboardingStep1Subtitle": "Afegeix el teu nom, tria un nom d'usuari i una foto si vols.",
@@ -1878,9 +1862,7 @@
   "attendeeOnboardingStep4Subtitle": "Toca per unir-te a les que t'agradin. Sempre te'n pots unir a més després.",
   "attendeeOnboardingFinish": "Finalitza",
   "attendeeOnboardingForYou": "Per a tu",
-
   "editProfileHandleLabel": "Nom d'usuari",
-
   "addFriendTitle": "Afegeix un amic",
   "addFriendSubtitle": "Troba algú pel seu correu o el seu @nom.",
   "addFriendInputHint": "Correu o @nom",
@@ -1889,12 +1871,10 @@
   "addFriendUnavailable": "Afegir amics no està disponible ara mateix.",
   "addFriendError": "Alguna cosa ha anat malament. Torna-ho a provar.",
   "addFriendSelf": "Ets tu",
-
   "rosterInviteIdentifierLabel": "Correu o @nom",
   "rosterInviteIdentifierHint": "nom@exemple.com o @nom",
   "rosterInviteInvalidIdentifier": "Introdueix un correu o @nom vàlid.",
   "rosterNoAccountForIdentifier": "Cap compte de Kolabing coincideix amb aquest correu o nom d'usuari.",
-
   "attendeeHomeEventsTitle": "ESDEVENIMENTS",
   "attendeeHomeChooseCity": "Tria ciutat",
   "attendeeHomeFilterToday": "Avui",
@@ -1910,19 +1890,11 @@
   "attendeeHomePickCityHint": "Tria una ciutat per descobrir esdeveniments a prop teu.",
   "attendeeHomeNoEventsCity": "No hi ha esdeveniments en aquesta ciutat",
   "attendeeHomeNoEventsCityHint": "Prova una altra ciutat o esborra els filtres.",
-  "attendeeHomeScopeAll": "Tots els esdeveniments",
-  "attendeeHomeScopeFollowing": "Seguint",
-  "attendeeHomeNoFollowsTitle": "Encara no segueixes ning\u00fa",
-  "attendeeHomeNoFollowsHint": "Segueix una comunitat i tot el que organitzi apareixer\u00e0 aqu\u00ed.",
-  "attendeeHomeNoFollowedEventsTitle": "Res de pr\u00f2xim",
-  "attendeeHomeNoFollowedEventsHint": "Les comunitats que segueixes encara no han anunciat res.",
-  "attendeeHomeFollowMore": "Segueix m\u00e9s comunitats",
   "eventPartnerBusiness": "Negoci",
   "eventPartnerCommunity": "Comunitat",
   "eventDateToday": "Avui",
   "eventDateTomorrow": "Demà",
   "eventDateInDays": "D'aquí a {days} dies",
-
   "attendeeCommunityProfileErrorTitle": "No s'ha pogut carregar la comunitat",
   "attendeeCommunityProfileTypeFallback": "Comunitat",
   "attendeeCommunityProfileMemberCount": "{count, plural, =0{Encara sense membres} one{{count} membre} other{{count} membres}}",
@@ -1937,11 +1909,9 @@
   "attendeeCommunityProfileRequestedSnack": "Sol·licitud enviada",
   "attendeeCommunityProfileRequestUnavailable": "Les sol·licituds encara no estan disponibles. Torna-ho a provar més tard.",
   "attendeeCommunityProfileOpenCommunity": "Obrir comunitat",
-
   "communityDetailTabRewards": "Recompenses",
   "communityDetailChatsAction": "Xats →",
   "communityDetailTiersAction": "Nivells",
-
   "communityMembersGroupNoTier": "Sense nivell",
   "communityMembersTierCount": "{count, plural, =0{Sense membres} one{{count} membre} other{{count} membres}}",
   "communityMembersYou": "★ Tu",
@@ -1949,7 +1919,6 @@
   "communityMembersEmptyTitle": "Encara no hi ha membres",
   "communityMembersEmptyBody": "Els membres apareixeran aquí quan s'uneixin a aquesta comunitat.",
   "communityMembersLoadError": "No s'han pogut carregar els membres",
-
   "personalRewardsTitle": "Recompenses",
   "personalRewardsRedeemXpTitle": "Bescanvia el teu XP",
   "personalRewardsXpUnit": "XP",
@@ -1962,7 +1931,6 @@
   "personalRewardsFailedToLoad": "No s'han pogut carregar les recompenses",
   "leaderboardEntryYou": "Tu",
   "leaderboardEntryBadgeCount": "{count, plural, =1{{count} insígnia} other{{count} insígnies}}",
-
   "communityRewardsComingSoonTitle": "Recompenses ben aviat",
   "communityRewardsComingSoonBody": "Aquí apareixeran els objectius, les insígnies i les recompenses d'aquesta comunitat.",
   "communityRewardsPointsLabel": "Els teus punts",
@@ -1984,11 +1952,9 @@
   "communityRewardsGoalsEmpty": "Encara no hi ha objectius.",
   "communityRewardsBadgesEmpty": "Encara no hi ha insígnies.",
   "communityRewardsRewardsEmpty": "Encara no hi ha recompenses.",
-
   "communityRewardsAddGoal": "Objectiu",
   "communityRewardsAddReward": "Recompensa",
   "communityRewardsAddBadge": "Insígnia",
-
   "communityGoalEditorNewTitle": "Nou objectiu",
   "communityGoalEditorEditTitle": "Edita l'objectiu",
   "communityGoalTitleLabel": "Títol",
@@ -2001,7 +1967,6 @@
   "communityGoalTargetRequired": "Introdueix un objectiu superior a 0",
   "communityGoalRewardPointsLabel": "Punts de recompensa",
   "communityGoalRewardPointsRequired": "Introdueix els punts de recompensa",
-
   "communityRewardEditorNewTitle": "Nova recompensa",
   "communityRewardEditorEditTitle": "Edita la recompensa",
   "communityRewardTitleLabel": "Títol",
@@ -2010,7 +1975,6 @@
   "communityRewardCostLabel": "Cost (punts)",
   "communityRewardCostRequired": "Introdueix un cost",
   "communityRewardStockLabel": "Estoc (buit = il·limitat)",
-
   "communityBadgeEditorNewTitle": "Nova insígnia",
   "communityBadgeEditorEditTitle": "Edita la insígnia",
   "communityBadgeTitleLabel": "Títol",
@@ -2024,23 +1988,19 @@
   "communityBadgeValueRequired": "Introdueix un valor",
   "communityBadgeChallengesLabel": "Reptes",
   "communityBadgeChallengesEmpty": "Encara no hi ha reptes disponibles.",
-
   "communityRewardsDeleteTitle": "Vols eliminar-ho?",
   "communityRewardsDeleteBody": "Vols eliminar «{title}»? No es pot desfer.",
-
   "communityEventsMyView": "La meva vista",
   "communityEventsAttendeeView": "Vista d'assistent",
   "communityEventVisibilityPublic": "Públic",
   "communityEventVisibilityMembers": "Membres",
   "communityEventVisibilityTier": "Nivell",
-
   "businessGoalTitle": "Quin és el teu objectiu?",
   "businessGoalSubtitle": "Adaptarem la teva configuració segons el que vulguis aconseguir.",
   "businessGoalVenueTitle": "Omplir el meu local",
   "businessGoalVenueDescription": "Tinc un lloc físic (bar, gimnàs, botiga, estudi) i vull que hi vinguin comunitats.",
   "businessGoalProductTitle": "Promocionar un producte o servei",
   "businessGoalProductDescription": "Vull arribar a comunitats en una o més ciutats, sense local físic.",
-
   "businessProductIdentityTitle": "Parla'ns de la teva marca",
   "businessProductIdentitySubtitle": "Afegeix el teu nom, categoria i logotip perquè les comunitats sàpiguen qui ets.",
   "businessProductIdentityIncomplete": "Afegeix un nom i almenys una categoria.",
@@ -2050,13 +2010,11 @@
   "businessProductCategoryHint": "Tria'n fins a 3 que et descriguin millor.",
   "businessProductTypeLabel": "Tipus de producte",
   "businessProductTypeHint": "Quin tipus de producte o servei és?",
-
   "businessProductCitiesTitle": "A quines ciutats vols arribar?",
   "businessProductCitiesSubtitle": "Pla gratuït: fins a {limit} ciutats. Passa a Premium per a un abast il·limitat.",
   "businessProductCitiesRequired": "Selecciona almenys una ciutat.",
   "businessProductCitiesLimitReached": "El pla gratuït inclou fins a {limit} ciutats. Passa a Premium per afegir-ne més.",
   "businessProductCitiesCounter": "{selected} de {limit} ciutats seleccionades",
-
   "businessProductAboutTitle": "Afegeix uns quants detalls més",
   "businessProductAboutSubtitle": "Tot és opcional, però ajuda les comunitats a decidir treballar amb tu.",
   "businessProductOfferingLabel": "Què ofereixes",
@@ -2067,15 +2025,17 @@
   "businessProductPhotosLabel": "Fotos (opcional)",
   "businessProductPhotosEmptyTitle": "Afegeix fotos",
   "businessProductPhotosEmptyDescription": "Mostra el que ofereixes. Puja les teves fotos, elimina les que no vulguis i ordena-les aquí.",
-
   "communityStep1SizeHelper": "Aproximadament, quants membres té la teva comunitat?",
-
   "missionsTitle": "Missions",
   "missionsProgress": "{progress}/{target}",
   "@missionsProgress": {
     "placeholders": {
-      "progress": { "type": "int" },
-      "target": { "type": "int" }
+      "progress": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
     }
   },
   "missionsPointsLabel": "pts",
@@ -2136,21 +2096,6 @@
   "permissionDeniedDialogLater": "Més tard",
   "permissionDeniedDialogOpenSettings": "Obre la configuració",
   "subscriptionManageAppleFailed": "No s'han pogut obrir les teves subscripcions de l'App Store. Ves a Configuració › el teu nom › Subscripcions per gestionar-la o cancel·lar-la.",
-  "communityFollow": "Segueix",
-  "communityFollowing": "Seguint",
-  "communityFollowedSnack": "Ja la segueixes. Els seus esdeveniments apareixeran al teu feed.",
-  "communityUnfollowedSnack": "Has deixat de seguir-la.",
-  "communityFollowFailed": "No s'ha pogut actualitzar. Torna-ho a provar.",
-  "communityBecomeMember": "Fes-te membre",
-  "communityMemberBadge": "Membre",
-  "communityApplicationTitle": "Fes-te membre",
-  "communityApplicationIntro": "{community} fa unes preguntes abans d'afegir nous membres.",
-  "communityApplicationOptional": "Opcional",
-  "communityApplicationRequiredError": "Respon a això, si us plau",
-  "communityApplicationSubmit": "ENVIA LA SOL·LICITUD",
-  "communityApplicationSentSnack": "Sol·licitud enviada. L'organitzador la revisarà.",
-  "communityApplicationJoinedSnack": "Ja ets membre.",
-  "communityApplicationFailed": "No s'ha pogut enviar la teva sol·licitud. Torna-ho a provar.",
   "qrHubTitle": "Escaneja o comparteix",
   "qrHubScanTitle": "Escaneja un codi",
   "qrHubScanSubtitle": "Fes check-in en un esdeveniment o emparella't per jugar un repte",
@@ -2202,5 +2147,34 @@
   "eventQrNotAuthorized": "Només l'organitzador d'aquest esdeveniment pot mostrar el seu codi de check-in.",
   "verifyScanErrorTitle": "No s'ha pogut confirmar",
   "checkinAlreadyTitle": "Ja tens el check-in fet",
-  "verifyScanUnreachable": "No s'ha pogut connectar amb el servidor. Comprova la connexió i torna a escanejar."
+  "verifyScanUnreachable": "No s'ha pogut connectar amb el servidor. Comprova la connexió i torna a escanejar.",
+  "eventQrViewCheckins": "Mostra els registres",
+  "communityFollow": "Segueix",
+  "communityFollowing": "Seguint",
+  "communityFollowedSnack": "Ja la segueixes. Els seus esdeveniments apareixeran al teu feed.",
+  "communityUnfollowedSnack": "Has deixat de seguir-la.",
+  "communityFollowFailed": "No s'ha pogut actualitzar. Torna-ho a provar.",
+  "communityBecomeMember": "Fes-te membre",
+  "communityMemberBadge": "Membre",
+  "communityApplicationTitle": "Fes-te membre",
+  "communityApplicationIntro": "{community} fa unes preguntes abans d'afegir nous membres.",
+  "communityApplicationOptional": "Opcional",
+  "communityApplicationRequiredError": "Respon a això, si us plau",
+  "communityApplicationSubmit": "ENVIA LA SOL·LICITUD",
+  "communityApplicationSentSnack": "Sol·licitud enviada. L'organitzador la revisarà.",
+  "communityApplicationJoinedSnack": "Ja ets membre.",
+  "communityApplicationFailed": "No s'ha pogut enviar la teva sol·licitud. Torna-ho a provar.",
+  "challengeTogetherTitle": "Junts",
+  "challengeTogetherWaiting": "Esperant que {name} ho confirmi…",
+  "challengeTogetherEachEarns": "{points} XP per a cadascú",
+  "challengeTogetherRevealTitle": "Ben fet!",
+  "challengeTogetherRevealBody": "Tu i {name} ho heu guanyat tots dos.",
+  "challengeTogetherPrompt": "Vosaltres dos: {challenge}",
+  "attendeeHomeScopeAll": "Tots els esdeveniments",
+  "attendeeHomeScopeFollowing": "Seguint",
+  "attendeeHomeNoFollowsTitle": "Encara no segueixes ningú",
+  "attendeeHomeNoFollowsHint": "Segueix una comunitat i tot el que organitzi apareixerà aquí.",
+  "attendeeHomeNoFollowedEventsTitle": "Res de pròxim",
+  "attendeeHomeNoFollowedEventsHint": "Les comunitats que segueixes encara no han anunciat res.",
+  "attendeeHomeFollowMore": "Segueix més comunitats"
 }

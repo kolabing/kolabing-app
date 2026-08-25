@@ -64,8 +64,7 @@ class ChallengeCompletion {
       eventId: json['event_id'] as String,
       challengerProfileId: json['challenger_profile_id'] as String,
       verifierProfileId: json['verifier_profile_id'] as String,
-      status:
-          ChallengeCompletionStatus.fromString(json['status'] as String),
+      status: ChallengeCompletionStatus.fromString(json['status'] as String),
       pointsEarned: json['points_earned'] as int,
       completedAt: json['completed_at'] != null
           ? DateTime.parse(json['completed_at'] as String)
@@ -73,7 +72,9 @@ class ChallengeCompletion {
       createdAt: DateTime.parse(json['created_at'] as String),
       challengeName: json['challenge_name'] as String?,
       challengeDifficulty: json['challenge_difficulty'] != null
-          ? ChallengeDifficulty.fromString(json['challenge_difficulty'] as String)
+          ? ChallengeDifficulty.fromString(
+              json['challenge_difficulty'] as String,
+            )
           : null,
       eventName: json['event_name'] as String?,
       challengerName: json['challenger_name'] as String?,
@@ -116,16 +117,16 @@ class ChallengeCompletion {
   bool get isRejected => status == ChallengeCompletionStatus.rejected;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        if (challenge != null) 'challenge': challenge!.toJson(),
-        'event_id': eventId,
-        'challenger_profile_id': challengerProfileId,
-        'verifier_profile_id': verifierProfileId,
-        'status': status.toApiValue(),
-        'points_earned': pointsEarned,
-        if (completedAt != null) 'completed_at': completedAt!.toIso8601String(),
-        'created_at': createdAt.toIso8601String(),
-      };
+    'id': id,
+    if (challenge != null) 'challenge': challenge!.toJson(),
+    'event_id': eventId,
+    'challenger_profile_id': challengerProfileId,
+    'verifier_profile_id': verifierProfileId,
+    'status': status.toApiValue(),
+    'points_earned': pointsEarned,
+    if (completedAt != null) 'completed_at': completedAt!.toIso8601String(),
+    'created_at': createdAt.toIso8601String(),
+  };
 
   ChallengeCompletion copyWith({
     String? id,
@@ -137,16 +138,15 @@ class ChallengeCompletion {
     int? pointsEarned,
     DateTime? completedAt,
     DateTime? createdAt,
-  }) =>
-      ChallengeCompletion(
-        id: id ?? this.id,
-        challenge: challenge ?? this.challenge,
-        eventId: eventId ?? this.eventId,
-        challengerProfileId: challengerProfileId ?? this.challengerProfileId,
-        verifierProfileId: verifierProfileId ?? this.verifierProfileId,
-        status: status ?? this.status,
-        pointsEarned: pointsEarned ?? this.pointsEarned,
-        completedAt: completedAt ?? this.completedAt,
-        createdAt: createdAt ?? this.createdAt,
-      );
+  }) => ChallengeCompletion(
+    id: id ?? this.id,
+    challenge: challenge ?? this.challenge,
+    eventId: eventId ?? this.eventId,
+    challengerProfileId: challengerProfileId ?? this.challengerProfileId,
+    verifierProfileId: verifierProfileId ?? this.verifierProfileId,
+    status: status ?? this.status,
+    pointsEarned: pointsEarned ?? this.pointsEarned,
+    completedAt: completedAt ?? this.completedAt,
+    createdAt: createdAt ?? this.createdAt,
+  );
 }

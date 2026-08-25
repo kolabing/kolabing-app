@@ -91,15 +91,15 @@ class RewardClaim {
   String get rewardName => eventReward?.name ?? 'Unknown Reward';
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        if (eventReward != null) 'event_reward': eventReward!.toJson(),
-        'profile_id': profileId,
-        'status': status.toApiValue(),
-        'won_at': wonAt.toIso8601String(),
-        if (redeemedAt != null) 'redeemed_at': redeemedAt!.toIso8601String(),
-        if (redeemToken != null) 'redeem_token': redeemToken,
-        'created_at': createdAt.toIso8601String(),
-      };
+    'id': id,
+    if (eventReward != null) 'event_reward': eventReward!.toJson(),
+    'profile_id': profileId,
+    'status': status.toApiValue(),
+    'won_at': wonAt.toIso8601String(),
+    if (redeemedAt != null) 'redeemed_at': redeemedAt!.toIso8601String(),
+    if (redeemToken != null) 'redeem_token': redeemToken,
+    'created_at': createdAt.toIso8601String(),
+  };
 
   RewardClaim copyWith({
     String? id,
@@ -110,25 +110,21 @@ class RewardClaim {
     DateTime? redeemedAt,
     String? redeemToken,
     DateTime? createdAt,
-  }) =>
-      RewardClaim(
-        id: id ?? this.id,
-        eventReward: eventReward ?? this.eventReward,
-        profileId: profileId ?? this.profileId,
-        status: status ?? this.status,
-        wonAt: wonAt ?? this.wonAt,
-        redeemedAt: redeemedAt ?? this.redeemedAt,
-        redeemToken: redeemToken ?? this.redeemToken,
-        createdAt: createdAt ?? this.createdAt,
-      );
+  }) => RewardClaim(
+    id: id ?? this.id,
+    eventReward: eventReward ?? this.eventReward,
+    profileId: profileId ?? this.profileId,
+    status: status ?? this.status,
+    wonAt: wonAt ?? this.wonAt,
+    redeemedAt: redeemedAt ?? this.redeemedAt,
+    redeemToken: redeemToken ?? this.redeemToken,
+    createdAt: createdAt ?? this.createdAt,
+  );
 }
 
 /// Result of a spin-the-wheel action
 class SpinResult {
-  const SpinResult({
-    required this.won,
-    this.rewardClaim,
-  });
+  const SpinResult({required this.won, this.rewardClaim});
 
   factory SpinResult.fromJson(Map<String, dynamic> json) {
     return SpinResult(

@@ -19,7 +19,9 @@ class GamificationBadge {
       icon: json['icon'] as String,
       milestoneType: json['milestone_type'] as String,
       milestoneValue: json['milestone_value'] as int,
-      slug: json['slug'] as String? ?? json['name']?.toString().toLowerCase().replaceAll(' ', '-'),
+      slug:
+          json['slug'] as String? ??
+          json['name']?.toString().toLowerCase().replaceAll(' ', '-'),
       iconUrl: json['icon_url'] as String?,
     );
   }
@@ -38,15 +40,15 @@ class GamificationBadge {
   int get thresholdValue => milestoneValue;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'description': description,
-        'icon': icon,
-        'milestone_type': milestoneType,
-        'milestone_value': milestoneValue,
-        if (slug != null) 'slug': slug,
-        if (iconUrl != null) 'icon_url': iconUrl,
-      };
+    'id': id,
+    'name': name,
+    'description': description,
+    'icon': icon,
+    'milestone_type': milestoneType,
+    'milestone_value': milestoneValue,
+    if (slug != null) 'slug': slug,
+    if (iconUrl != null) 'icon_url': iconUrl,
+  };
 }
 
 /// Badge award model - when a user earns a badge
@@ -76,17 +78,15 @@ class BadgeAward {
   String get badgeIcon => badge.icon;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'badge': badge.toJson(),
-        'awarded_at': awardedAt.toIso8601String(),
-      };
+    'id': id,
+    'badge': badge.toJson(),
+    'awarded_at': awardedAt.toIso8601String(),
+  };
 }
 
 /// Response for badges list
 class BadgesResponse {
-  const BadgesResponse({
-    required this.badges,
-  });
+  const BadgesResponse({required this.badges});
 
   factory BadgesResponse.fromJson(Map<String, dynamic> json) {
     final badgesJson = json['badges'] as List<dynamic>;
@@ -102,9 +102,7 @@ class BadgesResponse {
 
 /// Response for user's earned badges
 class MyBadgesResponse {
-  const MyBadgesResponse({
-    required this.badges,
-  });
+  const MyBadgesResponse({required this.badges});
 
   factory MyBadgesResponse.fromJson(Map<String, dynamic> json) {
     final badgesJson = json['badges'] as List<dynamic>;

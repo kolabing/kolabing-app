@@ -708,7 +708,7 @@
   "attendeeNavScan": "Escanear",
   "attendeeNavProfile": "Perfil",
   "attendeeMyQrTitle": "Mi QR de perfil",
-  "attendeeMyQrSubtitle": "Muéstralo a un organizador para registrarte o conectar.",
+  "attendeeMyQrSubtitle": "Deja que alguien lo escanee para hacerte check-in o emparejaros en un reto.",
   "attendeeMyQrTooltip": "Mi código QR",
   "attendeeMyQrUnavailable": "Tu QR de perfil aún no está listo.",
   "attendeeHomeWelcomeBack": "Bienvenido de nuevo",
@@ -844,7 +844,6 @@
   "eventDiscoveryApply": "Aplicar",
   "eventQrTitle": "Registro del evento",
   "eventQrInstructions": "Los asistentes pueden escanear este código QR para registrarse en tu evento",
-  "eventQrViewCheckins": "Ver registros",
   "eventQrGenerating": "Generando código QR...",
   "eventQrErrorTitle": "No se pudo generar el código QR",
   "eventQrCopyToken": "Copiar token",
@@ -872,8 +871,8 @@
   "qrScannerClose": "Cerrar",
   "qrScannerTitle": "Escanear código QR",
   "qrScannerCheckingIn": "Registrando...",
-  "qrScannerInstructionTitle": "Apunta la cámara al código QR del evento",
-  "qrScannerInstructionSubtitle": "El organizador del evento mostrará el código QR",
+  "qrScannerInstructionTitle": "Apunta la cámara a un código QR de Kolabing",
+  "qrScannerInstructionSubtitle": "El código de check-in de un evento o el QR de perfil de otro miembro",
   "rewardWalletTitle": "Mis recompensas",
   "rewardWalletEmptyTitle": "Todavía no hay recompensas",
   "rewardWalletEmptyBody": "¡Completa retos y gira la ruleta\npara ganar recompensas increíbles!",
@@ -1529,7 +1528,6 @@
   "dashboardGrowViewKolabsSubtitle": "{active} activos · {completed} completados",
   "dashboardEmptyUpcomingSubtitle": "Crea un Kolab para empezar a llenar tu calendario",
   "dashboardHeroCreateKolabButton": "+ CREAR UN KOLAB",
-
   "eventHubOpenChat": "Abrir chat del evento",
   "eventHubAttendeesTitle": "Asistentes",
   "eventHubWaitlistTitle": "Lista de espera",
@@ -1559,7 +1557,6 @@
   "eventHubExtended": "Serie ampliada: {count} fechas nuevas",
   "eventHubExtendedNone": "No hay fechas nuevas que añadir",
   "eventHubAddPhotos": "Añadir fotos",
-
   "eventFormNewTitle": "Nuevo evento",
   "eventFormEditTitle": "Editar evento",
   "eventFormSave": "Guardar",
@@ -1630,7 +1627,6 @@
   "communityShareInvite": "Compartir invitación",
   "communityShareInviteMessage": "Únete a {name} en Kolabing: {url}",
   "communityShareInviteCopied": "Enlace de invitación copiado.",
-
   "notifSettingsTitle": "Notificaciones",
   "notifSettingsMessages": "Mensajes",
   "notifSettingsMessagesSubtitle": "Nuevos mensajes de chat en tus comunidades y eventos",
@@ -1641,7 +1637,6 @@
   "notifSettingsMarketing": "Consejos y novedades",
   "notifSettingsMarketingSubtitle": "Consejos de producto y noticias ocasionales",
   "notifSettingsSaveError": "No se pudo guardar tu preferencia. Inténtalo de nuevo.",
-
   "chatsTitle": "Chats",
   "chatInboxTooltip": "Chats",
   "chatThreadFallbackTitle": "Chat",
@@ -1656,7 +1651,6 @@
   "chatSectionKolabs": "Kolabs",
   "chatComposerHint": "Mensaje",
   "chatThreadEmptyMessage": "Aún no hay mensajes. Saluda 👋",
-
   "chatManageNewChatTitle": "Nuevo chat",
   "chatManageRenameTitle": "Renombrar chat",
   "chatManageNameLabel": "Nombre del chat",
@@ -1683,7 +1677,6 @@
   "chatMemberRemoveBody": "Perderá acceso a este chat y no podrá volver a unirse.",
   "chatMemberRemoved": "Se quitó a {name}",
   "chatThreadManageMembers": "Administrar miembros",
-
   "communityDetailTabChats": "Chats",
   "communityDetailTabEvents": "Eventos",
   "communityDetailTabMembers": "Miembros",
@@ -1709,12 +1702,10 @@
   "communityDetailGalleryLabel": "Galería y eventos pasados",
   "communityDetailGalleryBody": "Las fotos y los eventos pasados estarán aquí cuando se lance el ciclo de vida de eventos (Fase 3).",
   "communityDetailGalleryEmpty": "Aún no hay eventos pasados que mostrar.",
-
   "myCommunitiesNoTier": "Sin nivel todavía",
   "myCommunitiesAdminBadge": "ADMIN",
   "myCommunitiesEmptyTitle": "Aún no perteneces a ninguna comunidad",
   "myCommunitiesEmptyBody": "Únete a una comunidad para ganarte tu lugar en sus niveles y ver eventos y ventajas exclusivos para miembros.",
-
   "communityHubEmptyTitle": "Crea tu comunidad",
   "communityHubEmptyBody": "Crea una comunidad para formar una lista de miembros y configurar tus propios niveles. Tu primera comunidad es gratis.",
   "communityHubCreateCommunity": "CREAR COMUNIDAD",
@@ -1768,7 +1759,6 @@
   "communityHubMemberFallback": "Miembro",
   "communityHubChipAdmin": "ADMIN",
   "communityHubLoadError": "No se pudo cargar tu comunidad",
-
   "createCommunityPremiumTitle": "Community Premium",
   "createCommunityPremiumBody": "Tu plan gratuito incluye una comunidad. Gestionar más de una forma parte de Community Premium — próximamente.",
   "createCommunityTitle": "Nueva comunidad",
@@ -1780,7 +1770,6 @@
   "createCommunityJoinAnyone": "Cualquiera",
   "createCommunityJoinInviteOnly": "Solo con invitación",
   "createCommunitySubmit": "CREAR COMUNIDAD",
-
   "tierEditorEditTitle": "Editar nivel",
   "tierEditorNewTitle": "Nuevo nivel",
   "tierEditorDeleteTooltip": "Eliminar nivel",
@@ -1798,7 +1787,6 @@
   "tierEditorThresholdRequired": "Introduce un umbral de {unit}",
   "tierEditorSave": "GUARDAR",
   "tierEditorCreate": "CREAR NIVEL",
-
   "rosterTitle": "Miembros",
   "rosterInviteTooltip": "Invitar miembro",
   "rosterInviteTitle": "Invitar miembro",
@@ -1838,7 +1826,6 @@
   "friendUnknownName": "Miembro",
   "friendCountOne": "1 amigo",
   "friendCountOther": "{count} amigos",
-
   "discoverCommunitiesTitle": "Descubre comunidades",
   "discoverCommunitiesCta": "Descubre comunidades",
   "discoverCommunitiesJoin": "Unirse",
@@ -1851,9 +1838,7 @@
   "discoverCommunitiesEmptyTitle": "Aún no hay nada que descubrir",
   "discoverCommunitiesEmptyBody": "El descubrimiento de comunidades llegará pronto. Vuelve para encontrar y unirte a comunidades cerca de ti.",
   "discoverCommunitiesError": "No se pudieron cargar las comunidades. Inténtalo de nuevo.",
-
   "commonSkip": "Omitir",
-
   "handleFieldPlaceholder": "tunombre",
   "handleFieldHint": "3-20 caracteres: minúsculas, números y guiones bajos.",
   "handleFieldFormatError": "Usa 3-20 minúsculas, números o guiones bajos.",
@@ -1862,7 +1847,6 @@
   "handleFieldTaken": "Ese nombre de usuario no está disponible.",
   "handleFieldTakenWithSuggestion": "No disponible. Prueba @{suggestion}",
   "handleFieldYours": "Este es tu nombre de usuario actual.",
-
   "attendeeOnboardingStepCounter": "Paso {step} de {total}",
   "attendeeOnboardingStep1Title": "Vamos a configurarte",
   "attendeeOnboardingStep1Subtitle": "Añade tu nombre, elige un nombre de usuario y una foto si quieres.",
@@ -1878,9 +1862,7 @@
   "attendeeOnboardingStep4Subtitle": "Toca para unirte a las que te gusten. Siempre puedes unirte a más después.",
   "attendeeOnboardingFinish": "Finalizar",
   "attendeeOnboardingForYou": "Para ti",
-
   "editProfileHandleLabel": "Nombre de usuario",
-
   "addFriendTitle": "Añadir un amigo",
   "addFriendSubtitle": "Encuentra a alguien por su correo o su @nombre.",
   "addFriendInputHint": "Correo o @nombre",
@@ -1889,12 +1871,10 @@
   "addFriendUnavailable": "Añadir amigos no está disponible ahora mismo.",
   "addFriendError": "Algo salió mal. Inténtalo de nuevo.",
   "addFriendSelf": "Eres tú",
-
   "rosterInviteIdentifierLabel": "Correo o @nombre",
   "rosterInviteIdentifierHint": "nombre@ejemplo.com o @nombre",
   "rosterInviteInvalidIdentifier": "Introduce un correo o @nombre válido.",
   "rosterNoAccountForIdentifier": "Ninguna cuenta de Kolabing coincide con ese correo o nombre de usuario.",
-
   "attendeeHomeEventsTitle": "EVENTOS",
   "attendeeHomeChooseCity": "Elegir ciudad",
   "attendeeHomeFilterToday": "Hoy",
@@ -1910,19 +1890,11 @@
   "attendeeHomePickCityHint": "Elige una ciudad para descubrir eventos cerca de ti.",
   "attendeeHomeNoEventsCity": "No hay eventos en esta ciudad",
   "attendeeHomeNoEventsCityHint": "Prueba otra ciudad o borra los filtros.",
-  "attendeeHomeScopeAll": "Todos los eventos",
-  "attendeeHomeScopeFollowing": "Siguiendo",
-  "attendeeHomeNoFollowsTitle": "A\u00fan no sigues a nadie",
-  "attendeeHomeNoFollowsHint": "Sigue a una comunidad y todo lo que organice aparecer\u00e1 aqu\u00ed.",
-  "attendeeHomeNoFollowedEventsTitle": "Nada pr\u00f3ximamente",
-  "attendeeHomeNoFollowedEventsHint": "Las comunidades que sigues a\u00fan no han anunciado nada.",
-  "attendeeHomeFollowMore": "Sigue m\u00e1s comunidades",
   "eventPartnerBusiness": "Negocio",
   "eventPartnerCommunity": "Comunidad",
   "eventDateToday": "Hoy",
   "eventDateTomorrow": "Mañana",
   "eventDateInDays": "En {days} días",
-
   "attendeeCommunityProfileErrorTitle": "No se pudo cargar la comunidad",
   "attendeeCommunityProfileTypeFallback": "Comunidad",
   "attendeeCommunityProfileMemberCount": "{count, plural, =0{Aún sin miembros} one{{count} miembro} other{{count} miembros}}",
@@ -1937,11 +1909,9 @@
   "attendeeCommunityProfileRequestedSnack": "Solicitud enviada",
   "attendeeCommunityProfileRequestUnavailable": "Las solicitudes aún no están disponibles. Inténtalo más tarde.",
   "attendeeCommunityProfileOpenCommunity": "Abrir comunidad",
-
   "communityDetailTabRewards": "Recompensas",
   "communityDetailChatsAction": "Chats →",
   "communityDetailTiersAction": "Niveles",
-
   "communityMembersGroupNoTier": "Sin nivel",
   "communityMembersTierCount": "{count, plural, =0{Sin miembros} one{{count} miembro} other{{count} miembros}}",
   "communityMembersYou": "★ Tú",
@@ -1949,7 +1919,6 @@
   "communityMembersEmptyTitle": "Aún no hay miembros",
   "communityMembersEmptyBody": "Los miembros aparecerán aquí cuando se unan a esta comunidad.",
   "communityMembersLoadError": "No se pudieron cargar los miembros",
-
   "personalRewardsTitle": "Recompensas",
   "personalRewardsRedeemXpTitle": "Canjea tu XP",
   "personalRewardsXpUnit": "XP",
@@ -1962,7 +1931,6 @@
   "personalRewardsFailedToLoad": "No se pudieron cargar las recompensas",
   "leaderboardEntryYou": "Tú",
   "leaderboardEntryBadgeCount": "{count, plural, =1{{count} insignia} other{{count} insignias}}",
-
   "communityRewardsComingSoonTitle": "Recompensas próximamente",
   "communityRewardsComingSoonBody": "Aquí aparecerán los objetivos, las insignias y las recompensas de esta comunidad.",
   "communityRewardsPointsLabel": "Tus puntos",
@@ -1984,11 +1952,9 @@
   "communityRewardsGoalsEmpty": "Aún no hay objetivos.",
   "communityRewardsBadgesEmpty": "Aún no hay insignias.",
   "communityRewardsRewardsEmpty": "Aún no hay recompensas.",
-
   "communityRewardsAddGoal": "Objetivo",
   "communityRewardsAddReward": "Recompensa",
   "communityRewardsAddBadge": "Insignia",
-
   "communityGoalEditorNewTitle": "Nuevo objetivo",
   "communityGoalEditorEditTitle": "Editar objetivo",
   "communityGoalTitleLabel": "Título",
@@ -2001,7 +1967,6 @@
   "communityGoalTargetRequired": "Introduce un objetivo mayor que 0",
   "communityGoalRewardPointsLabel": "Puntos de recompensa",
   "communityGoalRewardPointsRequired": "Introduce los puntos de recompensa",
-
   "communityRewardEditorNewTitle": "Nueva recompensa",
   "communityRewardEditorEditTitle": "Editar recompensa",
   "communityRewardTitleLabel": "Título",
@@ -2010,7 +1975,6 @@
   "communityRewardCostLabel": "Coste (puntos)",
   "communityRewardCostRequired": "Introduce un coste",
   "communityRewardStockLabel": "Existencias (vacío = ilimitadas)",
-
   "communityBadgeEditorNewTitle": "Nueva insignia",
   "communityBadgeEditorEditTitle": "Editar insignia",
   "communityBadgeTitleLabel": "Título",
@@ -2024,23 +1988,19 @@
   "communityBadgeValueRequired": "Introduce un valor",
   "communityBadgeChallengesLabel": "Retos",
   "communityBadgeChallengesEmpty": "Aún no hay retos disponibles.",
-
   "communityRewardsDeleteTitle": "¿Eliminar?",
   "communityRewardsDeleteBody": "¿Eliminar «{title}»? No se puede deshacer.",
-
   "communityEventsMyView": "Mi vista",
   "communityEventsAttendeeView": "Vista de asistente",
   "communityEventVisibilityPublic": "Público",
   "communityEventVisibilityMembers": "Miembros",
   "communityEventVisibilityTier": "Nivel",
-
   "businessGoalTitle": "¿Cuál es tu objetivo?",
   "businessGoalSubtitle": "Adaptaremos tu configuración según lo que quieras conseguir.",
   "businessGoalVenueTitle": "Llenar mi local",
   "businessGoalVenueDescription": "Tengo un sitio físico (bar, gimnasio, tienda, estudio) y quiero que vengan comunidades.",
   "businessGoalProductTitle": "Promocionar un producto o servicio",
   "businessGoalProductDescription": "Quiero llegar a comunidades en una o varias ciudades, sin local físico.",
-
   "businessProductIdentityTitle": "Háblanos de tu marca",
   "businessProductIdentitySubtitle": "Añade tu nombre, categoría y logotipo para que las comunidades sepan quién eres.",
   "businessProductIdentityIncomplete": "Añade un nombre y al menos una categoría.",
@@ -2050,13 +2010,11 @@
   "businessProductCategoryHint": "Elige hasta 3 que mejor te describan.",
   "businessProductTypeLabel": "Tipo de producto",
   "businessProductTypeHint": "¿Qué tipo de producto o servicio es?",
-
   "businessProductCitiesTitle": "¿A qué ciudades quieres llegar?",
   "businessProductCitiesSubtitle": "Plan gratuito: hasta {limit} ciudades. Pasa a Premium para un alcance ilimitado.",
   "businessProductCitiesRequired": "Selecciona al menos una ciudad.",
   "businessProductCitiesLimitReached": "El plan gratuito incluye hasta {limit} ciudades. Pasa a Premium para añadir más.",
   "businessProductCitiesCounter": "{selected} de {limit} ciudades seleccionadas",
-
   "businessProductAboutTitle": "Añade algunos detalles más",
   "businessProductAboutSubtitle": "Todo es opcional, pero ayuda a las comunidades a decidir trabajar contigo.",
   "businessProductOfferingLabel": "Qué ofreces",
@@ -2067,15 +2025,17 @@
   "businessProductPhotosLabel": "Fotos (opcional)",
   "businessProductPhotosEmptyTitle": "Añadir fotos",
   "businessProductPhotosEmptyDescription": "Muestra lo que ofreces. Sube tus propias fotos, elimina las que no quieras y ordénalas aquí.",
-
   "communityStep1SizeHelper": "¿Aproximadamente cuántos miembros tiene tu comunidad?",
-
   "missionsTitle": "Misiones",
   "missionsProgress": "{progress}/{target}",
   "@missionsProgress": {
     "placeholders": {
-      "progress": { "type": "int" },
-      "target": { "type": "int" }
+      "progress": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      }
     }
   },
   "missionsPointsLabel": "pts",
@@ -2136,21 +2096,6 @@
   "permissionDeniedDialogLater": "Más tarde",
   "permissionDeniedDialogOpenSettings": "Abrir ajustes",
   "subscriptionManageAppleFailed": "No se han podido abrir tus suscripciones de la App Store. Ve a Ajustes › tu nombre › Suscripciones para gestionarla o cancelarla.",
-  "communityFollow": "Seguir",
-  "communityFollowing": "Siguiendo",
-  "communityFollowedSnack": "Ya la sigues. Sus eventos aparecerán en tu feed.",
-  "communityUnfollowedSnack": "Has dejado de seguirla.",
-  "communityFollowFailed": "No se pudo actualizar. Inténtalo de nuevo.",
-  "communityBecomeMember": "Hazte miembro",
-  "communityMemberBadge": "Miembro",
-  "communityApplicationTitle": "Hazte miembro",
-  "communityApplicationIntro": "{community} hace algunas preguntas antes de añadir nuevos miembros.",
-  "communityApplicationOptional": "Opcional",
-  "communityApplicationRequiredError": "Responde a esto, por favor",
-  "communityApplicationSubmit": "ENVIAR SOLICITUD",
-  "communityApplicationSentSnack": "Solicitud enviada. El organizador la revisará.",
-  "communityApplicationJoinedSnack": "Ya eres miembro.",
-  "communityApplicationFailed": "No se pudo enviar tu solicitud. Inténtalo de nuevo.",
   "qrHubTitle": "Escanear o compartir",
   "qrHubScanTitle": "Escanear un código",
   "qrHubScanSubtitle": "Haz check-in en un evento o empareja para jugar un reto",
@@ -2202,5 +2147,34 @@
   "eventQrNotAuthorized": "Solo el organizador de este evento puede mostrar su código de check-in.",
   "verifyScanErrorTitle": "No se pudo confirmar",
   "checkinAlreadyTitle": "Ya tienes el check-in hecho",
-  "verifyScanUnreachable": "No se pudo conectar con el servidor. Comprueba tu conexión y vuelve a escanear."
+  "verifyScanUnreachable": "No se pudo conectar con el servidor. Comprueba tu conexión y vuelve a escanear.",
+  "eventQrViewCheckins": "Ver registros",
+  "communityFollow": "Seguir",
+  "communityFollowing": "Siguiendo",
+  "communityFollowedSnack": "Ya la sigues. Sus eventos aparecerán en tu feed.",
+  "communityUnfollowedSnack": "Has dejado de seguirla.",
+  "communityFollowFailed": "No se pudo actualizar. Inténtalo de nuevo.",
+  "communityBecomeMember": "Hazte miembro",
+  "communityMemberBadge": "Miembro",
+  "communityApplicationTitle": "Hazte miembro",
+  "communityApplicationIntro": "{community} hace algunas preguntas antes de añadir nuevos miembros.",
+  "communityApplicationOptional": "Opcional",
+  "communityApplicationRequiredError": "Responde a esto, por favor",
+  "communityApplicationSubmit": "ENVIAR SOLICITUD",
+  "communityApplicationSentSnack": "Solicitud enviada. El organizador la revisará.",
+  "communityApplicationJoinedSnack": "Ya eres miembro.",
+  "communityApplicationFailed": "No se pudo enviar tu solicitud. Inténtalo de nuevo.",
+  "challengeTogetherTitle": "Juntos",
+  "challengeTogetherWaiting": "Esperando a que {name} confirme…",
+  "challengeTogetherEachEarns": "{points} XP para cada uno",
+  "challengeTogetherRevealTitle": "¡Bien hecho!",
+  "challengeTogetherRevealBody": "{name} y tú lo habéis ganado los dos.",
+  "challengeTogetherPrompt": "Vosotros dos: {challenge}",
+  "attendeeHomeScopeAll": "Todos los eventos",
+  "attendeeHomeScopeFollowing": "Siguiendo",
+  "attendeeHomeNoFollowsTitle": "Aún no sigues a nadie",
+  "attendeeHomeNoFollowsHint": "Sigue a una comunidad y todo lo que organice aparecerá aquí.",
+  "attendeeHomeNoFollowedEventsTitle": "Nada próximamente",
+  "attendeeHomeNoFollowedEventsHint": "Las comunidades que sigues aún no han anunciado nada.",
+  "attendeeHomeFollowMore": "Sigue más comunidades"
 }

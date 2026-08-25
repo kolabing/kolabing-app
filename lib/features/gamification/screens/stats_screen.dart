@@ -25,7 +25,9 @@ class StatsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context).statsScreenTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
         actions: [
@@ -40,7 +42,8 @@ class StatsScreen extends ConsumerWidget {
         loading: () => Center(
           child: CircularProgressIndicator(color: context.colors.primary),
         ),
-        error: (error, stack) => _buildErrorState(context, ref, error.toString()),
+        error: (error, stack) =>
+            _buildErrorState(context, ref, error.toString()),
       ),
     );
   }
@@ -114,13 +117,18 @@ class StatsScreen extends ConsumerWidget {
               const SizedBox(width: KolabingSpacing.sm),
               Text(
                 '${stats.totalPoints}',
-                style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 48, fontWeight: FontWeight.w700, color: context.colors.onPrimary),
+                style: KolabingTextStyles.bodyLarge.copyWith(
+                  fontSize: 48,
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.onPrimary,
+                ),
               ),
             ],
           ),
           Text(
             AppLocalizations.of(context).statsScreenTotalPoints,
-            style: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.onPrimary.withValues(alpha: 0.9),
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              color: context.colors.onPrimary.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -185,7 +193,12 @@ class StatsScreen extends ConsumerWidget {
         children: [
           Text(
             l10n.statsScreenDetailedStats,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.2),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurfaceVariant,
+              letterSpacing: 1.2,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.md),
 
@@ -257,12 +270,18 @@ class StatsScreen extends ConsumerWidget {
         Expanded(
           child: Text(
             label,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
         ),
         Text(
           value,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: context.colors.onSurface,
+          ),
         ),
       ],
     );
@@ -274,7 +293,12 @@ class StatsScreen extends ConsumerWidget {
       children: [
         Text(
           AppLocalizations.of(context).statsScreenQuickActions,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.2),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: context.colors.onSurfaceVariant,
+            letterSpacing: 1.2,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Row(
@@ -319,9 +343,7 @@ class StatsScreen extends ConsumerWidget {
         decoration: BoxDecoration(
           color: context.colors.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: context.colors.darkBorder,
-          ),
+          border: Border.all(color: context.colors.darkBorder),
         ),
         child: Column(
           children: [
@@ -332,7 +354,11 @@ class StatsScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               label,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
+              ),
             ),
           ],
         ),
@@ -347,7 +373,9 @@ class StatsScreen extends ConsumerWidget {
         content: Text(AppLocalizations.of(context).statsScreenShareComingSoon),
         backgroundColor: context.colors.info,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(KolabingRadius.md)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(KolabingRadius.md),
+        ),
       ),
     );
   }
@@ -367,12 +395,17 @@ class StatsScreen extends ConsumerWidget {
             const SizedBox(height: KolabingSpacing.md),
             Text(
               AppLocalizations.of(context).statsScreenFailedToLoad,
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               error,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: KolabingSpacing.md),

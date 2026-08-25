@@ -55,17 +55,17 @@ class EventReward {
   String get probabilityPercent => '${(probability * 100).toStringAsFixed(1)}%';
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'event_id': eventId,
-        'name': name,
-        if (description != null) 'description': description,
-        'total_quantity': totalQuantity,
-        'remaining_quantity': remainingQuantity,
-        'probability': probability,
-        if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),
-        'created_at': createdAt.toIso8601String(),
-        'updated_at': updatedAt.toIso8601String(),
-      };
+    'id': id,
+    'event_id': eventId,
+    'name': name,
+    if (description != null) 'description': description,
+    'total_quantity': totalQuantity,
+    'remaining_quantity': remainingQuantity,
+    'probability': probability,
+    if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),
+    'created_at': createdAt.toIso8601String(),
+    'updated_at': updatedAt.toIso8601String(),
+  };
 
   EventReward copyWith({
     String? id,
@@ -78,17 +78,16 @@ class EventReward {
     DateTime? expiresAt,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) =>
-      EventReward(
-        id: id ?? this.id,
-        eventId: eventId ?? this.eventId,
-        name: name ?? this.name,
-        description: description ?? this.description,
-        totalQuantity: totalQuantity ?? this.totalQuantity,
-        remainingQuantity: remainingQuantity ?? this.remainingQuantity,
-        probability: probability ?? this.probability,
-        expiresAt: expiresAt ?? this.expiresAt,
-        createdAt: createdAt ?? this.createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
+  }) => EventReward(
+    id: id ?? this.id,
+    eventId: eventId ?? this.eventId,
+    name: name ?? this.name,
+    description: description ?? this.description,
+    totalQuantity: totalQuantity ?? this.totalQuantity,
+    remainingQuantity: remainingQuantity ?? this.remainingQuantity,
+    probability: probability ?? this.probability,
+    expiresAt: expiresAt ?? this.expiresAt,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
 }

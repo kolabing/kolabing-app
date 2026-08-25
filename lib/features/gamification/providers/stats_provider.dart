@@ -38,8 +38,10 @@ final myStatsProvider = FutureProvider.autoDispose<GamificationStats>((
 // =============================================================================
 
 /// Provider for user's public game card
-final gameCardProvider =
-    FutureProvider.autoDispose.family<GameCard, String>((ref, profileId) async {
+final gameCardProvider = FutureProvider.autoDispose.family<GameCard, String>((
+  ref,
+  profileId,
+) async {
   final service = ref.watch(statsServiceProvider);
   return service.getGameCard(profileId);
 });

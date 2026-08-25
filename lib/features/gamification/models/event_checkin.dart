@@ -40,15 +40,15 @@ class EventCheckin {
   final int? pointsEarned;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'event_id': eventId,
-        'profile_id': profileId,
-        'checked_in_at': checkedInAt.toIso8601String(),
-        'created_at': createdAt.toIso8601String(),
-        if (eventName != null) 'event_name': eventName,
-        if (profileName != null) 'profile_name': profileName,
-        if (pointsEarned != null) 'points_earned': pointsEarned,
-      };
+    'id': id,
+    'event_id': eventId,
+    'profile_id': profileId,
+    'checked_in_at': checkedInAt.toIso8601String(),
+    'created_at': createdAt.toIso8601String(),
+    if (eventName != null) 'event_name': eventName,
+    if (profileName != null) 'profile_name': profileName,
+    if (pointsEarned != null) 'points_earned': pointsEarned,
+  };
 
   EventCheckin copyWith({
     String? id,
@@ -59,15 +59,14 @@ class EventCheckin {
     String? eventName,
     String? profileName,
     int? pointsEarned,
-  }) =>
-      EventCheckin(
-        id: id ?? this.id,
-        eventId: eventId ?? this.eventId,
-        profileId: profileId ?? this.profileId,
-        checkedInAt: checkedInAt ?? this.checkedInAt,
-        createdAt: createdAt ?? this.createdAt,
-        eventName: eventName ?? this.eventName,
-        profileName: profileName ?? this.profileName,
-        pointsEarned: pointsEarned ?? this.pointsEarned,
-      );
+  }) => EventCheckin(
+    id: id ?? this.id,
+    eventId: eventId ?? this.eventId,
+    profileId: profileId ?? this.profileId,
+    checkedInAt: checkedInAt ?? this.checkedInAt,
+    createdAt: createdAt ?? this.createdAt,
+    eventName: eventName ?? this.eventName,
+    profileName: profileName ?? this.profileName,
+    pointsEarned: pointsEarned ?? this.pointsEarned,
+  );
 }

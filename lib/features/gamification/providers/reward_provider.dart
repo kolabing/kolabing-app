@@ -16,8 +16,10 @@ final rewardServiceProvider = Provider<RewardService>((ref) {
 // =============================================================================
 
 /// Provider for event rewards list
-final eventRewardsProvider =
-    FutureProvider.family<List<EventReward>, String>((ref, eventId) async {
+final eventRewardsProvider = FutureProvider.family<List<EventReward>, String>((
+  ref,
+  eventId,
+) async {
   final service = ref.watch(rewardServiceProvider);
   return service.getEventRewards(eventId);
 });
@@ -109,13 +111,12 @@ class SpinState {
     bool? isLoading,
     String? error,
     bool? isComplete,
-  }) =>
-      SpinState(
-        result: result ?? this.result,
-        isLoading: isLoading ?? this.isLoading,
-        error: error,
-        isComplete: isComplete ?? this.isComplete,
-      );
+  }) => SpinState(
+    result: result ?? this.result,
+    isLoading: isLoading ?? this.isLoading,
+    error: error,
+    isComplete: isComplete ?? this.isComplete,
+  );
 }
 
 /// Notifier for spin operation
@@ -177,24 +178,22 @@ final myRewardsProvider = FutureProvider.autoDispose<RewardWalletResponse>((
 });
 
 /// Provider for paginated rewards
-final myRewardsPaginatedProvider =
-    FutureProvider.autoDispose
-        .family<RewardWalletResponse, ({int page, int limit})>(
-        (ref, params) async {
-  final authState = ref.watch(authProvider);
-  if (!authState.isAuthenticated || authState.user == null) {
-    return RewardWalletResponse(
-      rewards: const <RewardClaim>[],
-      currentPage: params.page,
-      totalPages: 1,
-      totalCount: 0,
-      perPage: params.limit,
-    );
-  }
+final myRewardsPaginatedProvider = FutureProvider.autoDispose
+    .family<RewardWalletResponse, ({int page, int limit})>((ref, params) async {
+      final authState = ref.watch(authProvider);
+      if (!authState.isAuthenticated || authState.user == null) {
+        return RewardWalletResponse(
+          rewards: const <RewardClaim>[],
+          currentPage: params.page,
+          totalPages: 1,
+          totalCount: 0,
+          perPage: params.limit,
+        );
+      }
 
-  final service = ref.watch(rewardServiceProvider);
-  return service.getMyRewards(page: params.page, limit: params.limit);
-});
+      final service = ref.watch(rewardServiceProvider);
+      return service.getMyRewards(page: params.page, limit: params.limit);
+    });
 
 // =============================================================================
 // Redeem QR Provider
@@ -219,13 +218,12 @@ class RedeemQRState {
     bool? isLoading,
     String? error,
     bool? isGenerated,
-  }) =>
-      RedeemQRState(
-        rewardClaim: rewardClaim ?? this.rewardClaim,
-        isLoading: isLoading ?? this.isLoading,
-        error: error,
-        isGenerated: isGenerated ?? this.isGenerated,
-      );
+  }) => RedeemQRState(
+    rewardClaim: rewardClaim ?? this.rewardClaim,
+    isLoading: isLoading ?? this.isLoading,
+    error: error,
+    isGenerated: isGenerated ?? this.isGenerated,
+  );
 }
 
 /// Notifier for generating redeem QR
@@ -284,13 +282,12 @@ class ConfirmRedeemState {
     bool? isLoading,
     String? error,
     bool? isConfirmed,
-  }) =>
-      ConfirmRedeemState(
-        rewardClaim: rewardClaim ?? this.rewardClaim,
-        isLoading: isLoading ?? this.isLoading,
-        error: error,
-        isConfirmed: isConfirmed ?? this.isConfirmed,
-      );
+  }) => ConfirmRedeemState(
+    rewardClaim: rewardClaim ?? this.rewardClaim,
+    isLoading: isLoading ?? this.isLoading,
+    error: error,
+    isConfirmed: isConfirmed ?? this.isConfirmed,
+  );
 }
 
 /// Notifier for confirming redemption (organizer scans QR)
@@ -312,7 +309,9 @@ class ConfirmRedeemNotifier extends Notifier<ConfirmRedeemState> {
       return null;
     } catch (e) {
       state = state.copyWith(
-          isLoading: false, error: 'Failed to confirm redemption');
+        isLoading: false,
+        error: 'Failed to confirm redemption',
+      );
       return null;
     }
   }
@@ -325,5 +324,5 @@ class ConfirmRedeemNotifier extends Notifier<ConfirmRedeemState> {
 /// Provider for confirm redeem operation
 final confirmRedeemProvider =
     NotifierProvider<ConfirmRedeemNotifier, ConfirmRedeemState>(
-  ConfirmRedeemNotifier.new,
-);
+      ConfirmRedeemNotifier.new,
+    );

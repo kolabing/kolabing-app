@@ -210,9 +210,7 @@ class RewardDetailScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: badgeColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: badgeColor.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: badgeColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -349,11 +347,7 @@ class RewardDetailScreen extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            LucideIcons.checkCircle2,
-            size: 48,
-            color: context.colors.info,
-          ),
+          Icon(LucideIcons.checkCircle2, size: 48, color: context.colors.info),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             'This reward has been redeemed',
@@ -386,11 +380,7 @@ class RewardDetailScreen extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            LucideIcons.xCircle,
-            size: 48,
-            color: context.colors.error,
-          ),
+          Icon(LucideIcons.xCircle, size: 48, color: context.colors.error),
           const SizedBox(height: KolabingSpacing.md),
           Text(
             'This reward has expired',

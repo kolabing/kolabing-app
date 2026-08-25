@@ -2391,7 +2391,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attendeeMyQrSubtitle =>
-      'Show this to a host to check in or connect.';
+      'Let someone scan this to check you in or pair up for a challenge.';
 
   @override
   String get attendeeMyQrTooltip => 'My QR code';
@@ -2834,9 +2834,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Attendees can scan this QR code to check in to your event';
 
   @override
-  String get eventQrViewCheckins => 'View Check-ins';
-
-  @override
   String get eventQrGenerating => 'Generating QR Code...';
 
   @override
@@ -2926,11 +2923,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get qrScannerInstructionTitle =>
-      'Point your camera at the event QR code';
+      'Point your camera at a Kolabing QR code';
 
   @override
   String get qrScannerInstructionSubtitle =>
-      'The QR code will be displayed by the event organizer';
+      'An event\'s check-in code, or another member\'s profile QR';
 
   @override
   String get rewardWalletTitle => 'My Rewards';
@@ -6389,29 +6386,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Try another city or clear your filters.';
 
   @override
-  String get attendeeHomeScopeAll => 'All events';
-
-  @override
-  String get attendeeHomeScopeFollowing => 'Following';
-
-  @override
-  String get attendeeHomeNoFollowsTitle => 'You don\'t follow anyone yet';
-
-  @override
-  String get attendeeHomeNoFollowsHint =>
-      'Follow a community and everything it puts on shows up here.';
-
-  @override
-  String get attendeeHomeNoFollowedEventsTitle => 'Nothing coming up';
-
-  @override
-  String get attendeeHomeNoFollowedEventsHint =>
-      'The communities you follow haven\'t announced anything yet.';
-
-  @override
-  String get attendeeHomeFollowMore => 'Follow more communities';
-
-  @override
   String get eventPartnerBusiness => 'Business';
 
   @override
@@ -7117,56 +7091,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.';
 
   @override
-  String get communityFollow => 'Follow';
-
-  @override
-  String get communityFollowing => 'Following';
-
-  @override
-  String get communityFollowedSnack =>
-      'Following. Their events will show up in your feed.';
-
-  @override
-  String get communityUnfollowedSnack => 'Unfollowed.';
-
-  @override
-  String get communityFollowFailed => 'Couldn\'t update that. Try again.';
-
-  @override
-  String get communityBecomeMember => 'Become a member';
-
-  @override
-  String get communityMemberBadge => 'Member';
-
-  @override
-  String get communityApplicationTitle => 'Become a member';
-
-  @override
-  String communityApplicationIntro(String community) {
-    return '$community asks a few questions before adding new members.';
-  }
-
-  @override
-  String get communityApplicationOptional => 'Optional';
-
-  @override
-  String get communityApplicationRequiredError => 'Please answer this';
-
-  @override
-  String get communityApplicationSubmit => 'SEND APPLICATION';
-
-  @override
-  String get communityApplicationSentSnack =>
-      'Application sent. The organiser will review it.';
-
-  @override
-  String get communityApplicationJoinedSnack => 'You\'re a member now.';
-
-  @override
-  String get communityApplicationFailed =>
-      'Couldn\'t send your application. Try again.';
-
-  @override
   String get qrHubTitle => 'Scan or share';
 
   @override
@@ -7353,4 +7277,106 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get verifyScanUnreachable =>
       'Couldn\'t reach the server. Check your connection and scan again.';
+
+  @override
+  String get eventQrViewCheckins => 'View Check-ins';
+
+  @override
+  String get communityFollow => 'Follow';
+
+  @override
+  String get communityFollowing => 'Following';
+
+  @override
+  String get communityFollowedSnack =>
+      'Following. Their events will show up in your feed.';
+
+  @override
+  String get communityUnfollowedSnack => 'Unfollowed.';
+
+  @override
+  String get communityFollowFailed => 'Couldn\'t update that. Try again.';
+
+  @override
+  String get communityBecomeMember => 'Become a member';
+
+  @override
+  String get communityMemberBadge => 'Member';
+
+  @override
+  String get communityApplicationTitle => 'Become a member';
+
+  @override
+  String communityApplicationIntro(String community) {
+    return '$community asks a few questions before adding new members.';
+  }
+
+  @override
+  String get communityApplicationOptional => 'Optional';
+
+  @override
+  String get communityApplicationRequiredError => 'Please answer this';
+
+  @override
+  String get communityApplicationSubmit => 'SEND APPLICATION';
+
+  @override
+  String get communityApplicationSentSnack =>
+      'Application sent. The organiser will review it.';
+
+  @override
+  String get communityApplicationJoinedSnack => 'You\'re a member now.';
+
+  @override
+  String get communityApplicationFailed =>
+      'Couldn\'t send your application. Try again.';
+
+  @override
+  String get challengeTogetherTitle => 'Together';
+
+  @override
+  String challengeTogetherWaiting(String name) {
+    return 'Waiting for $name to confirm…';
+  }
+
+  @override
+  String challengeTogetherEachEarns(int points) {
+    return '$points XP each';
+  }
+
+  @override
+  String get challengeTogetherRevealTitle => 'Nice one!';
+
+  @override
+  String challengeTogetherRevealBody(String name) {
+    return 'You and $name both earned it.';
+  }
+
+  @override
+  String challengeTogetherPrompt(String challenge) {
+    return 'You two: $challenge';
+  }
+
+  @override
+  String get attendeeHomeScopeAll => 'All events';
+
+  @override
+  String get attendeeHomeScopeFollowing => 'Following';
+
+  @override
+  String get attendeeHomeNoFollowsTitle => 'You don\'t follow anyone yet';
+
+  @override
+  String get attendeeHomeNoFollowsHint =>
+      'Follow a community and everything it puts on shows up here.';
+
+  @override
+  String get attendeeHomeNoFollowedEventsTitle => 'Nothing coming up';
+
+  @override
+  String get attendeeHomeNoFollowedEventsHint =>
+      'The communities you follow haven\'t announced anything yet.';
+
+  @override
+  String get attendeeHomeFollowMore => 'Follow more communities';
 }

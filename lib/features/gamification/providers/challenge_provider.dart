@@ -18,9 +18,9 @@ final challengeServiceProvider = Provider<ChallengeService>((ref) {
 /// Provider for event challenges (simple FutureProvider)
 final eventChallengesProvider =
     FutureProvider.family<ChallengesResponse, String>((ref, eventId) async {
-  final service = ref.watch(challengeServiceProvider);
-  return service.getEventChallenges(eventId);
-});
+      final service = ref.watch(challengeServiceProvider);
+      return service.getEventChallenges(eventId);
+    });
 
 // =============================================================================
 // Challenge Completion Providers
@@ -56,14 +56,13 @@ class InitiateChallengeState {
     String? error,
     ChallengeFailure? failure,
     bool? isSuccess,
-  }) =>
-      InitiateChallengeState(
-        completion: completion ?? this.completion,
-        isLoading: isLoading ?? this.isLoading,
-        error: error,
-        failure: failure,
-        isSuccess: isSuccess ?? this.isSuccess,
-      );
+  }) => InitiateChallengeState(
+    completion: completion ?? this.completion,
+    isLoading: isLoading ?? this.isLoading,
+    error: error,
+    failure: failure,
+    isSuccess: isSuccess ?? this.isSuccess,
+  );
 }
 
 /// Notifier for initiating challenges
@@ -113,8 +112,8 @@ class InitiateChallengeNotifier extends Notifier<InitiateChallengeState> {
 /// Provider for initiating challenges
 final initiateChallengeProvider =
     NotifierProvider<InitiateChallengeNotifier, InitiateChallengeState>(
-  InitiateChallengeNotifier.new,
-);
+      InitiateChallengeNotifier.new,
+    );
 
 // =============================================================================
 // My Challenge Completions Provider
@@ -157,15 +156,14 @@ class MyChallengeCompletionsState {
     String? error,
     int? currentPage,
     bool? hasMore,
-  }) =>
-      MyChallengeCompletionsState(
-        completions: completions ?? this.completions,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        error: error,
-        currentPage: currentPage ?? this.currentPage,
-        hasMore: hasMore ?? this.hasMore,
-      );
+  }) => MyChallengeCompletionsState(
+    completions: completions ?? this.completions,
+    isLoading: isLoading ?? this.isLoading,
+    isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    error: error,
+    currentPage: currentPage ?? this.currentPage,
+    hasMore: hasMore ?? this.hasMore,
+  );
 }
 
 /// Notifier for my challenge completions
@@ -256,9 +254,10 @@ class MyChallengeCompletionsNotifier
 
 /// Provider for my challenge completions
 final myChallengeCompletionsProvider =
-    NotifierProvider<MyChallengeCompletionsNotifier, MyChallengeCompletionsState>(
-  MyChallengeCompletionsNotifier.new,
-);
+    NotifierProvider<
+      MyChallengeCompletionsNotifier,
+      MyChallengeCompletionsState
+    >(MyChallengeCompletionsNotifier.new);
 
 // =============================================================================
 // Challenge CRUD for Organizers

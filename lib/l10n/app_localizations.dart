@@ -4351,7 +4351,7 @@ abstract class AppLocalizations {
   /// Attendee: helper text under the user's own profile QR code
   ///
   /// In en, this message translates to:
-  /// **'Show this to a host to check in or connect.'**
+  /// **'Let someone scan this to check you in or pair up for a challenge.'**
   String get attendeeMyQrSubtitle;
 
   /// Attendee app bar: tooltip for the my-profile-QR action
@@ -5164,12 +5164,6 @@ abstract class AppLocalizations {
   /// **'Attendees can scan this QR code to check in to your event'**
   String get eventQrInstructions;
 
-  /// Button to view event check-ins
-  ///
-  /// In en, this message translates to:
-  /// **'View Check-ins'**
-  String get eventQrViewCheckins;
-
   /// Loading message while the QR code is generated
   ///
   /// In en, this message translates to:
@@ -5335,13 +5329,13 @@ abstract class AppLocalizations {
   /// Primary instruction in the QR scanner
   ///
   /// In en, this message translates to:
-  /// **'Point your camera at the event QR code'**
+  /// **'Point your camera at a Kolabing QR code'**
   String get qrScannerInstructionTitle;
 
   /// Secondary instruction in the QR scanner
   ///
   /// In en, this message translates to:
-  /// **'The QR code will be displayed by the event organizer'**
+  /// **'An event\'s check-in code, or another member\'s profile QR'**
   String get qrScannerInstructionSubtitle;
 
   /// App bar title of the reward wallet screen
@@ -11384,48 +11378,6 @@ abstract class AppLocalizations {
   /// **'Try another city or clear your filters.'**
   String get attendeeHomeNoEventsCityHint;
 
-  /// Feed scope tab: every public event in the selected city.
-  ///
-  /// In en, this message translates to:
-  /// **'All events'**
-  String get attendeeHomeScopeAll;
-
-  /// Feed scope tab: only events from communities the attendee follows.
-  ///
-  /// In en, this message translates to:
-  /// **'Following'**
-  String get attendeeHomeScopeFollowing;
-
-  /// Empty state in the Following feed when the attendee follows no community.
-  ///
-  /// In en, this message translates to:
-  /// **'You don\'t follow anyone yet'**
-  String get attendeeHomeNoFollowsTitle;
-
-  /// Hint under the no-follows empty state.
-  ///
-  /// In en, this message translates to:
-  /// **'Follow a community and everything it puts on shows up here.'**
-  String get attendeeHomeNoFollowsHint;
-
-  /// Empty state in the Following feed when followed communities have no upcoming events.
-  ///
-  /// In en, this message translates to:
-  /// **'Nothing coming up'**
-  String get attendeeHomeNoFollowedEventsTitle;
-
-  /// Hint under the no-followed-events empty state.
-  ///
-  /// In en, this message translates to:
-  /// **'The communities you follow haven\'t announced anything yet.'**
-  String get attendeeHomeNoFollowedEventsHint;
-
-  /// Button in the Following feed's empty state, opens community discovery.
-  ///
-  /// In en, this message translates to:
-  /// **'Follow more communities'**
-  String get attendeeHomeFollowMore;
-
   /// Event card badge for a business-hosted event.
   ///
   /// In en, this message translates to:
@@ -12602,96 +12554,6 @@ abstract class AppLocalizations {
   /// **'Couldn\'t open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.'**
   String get subscriptionManageAppleFailed;
 
-  /// Action that follows a community — one tap, no approval.
-  ///
-  /// In en, this message translates to:
-  /// **'Follow'**
-  String get communityFollow;
-
-  /// State shown when the viewer already follows a community.
-  ///
-  /// In en, this message translates to:
-  /// **'Following'**
-  String get communityFollowing;
-
-  /// Confirmation after following a community.
-  ///
-  /// In en, this message translates to:
-  /// **'Following. Their events will show up in your feed.'**
-  String get communityFollowedSnack;
-
-  /// Confirmation after unfollowing.
-  ///
-  /// In en, this message translates to:
-  /// **'Unfollowed.'**
-  String get communityUnfollowedSnack;
-
-  /// Shown when following or unfollowing fails.
-  ///
-  /// In en, this message translates to:
-  /// **'Couldn\'t update that. Try again.'**
-  String get communityFollowFailed;
-
-  /// Action that starts the membership application.
-  ///
-  /// In en, this message translates to:
-  /// **'Become a member'**
-  String get communityBecomeMember;
-
-  /// Shown when the viewer is already a member of the community.
-  ///
-  /// In en, this message translates to:
-  /// **'Member'**
-  String get communityMemberBadge;
-
-  /// Title of the membership application sheet.
-  ///
-  /// In en, this message translates to:
-  /// **'Become a member'**
-  String get communityApplicationTitle;
-
-  /// Explains why the application form is being shown.
-  ///
-  /// In en, this message translates to:
-  /// **'{community} asks a few questions before adding new members.'**
-  String communityApplicationIntro(String community);
-
-  /// Marks a question that may be left blank.
-  ///
-  /// In en, this message translates to:
-  /// **'Optional'**
-  String get communityApplicationOptional;
-
-  /// Validation message on a required application question.
-  ///
-  /// In en, this message translates to:
-  /// **'Please answer this'**
-  String get communityApplicationRequiredError;
-
-  /// Submits the membership application.
-  ///
-  /// In en, this message translates to:
-  /// **'SEND APPLICATION'**
-  String get communityApplicationSubmit;
-
-  /// Confirmation after an application that needs approval.
-  ///
-  /// In en, this message translates to:
-  /// **'Application sent. The organiser will review it.'**
-  String get communityApplicationSentSnack;
-
-  /// Confirmation when the application was accepted immediately.
-  ///
-  /// In en, this message translates to:
-  /// **'You\'re a member now.'**
-  String get communityApplicationJoinedSnack;
-
-  /// Shown when submitting the application fails.
-  ///
-  /// In en, this message translates to:
-  /// **'Couldn\'t send your application. Try again.'**
-  String get communityApplicationFailed;
-
   /// Title of the attendee QR hub sheet.
   ///
   /// In en, this message translates to:
@@ -13003,6 +12865,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t reach the server. Check your connection and scan again.'**
   String get verifyScanUnreachable;
+
+  /// Button to view event check-ins
+  ///
+  /// In en, this message translates to:
+  /// **'View Check-ins'**
+  String get eventQrViewCheckins;
+
+  /// Action that follows a community — one tap, no approval.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow'**
+  String get communityFollow;
+
+  /// State shown when the viewer already follows a community.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get communityFollowing;
+
+  /// Confirmation after following a community.
+  ///
+  /// In en, this message translates to:
+  /// **'Following. Their events will show up in your feed.'**
+  String get communityFollowedSnack;
+
+  /// Confirmation after unfollowing.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfollowed.'**
+  String get communityUnfollowedSnack;
+
+  /// Shown when following or unfollowing fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update that. Try again.'**
+  String get communityFollowFailed;
+
+  /// Action that starts the membership application.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a member'**
+  String get communityBecomeMember;
+
+  /// Shown when the viewer is already a member of the community.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get communityMemberBadge;
+
+  /// Title of the membership application sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a member'**
+  String get communityApplicationTitle;
+
+  /// Explains why the application form is being shown.
+  ///
+  /// In en, this message translates to:
+  /// **'{community} asks a few questions before adding new members.'**
+  String communityApplicationIntro(String community);
+
+  /// Marks a question that may be left blank.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get communityApplicationOptional;
+
+  /// Validation message on a required application question.
+  ///
+  /// In en, this message translates to:
+  /// **'Please answer this'**
+  String get communityApplicationRequiredError;
+
+  /// Submits the membership application.
+  ///
+  /// In en, this message translates to:
+  /// **'SEND APPLICATION'**
+  String get communityApplicationSubmit;
+
+  /// Confirmation after an application that needs approval.
+  ///
+  /// In en, this message translates to:
+  /// **'Application sent. The organiser will review it.'**
+  String get communityApplicationSentSnack;
+
+  /// Confirmation when the application was accepted immediately.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re a member now.'**
+  String get communityApplicationJoinedSnack;
+
+  /// Shown when submitting the application fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send your application. Try again.'**
+  String get communityApplicationFailed;
+
+  /// Title of the shared challenge screen both devices show.
+  ///
+  /// In en, this message translates to:
+  /// **'Together'**
+  String get challengeTogetherTitle;
+
+  /// Shown to the person who started the challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for {name} to confirm…'**
+  String challengeTogetherWaiting(String name);
+
+  /// How much both people earn — the challenge pays both sides.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} XP each'**
+  String challengeTogetherEachEarns(int points);
+
+  /// Celebration title on the shared reveal.
+  ///
+  /// In en, this message translates to:
+  /// **'Nice one!'**
+  String get challengeTogetherRevealTitle;
+
+  /// Body on the shared reveal, naming the other person.
+  ///
+  /// In en, this message translates to:
+  /// **'You and {name} both earned it.'**
+  String challengeTogetherRevealBody(String name);
+
+  /// Names the challenge the pair agreed on.
+  ///
+  /// In en, this message translates to:
+  /// **'You two: {challenge}'**
+  String challengeTogetherPrompt(String challenge);
+
+  /// Feed scope tab: every public event in the selected city.
+  ///
+  /// In en, this message translates to:
+  /// **'All events'**
+  String get attendeeHomeScopeAll;
+
+  /// Feed scope tab: only events from communities the attendee follows.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get attendeeHomeScopeFollowing;
+
+  /// Empty state in the Following feed when the attendee follows no community.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t follow anyone yet'**
+  String get attendeeHomeNoFollowsTitle;
+
+  /// Hint under the no-follows empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow a community and everything it puts on shows up here.'**
+  String get attendeeHomeNoFollowsHint;
+
+  /// Empty state in the Following feed when followed communities have no upcoming events.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing coming up'**
+  String get attendeeHomeNoFollowedEventsTitle;
+
+  /// Hint under the no-followed-events empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'The communities you follow haven\'t announced anything yet.'**
+  String get attendeeHomeNoFollowedEventsHint;
+
+  /// Button in the Following feed's empty state, opens community discovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow more communities'**
+  String get attendeeHomeFollowMore;
 }
 
 class _AppLocalizationsDelegate

@@ -24,11 +24,12 @@ class MeRewardsOverviewNotifier
   Future<void> reload() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-        () => ref.read(meRewardsServiceProvider).getOverview());
+      () => ref.read(meRewardsServiceProvider).getOverview(),
+    );
   }
 }
 
-final meRewardsOverviewProvider = NotifierProvider<MeRewardsOverviewNotifier,
-    AsyncValue<MeRewardsOverview?>>(
-  MeRewardsOverviewNotifier.new,
-);
+final meRewardsOverviewProvider =
+    NotifierProvider<MeRewardsOverviewNotifier, AsyncValue<MeRewardsOverview?>>(
+      MeRewardsOverviewNotifier.new,
+    );

@@ -12,11 +12,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 
 /// Service for handling badge operations
 class BadgeService {
-  BadgeService({
-    required AuthService authService,
-    http.Client? httpClient,
-  })  : _authService = authService,
-        _httpClient = httpClient ?? http.Client();
+  BadgeService({required AuthService authService, http.Client? httpClient})
+    : _authService = authService,
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
