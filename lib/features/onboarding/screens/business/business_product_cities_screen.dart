@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
+import '../../../../config/constants/spacing.dart';
 import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
@@ -11,6 +12,8 @@ import '../../../../l10n/app_localizations.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../widgets/city_list_item.dart';
 import '../../widgets/onboarding_header.dart';
+import '../../widgets/onboarding_search_step.dart';
+import '../../../../widgets/kolabing_button.dart';
 
 /// Maximum number of target cities a free business may select. Premium is
 /// unlimited (enforced both here and backend-side via the Business paywall).
@@ -29,7 +32,6 @@ class BusinessProductCitiesScreen extends ConsumerStatefulWidget {
 
 class _BusinessProductCitiesScreenState
     extends ConsumerState<BusinessProductCitiesScreen> {
-  final _searchController = TextEditingController();
   String _searchQuery = '';
 
   @override
@@ -47,12 +49,6 @@ class _BusinessProductCitiesScreenState
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
   }
 
   void _handleBack() => context.pop();
@@ -91,9 +87,9 @@ class _BusinessProductCitiesScreenState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          AppLocalizations.of(context).businessProductCitiesLimitReached(
-            kFreeTargetCityLimit,
-          ),
+          AppLocalizations.of(
+            context,
+          ).businessProductCitiesLimitReached(kFreeTargetCityLimit),
         ),
         backgroundColor: context.colors.onSurface,
       ),
@@ -108,181 +104,96 @@ class _BusinessProductCitiesScreenState
     final filteredCities = ref.watch(filteredCitiesProvider(_searchQuery));
     final canContinue = selectedIds.isNotEmpty;
 
-    return Scaffold(
-      backgroundColor: context.colors.background,
-      body: SafeArea(
+    return OnboardingSearchStep(
+      chrome: OnboardingHeader(
+        currentStep: 3,
+        totalSteps: 4,
+        onBack: _handleBack,
+        showSkip: false,
+      ),
+      headline: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          KolabingSpacing.lg,
+          KolabingSpacing.xl,
+          KolabingSpacing.lg,
+          KolabingSpacing.md,
+        ),
         child: Column(
           children: [
-            OnboardingHeader(
-              currentStep: 3,
-              totalSteps: 4,
-              onBack: _handleBack,
-              showSkip: false,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                children: [
-                  const SizedBox(height: 32),
-                  Text(
-                    l10n.businessProductCitiesTitle,
-                    style: KolabingTextStyles.bodyLarge.copyWith(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: context.colors.onSurface,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.businessProductCitiesSubtitle(kFreeTargetCityLimit),
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                      color: context.colors.onSurfaceVariant,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  _SelectionCounter(
-                    selected: selectedIds.length,
-                    limit: kFreeTargetCityLimit,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _searchController,
-                    onChanged: (value) =>
-                        setState(() => _searchQuery = value),
-                    style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: context.colors.onSurface,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: l10n.communityStep3SearchHint,
-                      hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-                        color: context.colors.textTertiary,
-                      ),
-                      prefixIcon: Icon(
-                        LucideIcons.search,
-                        size: 20,
-                        color: context.colors.textTertiary,
-                      ),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(
-                                LucideIcons.x,
-                                size: 20,
-                                color: context.colors.textTertiary,
-                              ),
-                              onPressed: () {
-                                _searchController.clear();
-                                setState(() => _searchQuery = '');
-                              },
-                            )
-                          : null,
-                      filled: true,
-                      fillColor: context.colors.surfaceContainerLow,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(
-                          color: context.colors.outlineVariant,
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                ],
+            Text(
+              l10n.businessProductCitiesTitle,
+              textAlign: TextAlign.center,
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: context.colors.onSurface,
               ),
             ),
-            Expanded(
-              child: filteredCities.when(
-                data: (cities) {
-                  if (cities.isEmpty) {
-                    return Center(
-                      child: Text(
-                        l10n.communityStep3NoCitiesFound,
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          color: context.colors.onSurfaceVariant,
-                        ),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: cities.length,
-                    itemBuilder: (context, index) {
-                      final city = cities[index];
-                      return CityListItem(
-                        id: city.id,
-                        name: city.name,
-                        country: city.country,
-                        isSelected: selectedIds.contains(city.id),
-                        onTap: () => _toggleCity(city.id, city.name),
-                      );
-                    },
-                  );
-                },
-                loading: () => Center(
-                  child: CircularProgressIndicator(
-                    color: context.colors.primary,
-                  ),
-                ),
-                error: (_, __) => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        color: context.colors.error,
-                        size: 48,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        l10n.communityStep3LoadError,
-                        style: KolabingTextStyles.bodySmall.copyWith(
-                          color: context.colors.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextButton(
-                        onPressed: () => ref.invalidate(citiesProvider),
-                        child: Text(l10n.commonRetry),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: canContinue ? _handleContinue : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    foregroundColor: context.colors.onPrimary,
-                    disabledBackgroundColor: context.colors.primary.withValues(
-                      alpha: 0.5,
-                    ),
-                    disabledForegroundColor: context.colors.onPrimary.withValues(
-                      alpha: 0.5,
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    l10n.commonContinue,
-                    style: KolabingTextStyles.button.copyWith(
-                      fontSize: 16,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
+            const SizedBox(height: KolabingSpacing.xs),
+            Text(
+              l10n.businessProductCitiesSubtitle(kFreeTargetCityLimit),
+              textAlign: TextAlign.center,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
               ),
             ),
           ],
+        ),
+      ),
+      searchHint: l10n.communityStep3SearchHint,
+      onQueryChanged: (value) => setState(() => _searchQuery = value),
+      // The counter stays put while searching: "2 of 3" is the one thing a
+      // multi-select reader needs to keep seeing as they pick.
+      aboveResults: _SelectionCounter(
+        selected: selectedIds.length,
+        limit: kFreeTargetCityLimit,
+      ),
+      results: filteredCities.when(
+        data: (cities) {
+          if (cities.isEmpty) {
+            return OnboardingSearchMessage(
+              icon: LucideIcons.mapPin,
+              text: l10n.communityStep3NoCitiesFound,
+            );
+          }
+          return ListView.builder(
+            padding: EdgeInsets.zero,
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            itemCount: cities.length,
+            itemBuilder: (context, index) {
+              final city = cities[index];
+              return CityListItem(
+                id: city.id,
+                name: city.name,
+                country: city.country,
+                isSelected: selectedIds.contains(city.id),
+                onTap: () => _toggleCity(city.id, city.name),
+              );
+            },
+          );
+        },
+        loading: () => Padding(
+          padding: const EdgeInsets.all(KolabingSpacing.xl),
+          child: Center(
+            child: CircularProgressIndicator(color: context.colors.primary),
+          ),
+        ),
+        error: (_, _) => OnboardingSearchMessage(
+          icon: LucideIcons.alertCircle,
+          text: l10n.communityStep3LoadError,
+          action: TextButton(
+            onPressed: () => ref.invalidate(citiesProvider),
+            child: Text(l10n.commonRetry),
+          ),
+        ),
+      ),
+      footer: Padding(
+        padding: const EdgeInsets.all(KolabingSpacing.lg),
+        child: KolabingButton(
+          label: l10n.commonContinue,
+          onPressed: canContinue ? _handleContinue : null,
+          variant: KolabingButtonVariant.primary,
+          isDisabled: !canContinue,
         ),
       ),
     );
@@ -308,11 +219,7 @@ class _SelectionCounter extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            LucideIcons.mapPin,
-            size: 16,
-            color: context.colors.primaryDark,
-          ),
+          Icon(LucideIcons.mapPin, size: 16, color: context.colors.primaryDark),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

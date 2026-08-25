@@ -2391,7 +2391,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attendeeMyQrSubtitle =>
-      'Let someone scan this to check you in or pair up for a challenge.';
+      'Show this to a host to check in or connect.';
 
   @override
   String get attendeeMyQrTooltip => 'My QR code';
@@ -2834,6 +2834,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Attendees can scan this QR code to check in to your event';
 
   @override
+  String get eventQrViewCheckins => 'View Check-ins';
+
+  @override
   String get eventQrGenerating => 'Generating QR Code...';
 
   @override
@@ -2923,11 +2926,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get qrScannerInstructionTitle =>
-      'Point your camera at a Kolabing QR code';
+      'Point your camera at the event QR code';
 
   @override
   String get qrScannerInstructionSubtitle =>
-      'An event\'s check-in code, or another member\'s profile QR';
+      'The QR code will be displayed by the event organizer';
 
   @override
   String get rewardWalletTitle => 'My Rewards';
@@ -2962,22 +2965,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get challengeCompletionStatusPending => 'Pending';
-
-  @override
-  String get challengeCompletionStatusCancelled => 'Cancelled';
-
-  @override
-  String get challengeCompletionStatusExpired => 'Expired';
-
-  @override
-  String get challengeTogetherCancel => 'Cancel this request';
-
-  @override
-  String get challengeTogetherCancelled => 'Request cancelled.';
-
-  @override
-  String get challengeTogetherCancelFailed =>
-      'Couldn\'t cancel that — they may have already answered.';
 
   @override
   String get mediaTitleVenue => 'SHOW OFF YOUR VENUE';
@@ -7107,6 +7094,27 @@ class AppLocalizationsEn extends AppLocalizations {
       'Couldn\'t open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.';
 
   @override
+  String onboardingStepOf(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get challengeCompletionStatusCancelled => 'Cancelled';
+
+  @override
+  String get challengeCompletionStatusExpired => 'Expired';
+
+  @override
+  String get challengeTogetherCancel => 'Cancel this request';
+
+  @override
+  String get challengeTogetherCancelled => 'Request cancelled.';
+
+  @override
+  String get challengeTogetherCancelFailed =>
+      'Couldn\'t cancel that — they may have already answered.';
+
+  @override
   String get qrHubTitle => 'Scan or share';
 
   @override
@@ -7374,9 +7382,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get verifyScanUnreachable =>
       'Couldn\'t reach the server. Check your connection and scan again.';
-
-  @override
-  String get eventQrViewCheckins => 'View Check-ins';
 
   @override
   String get communityFollow => 'Follow';

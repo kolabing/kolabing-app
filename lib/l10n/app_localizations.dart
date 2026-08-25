@@ -4351,7 +4351,7 @@ abstract class AppLocalizations {
   /// Attendee: helper text under the user's own profile QR code
   ///
   /// In en, this message translates to:
-  /// **'Let someone scan this to check you in or pair up for a challenge.'**
+  /// **'Show this to a host to check in or connect.'**
   String get attendeeMyQrSubtitle;
 
   /// Attendee app bar: tooltip for the my-profile-QR action
@@ -5164,6 +5164,12 @@ abstract class AppLocalizations {
   /// **'Attendees can scan this QR code to check in to your event'**
   String get eventQrInstructions;
 
+  /// Button to view event check-ins
+  ///
+  /// In en, this message translates to:
+  /// **'View Check-ins'**
+  String get eventQrViewCheckins;
+
   /// Loading message while the QR code is generated
   ///
   /// In en, this message translates to:
@@ -5329,13 +5335,13 @@ abstract class AppLocalizations {
   /// Primary instruction in the QR scanner
   ///
   /// In en, this message translates to:
-  /// **'Point your camera at a Kolabing QR code'**
+  /// **'Point your camera at the event QR code'**
   String get qrScannerInstructionTitle;
 
   /// Secondary instruction in the QR scanner
   ///
   /// In en, this message translates to:
-  /// **'An event\'s check-in code, or another member\'s profile QR'**
+  /// **'The QR code will be displayed by the event organizer'**
   String get qrScannerInstructionSubtitle;
 
   /// App bar title of the reward wallet screen
@@ -5403,36 +5409,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pending'**
   String get challengeCompletionStatusPending;
-
-  /// Status badge for a challenge request the challenger withdrew.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancelled'**
-  String get challengeCompletionStatusCancelled;
-
-  /// Status badge for a challenge request nobody answered in time.
-  ///
-  /// In en, this message translates to:
-  /// **'Expired'**
-  String get challengeCompletionStatusExpired;
-
-  /// Button on the waiting screen: withdraws the request.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel this request'**
-  String get challengeTogetherCancel;
-
-  /// Confirmation after cancelling a challenge request.
-  ///
-  /// In en, this message translates to:
-  /// **'Request cancelled.'**
-  String get challengeTogetherCancelled;
-
-  /// Failure after trying to cancel a challenge request.
-  ///
-  /// In en, this message translates to:
-  /// **'Couldn\'t cancel that — they may have already answered.'**
-  String get challengeTogetherCancelFailed;
 
   /// Media step header when promoting a venue
   ///
@@ -12584,6 +12560,42 @@ abstract class AppLocalizations {
   /// **'Couldn\'t open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.'**
   String get subscriptionManageAppleFailed;
 
+  /// Onboarding header step counter.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String onboardingStepOf(int current, int total);
+
+  /// Status badge for a challenge request the challenger withdrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get challengeCompletionStatusCancelled;
+
+  /// Status badge for a challenge request nobody answered in time.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get challengeCompletionStatusExpired;
+
+  /// Button on the waiting screen: withdraws the request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this request'**
+  String get challengeTogetherCancel;
+
+  /// Confirmation after cancelling a challenge request.
+  ///
+  /// In en, this message translates to:
+  /// **'Request cancelled.'**
+  String get challengeTogetherCancelled;
+
+  /// Failure after trying to cancel a challenge request.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t cancel that — they may have already answered.'**
+  String get challengeTogetherCancelFailed;
+
   /// Title of the attendee QR hub sheet.
   ///
   /// In en, this message translates to:
@@ -13033,12 +13045,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t reach the server. Check your connection and scan again.'**
   String get verifyScanUnreachable;
-
-  /// Button to view event check-ins
-  ///
-  /// In en, this message translates to:
-  /// **'View Check-ins'**
-  String get eventQrViewCheckins;
 
   /// Action that follows a community — one tap, no approval.
   ///

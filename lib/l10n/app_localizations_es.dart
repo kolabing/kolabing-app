@@ -2410,7 +2410,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get attendeeMyQrSubtitle =>
-      'Deja que alguien lo escanee para hacerte check-in o emparejaros en un reto.';
+      'Muéstralo a un organizador para registrarte o conectar.';
 
   @override
   String get attendeeMyQrTooltip => 'Mi código QR';
@@ -2859,6 +2859,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Los asistentes pueden escanear este código QR para registrarse en tu evento';
 
   @override
+  String get eventQrViewCheckins => 'Ver registros';
+
+  @override
   String get eventQrGenerating => 'Generando código QR...';
 
   @override
@@ -2950,11 +2953,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get qrScannerInstructionTitle =>
-      'Apunta la cámara a un código QR de Kolabing';
+      'Apunta la cámara al código QR del evento';
 
   @override
   String get qrScannerInstructionSubtitle =>
-      'El código de check-in de un evento o el QR de perfil de otro miembro';
+      'El organizador del evento mostrará el código QR';
 
   @override
   String get rewardWalletTitle => 'Mis recompensas';
@@ -2989,22 +2992,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get challengeCompletionStatusPending => 'Pendiente';
-
-  @override
-  String get challengeCompletionStatusCancelled => 'Cancelado';
-
-  @override
-  String get challengeCompletionStatusExpired => 'Caducado';
-
-  @override
-  String get challengeTogetherCancel => 'Cancelar la solicitud';
-
-  @override
-  String get challengeTogetherCancelled => 'Solicitud cancelada.';
-
-  @override
-  String get challengeTogetherCancelFailed =>
-      'No se pudo cancelar; puede que ya hayan respondido.';
 
   @override
   String get mediaTitleVenue => 'MUESTRA TU LOCAL';
@@ -7176,6 +7163,27 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se han podido abrir tus suscripciones de la App Store. Ve a Ajustes › tu nombre › Suscripciones para gestionarla o cancelarla.';
 
   @override
+  String onboardingStepOf(int current, int total) {
+    return 'Paso $current de $total';
+  }
+
+  @override
+  String get challengeCompletionStatusCancelled => 'Cancelado';
+
+  @override
+  String get challengeCompletionStatusExpired => 'Caducado';
+
+  @override
+  String get challengeTogetherCancel => 'Cancelar la solicitud';
+
+  @override
+  String get challengeTogetherCancelled => 'Solicitud cancelada.';
+
+  @override
+  String get challengeTogetherCancelFailed =>
+      'No se pudo cancelar; puede que ya hayan respondido.';
+
+  @override
   String get qrHubTitle => 'Escanear o compartir';
 
   @override
@@ -7443,9 +7451,6 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get verifyScanUnreachable =>
       'No se pudo conectar con el servidor. Comprueba tu conexión y vuelve a escanear.';
-
-  @override
-  String get eventQrViewCheckins => 'Ver registros';
 
   @override
   String get communityFollow => 'Seguir';

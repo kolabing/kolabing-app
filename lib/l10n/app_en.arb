@@ -36,11 +36,7 @@
   "onboardingCompleteMissingFields": "Please complete: {fields}",
   "@onboardingCompleteMissingFields": {
     "description": "Error when account creation is blocked by missing onboarding fields; {fields} is a comma-separated list of field names",
-    "placeholders": {
-      "fields": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "fields": { "type": "String" } }
   },
   "onboardingFieldName": "Name",
   "onboardingFieldBusinessCategory": "Business category",
@@ -1621,120 +1617,62 @@
   "kolabStarReviewSubtitle": "Got it — your answer is recorded. A quick 5-star review helps {partnerName} build trust on Kolabing. Totally optional.",
   "@kolabStarReviewSubtitle": {
     "description": "Subtitle of the optional 5-star review step.",
-    "placeholders": {
-      "partnerName": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "partnerName": { "type": "String" } }
   },
   "kolabStarReviewBizCommunicationLabel": "Communication",
-  "@kolabStarReviewBizCommunicationLabel": {
-    "description": "Business star review: communication row label"
-  },
+  "@kolabStarReviewBizCommunicationLabel": { "description": "Business star review: communication row label" },
   "kolabStarReviewBizCommunicationHelper": "Was it easy to coordinate?",
-  "@kolabStarReviewBizCommunicationHelper": {
-    "description": "Business star review: communication row helper"
-  },
+  "@kolabStarReviewBizCommunicationHelper": { "description": "Business star review: communication row helper" },
   "kolabStarReviewBizReliabilityLabel": "Reliability",
-  "@kolabStarReviewBizReliabilityLabel": {
-    "description": "Business star review: reliability row label"
-  },
+  "@kolabStarReviewBizReliabilityLabel": { "description": "Business star review: reliability row label" },
   "kolabStarReviewBizReliabilityHelper": "Did the community show up and deliver?",
-  "@kolabStarReviewBizReliabilityHelper": {
-    "description": "Business star review: reliability row helper"
-  },
+  "@kolabStarReviewBizReliabilityHelper": { "description": "Business star review: reliability row helper" },
   "kolabStarReviewBizFitLabel": "Community fit",
-  "@kolabStarReviewBizFitLabel": {
-    "description": "Business star review: fit row label"
-  },
+  "@kolabStarReviewBizFitLabel": { "description": "Business star review: fit row label" },
   "kolabStarReviewBizFitHelper": "Was their audience a good match?",
-  "@kolabStarReviewBizFitHelper": {
-    "description": "Business star review: fit row helper"
-  },
+  "@kolabStarReviewBizFitHelper": { "description": "Business star review: fit row helper" },
   "kolabStarReviewBizValueLabel": "Business value",
-  "@kolabStarReviewBizValueLabel": {
-    "description": "Business star review: value row label"
-  },
+  "@kolabStarReviewBizValueLabel": { "description": "Business star review: value row label" },
   "kolabStarReviewBizValueHelper": "Did the Kolab bring value to your business?",
-  "@kolabStarReviewBizValueHelper": {
-    "description": "Business star review: value row helper"
-  },
+  "@kolabStarReviewBizValueHelper": { "description": "Business star review: value row helper" },
   "kolabStarReviewBizRepeatLabel": "Would work with them again",
-  "@kolabStarReviewBizRepeatLabel": {
-    "description": "Business star review: repeat row label"
-  },
+  "@kolabStarReviewBizRepeatLabel": { "description": "Business star review: repeat row label" },
   "kolabStarReviewBizRepeatHelper": "Would you repeat a Kolab with them?",
-  "@kolabStarReviewBizRepeatHelper": {
-    "description": "Business star review: repeat row helper"
-  },
+  "@kolabStarReviewBizRepeatHelper": { "description": "Business star review: repeat row helper" },
   "kolabStarReviewComCommunicationLabel": "Communication",
-  "@kolabStarReviewComCommunicationLabel": {
-    "description": "Community star review: communication row label"
-  },
+  "@kolabStarReviewComCommunicationLabel": { "description": "Community star review: communication row label" },
   "kolabStarReviewComCommunicationHelper": "Was it easy to coordinate?",
-  "@kolabStarReviewComCommunicationHelper": {
-    "description": "Community star review: communication row helper"
-  },
+  "@kolabStarReviewComCommunicationHelper": { "description": "Community star review: communication row helper" },
   "kolabStarReviewComReliabilityLabel": "Reliability",
-  "@kolabStarReviewComReliabilityLabel": {
-    "description": "Community star review: reliability row label"
-  },
+  "@kolabStarReviewComReliabilityLabel": { "description": "Community star review: reliability row label" },
   "kolabStarReviewComReliabilityHelper": "Did the business deliver what was agreed?",
-  "@kolabStarReviewComReliabilityHelper": {
-    "description": "Community star review: reliability row helper"
-  },
+  "@kolabStarReviewComReliabilityHelper": { "description": "Community star review: reliability row helper" },
   "kolabStarReviewComFitLabel": "Experience fit",
-  "@kolabStarReviewComFitLabel": {
-    "description": "Community star review: fit row label"
-  },
+  "@kolabStarReviewComFitLabel": { "description": "Community star review: fit row label" },
   "kolabStarReviewComFitHelper": "Was the experience right for your community?",
-  "@kolabStarReviewComFitHelper": {
-    "description": "Community star review: fit row helper"
-  },
+  "@kolabStarReviewComFitHelper": { "description": "Community star review: fit row helper" },
   "kolabStarReviewComValueLabel": "Member value",
-  "@kolabStarReviewComValueLabel": {
-    "description": "Community star review: value row label"
-  },
+  "@kolabStarReviewComValueLabel": { "description": "Community star review: value row label" },
   "kolabStarReviewComValueHelper": "Did your members get something valuable?",
-  "@kolabStarReviewComValueHelper": {
-    "description": "Community star review: value row helper"
-  },
+  "@kolabStarReviewComValueHelper": { "description": "Community star review: value row helper" },
   "kolabStarReviewComRepeatLabel": "Would Kolab again",
-  "@kolabStarReviewComRepeatLabel": {
-    "description": "Community star review: repeat row label"
-  },
+  "@kolabStarReviewComRepeatLabel": { "description": "Community star review: repeat row label" },
   "kolabStarReviewComRepeatHelper": "Would you repeat a Kolab with them?",
-  "@kolabStarReviewComRepeatHelper": {
-    "description": "Community star review: repeat row helper"
-  },
+  "@kolabStarReviewComRepeatHelper": { "description": "Community star review: repeat row helper" },
   "kolabStarReviewCommentLabel": "Anything else you'd like to add?",
-  "@kolabStarReviewCommentLabel": {
-    "description": "Optional free-text comment field label."
-  },
+  "@kolabStarReviewCommentLabel": { "description": "Optional free-text comment field label." },
   "kolabStarReviewSubmit": "Submit review",
-  "@kolabStarReviewSubmit": {
-    "description": "Submit the 5-star review."
-  },
+  "@kolabStarReviewSubmit": { "description": "Submit the 5-star review." },
   "kolabStarReviewSubmitting": "Submitting…",
-  "@kolabStarReviewSubmitting": {
-    "description": "Loading label while the review is being submitted."
-  },
+  "@kolabStarReviewSubmitting": { "description": "Loading label while the review is being submitted." },
   "kolabStarReviewSkip": "Skip for now",
-  "@kolabStarReviewSkip": {
-    "description": "Skip the optional star review step."
-  },
+  "@kolabStarReviewSkip": { "description": "Skip the optional star review step." },
   "kolabStarReviewSuccess": "Thanks — your review helps improve future Kolabs.",
-  "@kolabStarReviewSuccess": {
-    "description": "Success copy shown after a star review is submitted."
-  },
+  "@kolabStarReviewSuccess": { "description": "Success copy shown after a star review is submitted." },
   "kolabStarReviewAlreadyDone": "You've shared your feedback ✓",
-  "@kolabStarReviewAlreadyDone": {
-    "description": "Shown when the viewer has already submitted a star review."
-  },
+  "@kolabStarReviewAlreadyDone": { "description": "Shown when the viewer has already submitted a star review." },
   "kolabStarReviewError": "Could not submit your review. Please try again.",
-  "@kolabStarReviewError": {
-    "description": "Error when star review submission fails."
-  },
+  "@kolabStarReviewError": { "description": "Error when star review submission fails." },
   "kolabCompletionCelebrationTitle": "Kolab completed! 🎉",
   "@kolabCompletionCelebrationTitle": {
     "description": "Celebration step title."
@@ -3071,7 +3009,7 @@
   "@attendeeMyQrTitle": {
     "description": "Attendee: title of the sheet showing the user's own profile QR code"
   },
-  "attendeeMyQrSubtitle": "Let someone scan this to check you in or pair up for a challenge.",
+  "attendeeMyQrSubtitle": "Show this to a host to check in or connect.",
   "@attendeeMyQrSubtitle": {
     "description": "Attendee: helper text under the user's own profile QR code"
   },
@@ -3236,94 +3174,50 @@
     "description": "Confirmation message in the sign out dialog"
   },
   "attendeeProfileStatFriends": "Friends",
-  "@attendeeProfileStatFriends": {
-    "description": "Attendee profile stat label: friends count"
-  },
+  "@attendeeProfileStatFriends": { "description": "Attendee profile stat label: friends count" },
   "attendeeProfileStatEvents": "Events",
-  "@attendeeProfileStatEvents": {
-    "description": "Attendee profile stat label: events attended count"
-  },
+  "@attendeeProfileStatEvents": { "description": "Attendee profile stat label: events attended count" },
   "attendeeProfileStatChats": "Chats",
-  "@attendeeProfileStatChats": {
-    "description": "Attendee profile stat label: chat threads count"
-  },
+  "@attendeeProfileStatChats": { "description": "Attendee profile stat label: chat threads count" },
   "attendeeProfileStatPoints": "Points",
-  "@attendeeProfileStatPoints": {
-    "description": "Attendee profile stat label: total points"
-  },
+  "@attendeeProfileStatPoints": { "description": "Attendee profile stat label: total points" },
   "attendeeProfileMyCommunities": "MY COMMUNITIES",
-  "@attendeeProfileMyCommunities": {
-    "description": "Attendee profile section header for the communities the user belongs to"
-  },
+  "@attendeeProfileMyCommunities": { "description": "Attendee profile section header for the communities the user belongs to" },
   "attendeeProfileNoCommunities": "You haven't joined any communities yet.",
-  "@attendeeProfileNoCommunities": {
-    "description": "Attendee profile empty state for the communities section"
-  },
+  "@attendeeProfileNoCommunities": { "description": "Attendee profile empty state for the communities section" },
   "attendeeProfileFindFriends": "Find friends",
   "attendeeProfileFriends": "FRIENDS",
-  "@attendeeProfileFriends": {
-    "description": "Attendee profile section header for the friends preview"
-  },
+  "@attendeeProfileFriends": { "description": "Attendee profile section header for the friends preview" },
   "attendeeProfileSeeAll": "See all",
-  "@attendeeProfileSeeAll": {
-    "description": "Link to open the full friends list from the attendee profile"
-  },
+  "@attendeeProfileSeeAll": { "description": "Link to open the full friends list from the attendee profile" },
   "editProfileTitle": "Edit profile",
-  "@editProfileTitle": {
-    "description": "Title of the edit-profile screen"
-  },
+  "@editProfileTitle": { "description": "Title of the edit-profile screen" },
   "editProfileChangePhoto": "Change photo",
-  "@editProfileChangePhoto": {
-    "description": "Button to pick a new profile photo"
-  },
+  "@editProfileChangePhoto": { "description": "Button to pick a new profile photo" },
   "editProfileNameLabel": "Name",
-  "@editProfileNameLabel": {
-    "description": "Field label for the user's display name"
-  },
+  "@editProfileNameLabel": { "description": "Field label for the user's display name" },
   "editProfileNameHint": "Your name",
-  "@editProfileNameHint": {
-    "description": "Placeholder for the name field"
-  },
+  "@editProfileNameHint": { "description": "Placeholder for the name field" },
   "editProfileNameRequired": "Please enter your name.",
-  "@editProfileNameRequired": {
-    "description": "Validation error when the name field is empty"
-  },
+  "@editProfileNameRequired": { "description": "Validation error when the name field is empty" },
   "editProfileCityLabel": "City",
-  "@editProfileCityLabel": {
-    "description": "Field label for the user's city"
-  },
+  "@editProfileCityLabel": { "description": "Field label for the user's city" },
   "editProfileCityHint": "Select your city",
-  "@editProfileCityHint": {
-    "description": "Placeholder for the city picker"
-  },
+  "@editProfileCityHint": { "description": "Placeholder for the city picker" },
   "editProfileCitySearchHint": "Search cities",
-  "@editProfileCitySearchHint": {
-    "description": "Placeholder for the city search field"
-  },
+  "@editProfileCitySearchHint": { "description": "Placeholder for the city search field" },
   "editProfileNoCitiesFound": "No cities found",
-  "@editProfileNoCitiesFound": {
-    "description": "Empty state when the city search returns nothing"
-  },
+  "@editProfileNoCitiesFound": { "description": "Empty state when the city search returns nothing" },
   "editProfileCityLoadError": "Couldn't load cities",
-  "@editProfileCityLoadError": {
-    "description": "Error message when the cities list fails to load"
-  },
+  "@editProfileCityLoadError": { "description": "Error message when the cities list fails to load" },
   "editProfileSave": "Save",
-  "@editProfileSave": {
-    "description": "Save button on the edit-profile screen"
-  },
+  "@editProfileSave": { "description": "Save button on the edit-profile screen" },
   "editProfileSaved": "Profile updated",
-  "@editProfileSaved": {
-    "description": "Success message after saving the profile"
-  },
+  "@editProfileSaved": { "description": "Success message after saving the profile" },
   "editProfileSaveError": "Couldn't save your profile. Please try again.",
-  "@editProfileSaveError": {
-    "description": "Generic error message when saving the profile fails"
-  },
+  "@editProfileSaveError": { "description": "Generic error message when saving the profile fails" },
   "memberProfileFriends": "Friends",
-  "@memberProfileFriends": {
-    "description": "Member public profile stat label: friends count"
-  },
+  "@memberProfileFriends": { "description": "Member public profile stat label: friends count" },
   "badgesScreenTitle": "Badges",
   "@badgesScreenTitle": {
     "description": "Badges screen app bar title"
@@ -3662,6 +3556,10 @@
   "@eventQrInstructions": {
     "description": "Instructions under the QR code"
   },
+  "eventQrViewCheckins": "View Check-ins",
+  "@eventQrViewCheckins": {
+    "description": "Button to view event check-ins"
+  },
   "eventQrGenerating": "Generating QR Code...",
   "@eventQrGenerating": {
     "description": "Loading message while the QR code is generated"
@@ -3775,11 +3673,11 @@
   "@qrScannerCheckingIn": {
     "description": "Loading message while checking in"
   },
-  "qrScannerInstructionTitle": "Point your camera at a Kolabing QR code",
+  "qrScannerInstructionTitle": "Point your camera at the event QR code",
   "@qrScannerInstructionTitle": {
     "description": "Primary instruction in the QR scanner"
   },
-  "qrScannerInstructionSubtitle": "An event's check-in code, or another member's profile QR",
+  "qrScannerInstructionSubtitle": "The QR code will be displayed by the event organizer",
   "@qrScannerInstructionSubtitle": {
     "description": "Secondary instruction in the QR scanner"
   },
@@ -3824,26 +3722,6 @@
     "description": "Status badge for a rejected completion"
   },
   "challengeCompletionStatusPending": "Pending",
-  "challengeCompletionStatusCancelled": "Cancelled",
-  "@challengeCompletionStatusCancelled": {
-    "description": "Status badge for a challenge request the challenger withdrew."
-  },
-  "challengeCompletionStatusExpired": "Expired",
-  "@challengeCompletionStatusExpired": {
-    "description": "Status badge for a challenge request nobody answered in time."
-  },
-  "challengeTogetherCancel": "Cancel this request",
-  "@challengeTogetherCancel": {
-    "description": "Button on the waiting screen: withdraws the request."
-  },
-  "challengeTogetherCancelled": "Request cancelled.",
-  "@challengeTogetherCancelled": {
-    "description": "Confirmation after cancelling a challenge request."
-  },
-  "challengeTogetherCancelFailed": "Couldn't cancel that \u2014 they may have already answered.",
-  "@challengeTogetherCancelFailed": {
-    "description": "Failure after trying to cancel a challenge request."
-  },
   "@challengeCompletionStatusPending": {
     "description": "Status badge for a pending completion"
   },
@@ -5423,29 +5301,17 @@
   "publicProfileReputationReviewsCount": "{count, plural, =1{1 review} other{{count} reviews}}",
   "@publicProfileReputationReviewsCount": {
     "description": "Review count shown in the reputation summary card",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "count": { "type": "int" } }
   },
   "publicProfileReputationPartnersCount": "{count, plural, =1{1 partner} other{{count} partners}}",
   "@publicProfileReputationPartnersCount": {
     "description": "Unique partner count shown in the reputation summary card",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "count": { "type": "int" } }
   },
   "reputationCompletedKolabsCount": "{count, plural, =1{1 completed} other{{count} completed}}",
   "@reputationCompletedKolabsCount": {
     "description": "Completed Kolabs count shown in the reputation summary card",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "count": { "type": "int" } }
   },
   "publicProfileAbout": "About",
   "@publicProfileAbout": {
@@ -6396,20 +6262,12 @@
   "subscriptionPlanPerMonthEq": "≈ {price}/mo",
   "@subscriptionPlanPerMonthEq": {
     "description": "Per-month-equivalent price for a multi-month plan",
-    "placeholders": {
-      "price": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "price": { "type": "String" } }
   },
   "subscriptionPlanSavePercent": "Save {percent}%",
   "@subscriptionPlanSavePercent": {
     "description": "Savings percent of a multi-month plan vs paying monthly",
-    "placeholders": {
-      "percent": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "percent": { "type": "int" } }
   },
   "@subscriptionPaywallPerMonth": {
     "description": "Per-month suffix shown after the price in the paywall"
@@ -6514,106 +6372,46 @@
   },
   "dashboardEmptyUpcomingSubtitle": "Create a Kolab to start filling your calendar",
   "dashboardHeroCreateKolabButton": "+ CREATE A KOLAB",
+
   "eventHubOpenChat": "Open event chat",
-  "@eventHubOpenChat": {
-    "description": "Event hub: button to open the event chat thread"
-  },
+  "@eventHubOpenChat": { "description": "Event hub: button to open the event chat thread" },
   "eventHubAttendeesTitle": "Attendees",
-  "@eventHubAttendeesTitle": {
-    "description": "Event hub: section header for confirmed attendees"
-  },
+  "@eventHubAttendeesTitle": { "description": "Event hub: section header for confirmed attendees" },
   "eventHubWaitlistTitle": "Waitlist",
-  "@eventHubWaitlistTitle": {
-    "description": "Event hub: section header for the waitlist"
-  },
+  "@eventHubWaitlistTitle": { "description": "Event hub: section header for the waitlist" },
   "eventHubNoAttendees": "No one has signed up yet.",
-  "@eventHubNoAttendees": {
-    "description": "Event hub: empty attendees state"
-  },
+  "@eventHubNoAttendees": { "description": "Event hub: empty attendees state" },
   "eventHubGoingCount": "{count} going",
-  "@eventHubGoingCount": {
-    "description": "Event hub: count of confirmed attendees",
-    "placeholders": {
-      "count": {
-        "type": "num"
-      }
-    }
-  },
+  "@eventHubGoingCount": { "description": "Event hub: count of confirmed attendees", "placeholders": { "count": { "type": "num" } } },
   "eventHubWaitlistCount": "{count} on waitlist",
-  "@eventHubWaitlistCount": {
-    "description": "Event hub: count of waitlisted attendees",
-    "placeholders": {
-      "count": {
-        "type": "num"
-      }
-    }
-  },
+  "@eventHubWaitlistCount": { "description": "Event hub: count of waitlisted attendees", "placeholders": { "count": { "type": "num" } } },
   "eventHubCapacity": "capacity {count}",
-  "@eventHubCapacity": {
-    "description": "Event hub: capacity label",
-    "placeholders": {
-      "count": {
-        "type": "num"
-      }
-    }
-  },
+  "@eventHubCapacity": { "description": "Event hub: capacity label", "placeholders": { "count": { "type": "num" } } },
   "eventHubSpotsLeft": "{count} spot(s) left",
-  "@eventHubSpotsLeft": {
-    "description": "Event hub: remaining spots",
-    "placeholders": {
-      "count": {
-        "type": "num"
-      }
-    }
-  },
+  "@eventHubSpotsLeft": { "description": "Event hub: remaining spots", "placeholders": { "count": { "type": "num" } } },
   "eventHubUnlimited": "Unlimited",
-  "@eventHubUnlimited": {
-    "description": "Event hub: unlimited capacity label"
-  },
+  "@eventHubUnlimited": { "description": "Event hub: unlimited capacity label" },
   "eventHubImGoing": "I'm going",
-  "@eventHubImGoing": {
-    "description": "RSVP button: join as going"
-  },
+  "@eventHubImGoing": { "description": "RSVP button: join as going" },
   "eventHubGoingTapToLeave": "Going ✓  ·  tap to leave",
-  "@eventHubGoingTapToLeave": {
-    "description": "RSVP button: currently going, tap to leave"
-  },
+  "@eventHubGoingTapToLeave": { "description": "RSVP button: currently going, tap to leave" },
   "eventHubJoinWaitlist": "Join waitlist",
-  "@eventHubJoinWaitlist": {
-    "description": "RSVP button: join the waitlist when full"
-  },
+  "@eventHubJoinWaitlist": { "description": "RSVP button: join the waitlist when full" },
   "eventHubOnWaitlistTapToLeave": "On waitlist  ·  tap to leave",
-  "@eventHubOnWaitlistTapToLeave": {
-    "description": "RSVP button: currently waitlisted, tap to leave"
-  },
+  "@eventHubOnWaitlistTapToLeave": { "description": "RSVP button: currently waitlisted, tap to leave" },
   "eventHubWaitlistPosition": "You're #{position} on the waitlist",
-  "@eventHubWaitlistPosition": {
-    "description": "Event hub: viewer waitlist position",
-    "placeholders": {
-      "position": {
-        "type": "num"
-      }
-    }
-  },
+  "@eventHubWaitlistPosition": { "description": "Event hub: viewer waitlist position", "placeholders": { "position": { "type": "num" } } },
   "eventDetailViewCommunity": "View community",
-  "@eventDetailViewCommunity": {
-    "description": "Event detail: tap the host community to open its public profile"
-  },
+  "@eventDetailViewCommunity": { "description": "Event detail: tap the host community to open its public profile" },
   "eventHubEdit": "Edit",
   "commonDelete": "Delete",
   "eventHubDelete": "Delete event",
   "eventHubScanCheckIns": "Scan check-ins",
-  "@eventHubScanCheckIns": {
-    "description": "Event hub leader menu: open the QR scanner to check attendees in"
-  },
+  "@eventHubScanCheckIns": { "description": "Event hub leader menu: open the QR scanner to check attendees in" },
   "eventHubDeleteConfirmTitle": "Delete this event?",
   "eventHubDeleteConfirmBody": "\"{name}\" — anyone going or waitlisted will be notified it's cancelled.",
   "@eventHubDeleteConfirmBody": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "name": { "type": "String" } }
   },
   "eventHubDeleteScopeThis": "This event only",
   "eventHubDeleteScopeFollowing": "This and the following events",
@@ -6622,32 +6420,19 @@
   "eventHubExtendSeries": "Extend series (+3 months)",
   "eventHubExtended": "Series extended — {count} new dates",
   "@eventHubExtended": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "count": { "type": "int" } }
   },
   "eventHubExtendedNone": "No new dates to add",
-  "@eventHubEdit": {
-    "description": "Event hub: edit the event"
-  },
+  "@eventHubEdit": { "description": "Event hub: edit the event" },
   "eventHubAddPhotos": "Add photos",
-  "@eventHubAddPhotos": {
-    "description": "Event hub: add photos to the event gallery"
-  },
+  "@eventHubAddPhotos": { "description": "Event hub: add photos to the event gallery" },
+
   "eventFormNewTitle": "New event",
-  "@eventFormNewTitle": {
-    "description": "Create event form: app bar title"
-  },
+  "@eventFormNewTitle": { "description": "Create event form: app bar title" },
   "eventFormEditTitle": "Edit event",
-  "@eventFormEditTitle": {
-    "description": "Edit event form: app bar title"
-  },
+  "@eventFormEditTitle": { "description": "Edit event form: app bar title" },
   "eventFormSave": "Save",
-  "@eventFormSave": {
-    "description": "Event form: save action"
-  },
+  "@eventFormSave": { "description": "Event form: save action" },
   "eventFormPublish": "Publish event",
   "eventFormRepeatLabel": "Repeat",
   "eventFormRepeatNone": "Doesn't repeat",
@@ -6667,685 +6452,364 @@
   "eventFormErrWeekday": "Pick at least one day",
   "eventFormErrEndsCount": "Enter how many events",
   "eventFormErrEndsOn": "Pick an end date after the start",
-  "@eventFormPublish": {
-    "description": "Event form: publish a new event"
-  },
+  "@eventFormPublish": { "description": "Event form: publish a new event" },
   "eventFormNameLabel": "Name",
-  "@eventFormNameLabel": {
-    "description": "Event form: name field label"
-  },
+  "@eventFormNameLabel": { "description": "Event form: name field label" },
   "eventFormNameHint": "Saturday 10K",
-  "@eventFormNameHint": {
-    "description": "Event form: name field hint"
-  },
+  "@eventFormNameHint": { "description": "Event form: name field hint" },
   "eventFormStartsLabel": "Starts",
-  "@eventFormStartsLabel": {
-    "description": "Event form: start date label"
-  },
+  "@eventFormStartsLabel": { "description": "Event form: start date label" },
   "eventFormEndsLabel": "Ends (optional)",
-  "@eventFormEndsLabel": {
-    "description": "Event form: end date label"
-  },
+  "@eventFormEndsLabel": { "description": "Event form: end date label" },
   "eventFormPickStart": "Pick start date & time",
-  "@eventFormPickStart": {
-    "description": "Event form: start date picker hint"
-  },
+  "@eventFormPickStart": { "description": "Event form: start date picker hint" },
   "eventFormPickEnd": "Pick end date & time",
-  "@eventFormPickEnd": {
-    "description": "Event form: end date picker hint"
-  },
+  "@eventFormPickEnd": { "description": "Event form: end date picker hint" },
   "eventFormLocationLabel": "Location (optional)",
-  "@eventFormLocationLabel": {
-    "description": "Event form: location label"
-  },
+  "@eventFormLocationLabel": { "description": "Event form: location label" },
   "eventFormLocationHint": "Ciutadella Park",
-  "@eventFormLocationHint": {
-    "description": "Event form: location hint"
-  },
+  "@eventFormLocationHint": { "description": "Event form: location hint" },
   "eventFormCityLabel": "City (optional)",
-  "@eventFormCityLabel": {
-    "description": "Event form: city label (the event's location city)"
-  },
+  "@eventFormCityLabel": { "description": "Event form: city label (the event's location city)" },
   "eventFormCityHint": "Select a city",
-  "@eventFormCityHint": {
-    "description": "Event form: city picker placeholder when no city is chosen"
-  },
+  "@eventFormCityHint": { "description": "Event form: city picker placeholder when no city is chosen" },
   "eventFormLocationSearchHint": "Search venue or address",
-  "@eventFormLocationSearchHint": {
-    "description": "Event form: Google Places location search placeholder"
-  },
+  "@eventFormLocationSearchHint": { "description": "Event form: Google Places location search placeholder" },
   "eventFormLocationStartTyping": "Start typing the venue or address to see suggestions.",
-  "@eventFormLocationStartTyping": {
-    "description": "Event form: location autocomplete empty-query hint"
-  },
+  "@eventFormLocationStartTyping": { "description": "Event form: location autocomplete empty-query hint" },
   "eventFormLocationNoMatches": "No matches yet. Try adding the city to the address.",
-  "@eventFormLocationNoMatches": {
-    "description": "Event form: location autocomplete no-results hint"
-  },
+  "@eventFormLocationNoMatches": { "description": "Event form: location autocomplete no-results hint" },
   "eventFormLocationError": "We could not load location suggestions right now.",
-  "@eventFormLocationError": {
-    "description": "Event form: location autocomplete error message"
-  },
+  "@eventFormLocationError": { "description": "Event form: location autocomplete error message" },
   "eventFormCityDetected": "City: {city}",
   "@eventFormCityDetected": {
     "description": "Event form: read-only hint showing the city derived from the picked place",
-    "placeholders": {
-      "city": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "city": { "type": "String" } }
   },
   "eventFormCityNotDetected": "No city detected for this place. The event won't appear in city discovery.",
-  "@eventFormCityNotDetected": {
-    "description": "Event form: hint when the picked place has no resolvable city"
-  },
+  "@eventFormCityNotDetected": { "description": "Event form: hint when the picked place has no resolvable city" },
   "eventFormCapacityLabel": "Capacity (optional)",
-  "@eventFormCapacityLabel": {
-    "description": "Event form: capacity label"
-  },
+  "@eventFormCapacityLabel": { "description": "Event form: capacity label" },
   "eventFormLimit": "Limit",
-  "@eventFormLimit": {
-    "description": "Event form: capacity limit toggle label"
-  },
+  "@eventFormLimit": { "description": "Event form: capacity limit toggle label" },
   "eventFormWhoCanJoin": "Who can join",
-  "@eventFormWhoCanJoin": {
-    "description": "Event form: tier-gate section label"
-  },
+  "@eventFormWhoCanJoin": { "description": "Event form: tier-gate section label" },
   "eventFormAllMembers": "All members",
-  "@eventFormAllMembers": {
-    "description": "Event form: open to all members option"
-  },
+  "@eventFormAllMembers": { "description": "Event form: open to all members option" },
   "eventFormSelectedTiers": "Selected tiers",
-  "@eventFormSelectedTiers": {
-    "description": "Event form: restrict to selected tiers option"
-  },
+  "@eventFormSelectedTiers": { "description": "Event form: restrict to selected tiers option" },
   "eventFormVisibilityLabel": "Visibility",
-  "@eventFormVisibilityLabel": {
-    "description": "Event form: section label for who can see the event."
-  },
+  "@eventFormVisibilityLabel": { "description": "Event form: section label for who can see the event." },
   "eventFormVisibilityPublic": "Public",
-  "@eventFormVisibilityPublic": {
-    "description": "Event visibility option: anyone can see it in city discovery."
-  },
+  "@eventFormVisibilityPublic": { "description": "Event visibility option: anyone can see it in city discovery." },
   "eventFormVisibilityPublicHint": "Appears in city discovery — anyone can find it.",
-  "@eventFormVisibilityPublicHint": {
-    "description": "Helper text for the Public visibility option."
-  },
+  "@eventFormVisibilityPublicHint": { "description": "Helper text for the Public visibility option." },
   "eventFormVisibilityMembers": "Members",
-  "@eventFormVisibilityMembers": {
-    "description": "Event visibility option: visible to community members only."
-  },
+  "@eventFormVisibilityMembers": { "description": "Event visibility option: visible to community members only." },
   "eventFormVisibilityMembersHint": "Only your community members can see it.",
-  "@eventFormVisibilityMembersHint": {
-    "description": "Helper text for the Members visibility option."
-  },
+  "@eventFormVisibilityMembersHint": { "description": "Helper text for the Members visibility option." },
   "eventFormVisibilityTier": "Specific tier",
-  "@eventFormVisibilityTier": {
-    "description": "Event visibility option: visible to selected membership tiers only."
-  },
+  "@eventFormVisibilityTier": { "description": "Event visibility option: visible to selected membership tiers only." },
   "eventFormVisibilityTierHint": "Only members on the selected tiers can see it.",
-  "@eventFormVisibilityTierHint": {
-    "description": "Helper text for the Specific tier visibility option."
-  },
+  "@eventFormVisibilityTierHint": { "description": "Helper text for the Specific tier visibility option." },
   "eventFormPhotos": "Photos",
-  "@eventFormPhotos": {
-    "description": "Event form: photos section label"
-  },
+  "@eventFormPhotos": { "description": "Event form: photos section label" },
   "eventFormAddFromGallery": "Add from gallery",
-  "@eventFormAddFromGallery": {
-    "description": "Event form: pick photos from gallery"
-  },
+  "@eventFormAddFromGallery": { "description": "Event form: pick photos from gallery" },
   "eventFormPhotosAfterCreate": "Photos can be added once the event is created.",
-  "@eventFormPhotosAfterCreate": {
-    "description": "Event form: note that photos upload after creation"
-  },
+  "@eventFormPhotosAfterCreate": { "description": "Event form: note that photos upload after creation" },
   "eventFormErrName": "Event name needs at least 3 characters.",
-  "@eventFormErrName": {
-    "description": "Event form: name validation error"
-  },
+  "@eventFormErrName": { "description": "Event form: name validation error" },
   "eventFormErrStart": "Pick a start date & time.",
-  "@eventFormErrStart": {
-    "description": "Event form: missing start error"
-  },
+  "@eventFormErrStart": { "description": "Event form: missing start error" },
   "eventFormErrStartFuture": "Start must be in the future.",
-  "@eventFormErrStartFuture": {
-    "description": "Event form: start-in-past error"
-  },
+  "@eventFormErrStartFuture": { "description": "Event form: start-in-past error" },
   "eventFormErrEndAfterStart": "End must be after the start.",
-  "@eventFormErrEndAfterStart": {
-    "description": "Event form: end-before-start error"
-  },
+  "@eventFormErrEndAfterStart": { "description": "Event form: end-before-start error" },
   "eventFormErrCapacity": "Enter a valid capacity, or turn off the limit.",
-  "@eventFormErrCapacity": {
-    "description": "Event form: invalid capacity error"
-  },
+  "@eventFormErrCapacity": { "description": "Event form: invalid capacity error" },
   "eventFormErrTier": "Select at least one tier for this event.",
-  "@eventFormErrTier": {
-    "description": "Event form: error when 'Specific tier' visibility is chosen but no tier is selected."
-  },
+  "@eventFormErrTier": { "description": "Event form: error when 'Specific tier' visibility is chosen but no tier is selected." },
   "eventFormPhotosUploaded": "Photos uploaded.",
-  "@eventFormPhotosUploaded": {
-    "description": "Event form: photos uploaded confirmation"
-  },
+  "@eventFormPhotosUploaded": { "description": "Event form: photos uploaded confirmation" },
   "eventPhotosMaxPerAdd": "You can add up to {max} photos at a time.",
   "@eventPhotosMaxPerAdd": {
     "description": "Gallery: too many photos selected in one batch",
-    "placeholders": {
-      "max": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "max": { "type": "int" } }
   },
   "eventPhotosTotalCapReached": "This gallery already has {count} of {max} photos.",
   "@eventPhotosTotalCapReached": {
     "description": "Gallery: total photo cap already reached",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      },
-      "max": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "count": { "type": "int" }, "max": { "type": "int" } }
   },
   "eventPhotosTotalCapPartial": "Only {allowed} more photos can be added (max {max} total).",
   "@eventPhotosTotalCapPartial": {
     "description": "Gallery: only some of the picked photos fit under the total cap",
-    "placeholders": {
-      "allowed": {
-        "type": "int"
-      },
-      "max": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "allowed": { "type": "int" }, "max": { "type": "int" } }
   },
   "eventFormAddFromCommunity": "Choose from community gallery",
-  "@eventFormAddFromCommunity": {
-    "description": "Event form: pick photos from the community's past-event gallery"
-  },
+  "@eventFormAddFromCommunity": { "description": "Event form: pick photos from the community's past-event gallery" },
   "eventFormCommunityGalleryTitle": "Community gallery",
-  "@eventFormCommunityGalleryTitle": {
-    "description": "Event form: title of the community gallery picker sheet"
-  },
+  "@eventFormCommunityGalleryTitle": { "description": "Event form: title of the community gallery picker sheet" },
   "eventFormCommunityGalleryEmpty": "No photos in the community gallery yet.",
-  "@eventFormCommunityGalleryEmpty": {
-    "description": "Event form: empty state for the community gallery picker"
-  },
+  "@eventFormCommunityGalleryEmpty": { "description": "Event form: empty state for the community gallery picker" },
   "eventFormCommunityGalleryAdd": "Add {count} photos",
   "@eventFormCommunityGalleryAdd": {
     "description": "Event form: confirm button for adding selected community-gallery photos",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "count": { "type": "int" } }
   },
   "communityShareInvite": "Share invite",
-  "@communityShareInvite": {
-    "description": "Community: action to share a join-invite link"
-  },
+  "@communityShareInvite": { "description": "Community: action to share a join-invite link" },
   "communityShareInviteMessage": "Join {name} on Kolabing: {url}",
   "@communityShareInviteMessage": {
     "description": "Community: invite share message body",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "url": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "name": { "type": "String" }, "url": { "type": "String" } }
   },
   "communityShareInviteCopied": "Invite link copied.",
-  "@communityShareInviteCopied": {
-    "description": "Community: invite link copied to clipboard fallback"
-  },
+  "@communityShareInviteCopied": { "description": "Community: invite link copied to clipboard fallback" },
+
   "notifSettingsTitle": "Notifications",
-  "@notifSettingsTitle": {
-    "description": "Notification settings screen title"
-  },
+  "@notifSettingsTitle": { "description": "Notification settings screen title" },
   "notifSettingsMessages": "Messages",
-  "@notifSettingsMessages": {
-    "description": "Notification settings: messages toggle"
-  },
+  "@notifSettingsMessages": { "description": "Notification settings: messages toggle" },
   "notifSettingsMessagesSubtitle": "New chat messages in your communities and events",
-  "@notifSettingsMessagesSubtitle": {
-    "description": "Notification settings: messages toggle subtitle"
-  },
+  "@notifSettingsMessagesSubtitle": { "description": "Notification settings: messages toggle subtitle" },
   "notifSettingsApplications": "New applications",
-  "@notifSettingsApplications": {
-    "description": "Notification settings: applications toggle"
-  },
+  "@notifSettingsApplications": { "description": "Notification settings: applications toggle" },
   "notifSettingsApplicationsSubtitle": "When someone applies to your Kolab",
-  "@notifSettingsApplicationsSubtitle": {
-    "description": "Notification settings: applications subtitle"
-  },
+  "@notifSettingsApplicationsSubtitle": { "description": "Notification settings: applications subtitle" },
   "notifSettingsCollaborations": "Collaboration updates",
-  "@notifSettingsCollaborations": {
-    "description": "Notification settings: collaboration updates toggle"
-  },
+  "@notifSettingsCollaborations": { "description": "Notification settings: collaboration updates toggle" },
   "notifSettingsCollaborationsSubtitle": "Status changes on your Kolabs",
-  "@notifSettingsCollaborationsSubtitle": {
-    "description": "Notification settings: collaboration updates subtitle"
-  },
+  "@notifSettingsCollaborationsSubtitle": { "description": "Notification settings: collaboration updates subtitle" },
   "notifSettingsMarketing": "Tips & updates",
-  "@notifSettingsMarketing": {
-    "description": "Notification settings: marketing toggle"
-  },
+  "@notifSettingsMarketing": { "description": "Notification settings: marketing toggle" },
   "notifSettingsMarketingSubtitle": "Occasional product tips and news",
-  "@notifSettingsMarketingSubtitle": {
-    "description": "Notification settings: marketing subtitle"
-  },
+  "@notifSettingsMarketingSubtitle": { "description": "Notification settings: marketing subtitle" },
   "notifSettingsSaveError": "Could not save your preference. Try again.",
-  "@notifSettingsSaveError": {
-    "description": "Notification settings: save failure message"
-  },
+  "@notifSettingsSaveError": { "description": "Notification settings: save failure message" },
+
   "chatsTitle": "Chats",
-  "@chatsTitle": {
-    "description": "Chat inbox screen app-bar title."
-  },
+  "@chatsTitle": { "description": "Chat inbox screen app-bar title." },
   "chatInboxTooltip": "Chats",
-  "@chatInboxTooltip": {
-    "description": "Tooltip on the app-bar chat inbox icon."
-  },
+  "@chatInboxTooltip": { "description": "Tooltip on the app-bar chat inbox icon." },
   "chatThreadFallbackTitle": "Chat",
-  "@chatThreadFallbackTitle": {
-    "description": "Fallback title for a chat thread with no name or participants."
-  },
+  "@chatThreadFallbackTitle": { "description": "Fallback title for a chat thread with no name or participants." },
   "chatSenderFallback": "Member",
-  "@chatSenderFallback": {
-    "description": "Fallback label above an incoming chat bubble when the sender's name is unknown."
-  },
+  "@chatSenderFallback": { "description": "Fallback label above an incoming chat bubble when the sender's name is unknown." },
   "chatThreadTapToOpen": "Tap to open",
-  "@chatThreadTapToOpen": {
-    "description": "Subtitle for a chat thread that has messages."
-  },
+  "@chatThreadTapToOpen": { "description": "Subtitle for a chat thread that has messages." },
   "chatThreadNoMessagesYet": "No messages yet",
-  "@chatThreadNoMessagesYet": {
-    "description": "Subtitle for a chat thread with no messages."
-  },
+  "@chatThreadNoMessagesYet": { "description": "Subtitle for a chat thread with no messages." },
   "chatInboxEmptyTitle": "No chats yet",
-  "@chatInboxEmptyTitle": {
-    "description": "Empty state title on the chat inbox."
-  },
+  "@chatInboxEmptyTitle": { "description": "Empty state title on the chat inbox." },
   "chatInboxEmptyBody": "Conversations show up here once a Kolab, community, or event chat gets going.",
-  "@chatInboxEmptyBody": {
-    "description": "Empty state body on the chat inbox."
-  },
+  "@chatInboxEmptyBody": { "description": "Empty state body on the chat inbox." },
   "chatSectionMain": "Main",
-  "@chatSectionMain": {
-    "description": "Chat inbox section label for the community main chat."
-  },
+  "@chatSectionMain": { "description": "Chat inbox section label for the community main chat." },
   "chatSectionCommunityChats": "Community chats",
-  "@chatSectionCommunityChats": {
-    "description": "Chat inbox section label for custom community chats."
-  },
+  "@chatSectionCommunityChats": { "description": "Chat inbox section label for custom community chats." },
   "chatSectionEvents": "Events",
-  "@chatSectionEvents": {
-    "description": "Chat inbox section label for event chats."
-  },
+  "@chatSectionEvents": { "description": "Chat inbox section label for event chats." },
   "chatSectionKolabs": "Kolabs",
-  "@chatSectionKolabs": {
-    "description": "Chat inbox section label for collaboration (Kolab) chats."
-  },
+  "@chatSectionKolabs": { "description": "Chat inbox section label for collaboration (Kolab) chats." },
   "chatComposerHint": "Message",
-  "@chatComposerHint": {
-    "description": "Hint text in the chat message composer field."
-  },
+  "@chatComposerHint": { "description": "Hint text in the chat message composer field." },
   "chatThreadEmptyMessage": "No messages yet. Say hi 👋",
-  "@chatThreadEmptyMessage": {
-    "description": "Empty state inside an open chat thread with no messages."
-  },
+  "@chatThreadEmptyMessage": { "description": "Empty state inside an open chat thread with no messages." },
+
   "chatManageNewChatTitle": "New chat",
-  "@chatManageNewChatTitle": {
-    "description": "Title of the create-chat dialog in the Chats tab."
-  },
+  "@chatManageNewChatTitle": { "description": "Title of the create-chat dialog in the Chats tab." },
   "chatManageRenameTitle": "Rename chat",
-  "@chatManageRenameTitle": {
-    "description": "Title of the rename-chat dialog."
-  },
+  "@chatManageRenameTitle": { "description": "Title of the rename-chat dialog." },
   "chatManageNameLabel": "Chat name",
-  "@chatManageNameLabel": {
-    "description": "Label for the chat name field."
-  },
+  "@chatManageNameLabel": { "description": "Label for the chat name field." },
   "chatManageNameHint": "e.g. Exec, Socials, Philanthropy",
-  "@chatManageNameHint": {
-    "description": "Hint for the chat name field."
-  },
+  "@chatManageNameHint": { "description": "Hint for the chat name field." },
   "chatManageCreate": "Create",
-  "@chatManageCreate": {
-    "description": "Create button in the new-chat dialog."
-  },
+  "@chatManageCreate": { "description": "Create button in the new-chat dialog." },
   "chatManageRename": "Rename",
-  "@chatManageRename": {
-    "description": "Rename action label."
-  },
+  "@chatManageRename": { "description": "Rename action label." },
   "chatManageDelete": "Delete",
-  "@chatManageDelete": {
-    "description": "Delete action label."
-  },
+  "@chatManageDelete": { "description": "Delete action label." },
   "chatManageCreateChat": "Create chat",
-  "@chatManageCreateChat": {
-    "description": "Label on the create-chat button in the Chats tab."
-  },
+  "@chatManageCreateChat": { "description": "Label on the create-chat button in the Chats tab." },
   "chatManageChatCreated": "Created \"{name}\"",
   "@chatManageChatCreated": {
     "description": "Snackbar after a chat is created.",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "name": { "type": "String" } }
   },
   "chatManageChatRenamed": "Chat renamed",
-  "@chatManageChatRenamed": {
-    "description": "Snackbar after a chat is renamed."
-  },
+  "@chatManageChatRenamed": { "description": "Snackbar after a chat is renamed." },
   "chatManageChatDeleted": "Chat deleted",
-  "@chatManageChatDeleted": {
-    "description": "Snackbar after a chat is deleted."
-  },
+  "@chatManageChatDeleted": { "description": "Snackbar after a chat is deleted." },
   "chatManageChatLimit": "You've reached the limit of {count} custom chats.",
   "@chatManageChatLimit": {
     "description": "Snackbar when the custom chat cap is reached.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "count": { "type": "int" } }
   },
   "chatManageDeleteTitle": "Delete this chat?",
-  "@chatManageDeleteTitle": {
-    "description": "Confirm dialog title for deleting a chat."
-  },
+  "@chatManageDeleteTitle": { "description": "Confirm dialog title for deleting a chat." },
   "chatManageDeleteBody": "Members will lose access to \"{name}\". You can recover it later if you change your mind.",
   "@chatManageDeleteBody": {
     "description": "Confirm dialog body for deleting a chat (notes it is recoverable).",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "name": { "type": "String" } }
   },
   "chatManageWhichCommunity": "Which community?",
-  "@chatManageWhichCommunity": {
-    "description": "Title of the community picker shown before creating a chat when the viewer manages more than one community."
-  },
+  "@chatManageWhichCommunity": { "description": "Title of the community picker shown before creating a chat when the viewer manages more than one community." },
   "chatJoinSectionTitle": "Chats you can join",
-  "@chatJoinSectionTitle": {
-    "description": "Section label for open chats the viewer can join."
-  },
+  "@chatJoinSectionTitle": { "description": "Section label for open chats the viewer can join." },
   "chatJoinAction": "Join",
-  "@chatJoinAction": {
-    "description": "Join button label for an open chat."
-  },
+  "@chatJoinAction": { "description": "Join button label for an open chat." },
   "chatJoinedSnack": "You joined \"{name}\"",
   "@chatJoinedSnack": {
     "description": "Snackbar after joining an open chat.",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "name": { "type": "String" } }
   },
   "chatThreadOpenEvent": "Open event",
-  "@chatThreadOpenEvent": {
-    "description": "Tooltip on the info icon in an event chat header that opens the event detail."
-  },
+  "@chatThreadOpenEvent": { "description": "Tooltip on the info icon in an event chat header that opens the event detail." },
   "chatMembersTitle": "Members",
-  "@chatMembersTitle": {
-    "description": "Title of the thread members / participants sheet."
-  },
+  "@chatMembersTitle": { "description": "Title of the thread members / participants sheet." },
   "chatMembersEmpty": "No members to manage yet.",
-  "@chatMembersEmpty": {
-    "description": "Empty state in the members sheet."
-  },
+  "@chatMembersEmpty": { "description": "Empty state in the members sheet." },
   "chatMemberRemove": "Remove",
-  "@chatMemberRemove": {
-    "description": "Remove (ban) action label for a member."
-  },
+  "@chatMemberRemove": { "description": "Remove (ban) action label for a member." },
   "chatMemberRemoveTitle": "Remove {name}?",
   "@chatMemberRemoveTitle": {
     "description": "Confirm dialog title for banning a member.",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "name": { "type": "String" } }
   },
   "chatMemberRemoveBody": "They'll lose access to this chat and won't be able to rejoin.",
-  "@chatMemberRemoveBody": {
-    "description": "Confirm dialog body for banning a member."
-  },
+  "@chatMemberRemoveBody": { "description": "Confirm dialog body for banning a member." },
   "chatMemberRemoved": "{name} was removed",
   "@chatMemberRemoved": {
     "description": "Snackbar after a member is banned.",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "name": { "type": "String" } }
   },
   "chatThreadManageMembers": "Manage members",
-  "@chatThreadManageMembers": {
-    "description": "Tooltip on the manage-members icon in the thread header."
-  },
+  "@chatThreadManageMembers": { "description": "Tooltip on the manage-members icon in the thread header." },
+
   "communityDetailTabChats": "Chats",
-  "@communityDetailTabChats": {
-    "description": "Community detail tab: chats."
-  },
+  "@communityDetailTabChats": { "description": "Community detail tab: chats." },
   "communityDetailTabEvents": "Events",
-  "@communityDetailTabEvents": {
-    "description": "Community detail tab: events."
-  },
+  "@communityDetailTabEvents": { "description": "Community detail tab: events." },
   "communityDetailTabMembers": "Members",
-  "@communityDetailTabMembers": {
-    "description": "Community detail tab: members."
-  },
+  "@communityDetailTabMembers": { "description": "Community detail tab: members." },
   "communityDetailTabDetails": "Details",
-  "@communityDetailTabDetails": {
-    "description": "Community detail tab: details."
-  },
+  "@communityDetailTabDetails": { "description": "Community detail tab: details." },
   "communityDetailTypeAndMembers": "{type} · {count} members",
   "@communityDetailTypeAndMembers": {
     "description": "Community header subtitle: community type and member count.",
     "placeholders": {
-      "type": {
-        "type": "String"
-      },
-      "count": {
-        "type": "int"
-      }
+      "type": { "type": "String" },
+      "count": { "type": "int" }
     }
   },
   "communityDetailMembersCount": "{count} members",
   "@communityDetailMembersCount": {
     "description": "Member count label.",
     "placeholders": {
-      "count": {
-        "type": "int"
-      }
+      "count": { "type": "int" }
     }
   },
   "communityDetailChatsLoadError": "Could not load chats",
-  "@communityDetailChatsLoadError": {
-    "description": "Title shown when the community chats fail to load."
-  },
+  "@communityDetailChatsLoadError": { "description": "Title shown when the community chats fail to load." },
   "communityDetailNoChatsTitle": "No chats yet",
-  "@communityDetailNoChatsTitle": {
-    "description": "Empty state title for the community chats tab."
-  },
+  "@communityDetailNoChatsTitle": { "description": "Empty state title for the community chats tab." },
   "communityDetailNoChatsBody": "This community’s conversations show up here.",
-  "@communityDetailNoChatsBody": {
-    "description": "Empty state body for the community chats tab."
-  },
+  "@communityDetailNoChatsBody": { "description": "Empty state body for the community chats tab." },
   "communityDetailNoEventsTitle": "No upcoming events",
-  "@communityDetailNoEventsTitle": {
-    "description": "Empty state title for the community events tab."
-  },
+  "@communityDetailNoEventsTitle": { "description": "Empty state title for the community events tab." },
   "communityDetailNoEventsBody": "Events created for this community will show here.",
-  "@communityDetailNoEventsBody": {
-    "description": "Empty state body for the community events tab."
-  },
+  "@communityDetailNoEventsBody": { "description": "Empty state body for the community events tab." },
   "communityDetailEventLockedSubtitle": "Locked — for another membership tier",
-  "@communityDetailEventLockedSubtitle": {
-    "description": "Subtitle shown on an event a member's tier cannot access."
-  },
+  "@communityDetailEventLockedSubtitle": { "description": "Subtitle shown on an event a member's tier cannot access." },
   "communityDetailEventLockedSnack": "This event is for a different membership tier.",
-  "@communityDetailEventLockedSnack": {
-    "description": "Snackbar shown when tapping a tier-locked event."
-  },
+  "@communityDetailEventLockedSnack": { "description": "Snackbar shown when tapping a tier-locked event." },
   "communityDetailLeaderboardButton": "Chapter leaderboard",
-  "@communityDetailLeaderboardButton": {
-    "description": "Button opening the chapter (community-scoped) leaderboard."
-  },
+  "@communityDetailLeaderboardButton": { "description": "Button opening the chapter (community-scoped) leaderboard." },
   "communityDetailAboutLabel": "About",
-  "@communityDetailAboutLabel": {
-    "description": "Section label for the community description."
-  },
+  "@communityDetailAboutLabel": { "description": "Section label for the community description." },
   "communityDetailMembershipLabel": "Your membership",
-  "@communityDetailMembershipLabel": {
-    "description": "Section label for the member's own membership details."
-  },
+  "@communityDetailMembershipLabel": { "description": "Section label for the member's own membership details." },
   "communityDetailRowTier": "Tier",
-  "@communityDetailRowTier": {
-    "description": "Row label: the member's tier."
-  },
+  "@communityDetailRowTier": { "description": "Row label: the member's tier." },
   "communityDetailRowType": "Type",
-  "@communityDetailRowType": {
-    "description": "Row label: the community type."
-  },
+  "@communityDetailRowType": { "description": "Row label: the community type." },
   "communityDetailRowMembers": "Members",
-  "@communityDetailRowMembers": {
-    "description": "Row label: member count."
-  },
+  "@communityDetailRowMembers": { "description": "Row label: member count." },
   "communityDetailRowRole": "Role",
-  "@communityDetailRowRole": {
-    "description": "Row label: the member's role."
-  },
+  "@communityDetailRowRole": { "description": "Row label: the member's role." },
   "communityDetailRoleCanManage": "Can manage",
-  "@communityDetailRoleCanManage": {
-    "description": "Role value shown when the member can manage the community."
-  },
+  "@communityDetailRoleCanManage": { "description": "Role value shown when the member can manage the community." },
   "communityDetailTierFallback": "Member",
-  "@communityDetailTierFallback": {
-    "description": "Fallback tier name when a member has no assigned tier."
-  },
+  "@communityDetailTierFallback": { "description": "Fallback tier name when a member has no assigned tier." },
   "communityDetailGalleryLabel": "Gallery & past events",
-  "@communityDetailGalleryLabel": {
-    "description": "Section label for the gallery and past events."
-  },
+  "@communityDetailGalleryLabel": { "description": "Section label for the gallery and past events." },
   "communityDetailGalleryBody": "Photos and past events will live here once the events lifecycle ships (Phase 3).",
-  "@communityDetailGalleryBody": {
-    "description": "Placeholder body for the gallery section."
-  },
+  "@communityDetailGalleryBody": { "description": "Placeholder body for the gallery section." },
   "communityDetailGalleryEmpty": "No past events to show yet.",
-  "@communityDetailGalleryEmpty": {
-    "description": "Empty state for the gallery and past events section when the community has no past events."
-  },
+  "@communityDetailGalleryEmpty": { "description": "Empty state for the gallery and past events section when the community has no past events." },
+
   "myCommunitiesNoTier": "No tier yet",
-  "@myCommunitiesNoTier": {
-    "description": "Shown on a membership card when the member has no tier."
-  },
+  "@myCommunitiesNoTier": { "description": "Shown on a membership card when the member has no tier." },
   "myCommunitiesAdminBadge": "ADMIN",
-  "@myCommunitiesAdminBadge": {
-    "description": "Badge shown when the member can manage the community."
-  },
+  "@myCommunitiesAdminBadge": { "description": "Badge shown when the member can manage the community." },
   "myCommunitiesEmptyTitle": "You're not in any communities yet",
-  "@myCommunitiesEmptyTitle": {
-    "description": "Empty state title for the member's communities list."
-  },
+  "@myCommunitiesEmptyTitle": { "description": "Empty state title for the member's communities list." },
   "myCommunitiesEmptyBody": "Join a community to earn your place on its tiers and see member-only events and perks.",
-  "@myCommunitiesEmptyBody": {
-    "description": "Empty state body for the member's communities list."
-  },
+  "@myCommunitiesEmptyBody": { "description": "Empty state body for the member's communities list." },
+
   "communityHubEmptyTitle": "Start your community",
-  "@communityHubEmptyTitle": {
-    "description": "Empty state title on the community leader hub."
-  },
+  "@communityHubEmptyTitle": { "description": "Empty state title on the community leader hub." },
   "communityHubEmptyBody": "Create a community to build a member roster and set up your own tiers. Your first community is free.",
-  "@communityHubEmptyBody": {
-    "description": "Empty state body on the community leader hub."
-  },
+  "@communityHubEmptyBody": { "description": "Empty state body on the community leader hub." },
   "communityHubCreateCommunity": "CREATE COMMUNITY",
-  "@communityHubCreateCommunity": {
-    "description": "Button to create a community."
-  },
+  "@communityHubCreateCommunity": { "description": "Button to create a community." },
   "communityHubSectionTiers": "Tiers",
-  "@communityHubSectionTiers": {
-    "description": "Section label: tiers."
-  },
+  "@communityHubSectionTiers": { "description": "Section label: tiers." },
   "communityHubSectionMembers": "Members",
-  "@communityHubSectionMembers": {
-    "description": "Section label: members."
-  },
+  "@communityHubSectionMembers": { "description": "Section label: members." },
   "communityHubSectionEvents": "Events",
-  "@communityHubSectionEvents": {
-    "description": "Section label: events."
-  },
+  "@communityHubSectionEvents": { "description": "Section label: events." },
   "communityHubSectionChats": "Chats",
-  "@communityHubSectionChats": {
-    "description": "Section label: chats."
-  },
+  "@communityHubSectionChats": { "description": "Section label: chats." },
   "communityHubTypeAndMembers": "{type}  ·  {count} members",
   "@communityHubTypeAndMembers": {
     "description": "Hub header subtitle with type and member count.",
     "placeholders": {
-      "type": {
-        "type": "String"
-      },
-      "count": {
-        "type": "int"
-      }
+      "type": { "type": "String" },
+      "count": { "type": "int" }
     }
   },
   "communityHubNoEvents": "No upcoming events yet.",
-  "@communityHubNoEvents": {
-    "description": "Empty state for the hub events section."
-  },
+  "@communityHubNoEvents": { "description": "Empty state for the hub events section." },
   "communityHubCreateEvent": "Create event",
-  "@communityHubCreateEvent": {
-    "description": "Button to create an event."
-  },
+  "@communityHubCreateEvent": { "description": "Button to create an event." },
   "communityHubNewChatTitle": "New chat",
-  "@communityHubNewChatTitle": {
-    "description": "Dialog title to create a new community chat."
-  },
+  "@communityHubNewChatTitle": { "description": "Dialog title to create a new community chat." },
   "communityHubChatNameLabel": "Chat name",
-  "@communityHubChatNameLabel": {
-    "description": "Label for the chat name field."
-  },
+  "@communityHubChatNameLabel": { "description": "Label for the chat name field." },
   "communityHubChatNameHint": "e.g. Exec, Socials, Philanthropy",
-  "@communityHubChatNameHint": {
-    "description": "Hint for the chat name field."
-  },
+  "@communityHubChatNameHint": { "description": "Hint for the chat name field." },
   "communityHubCreate": "Create",
-  "@communityHubCreate": {
-    "description": "Generic create action in the community hub."
-  },
+  "@communityHubCreate": { "description": "Generic create action in the community hub." },
   "communityHubChatCreated": "\"{name}\" created",
   "@communityHubChatCreated": {
     "description": "Confirmation after creating a custom chat.",
     "placeholders": {
-      "name": {
-        "type": "String"
-      }
+      "name": { "type": "String" }
     }
   },
   "communityHubChatLimit": "You can have up to {count} chats",
   "@communityHubChatLimit": {
     "description": "Error when the custom chat limit is reached.",
     "placeholders": {
-      "count": {
-        "type": "int"
-      }
+      "count": { "type": "int" }
     }
   },
   "communityHubAccess": "Access",
-  "@communityHubAccess": {
-    "description": "Default label on the per-chat access picker."
-  },
+  "@communityHubAccess": { "description": "Default label on the per-chat access picker." },
   "chatManageAccess": "Who can access",
   "chatManageMembers": "Members",
   "chatBlock": "Block",
@@ -7355,2064 +6819,1036 @@
   "chatRenamed": "Chat renamed",
   "chatDeleteTitle": "Delete this chat?",
   "chatDeleteBody": "All messages in \"{name}\" will be removed.",
-  "@chatDeleteBody": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
+  "@chatDeleteBody": { "placeholders": { "name": { "type": "String" } } },
   "chatDeleted": "Chat deleted",
   "communityHubAccessNoTiers": "No tiers",
-  "@communityHubAccessNoTiers": {
-    "description": "Access label when no tier can open the chat."
-  },
+  "@communityHubAccessNoTiers": { "description": "Access label when no tier can open the chat." },
   "communityHubAccessAllTiers": "All tiers",
-  "@communityHubAccessAllTiers": {
-    "description": "Access label when every tier can open the chat."
-  },
+  "@communityHubAccessAllTiers": { "description": "Access label when every tier can open the chat." },
   "communityHubAccessOneTier": "1 tier",
-  "@communityHubAccessOneTier": {
-    "description": "Access label when one tier can open the chat."
-  },
+  "@communityHubAccessOneTier": { "description": "Access label when one tier can open the chat." },
   "communityHubAccessTierCount": "{count} tiers",
   "@communityHubAccessTierCount": {
     "description": "Access label for how many tiers can open the chat.",
     "placeholders": {
-      "count": {
-        "type": "int"
-      }
+      "count": { "type": "int" }
     }
   },
   "communityHubCreateTiersFirst": "Create membership tiers first to gate chats.",
-  "@communityHubCreateTiersFirst": {
-    "description": "Snackbar shown when managing chat access with no tiers."
-  },
+  "@communityHubCreateTiersFirst": { "description": "Snackbar shown when managing chat access with no tiers." },
   "communityHubAccessDialogTitle": "Who can access \"{name}\"?",
   "@communityHubAccessDialogTitle": {
     "description": "Title of the chat access dialog.",
     "placeholders": {
-      "name": {
-        "type": "String"
-      }
+      "name": { "type": "String" }
     }
   },
   "communityHubAccessDialogChat": "chat",
-  "@communityHubAccessDialogChat": {
-    "description": "Fallback noun for an unnamed chat in the access dialog title."
-  },
+  "@communityHubAccessDialogChat": { "description": "Fallback noun for an unnamed chat in the access dialog title." },
   "communityHubAccessDialogBody": "You and your managers always have access. Choose which member tiers can open this chat.",
-  "@communityHubAccessDialogBody": {
-    "description": "Explanatory body of the chat access dialog."
-  },
+  "@communityHubAccessDialogBody": { "description": "Explanatory body of the chat access dialog." },
   "communityHubChatAccessUpdated": "Chat access updated",
-  "@communityHubChatAccessUpdated": {
-    "description": "Confirmation after updating chat access."
-  },
+  "@communityHubChatAccessUpdated": { "description": "Confirmation after updating chat access." },
   "communityHubNoChatsHint": "No chats yet. Your main chat + up to {count} custom chats live here.",
   "@communityHubNoChatsHint": {
     "description": "Hint shown when a community has no chats.",
     "placeholders": {
-      "count": {
-        "type": "int"
-      }
+      "count": { "type": "int" }
     }
   },
   "communityHubCreateChat": "Create chat",
-  "@communityHubCreateChat": {
-    "description": "Button to create a custom chat."
-  },
+  "@communityHubCreateChat": { "description": "Button to create a custom chat." },
   "communityHubChatLimitReached": "Chat limit reached ({count} custom chats).",
   "@communityHubChatLimitReached": {
     "description": "Hint shown when the custom chat limit is reached.",
     "placeholders": {
-      "count": {
-        "type": "int"
-      }
+      "count": { "type": "int" }
     }
   },
   "communityHubChatMain": "Main",
-  "@communityHubChatMain": {
-    "description": "Fallback name for the main community chat."
-  },
+  "@communityHubChatMain": { "description": "Fallback name for the main community chat." },
   "communityHubChatFallback": "Chat",
-  "@communityHubChatFallback": {
-    "description": "Fallback name for a community chat."
-  },
+  "@communityHubChatFallback": { "description": "Fallback name for a community chat." },
   "communityHubChipMain": "MAIN",
-  "@communityHubChipMain": {
-    "description": "Chip on the main community chat row."
-  },
+  "@communityHubChipMain": { "description": "Chip on the main community chat row." },
   "communityHubTierDetail": "{rule} · {threshold} {unit}",
   "@communityHubTierDetail": {
     "description": "Tier detail line: assignment rule plus threshold and unit.",
     "placeholders": {
-      "rule": {
-        "type": "String"
-      },
-      "threshold": {
-        "type": "int"
-      },
-      "unit": {
-        "type": "String"
-      }
+      "rule": { "type": "String" },
+      "threshold": { "type": "int" },
+      "unit": { "type": "String" }
     }
   },
   "communityHubChipDefault": "DEFAULT",
-  "@communityHubChipDefault": {
-    "description": "Chip on the default tier."
-  },
+  "@communityHubChipDefault": { "description": "Chip on the default tier." },
   "communityHubTierRank": "#{rank}",
   "@communityHubTierRank": {
     "description": "Tier rank indicator.",
     "placeholders": {
-      "rank": {
-        "type": "int"
-      }
+      "rank": { "type": "int" }
     }
   },
   "communityHubNoTiersHint": "No tiers yet. Add tiers to give members a status ladder.",
-  "@communityHubNoTiersHint": {
-    "description": "Hint shown when a community has no tiers."
-  },
+  "@communityHubNoTiersHint": { "description": "Hint shown when a community has no tiers." },
   "communityHubAddTier": "Add tier",
-  "@communityHubAddTier": {
-    "description": "Button to add a tier."
-  },
+  "@communityHubAddTier": { "description": "Button to add a tier." },
   "communityHubNoMembersHint": "No members yet. Invite people or share your join link.",
-  "@communityHubNoMembersHint": {
-    "description": "Hint shown when a community has no members."
-  },
+  "@communityHubNoMembersHint": { "description": "Hint shown when a community has no members." },
   "communityHubManageMembers": "Manage members",
-  "@communityHubManageMembers": {
-    "description": "Button to open the roster."
-  },
+  "@communityHubManageMembers": { "description": "Button to open the roster." },
   "communityHubManageAllMembers": "Manage all {count} members",
   "@communityHubManageAllMembers": {
     "description": "Button to open the full roster, with the total member count.",
     "placeholders": {
-      "count": {
-        "type": "int"
-      }
+      "count": { "type": "int" }
     }
   },
   "communityHubMemberFallback": "Member",
-  "@communityHubMemberFallback": {
-    "description": "Fallback name for a member without a display name."
-  },
+  "@communityHubMemberFallback": { "description": "Fallback name for a member without a display name." },
   "communityHubChipAdmin": "ADMIN",
-  "@communityHubChipAdmin": {
-    "description": "Chip shown next to a member who can manage."
-  },
+  "@communityHubChipAdmin": { "description": "Chip shown next to a member who can manage." },
   "communityHubLoadError": "Couldn't load your community",
-  "@communityHubLoadError": {
-    "description": "Error title when the community fails to load."
-  },
+  "@communityHubLoadError": { "description": "Error title when the community fails to load." },
+
   "createCommunityPremiumTitle": "Community Premium",
-  "@createCommunityPremiumTitle": {
-    "description": "Title of the Community Premium upsell dialog."
-  },
+  "@createCommunityPremiumTitle": { "description": "Title of the Community Premium upsell dialog." },
   "createCommunityPremiumBody": "Your free plan includes one community. Running more than one is part of Community Premium — coming soon.",
-  "@createCommunityPremiumBody": {
-    "description": "Body of the Community Premium upsell dialog."
-  },
+  "@createCommunityPremiumBody": { "description": "Body of the Community Premium upsell dialog." },
   "createCommunityTitle": "New community",
-  "@createCommunityTitle": {
-    "description": "Create-community screen app-bar title."
-  },
+  "@createCommunityTitle": { "description": "Create-community screen app-bar title." },
   "createCommunityNameLabel": "Name",
-  "@createCommunityNameLabel": {
-    "description": "Label for the community name field."
-  },
+  "@createCommunityNameLabel": { "description": "Label for the community name field." },
   "createCommunityNameHint": "e.g. Kappa Delta — Beta Chi, or City Run Club",
-  "@createCommunityNameHint": {
-    "description": "Hint for the community name field."
-  },
+  "@createCommunityNameHint": { "description": "Hint for the community name field." },
   "createCommunityNameRequired": "Name is required",
-  "@createCommunityNameRequired": {
-    "description": "Validation error for an empty community name."
-  },
+  "@createCommunityNameRequired": { "description": "Validation error for an empty community name." },
   "createCommunityTypeLabel": "Type",
-  "@createCommunityTypeLabel": {
-    "description": "Label for the community type field."
-  },
+  "@createCommunityTypeLabel": { "description": "Label for the community type field." },
   "createCommunityWhoCanJoin": "Who can join",
-  "@createCommunityWhoCanJoin": {
-    "description": "Label for the join-policy selector."
-  },
+  "@createCommunityWhoCanJoin": { "description": "Label for the join-policy selector." },
   "createCommunityJoinAnyone": "Anyone",
-  "@createCommunityJoinAnyone": {
-    "description": "Join policy option: open to anyone."
-  },
+  "@createCommunityJoinAnyone": { "description": "Join policy option: open to anyone." },
   "createCommunityJoinInviteOnly": "Invite only",
-  "@createCommunityJoinInviteOnly": {
-    "description": "Join policy option: invite only."
-  },
+  "@createCommunityJoinInviteOnly": { "description": "Join policy option: invite only." },
   "createCommunitySubmit": "CREATE COMMUNITY",
-  "@createCommunitySubmit": {
-    "description": "Submit button to create the community."
-  },
+  "@createCommunitySubmit": { "description": "Submit button to create the community." },
+
   "tierEditorEditTitle": "Edit tier",
-  "@tierEditorEditTitle": {
-    "description": "App-bar title when editing a tier."
-  },
+  "@tierEditorEditTitle": { "description": "App-bar title when editing a tier." },
   "tierEditorNewTitle": "New tier",
-  "@tierEditorNewTitle": {
-    "description": "App-bar title when creating a tier."
-  },
+  "@tierEditorNewTitle": { "description": "App-bar title when creating a tier." },
   "tierEditorDeleteTooltip": "Delete tier",
-  "@tierEditorDeleteTooltip": {
-    "description": "Tooltip on the delete-tier icon."
-  },
+  "@tierEditorDeleteTooltip": { "description": "Tooltip on the delete-tier icon." },
   "tierEditorDeleteTitle": "Delete tier?",
-  "@tierEditorDeleteTitle": {
-    "description": "Title of the delete-tier confirmation dialog."
-  },
+  "@tierEditorDeleteTitle": { "description": "Title of the delete-tier confirmation dialog." },
   "tierEditorDeleteBody": "Remove \"{name}\"? Members in it will need reassigning.",
   "@tierEditorDeleteBody": {
     "description": "Body of the delete-tier confirmation dialog.",
     "placeholders": {
-      "name": {
-        "type": "String"
-      }
+      "name": { "type": "String" }
     }
   },
   "tierEditorDelete": "Delete",
-  "@tierEditorDelete": {
-    "description": "Delete action."
-  },
+  "@tierEditorDelete": { "description": "Delete action." },
   "tierEditorNameLabel": "Name",
-  "@tierEditorNameLabel": {
-    "description": "Label for the tier name field."
-  },
+  "@tierEditorNameLabel": { "description": "Label for the tier name field." },
   "tierEditorNameHint": "e.g. Exec, Active, Captain, Coach",
-  "@tierEditorNameHint": {
-    "description": "Hint for the tier name field."
-  },
+  "@tierEditorNameHint": { "description": "Hint for the tier name field." },
   "tierEditorNameRequired": "Name is required",
-  "@tierEditorNameRequired": {
-    "description": "Validation error for an empty tier name."
-  },
+  "@tierEditorNameRequired": { "description": "Validation error for an empty tier name." },
   "tierEditorRankLabel": "Rank (higher = more senior)",
-  "@tierEditorRankLabel": {
-    "description": "Label for the tier rank field."
-  },
+  "@tierEditorRankLabel": { "description": "Label for the tier rank field." },
   "tierEditorRankRequired": "Enter a number (1 or higher)",
-  "@tierEditorRankRequired": {
-    "description": "Validation error for the tier rank field."
-  },
+  "@tierEditorRankRequired": { "description": "Validation error for the tier rank field." },
   "tierEditorColourLabel": "Colour",
-  "@tierEditorColourLabel": {
-    "description": "Label for the tier colour picker."
-  },
+  "@tierEditorColourLabel": { "description": "Label for the tier colour picker." },
   "tierEditorRuleLabel": "How members get this tier",
-  "@tierEditorRuleLabel": {
-    "description": "Label for the tier assignment-rule selector."
-  },
+  "@tierEditorRuleLabel": { "description": "Label for the tier assignment-rule selector." },
   "tierEditorThresholdLabel": "Threshold ({unit})",
   "@tierEditorThresholdLabel": {
     "description": "Label for the tier threshold field.",
     "placeholders": {
-      "unit": {
-        "type": "String"
-      }
+      "unit": { "type": "String" }
     }
   },
   "tierEditorThresholdRequired": "Enter a {unit} threshold",
   "@tierEditorThresholdRequired": {
     "description": "Validation error for the tier threshold field.",
     "placeholders": {
-      "unit": {
-        "type": "String"
-      }
+      "unit": { "type": "String" }
     }
   },
   "tierEditorSave": "SAVE",
-  "@tierEditorSave": {
-    "description": "Save button when editing a tier."
-  },
+  "@tierEditorSave": { "description": "Save button when editing a tier." },
   "tierEditorCreate": "CREATE TIER",
-  "@tierEditorCreate": {
-    "description": "Create button when adding a tier."
-  },
+  "@tierEditorCreate": { "description": "Create button when adding a tier." },
+
   "rosterTitle": "Members",
-  "@rosterTitle": {
-    "description": "Roster screen app-bar title."
-  },
+  "@rosterTitle": { "description": "Roster screen app-bar title." },
   "rosterInviteTooltip": "Invite member",
-  "@rosterInviteTooltip": {
-    "description": "Tooltip on the invite-member icon."
-  },
+  "@rosterInviteTooltip": { "description": "Tooltip on the invite-member icon." },
   "rosterInviteTitle": "Invite member",
-  "@rosterInviteTitle": {
-    "description": "Title of the invite-member dialog."
-  },
+  "@rosterInviteTitle": { "description": "Title of the invite-member dialog." },
   "rosterInviteBody": "Add a member by the email on their Kolabing account.",
-  "@rosterInviteBody": {
-    "description": "Body of the invite-member dialog."
-  },
+  "@rosterInviteBody": { "description": "Body of the invite-member dialog." },
   "rosterInviteEmailLabel": "Email",
-  "@rosterInviteEmailLabel": {
-    "description": "Label for the invite email field."
-  },
+  "@rosterInviteEmailLabel": { "description": "Label for the invite email field." },
   "rosterInviteEmailHint": "name@example.com",
-  "@rosterInviteEmailHint": {
-    "description": "Hint for the invite email field."
-  },
+  "@rosterInviteEmailHint": { "description": "Hint for the invite email field." },
   "rosterInvite": "Invite",
-  "@rosterInvite": {
-    "description": "Invite action."
-  },
+  "@rosterInvite": { "description": "Invite action." },
   "rosterInviteInvalidEmail": "Enter a valid email address",
-  "@rosterInviteInvalidEmail": {
-    "description": "Error for an invalid invite email."
-  },
+  "@rosterInviteInvalidEmail": { "description": "Error for an invalid invite email." },
   "rosterMemberAdded": "Member added",
-  "@rosterMemberAdded": {
-    "description": "Confirmation after adding a member."
-  },
+  "@rosterMemberAdded": { "description": "Confirmation after adding a member." },
   "rosterNoAccountForEmail": "No Kolabing account found for that email",
-  "@rosterNoAccountForEmail": {
-    "description": "Error when no account matches the invited email."
-  },
+  "@rosterNoAccountForEmail": { "description": "Error when no account matches the invited email." },
   "rosterMemberFallback": "Member",
   "rosterViewProfile": "View profile",
-  "@rosterMemberFallback": {
-    "description": "Fallback name for a member without a display name."
-  },
+  "@rosterMemberFallback": { "description": "Fallback name for a member without a display name." },
   "rosterEmptyTitle": "No members yet",
-  "@rosterEmptyTitle": {
-    "description": "Empty state title for the roster."
-  },
+  "@rosterEmptyTitle": { "description": "Empty state title for the roster." },
   "rosterInviteMember": "Invite a member",
-  "@rosterInviteMember": {
-    "description": "Empty state button to invite a member."
-  },
+  "@rosterInviteMember": { "description": "Empty state button to invite a member." },
   "rosterRemoveTitle": "Remove member?",
-  "@rosterRemoveTitle": {
-    "description": "Title of the remove-member confirmation dialog."
-  },
+  "@rosterRemoveTitle": { "description": "Title of the remove-member confirmation dialog." },
   "rosterRemoveBody": "Remove {name} from the community?",
   "@rosterRemoveBody": {
     "description": "Body of the remove-member confirmation dialog.",
     "placeholders": {
-      "name": {
-        "type": "String"
-      }
+      "name": { "type": "String" }
     }
   },
   "rosterRemoveBodyFallback": "this member",
-  "@rosterRemoveBodyFallback": {
-    "description": "Fallback noun for a member without a name in the remove dialog."
-  },
+  "@rosterRemoveBodyFallback": { "description": "Fallback noun for a member without a name in the remove dialog." },
   "rosterRemove": "Remove",
-  "@rosterRemove": {
-    "description": "Remove action."
-  },
+  "@rosterRemove": { "description": "Remove action." },
   "rosterTierLabel": "Tier",
-  "@rosterTierLabel": {
-    "description": "Label for the member tier selector."
-  },
+  "@rosterTierLabel": { "description": "Label for the member tier selector." },
   "rosterNoTier": "No tier",
-  "@rosterNoTier": {
-    "description": "Dropdown option for no tier."
-  },
+  "@rosterNoTier": { "description": "Dropdown option for no tier." },
   "rosterCanManageTitle": "Can manage this community",
-  "@rosterCanManageTitle": {
-    "description": "Title for the can-manage toggle."
-  },
+  "@rosterCanManageTitle": { "description": "Title for the can-manage toggle." },
   "rosterCanManageSubtitle": "Admin capability — independent of tier",
-  "@rosterCanManageSubtitle": {
-    "description": "Subtitle for the can-manage toggle."
-  },
+  "@rosterCanManageSubtitle": { "description": "Subtitle for the can-manage toggle." },
   "rosterStatusLabel": "Status",
-  "@rosterStatusLabel": {
-    "description": "Label for the membership status selector."
-  },
+  "@rosterStatusLabel": { "description": "Label for the membership status selector." },
   "rosterSave": "SAVE",
-  "@rosterSave": {
-    "description": "Save button in the member edit sheet."
-  },
+  "@rosterSave": { "description": "Save button in the member edit sheet." },
   "friendsTitle": "Friends",
-  "@friendsTitle": {
-    "description": "Title of the friends list screen / friends section."
-  },
+  "@friendsTitle": { "description": "Title of the friends list screen / friends section." },
   "friendRequestsTitle": "Requests",
-  "@friendRequestsTitle": {
-    "description": "Title of the incoming friend requests section."
-  },
+  "@friendRequestsTitle": { "description": "Title of the incoming friend requests section." },
   "friendAdd": "Add friend",
-  "@friendAdd": {
-    "description": "CTA to send a friend request."
-  },
+  "@friendAdd": { "description": "CTA to send a friend request." },
   "friendPending": "Pending",
-  "@friendPending": {
-    "description": "Label when an outgoing friend request is awaiting response (tap to cancel)."
-  },
+  "@friendPending": { "description": "Label when an outgoing friend request is awaiting response (tap to cancel)." },
   "friendAccept": "Accept",
-  "@friendAccept": {
-    "description": "Accept an incoming friend request."
-  },
+  "@friendAccept": { "description": "Accept an incoming friend request." },
   "friendDecline": "Decline",
-  "@friendDecline": {
-    "description": "Decline an incoming friend request."
-  },
+  "@friendDecline": { "description": "Decline an incoming friend request." },
   "friendFriends": "Friends",
-  "@friendFriends": {
-    "description": "Label when the viewer is already friends (tap to remove)."
-  },
+  "@friendFriends": { "description": "Label when the viewer is already friends (tap to remove)." },
   "friendRemoveTitle": "Remove this friend?",
-  "@friendRemoveTitle": {
-    "description": "Confirmation title before removing a friend."
-  },
+  "@friendRemoveTitle": { "description": "Confirmation title before removing a friend." },
   "friendRemoveConfirm": "Remove friend",
-  "@friendRemoveConfirm": {
-    "description": "Confirm button to remove a friend."
-  },
+  "@friendRemoveConfirm": { "description": "Confirm button to remove a friend." },
   "friendActionFailed": "Something went wrong. Please try again.",
-  "@friendActionFailed": {
-    "description": "Generic error when a friend action fails."
-  },
+  "@friendActionFailed": { "description": "Generic error when a friend action fails." },
   "friendsEmpty": "No friends yet",
-  "@friendsEmpty": {
-    "description": "Empty state for the friends list."
-  },
+  "@friendsEmpty": { "description": "Empty state for the friends list." },
   "friendsLoadError": "Couldn't load friends",
-  "@friendsLoadError": {
-    "description": "Error state for the friends list."
-  },
+  "@friendsLoadError": { "description": "Error state for the friends list." },
   "friendUnknownName": "Member",
-  "@friendUnknownName": {
-    "description": "Fallback name for a friend without a name."
-  },
+  "@friendUnknownName": { "description": "Fallback name for a friend without a name." },
   "friendCountOne": "1 friend",
-  "@friendCountOne": {
-    "description": "Friends count label, singular."
-  },
+  "@friendCountOne": { "description": "Friends count label, singular." },
   "friendCountOther": "{count} friends",
   "@friendCountOther": {
     "description": "Friends count label, plural.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "count": { "type": "int" } }
   },
+
   "discoverCommunitiesTitle": "Discover communities",
-  "@discoverCommunitiesTitle": {
-    "description": "App bar title for the community discovery screen."
-  },
+  "@discoverCommunitiesTitle": { "description": "App bar title for the community discovery screen." },
   "discoverCommunitiesCta": "Discover communities",
-  "@discoverCommunitiesCta": {
-    "description": "Call to action to open the community discovery screen."
-  },
+  "@discoverCommunitiesCta": { "description": "Call to action to open the community discovery screen." },
   "discoverCommunitiesJoin": "Join",
-  "@discoverCommunitiesJoin": {
-    "description": "Button to join a community from a discovery card."
-  },
+  "@discoverCommunitiesJoin": { "description": "Button to join a community from a discovery card." },
   "discoverCommunitiesJoined": "Joined",
-  "@discoverCommunitiesJoined": {
-    "description": "Label shown on a community card after the user has joined it."
-  },
+  "@discoverCommunitiesJoined": { "description": "Label shown on a community card after the user has joined it." },
   "discoverCommunitiesJoinedToast": "You joined {name}",
   "@discoverCommunitiesJoinedToast": {
     "description": "Snackbar confirming the user joined a community.",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "name": { "type": "String" } }
   },
   "discoverCommunitiesInviteOnly": "Invite only",
-  "@discoverCommunitiesInviteOnly": {
-    "description": "Badge/message shown when a community is invite-only and cannot be self-joined."
-  },
+  "@discoverCommunitiesInviteOnly": { "description": "Badge/message shown when a community is invite-only and cannot be self-joined." },
   "discoverCommunitiesInviteOnlyMessage": "{name} is invite only. Ask a member to add you.",
   "@discoverCommunitiesInviteOnlyMessage": {
     "description": "Snackbar shown when trying to join an invite-only community.",
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "name": { "type": "String" } }
   },
   "discoverCommunitiesJoinError": "Couldn't join right now. Please try again.",
-  "@discoverCommunitiesJoinError": {
-    "description": "Snackbar shown when joining a community fails."
-  },
+  "@discoverCommunitiesJoinError": { "description": "Snackbar shown when joining a community fails." },
   "discoverCommunitiesMembers": "{count, plural, =1{1 member} other{{count} members}}",
   "@discoverCommunitiesMembers": {
     "description": "Member count label on a discovery card.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "count": { "type": "int" } }
   },
   "discoverCommunitiesEmptyTitle": "Nothing to discover yet",
-  "@discoverCommunitiesEmptyTitle": {
-    "description": "Empty/coming-soon title on the community discovery screen."
-  },
+  "@discoverCommunitiesEmptyTitle": { "description": "Empty/coming-soon title on the community discovery screen." },
   "discoverCommunitiesEmptyBody": "Community discovery is coming soon. Check back to find and join communities near you.",
-  "@discoverCommunitiesEmptyBody": {
-    "description": "Empty/coming-soon body on the community discovery screen."
-  },
+  "@discoverCommunitiesEmptyBody": { "description": "Empty/coming-soon body on the community discovery screen." },
   "discoverCommunitiesError": "Couldn't load communities. Please try again.",
-  "@discoverCommunitiesError": {
-    "description": "Error state on the community discovery screen."
-  },
+  "@discoverCommunitiesError": { "description": "Error state on the community discovery screen." },
+
   "commonSkip": "Skip",
-  "@commonSkip": {
-    "description": "Generic Skip button label."
-  },
+  "@commonSkip": { "description": "Generic Skip button label." },
+
   "handleFieldPlaceholder": "yourhandle",
-  "@handleFieldPlaceholder": {
-    "description": "Placeholder text inside the @handle input."
-  },
+  "@handleFieldPlaceholder": { "description": "Placeholder text inside the @handle input." },
   "handleFieldHint": "3-20 characters: lowercase letters, numbers, underscores.",
-  "@handleFieldHint": {
-    "description": "Format hint shown under the handle field."
-  },
+  "@handleFieldHint": { "description": "Format hint shown under the handle field." },
   "handleFieldFormatError": "Use 3-20 lowercase letters, numbers or underscores.",
-  "@handleFieldFormatError": {
-    "description": "Shown when the entered handle is malformed."
-  },
+  "@handleFieldFormatError": { "description": "Shown when the entered handle is malformed." },
   "handleFieldChecking": "Checking availability…",
-  "@handleFieldChecking": {
-    "description": "Shown while the handle availability check is running."
-  },
+  "@handleFieldChecking": { "description": "Shown while the handle availability check is running." },
   "handleFieldAvailable": "Available",
-  "@handleFieldAvailable": {
-    "description": "Shown when the handle is available."
-  },
+  "@handleFieldAvailable": { "description": "Shown when the handle is available." },
   "handleFieldTaken": "That handle is taken.",
-  "@handleFieldTaken": {
-    "description": "Shown when the handle is already in use."
-  },
+  "@handleFieldTaken": { "description": "Shown when the handle is already in use." },
   "handleFieldTakenWithSuggestion": "Taken. Try @{suggestion}",
   "@handleFieldTakenWithSuggestion": {
     "description": "Shown when the handle is taken, offering a suggestion.",
-    "placeholders": {
-      "suggestion": {
-        "type": "String"
-      }
-    }
+    "placeholders": { "suggestion": { "type": "String" } }
   },
   "handleFieldYours": "This is your current handle.",
-  "@handleFieldYours": {
-    "description": "Shown when the handle equals the user's existing handle."
-  },
+  "@handleFieldYours": { "description": "Shown when the handle equals the user's existing handle." },
+
   "attendeeOnboardingStepCounter": "Step {step} of {total}",
   "@attendeeOnboardingStepCounter": {
     "description": "Step counter in the attendee onboarding header.",
-    "placeholders": {
-      "step": {
-        "type": "int"
-      },
-      "total": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "step": { "type": "int" }, "total": { "type": "int" } }
   },
   "attendeeOnboardingStep1Title": "Let's set you up",
-  "@attendeeOnboardingStep1Title": {
-    "description": "Attendee onboarding step 1 title (You)."
-  },
+  "@attendeeOnboardingStep1Title": { "description": "Attendee onboarding step 1 title (You)." },
   "attendeeOnboardingStep1Subtitle": "Add your name, pick a handle, and a photo if you like.",
-  "@attendeeOnboardingStep1Subtitle": {
-    "description": "Attendee onboarding step 1 subtitle."
-  },
+  "@attendeeOnboardingStep1Subtitle": { "description": "Attendee onboarding step 1 subtitle." },
   "attendeeOnboardingAddPhoto": "Add a photo",
   "attendeeOnboardingNameLabel": "Your name",
-  "@attendeeOnboardingNameLabel": {
-    "description": "Label for the attendee name field."
-  },
+  "@attendeeOnboardingNameLabel": { "description": "Label for the attendee name field." },
   "attendeeOnboardingNameHint": "How should we call you?",
-  "@attendeeOnboardingNameHint": {
-    "description": "Hint for the attendee name field."
-  },
+  "@attendeeOnboardingNameHint": { "description": "Hint for the attendee name field." },
   "attendeeOnboardingHandleLabel": "Your handle",
-  "@attendeeOnboardingHandleLabel": {
-    "description": "Label for the attendee @handle field."
-  },
+  "@attendeeOnboardingHandleLabel": { "description": "Label for the attendee @handle field." },
   "attendeeOnboardingStep2Title": "Where are you?",
-  "@attendeeOnboardingStep2Title": {
-    "description": "Attendee onboarding step 2 title (City)."
-  },
+  "@attendeeOnboardingStep2Title": { "description": "Attendee onboarding step 2 title (City)." },
   "attendeeOnboardingStep2Subtitle": "Pick your city to discover communities near you.",
-  "@attendeeOnboardingStep2Subtitle": {
-    "description": "Attendee onboarding step 2 subtitle."
-  },
+  "@attendeeOnboardingStep2Subtitle": { "description": "Attendee onboarding step 2 subtitle." },
   "attendeeOnboardingStep3Title": "What are you into?",
-  "@attendeeOnboardingStep3Title": {
-    "description": "Attendee onboarding step 3 title (Interests)."
-  },
+  "@attendeeOnboardingStep3Title": { "description": "Attendee onboarding step 3 title (Interests)." },
   "attendeeOnboardingStep3Subtitle": "Pick a few interests so we can suggest the right communities.",
-  "@attendeeOnboardingStep3Subtitle": {
-    "description": "Attendee onboarding step 3 subtitle."
-  },
+  "@attendeeOnboardingStep3Subtitle": { "description": "Attendee onboarding step 3 subtitle." },
   "attendeeOnboardingStep4Title": "Join your first communities",
-  "@attendeeOnboardingStep4Title": {
-    "description": "Attendee onboarding step 4 title (Join)."
-  },
+  "@attendeeOnboardingStep4Title": { "description": "Attendee onboarding step 4 title (Join)." },
   "attendeeOnboardingStep4Subtitle": "Tap to join the ones you like. You can always join more later.",
-  "@attendeeOnboardingStep4Subtitle": {
-    "description": "Attendee onboarding step 4 subtitle."
-  },
+  "@attendeeOnboardingStep4Subtitle": { "description": "Attendee onboarding step 4 subtitle." },
   "attendeeOnboardingFinish": "Finish",
-  "@attendeeOnboardingFinish": {
-    "description": "Finish button on the last attendee onboarding step."
-  },
+  "@attendeeOnboardingFinish": { "description": "Finish button on the last attendee onboarding step." },
   "attendeeOnboardingForYou": "For you",
-  "@attendeeOnboardingForYou": {
-    "description": "Badge marking a community that matches the attendee's interests."
-  },
+  "@attendeeOnboardingForYou": { "description": "Badge marking a community that matches the attendee's interests." },
+
   "editProfileHandleLabel": "Handle",
-  "@editProfileHandleLabel": {
-    "description": "Label for the @handle field in Edit Profile."
-  },
+  "@editProfileHandleLabel": { "description": "Label for the @handle field in Edit Profile." },
+
   "addFriendTitle": "Add a friend",
-  "@addFriendTitle": {
-    "description": "Title of the add-friend-by-identifier screen."
-  },
+  "@addFriendTitle": { "description": "Title of the add-friend-by-identifier screen." },
   "addFriendSubtitle": "Find someone by their email or @handle.",
-  "@addFriendSubtitle": {
-    "description": "Subtitle on the add-friend screen."
-  },
+  "@addFriendSubtitle": { "description": "Subtitle on the add-friend screen." },
   "addFriendInputHint": "Email or @handle",
-  "@addFriendInputHint": {
-    "description": "Hint for the add-friend search input."
-  },
+  "@addFriendInputHint": { "description": "Hint for the add-friend search input." },
   "addFriendSearch": "Search",
-  "@addFriendSearch": {
-    "description": "Search button on the add-friend screen."
-  },
+  "@addFriendSearch": { "description": "Search button on the add-friend screen." },
   "addFriendNoMatch": "No one matches that email or handle.",
-  "@addFriendNoMatch": {
-    "description": "Shown when the lookup returns no match."
-  },
+  "@addFriendNoMatch": { "description": "Shown when the lookup returns no match." },
   "addFriendUnavailable": "Adding friends isn't available right now.",
-  "@addFriendUnavailable": {
-    "description": "Shown when the lookup endpoint is not deployed (self-gated)."
-  },
+  "@addFriendUnavailable": { "description": "Shown when the lookup endpoint is not deployed (self-gated)." },
   "addFriendError": "Something went wrong. Please try again.",
-  "@addFriendError": {
-    "description": "Generic error on the add-friend screen."
-  },
+  "@addFriendError": { "description": "Generic error on the add-friend screen." },
   "addFriendSelf": "That's you",
-  "@addFriendSelf": {
-    "description": "CTA state when the matched profile is the viewer."
-  },
+  "@addFriendSelf": { "description": "CTA state when the matched profile is the viewer." },
+
   "rosterInviteIdentifierLabel": "Email or @handle",
-  "@rosterInviteIdentifierLabel": {
-    "description": "Label for the roster invite identifier field."
-  },
+  "@rosterInviteIdentifierLabel": { "description": "Label for the roster invite identifier field." },
   "rosterInviteIdentifierHint": "name@example.com or @handle",
-  "@rosterInviteIdentifierHint": {
-    "description": "Hint for the roster invite identifier field."
-  },
+  "@rosterInviteIdentifierHint": { "description": "Hint for the roster invite identifier field." },
   "rosterInviteInvalidIdentifier": "Enter a valid email or @handle.",
-  "@rosterInviteInvalidIdentifier": {
-    "description": "Validation error for the roster invite identifier."
-  },
+  "@rosterInviteInvalidIdentifier": { "description": "Validation error for the roster invite identifier." },
   "rosterNoAccountForIdentifier": "No Kolabing account matches that email or handle.",
-  "@rosterNoAccountForIdentifier": {
-    "description": "Shown when the invited identifier matches no account."
-  },
+  "@rosterNoAccountForIdentifier": { "description": "Shown when the invited identifier matches no account." },
+
   "attendeeHomeEventsTitle": "EVENTS",
-  "@attendeeHomeEventsTitle": {
-    "description": "Attendee home events section header."
-  },
+  "@attendeeHomeEventsTitle": { "description": "Attendee home events section header." },
   "attendeeHomeChooseCity": "Choose city",
-  "@attendeeHomeChooseCity": {
-    "description": "City picker button label when no city is selected."
-  },
+  "@attendeeHomeChooseCity": { "description": "City picker button label when no city is selected." },
   "attendeeHomeFilterToday": "Today",
-  "@attendeeHomeFilterToday": {
-    "description": "Events filter chip: show only today's events."
-  },
+  "@attendeeHomeFilterToday": { "description": "Events filter chip: show only today's events." },
   "attendeeHomeFilterDate": "When",
-  "@attendeeHomeFilterDate": {
-    "description": "Date-range dropdown chip / sheet title for the events feed."
-  },
+  "@attendeeHomeFilterDate": { "description": "Date-range dropdown chip / sheet title for the events feed." },
   "attendeeHomeFilterUpcoming": "Upcoming",
-  "@attendeeHomeFilterUpcoming": {
-    "description": "Events date filter chip: all future events (default)."
-  },
+  "@attendeeHomeFilterUpcoming": { "description": "Events date filter chip: all future events (default)." },
   "attendeeHomeFilterThisWeek": "This week",
-  "@attendeeHomeFilterThisWeek": {
-    "description": "Events date filter chip: events within the current week."
-  },
+  "@attendeeHomeFilterThisWeek": { "description": "Events date filter chip: events within the current week." },
   "attendeeHomeFilterThisWeekend": "This weekend",
-  "@attendeeHomeFilterThisWeekend": {
-    "description": "Events date filter chip: events this weekend (Sat-Sun)."
-  },
+  "@attendeeHomeFilterThisWeekend": { "description": "Events date filter chip: events this weekend (Sat-Sun)." },
   "attendeeHomeFilterThisMonth": "This month",
-  "@attendeeHomeFilterThisMonth": {
-    "description": "Events date filter chip: events within the current calendar month."
-  },
+  "@attendeeHomeFilterThisMonth": { "description": "Events date filter chip: events within the current calendar month." },
   "attendeeHomeFilterType": "Type",
-  "@attendeeHomeFilterType": {
-    "description": "Events filter chip / sheet title: filter by community type."
-  },
+  "@attendeeHomeFilterType": { "description": "Events filter chip / sheet title: filter by community type." },
   "attendeeHomeFilterTypeAll": "All types",
-  "@attendeeHomeFilterTypeAll": {
-    "description": "Type filter option that clears the community-type filter."
-  },
+  "@attendeeHomeFilterTypeAll": { "description": "Type filter option that clears the community-type filter." },
   "attendeeHomeExploreCommunities": "Explore communities",
-  "@attendeeHomeExploreCommunities": {
-    "description": "Persistent CTA on the attendee home that opens community discovery."
-  },
+  "@attendeeHomeExploreCommunities": { "description": "Persistent CTA on the attendee home that opens community discovery." },
   "attendeeHomePickCityTitle": "Pick a city",
-  "@attendeeHomePickCityTitle": {
-    "description": "Empty-state title when no city is selected for events."
-  },
+  "@attendeeHomePickCityTitle": { "description": "Empty-state title when no city is selected for events." },
   "attendeeHomePickCityHint": "Choose a city to discover events near you.",
-  "@attendeeHomePickCityHint": {
-    "description": "Empty-state hint inviting the user to pick a city."
-  },
+  "@attendeeHomePickCityHint": { "description": "Empty-state hint inviting the user to pick a city." },
   "attendeeHomeNoEventsCity": "No events in this city",
-  "@attendeeHomeNoEventsCity": {
-    "description": "Empty-state title when a city has no events for the current filters."
-  },
+  "@attendeeHomeNoEventsCity": { "description": "Empty-state title when a city has no events for the current filters." },
   "attendeeHomeNoEventsCityHint": "Try another city or clear your filters.",
-  "@attendeeHomeNoEventsCityHint": {
-    "description": "Empty-state hint when no events match in the selected city."
-  },
+  "@attendeeHomeNoEventsCityHint": { "description": "Empty-state hint when no events match in the selected city." },
   "eventPartnerBusiness": "Business",
-  "@eventPartnerBusiness": {
-    "description": "Event card badge for a business-hosted event."
-  },
+  "@eventPartnerBusiness": { "description": "Event card badge for a business-hosted event." },
   "eventPartnerCommunity": "Community",
-  "@eventPartnerCommunity": {
-    "description": "Event card badge for a community-hosted event."
-  },
+  "@eventPartnerCommunity": { "description": "Event card badge for a community-hosted event." },
   "eventDateToday": "Today",
-  "@eventDateToday": {
-    "description": "Event card relative date: today."
-  },
+  "@eventDateToday": { "description": "Event card relative date: today." },
   "eventDateTomorrow": "Tomorrow",
-  "@eventDateTomorrow": {
-    "description": "Event card relative date: tomorrow."
-  },
+  "@eventDateTomorrow": { "description": "Event card relative date: tomorrow." },
   "eventDateInDays": "In {days} days",
-  "@eventDateInDays": {
-    "description": "Event card relative date: N days away.",
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
+  "@eventDateInDays": { "description": "Event card relative date: N days away.", "placeholders": { "days": { "type": "int" } } },
+
   "attendeeCommunityProfileErrorTitle": "Couldn't load community",
-  "@attendeeCommunityProfileErrorTitle": {
-    "description": "Error title on the attendee community profile screen."
-  },
+  "@attendeeCommunityProfileErrorTitle": { "description": "Error title on the attendee community profile screen." },
   "attendeeCommunityProfileTypeFallback": "Community",
-  "@attendeeCommunityProfileTypeFallback": {
-    "description": "Fallback label when a community's type slug can't be resolved."
-  },
+  "@attendeeCommunityProfileTypeFallback": { "description": "Fallback label when a community's type slug can't be resolved." },
   "attendeeCommunityProfileMemberCount": "{count, plural, =0{No members yet} one{{count} member} other{{count} members}}",
-  "@attendeeCommunityProfileMemberCount": {
-    "description": "Member count under the community header.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@attendeeCommunityProfileMemberCount": { "description": "Member count under the community header.", "placeholders": { "count": { "type": "int" } } },
   "attendeeCommunityProfileAboutTitle": "About",
-  "@attendeeCommunityProfileAboutTitle": {
-    "description": "About section title on the attendee community profile."
-  },
+  "@attendeeCommunityProfileAboutTitle": { "description": "About section title on the attendee community profile." },
   "attendeeCommunityProfileUpcomingEventsTitle": "Upcoming events",
-  "@attendeeCommunityProfileUpcomingEventsTitle": {
-    "description": "Upcoming events section title."
-  },
+  "@attendeeCommunityProfileUpcomingEventsTitle": { "description": "Upcoming events section title." },
   "attendeeCommunityProfileSeeAll": "See all →",
-  "@attendeeCommunityProfileSeeAll": {
-    "description": "Action that opens the community detail on its Events tab."
-  },
+  "@attendeeCommunityProfileSeeAll": { "description": "Action that opens the community detail on its Events tab." },
   "attendeeCommunityProfileNoUpcomingEvents": "No upcoming events yet.",
-  "@attendeeCommunityProfileNoUpcomingEvents": {
-    "description": "Empty state for the upcoming events section."
-  },
+  "@attendeeCommunityProfileNoUpcomingEvents": { "description": "Empty state for the upcoming events section." },
   "attendeeCommunityProfileJoin": "Join community",
-  "@attendeeCommunityProfileJoin": {
-    "description": "CTA to join an open community."
-  },
+  "@attendeeCommunityProfileJoin": { "description": "CTA to join an open community." },
   "attendeeCommunityProfileJoinedSnack": "Joined ✓",
-  "@attendeeCommunityProfileJoinedSnack": {
-    "description": "Snackbar after a successful join."
-  },
+  "@attendeeCommunityProfileJoinedSnack": { "description": "Snackbar after a successful join." },
   "attendeeCommunityProfileRequestToJoin": "Request to join",
-  "@attendeeCommunityProfileRequestToJoin": {
-    "description": "CTA to request joining an invite-only community."
-  },
+  "@attendeeCommunityProfileRequestToJoin": { "description": "CTA to request joining an invite-only community." },
   "attendeeCommunityProfileRequested": "Requested",
-  "@attendeeCommunityProfileRequested": {
-    "description": "Disabled CTA label when a join request is pending."
-  },
+  "@attendeeCommunityProfileRequested": { "description": "Disabled CTA label when a join request is pending." },
   "attendeeCommunityProfileRequestedSnack": "Request sent",
-  "@attendeeCommunityProfileRequestedSnack": {
-    "description": "Snackbar after a join request is sent."
-  },
+  "@attendeeCommunityProfileRequestedSnack": { "description": "Snackbar after a join request is sent." },
   "attendeeCommunityProfileRequestUnavailable": "Requests aren't available yet. Try again later.",
-  "@attendeeCommunityProfileRequestUnavailable": {
-    "description": "Notice when the join-request endpoint isn't deployed yet."
-  },
+  "@attendeeCommunityProfileRequestUnavailable": { "description": "Notice when the join-request endpoint isn't deployed yet." },
   "attendeeCommunityProfileOpenCommunity": "Open community",
-  "@attendeeCommunityProfileOpenCommunity": {
-    "description": "CTA for an existing member to open the community detail."
-  },
+  "@attendeeCommunityProfileOpenCommunity": { "description": "CTA for an existing member to open the community detail." },
+
   "communityDetailTabRewards": "Rewards",
-  "@communityDetailTabRewards": {
-    "description": "Community detail tab: Rewards (goals, rewards, badges)."
-  },
+  "@communityDetailTabRewards": { "description": "Community detail tab: Rewards (goals, rewards, badges)." },
   "communityDetailChatsAction": "Chats →",
-  "@communityDetailChatsAction": {
-    "description": "Header action that opens the chat screen for this community."
-  },
+  "@communityDetailChatsAction": { "description": "Header action that opens the chat screen for this community." },
   "communityDetailTiersAction": "Tiers",
-  "@communityDetailTiersAction": {
-    "description": "Action that opens the tier editor from the Members tab."
-  },
+  "@communityDetailTiersAction": { "description": "Action that opens the tier editor from the Members tab." },
+
   "communityMembersGroupNoTier": "No tier",
-  "@communityMembersGroupNoTier": {
-    "description": "Section header for members without an assigned tier."
-  },
+  "@communityMembersGroupNoTier": { "description": "Section header for members without an assigned tier." },
   "communityMembersTierCount": "{count, plural, =0{No members} one{{count} member} other{{count} members}}",
-  "@communityMembersTierCount": {
-    "description": "Member count next to a tier section header.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@communityMembersTierCount": { "description": "Member count next to a tier section header.", "placeholders": { "count": { "type": "int" } } },
   "communityMembersYou": "★ You",
-  "@communityMembersYou": {
-    "description": "Marker on the viewer's own roster row in member view."
-  },
+  "@communityMembersYou": { "description": "Marker on the viewer's own roster row in member view." },
   "communityMembersPoints": "{points, plural, =1{{points} pt} other{{points} pts}}",
-  "@communityMembersPoints": {
-    "description": "Points shown on a member row.",
-    "placeholders": {
-      "points": {
-        "type": "int"
-      }
-    }
-  },
+  "@communityMembersPoints": { "description": "Points shown on a member row.", "placeholders": { "points": { "type": "int" } } },
   "communityMembersEmptyTitle": "No members yet",
-  "@communityMembersEmptyTitle": {
-    "description": "Empty state title for the Members tab."
-  },
+  "@communityMembersEmptyTitle": { "description": "Empty state title for the Members tab." },
   "communityMembersEmptyBody": "Members appear here once people join this community.",
-  "@communityMembersEmptyBody": {
-    "description": "Empty state body for the Members tab."
-  },
+  "@communityMembersEmptyBody": { "description": "Empty state body for the Members tab." },
   "communityMembersLoadError": "Couldn't load members",
-  "@communityMembersLoadError": {
-    "description": "Error title for the Members tab."
-  },
+  "@communityMembersLoadError": { "description": "Error title for the Members tab." },
+
   "personalRewardsTitle": "Rewards",
-  "@personalRewardsTitle": {
-    "description": "App bar title of the Personal Rewards Screen."
-  },
+  "@personalRewardsTitle": { "description": "App bar title of the Personal Rewards Screen." },
   "personalRewardsRedeemXpTitle": "Redeem your XP",
-  "@personalRewardsRedeemXpTitle": {
-    "description": "Title of the global XP redemption card."
-  },
+  "@personalRewardsRedeemXpTitle": { "description": "Title of the global XP redemption card." },
   "personalRewardsXpUnit": "XP",
-  "@personalRewardsXpUnit": {
-    "description": "Unit label shown after the XP balance."
-  },
+  "@personalRewardsXpUnit": { "description": "Unit label shown after the XP balance." },
   "personalRewardsComingSoon": "Coming soon",
-  "@personalRewardsComingSoon": {
-    "description": "Disabled CTA label on the Redeem your XP card (partner rewards not redeemable yet)."
-  },
+  "@personalRewardsComingSoon": { "description": "Disabled CTA label on the Redeem your XP card (partner rewards not redeemable yet)." },
   "personalRewardsXpCost": "{points, plural, =1{{points} XP} other{{points} XP}}",
-  "@personalRewardsXpCost": {
-    "description": "XP cost of a partner reward.",
-    "placeholders": {
-      "points": {
-        "type": "int"
-      }
-    }
-  },
+  "@personalRewardsXpCost": { "description": "XP cost of a partner reward.", "placeholders": { "points": { "type": "int" } } },
   "personalRewardsMyPoints": "{points, plural, =1{{points} pt} other{{points} pts}}",
-  "@personalRewardsMyPoints": {
-    "description": "The viewer's per-community points balance shown in a community section header.",
-    "placeholders": {
-      "points": {
-        "type": "int"
-      }
-    }
-  },
+  "@personalRewardsMyPoints": { "description": "The viewer's per-community points balance shown in a community section header.", "placeholders": { "points": { "type": "int" } } },
   "personalRewardsNoRewards": "No rewards yet.",
-  "@personalRewardsNoRewards": {
-    "description": "Empty state for a community with no rewards."
-  },
+  "@personalRewardsNoRewards": { "description": "Empty state for a community with no rewards." },
   "personalRewardsEmptyTitle": "No rewards yet",
-  "@personalRewardsEmptyTitle": {
-    "description": "Title of the empty state when the viewer has no community reward sections."
-  },
+  "@personalRewardsEmptyTitle": { "description": "Title of the empty state when the viewer has no community reward sections." },
   "personalRewardsEmptyBody": "Join communities and earn points to unlock rewards.",
-  "@personalRewardsEmptyBody": {
-    "description": "Body of the empty state on the Personal Rewards Screen."
-  },
+  "@personalRewardsEmptyBody": { "description": "Body of the empty state on the Personal Rewards Screen." },
   "personalRewardsFailedToLoad": "Couldn't load rewards",
-  "@personalRewardsFailedToLoad": {
-    "description": "Error title on the Personal Rewards Screen."
-  },
+  "@personalRewardsFailedToLoad": { "description": "Error title on the Personal Rewards Screen." },
   "leaderboardEntryYou": "You",
-  "@leaderboardEntryYou": {
-    "description": "Badge shown on the current user's leaderboard row."
-  },
+  "@leaderboardEntryYou": { "description": "Badge shown on the current user's leaderboard row." },
   "leaderboardEntryBadgeCount": "{count, plural, =1{{count} badge} other{{count} badges}}",
-  "@leaderboardEntryBadgeCount": {
-    "description": "Number of badges shown on a leaderboard row.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@leaderboardEntryBadgeCount": { "description": "Number of badges shown on a leaderboard row.", "placeholders": { "count": { "type": "int" } } },
+
   "communityRewardsComingSoonTitle": "Rewards coming soon",
-  "@communityRewardsComingSoonTitle": {
-    "description": "Title shown when the rewards-hub endpoint isn't available yet."
-  },
+  "@communityRewardsComingSoonTitle": { "description": "Title shown when the rewards-hub endpoint isn't available yet." },
   "communityRewardsComingSoonBody": "Goals, badges and rewards for this community will appear here.",
-  "@communityRewardsComingSoonBody": {
-    "description": "Body shown when the rewards-hub endpoint isn't available yet."
-  },
+  "@communityRewardsComingSoonBody": { "description": "Body shown when the rewards-hub endpoint isn't available yet." },
   "communityRewardsPointsLabel": "Your points",
-  "@communityRewardsPointsLabel": {
-    "description": "Label on the member points card."
-  },
+  "@communityRewardsPointsLabel": { "description": "Label on the member points card." },
   "communityRewardsTierLabel": "Tier",
-  "@communityRewardsTierLabel": {
-    "description": "Tier label on the member points card."
-  },
+  "@communityRewardsTierLabel": { "description": "Tier label on the member points card." },
   "communityRewardsNoTier": "No tier yet",
-  "@communityRewardsNoTier": {
-    "description": "Shown when the member has no tier yet."
-  },
+  "@communityRewardsNoTier": { "description": "Shown when the member has no tier yet." },
   "communityRewardsGoalsTitle": "Goals",
-  "@communityRewardsGoalsTitle": {
-    "description": "Goals section title."
-  },
+  "@communityRewardsGoalsTitle": { "description": "Goals section title." },
   "communityRewardsBadgesTitle": "Badges",
-  "@communityRewardsBadgesTitle": {
-    "description": "Badges section title."
-  },
+  "@communityRewardsBadgesTitle": { "description": "Badges section title." },
   "communityRewardsRewardsTitle": "Rewards",
-  "@communityRewardsRewardsTitle": {
-    "description": "Rewards section title."
-  },
+  "@communityRewardsRewardsTitle": { "description": "Rewards section title." },
   "communityRewardsGoalReward": "+{points} pts",
-  "@communityRewardsGoalReward": {
-    "description": "Reward points a goal grants.",
-    "placeholders": {
-      "points": {
-        "type": "int"
-      }
-    }
-  },
+  "@communityRewardsGoalReward": { "description": "Reward points a goal grants.", "placeholders": { "points": { "type": "int" } } },
   "communityRewardsGoalProgress": "{progress} / {target}",
-  "@communityRewardsGoalProgress": {
-    "description": "Goal progress text.",
-    "placeholders": {
-      "progress": {
-        "type": "int"
-      },
-      "target": {
-        "type": "int"
-      }
-    }
-  },
+  "@communityRewardsGoalProgress": { "description": "Goal progress text.", "placeholders": { "progress": { "type": "int" }, "target": { "type": "int" } } },
   "communityRewardsBadgeEarned": "Earned",
-  "@communityRewardsBadgeEarned": {
-    "description": "Label on an earned badge."
-  },
+  "@communityRewardsBadgeEarned": { "description": "Label on an earned badge." },
   "communityRewardsBadgeLocked": "Locked",
-  "@communityRewardsBadgeLocked": {
-    "description": "Label on a locked badge."
-  },
+  "@communityRewardsBadgeLocked": { "description": "Label on a locked badge." },
   "communityRewardsRedeem": "Redeem",
-  "@communityRewardsRedeem": {
-    "description": "Button to redeem a reward."
-  },
+  "@communityRewardsRedeem": { "description": "Button to redeem a reward." },
   "communityRewardsRewardCost": "{points, plural, =1{{points} pt} other{{points} pts}}",
-  "@communityRewardsRewardCost": {
-    "description": "Cost of a reward in points.",
-    "placeholders": {
-      "points": {
-        "type": "int"
-      }
-    }
-  },
+  "@communityRewardsRewardCost": { "description": "Cost of a reward in points.", "placeholders": { "points": { "type": "int" } } },
   "communityRewardsRewardStock": "{count, plural, =0{Out of stock} other{{count} left}}",
-  "@communityRewardsRewardStock": {
-    "description": "Remaining stock of a reward.",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
+  "@communityRewardsRewardStock": { "description": "Remaining stock of a reward.", "placeholders": { "count": { "type": "int" } } },
   "communityRewardsRedeemConfirmTitle": "Redeem reward?",
-  "@communityRewardsRedeemConfirmTitle": {
-    "description": "Confirm dialog title before redeeming."
-  },
+  "@communityRewardsRedeemConfirmTitle": { "description": "Confirm dialog title before redeeming." },
   "communityRewardsRedeemConfirmBody": "This will spend {points} points on \"{title}\".",
-  "@communityRewardsRedeemConfirmBody": {
-    "description": "Confirm dialog body before redeeming.",
-    "placeholders": {
-      "points": {
-        "type": "int"
-      },
-      "title": {
-        "type": "String"
-      }
-    }
-  },
+  "@communityRewardsRedeemConfirmBody": { "description": "Confirm dialog body before redeeming.", "placeholders": { "points": { "type": "int" }, "title": { "type": "String" } } },
   "communityRewardsRedeemedSnack": "Redeemed ✓",
-  "@communityRewardsRedeemedSnack": {
-    "description": "Snackbar after a successful redemption."
-  },
+  "@communityRewardsRedeemedSnack": { "description": "Snackbar after a successful redemption." },
   "communityRewardsGoalsEmpty": "No goals yet.",
-  "@communityRewardsGoalsEmpty": {
-    "description": "Empty state for the goals section."
-  },
+  "@communityRewardsGoalsEmpty": { "description": "Empty state for the goals section." },
   "communityRewardsBadgesEmpty": "No badges yet.",
-  "@communityRewardsBadgesEmpty": {
-    "description": "Empty state for the badges section."
-  },
+  "@communityRewardsBadgesEmpty": { "description": "Empty state for the badges section." },
   "communityRewardsRewardsEmpty": "No rewards yet.",
-  "@communityRewardsRewardsEmpty": {
-    "description": "Empty state for the rewards section."
-  },
+  "@communityRewardsRewardsEmpty": { "description": "Empty state for the rewards section." },
+
   "communityRewardsAddGoal": "Goal",
-  "@communityRewardsAddGoal": {
-    "description": "Leader action to add a goal."
-  },
+  "@communityRewardsAddGoal": { "description": "Leader action to add a goal." },
   "communityRewardsAddReward": "Reward",
-  "@communityRewardsAddReward": {
-    "description": "Leader action to add a reward."
-  },
+  "@communityRewardsAddReward": { "description": "Leader action to add a reward." },
   "communityRewardsAddBadge": "Badge",
-  "@communityRewardsAddBadge": {
-    "description": "Leader action to add a badge."
-  },
+  "@communityRewardsAddBadge": { "description": "Leader action to add a badge." },
+
   "communityGoalEditorNewTitle": "New goal",
-  "@communityGoalEditorNewTitle": {
-    "description": "Title of the goal editor when creating."
-  },
+  "@communityGoalEditorNewTitle": { "description": "Title of the goal editor when creating." },
   "communityGoalEditorEditTitle": "Edit goal",
-  "@communityGoalEditorEditTitle": {
-    "description": "Title of the goal editor when editing."
-  },
+  "@communityGoalEditorEditTitle": { "description": "Title of the goal editor when editing." },
   "communityGoalTitleLabel": "Title",
-  "@communityGoalTitleLabel": {
-    "description": "Goal title field label."
-  },
+  "@communityGoalTitleLabel": { "description": "Goal title field label." },
   "communityGoalTitleRequired": "Enter a title",
-  "@communityGoalTitleRequired": {
-    "description": "Validation when the goal title is empty."
-  },
+  "@communityGoalTitleRequired": { "description": "Validation when the goal title is empty." },
   "communityGoalEarnTypeLabel": "Earn by",
-  "@communityGoalEarnTypeLabel": {
-    "description": "Goal earn-type field label."
-  },
+  "@communityGoalEarnTypeLabel": { "description": "Goal earn-type field label." },
   "communityGoalEarnTypeEventCheckIns": "Event check-ins",
-  "@communityGoalEarnTypeEventCheckIns": {
-    "description": "Goal earn type: event check-ins."
-  },
+  "@communityGoalEarnTypeEventCheckIns": { "description": "Goal earn type: event check-ins." },
   "communityGoalEarnTypeChallenge": "Challenge",
-  "@communityGoalEarnTypeChallenge": {
-    "description": "Goal earn type: challenge."
-  },
+  "@communityGoalEarnTypeChallenge": { "description": "Goal earn type: challenge." },
   "communityGoalEarnTypeDaysInCommunity": "Days in community",
-  "@communityGoalEarnTypeDaysInCommunity": {
-    "description": "Goal earn type: days in community."
-  },
+  "@communityGoalEarnTypeDaysInCommunity": { "description": "Goal earn type: days in community." },
   "communityGoalTargetLabel": "Target",
-  "@communityGoalTargetLabel": {
-    "description": "Goal target field label."
-  },
+  "@communityGoalTargetLabel": { "description": "Goal target field label." },
   "communityGoalTargetRequired": "Enter a target greater than 0",
-  "@communityGoalTargetRequired": {
-    "description": "Validation for the goal target."
-  },
+  "@communityGoalTargetRequired": { "description": "Validation for the goal target." },
   "communityGoalRewardPointsLabel": "Reward points",
-  "@communityGoalRewardPointsLabel": {
-    "description": "Goal reward-points field label."
-  },
+  "@communityGoalRewardPointsLabel": { "description": "Goal reward-points field label." },
   "communityGoalRewardPointsRequired": "Enter reward points",
-  "@communityGoalRewardPointsRequired": {
-    "description": "Validation for the goal reward points."
-  },
+  "@communityGoalRewardPointsRequired": { "description": "Validation for the goal reward points." },
+
   "communityRewardEditorNewTitle": "New reward",
-  "@communityRewardEditorNewTitle": {
-    "description": "Title of the reward editor when creating."
-  },
+  "@communityRewardEditorNewTitle": { "description": "Title of the reward editor when creating." },
   "communityRewardEditorEditTitle": "Edit reward",
-  "@communityRewardEditorEditTitle": {
-    "description": "Title of the reward editor when editing."
-  },
+  "@communityRewardEditorEditTitle": { "description": "Title of the reward editor when editing." },
   "communityRewardTitleLabel": "Title",
-  "@communityRewardTitleLabel": {
-    "description": "Reward title field label."
-  },
+  "@communityRewardTitleLabel": { "description": "Reward title field label." },
   "communityRewardTitleRequired": "Enter a title",
-  "@communityRewardTitleRequired": {
-    "description": "Validation when the reward title is empty."
-  },
+  "@communityRewardTitleRequired": { "description": "Validation when the reward title is empty." },
   "communityRewardDescriptionLabel": "Description",
-  "@communityRewardDescriptionLabel": {
-    "description": "Reward description field label."
-  },
+  "@communityRewardDescriptionLabel": { "description": "Reward description field label." },
   "communityRewardCostLabel": "Cost (points)",
-  "@communityRewardCostLabel": {
-    "description": "Reward cost field label."
-  },
+  "@communityRewardCostLabel": { "description": "Reward cost field label." },
   "communityRewardCostRequired": "Enter a cost",
-  "@communityRewardCostRequired": {
-    "description": "Validation for the reward cost."
-  },
+  "@communityRewardCostRequired": { "description": "Validation for the reward cost." },
   "communityRewardStockLabel": "Stock (leave empty for unlimited)",
-  "@communityRewardStockLabel": {
-    "description": "Reward stock field label."
-  },
+  "@communityRewardStockLabel": { "description": "Reward stock field label." },
+
   "communityBadgeEditorNewTitle": "New badge",
-  "@communityBadgeEditorNewTitle": {
-    "description": "Title of the badge editor when creating."
-  },
+  "@communityBadgeEditorNewTitle": { "description": "Title of the badge editor when creating." },
   "communityBadgeEditorEditTitle": "Edit badge",
-  "@communityBadgeEditorEditTitle": {
-    "description": "Title of the badge editor when editing."
-  },
+  "@communityBadgeEditorEditTitle": { "description": "Title of the badge editor when editing." },
   "communityBadgeTitleLabel": "Title",
-  "@communityBadgeTitleLabel": {
-    "description": "Badge title field label."
-  },
+  "@communityBadgeTitleLabel": { "description": "Badge title field label." },
   "communityBadgeTitleRequired": "Enter a title",
-  "@communityBadgeTitleRequired": {
-    "description": "Validation when the badge title is empty."
-  },
+  "@communityBadgeTitleRequired": { "description": "Validation when the badge title is empty." },
   "communityBadgeCriteriaLabel": "Criteria",
-  "@communityBadgeCriteriaLabel": {
-    "description": "Badge criteria-type field label."
-  },
+  "@communityBadgeCriteriaLabel": { "description": "Badge criteria-type field label." },
   "communityBadgeCriteriaPointsThreshold": "Points threshold",
-  "@communityBadgeCriteriaPointsThreshold": {
-    "description": "Badge criteria: points threshold."
-  },
+  "@communityBadgeCriteriaPointsThreshold": { "description": "Badge criteria: points threshold." },
   "communityBadgeCriteriaEventCheckIns": "Event check-ins",
-  "@communityBadgeCriteriaEventCheckIns": {
-    "description": "Badge criteria: event check-ins."
-  },
+  "@communityBadgeCriteriaEventCheckIns": { "description": "Badge criteria: event check-ins." },
   "communityBadgeCriteriaDaysInCommunity": "Days in community",
-  "@communityBadgeCriteriaDaysInCommunity": {
-    "description": "Badge criteria: days in community."
-  },
+  "@communityBadgeCriteriaDaysInCommunity": { "description": "Badge criteria: days in community." },
   "communityBadgeCriteriaChallengesCompleted": "Challenges completed",
-  "@communityBadgeCriteriaChallengesCompleted": {
-    "description": "Badge criteria: challenges completed."
-  },
+  "@communityBadgeCriteriaChallengesCompleted": { "description": "Badge criteria: challenges completed." },
   "communityBadgeValueLabel": "Value",
-  "@communityBadgeValueLabel": {
-    "description": "Badge criteria-value field label."
-  },
+  "@communityBadgeValueLabel": { "description": "Badge criteria-value field label." },
   "communityBadgeValueRequired": "Enter a value",
-  "@communityBadgeValueRequired": {
-    "description": "Validation for the badge value."
-  },
+  "@communityBadgeValueRequired": { "description": "Validation for the badge value." },
   "communityBadgeChallengesLabel": "Challenges",
-  "@communityBadgeChallengesLabel": {
-    "description": "Label for the challenge picker on a badge."
-  },
+  "@communityBadgeChallengesLabel": { "description": "Label for the challenge picker on a badge." },
   "communityBadgeChallengesEmpty": "No challenges available yet.",
-  "@communityBadgeChallengesEmpty": {
-    "description": "Shown when no challenges can be picked."
-  },
+  "@communityBadgeChallengesEmpty": { "description": "Shown when no challenges can be picked." },
+
   "communityRewardsDeleteTitle": "Delete?",
-  "@communityRewardsDeleteTitle": {
-    "description": "Generic delete confirm title for goals/rewards/badges."
-  },
+  "@communityRewardsDeleteTitle": { "description": "Generic delete confirm title for goals/rewards/badges." },
   "communityRewardsDeleteBody": "Delete \"{title}\"? This can't be undone.",
-  "@communityRewardsDeleteBody": {
-    "description": "Generic delete confirm body.",
-    "placeholders": {
-      "title": {
-        "type": "String"
-      }
-    }
-  },
+  "@communityRewardsDeleteBody": { "description": "Generic delete confirm body.", "placeholders": { "title": { "type": "String" } } },
+
   "communityEventsMyView": "My view",
-  "@communityEventsMyView": {
-    "description": "Toggle option: the leader's own view of events."
-  },
+  "@communityEventsMyView": { "description": "Toggle option: the leader's own view of events." },
   "communityEventsAttendeeView": "Attendee view",
-  "@communityEventsAttendeeView": {
-    "description": "Toggle option: preview events as an attendee sees them."
-  },
+  "@communityEventsAttendeeView": { "description": "Toggle option: preview events as an attendee sees them." },
   "communityEventVisibilityPublic": "Public",
-  "@communityEventVisibilityPublic": {
-    "description": "Event visibility badge: public."
-  },
+  "@communityEventVisibilityPublic": { "description": "Event visibility badge: public." },
   "communityEventVisibilityMembers": "Members",
-  "@communityEventVisibilityMembers": {
-    "description": "Event visibility badge: members only."
-  },
+  "@communityEventVisibilityMembers": { "description": "Event visibility badge: members only." },
   "communityEventVisibilityTier": "Tier",
-  "@communityEventVisibilityTier": {
-    "description": "Event visibility badge: tier-gated."
-  },
+  "@communityEventVisibilityTier": { "description": "Event visibility badge: tier-gated." },
+
   "businessGoalTitle": "What's your goal?",
-  "@businessGoalTitle": {
-    "description": "Business onboarding goal step: title"
-  },
+  "@businessGoalTitle": { "description": "Business onboarding goal step: title" },
   "businessGoalSubtitle": "We'll tailor your setup based on what you want to achieve.",
-  "@businessGoalSubtitle": {
-    "description": "Business onboarding goal step: subtitle"
-  },
+  "@businessGoalSubtitle": { "description": "Business onboarding goal step: subtitle" },
   "businessGoalVenueTitle": "Fill my venue",
-  "@businessGoalVenueTitle": {
-    "description": "Business onboarding goal step: venue option title"
-  },
+  "@businessGoalVenueTitle": { "description": "Business onboarding goal step: venue option title" },
   "businessGoalVenueDescription": "I have a physical place (bar, gym, shop, studio) and want communities to come.",
-  "@businessGoalVenueDescription": {
-    "description": "Business onboarding goal step: venue option description"
-  },
+  "@businessGoalVenueDescription": { "description": "Business onboarding goal step: venue option description" },
   "businessGoalProductTitle": "Promote a product or service",
-  "@businessGoalProductTitle": {
-    "description": "Business onboarding goal step: product option title"
-  },
+  "@businessGoalProductTitle": { "description": "Business onboarding goal step: product option title" },
   "businessGoalProductDescription": "I want to reach communities in one or more cities, no physical venue needed.",
-  "@businessGoalProductDescription": {
-    "description": "Business onboarding goal step: product option description"
-  },
+  "@businessGoalProductDescription": { "description": "Business onboarding goal step: product option description" },
+
   "businessProductIdentityTitle": "Tell us about your brand",
-  "@businessProductIdentityTitle": {
-    "description": "Business product path identity step: title"
-  },
+  "@businessProductIdentityTitle": { "description": "Business product path identity step: title" },
   "businessProductIdentitySubtitle": "Add your name, category and logo so communities know who you are.",
-  "@businessProductIdentitySubtitle": {
-    "description": "Business product path identity step: subtitle"
-  },
+  "@businessProductIdentitySubtitle": { "description": "Business product path identity step: subtitle" },
   "businessProductIdentityIncomplete": "Please add a name and at least one category.",
-  "@businessProductIdentityIncomplete": {
-    "description": "Business product path identity step: validation error"
-  },
+  "@businessProductIdentityIncomplete": { "description": "Business product path identity step: validation error" },
   "businessProductNameLabel": "Brand name",
-  "@businessProductNameLabel": {
-    "description": "Business product path: brand name field label"
-  },
+  "@businessProductNameLabel": { "description": "Business product path: brand name field label" },
   "businessProductNameHint": "Your brand or company name",
-  "@businessProductNameHint": {
-    "description": "Business product path: brand name field hint"
-  },
+  "@businessProductNameHint": { "description": "Business product path: brand name field hint" },
   "businessProductCategoryLabel": "Category",
-  "@businessProductCategoryLabel": {
-    "description": "Business product path: category field label"
-  },
+  "@businessProductCategoryLabel": { "description": "Business product path: category field label" },
   "businessProductCategoryHint": "Pick up to 3 that best describe you.",
-  "@businessProductCategoryHint": {
-    "description": "Business product path: category field hint"
-  },
+  "@businessProductCategoryHint": { "description": "Business product path: category field hint" },
+
   "businessProductTypeLabel": "Product type",
-  "@businessProductTypeLabel": {
-    "description": "Business product path: product-type picker label"
-  },
+  "@businessProductTypeLabel": { "description": "Business product path: product-type picker label" },
   "businessProductTypeHint": "What kind of product or service is it?",
-  "@businessProductTypeHint": {
-    "description": "Business product path: product-type picker hint"
-  },
+  "@businessProductTypeHint": { "description": "Business product path: product-type picker hint" },
+
   "businessProductCitiesTitle": "Which cities do you want to reach?",
-  "@businessProductCitiesTitle": {
-    "description": "Business product path cities step: title"
-  },
+  "@businessProductCitiesTitle": { "description": "Business product path cities step: title" },
   "businessProductCitiesSubtitle": "Free plan: up to {limit} cities. Upgrade to Premium for unlimited reach.",
   "@businessProductCitiesSubtitle": {
     "description": "Business product path cities step: subtitle with free limit",
-    "placeholders": {
-      "limit": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "limit": { "type": "int" } }
   },
   "businessProductCitiesRequired": "Please select at least one city.",
-  "@businessProductCitiesRequired": {
-    "description": "Business product path cities step: validation error"
-  },
+  "@businessProductCitiesRequired": { "description": "Business product path cities step: validation error" },
   "businessProductCitiesLimitReached": "Free plan covers up to {limit} cities. Upgrade to Premium to add more.",
   "@businessProductCitiesLimitReached": {
     "description": "Business product path cities step: free limit reached toast",
-    "placeholders": {
-      "limit": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "limit": { "type": "int" } }
   },
   "businessProductCitiesCounter": "{selected} of {limit} cities selected",
   "@businessProductCitiesCounter": {
     "description": "Business product path cities step: selection counter",
-    "placeholders": {
-      "selected": {
-        "type": "int"
-      },
-      "limit": {
-        "type": "int"
-      }
-    }
+    "placeholders": { "selected": { "type": "int" }, "limit": { "type": "int" } }
   },
+
   "businessProductAboutTitle": "Add a few more details",
-  "@businessProductAboutTitle": {
-    "description": "Business product path about step: title"
-  },
+  "@businessProductAboutTitle": { "description": "Business product path about step: title" },
   "businessProductAboutSubtitle": "All optional, but they help communities decide to work with you.",
-  "@businessProductAboutSubtitle": {
-    "description": "Business product path about step: subtitle"
-  },
+  "@businessProductAboutSubtitle": { "description": "Business product path about step: subtitle" },
   "businessProductOfferingLabel": "What you offer",
-  "@businessProductOfferingLabel": {
-    "description": "Business product path: offering field label"
-  },
+  "@businessProductOfferingLabel": { "description": "Business product path: offering field label" },
   "businessProductOfferingHint": "e.g., 20% off for community members, free samples, giveaway prizes",
-  "@businessProductOfferingHint": {
-    "description": "Business product path: offering field hint"
-  },
+  "@businessProductOfferingHint": { "description": "Business product path: offering field hint" },
   "venueModeBusinessVenue": "Business Venue",
-  "@venueModeBusinessVenue": {
-    "description": "Venue mode label: hosted at the business location"
-  },
+  "@venueModeBusinessVenue": { "description": "Venue mode label: hosted at the business location" },
   "venueModeCommunityVenue": "Community Venue",
-  "@venueModeCommunityVenue": {
-    "description": "Venue mode label: hosted at the community location"
-  },
+  "@venueModeCommunityVenue": { "description": "Venue mode label: hosted at the community location" },
   "venueModeNoVenue": "No venue yet",
-  "@venueModeNoVenue": {
-    "description": "Venue mode label: no specific venue yet (online or to be arranged)"
-  },
+  "@venueModeNoVenue": { "description": "Venue mode label: no specific venue yet (online or to be arranged)" },
   "businessProductPhotosLabel": "Photos (optional)",
-  "@businessProductPhotosLabel": {
-    "description": "Business product path: photos field label"
-  },
+  "@businessProductPhotosLabel": { "description": "Business product path: photos field label" },
+
   "businessProductPhotosEmptyTitle": "Add photos",
-  "@businessProductPhotosEmptyTitle": {
-    "description": "Business product path: photos empty-state title (non-venue)"
-  },
+  "@businessProductPhotosEmptyTitle": { "description": "Business product path: photos empty-state title (non-venue)" },
   "businessProductPhotosEmptyDescription": "Show what you offer. Upload your own photos, remove what you do not want, and set the final order here.",
-  "@businessProductPhotosEmptyDescription": {
-    "description": "Business product path: photos empty-state description (non-venue)"
-  },
+  "@businessProductPhotosEmptyDescription": { "description": "Business product path: photos empty-state description (non-venue)" },
+
   "communityStep1SizeHelper": "Roughly how many members are in your community?",
-  "@communityStep1SizeHelper": {
-    "description": "Community onboarding step 1: community size helper text"
-  },
+  "@communityStep1SizeHelper": { "description": "Community onboarding step 1: community size helper text" },
+
   "missionsTitle": "Missions",
-  "@missionsTitle": {
-    "description": "Missions screen app-bar title and profile entry label"
-  },
+  "@missionsTitle": { "description": "Missions screen app-bar title and profile entry label" },
   "missionsProgress": "{progress}/{target}",
   "@missionsProgress": {
     "description": "Mission progress as current over target, e.g. 2/5",
     "placeholders": {
-      "progress": {
-        "type": "int",
-        "example": "2"
-      },
-      "target": {
-        "type": "int",
-        "example": "5"
-      }
+      "progress": { "type": "int", "example": "2" },
+      "target": { "type": "int", "example": "5" }
     }
   },
   "missionsPointsLabel": "pts",
-  "@missionsPointsLabel": {
-    "description": "Short label for points awarded by a mission, shown after the amount (e.g. +50 pts)"
-  },
+  "@missionsPointsLabel": { "description": "Short label for points awarded by a mission, shown after the amount (e.g. +50 pts)" },
   "missionsEmptyTitle": "No missions yet",
-  "@missionsEmptyTitle": {
-    "description": "Missions screen empty-state title"
-  },
+  "@missionsEmptyTitle": { "description": "Missions screen empty-state title" },
   "missionsEmptyMessage": "Keep using Kolabing and new missions will show up here.",
-  "@missionsEmptyMessage": {
-    "description": "Missions screen empty-state message"
-  },
+  "@missionsEmptyMessage": { "description": "Missions screen empty-state message" },
   "missionsLoadError": "Could not load your missions",
-  "@missionsLoadError": {
-    "description": "Missions screen error-state message"
-  },
+  "@missionsLoadError": { "description": "Missions screen error-state message" },
   "missionsCategoryOnboarding": "Getting started",
-  "@missionsCategoryOnboarding": {
-    "description": "Mission category header: onboarding"
-  },
+  "@missionsCategoryOnboarding": { "description": "Mission category header: onboarding" },
   "missionsCategoryAttendance": "Attendance",
-  "@missionsCategoryAttendance": {
-    "description": "Mission category header: attendance"
-  },
+  "@missionsCategoryAttendance": { "description": "Mission category header: attendance" },
   "missionsCategoryEngagement": "Engagement",
-  "@missionsCategoryEngagement": {
-    "description": "Mission category header: engagement"
-  },
+  "@missionsCategoryEngagement": { "description": "Mission category header: engagement" },
   "missionsCategoryContent": "Content",
-  "@missionsCategoryContent": {
-    "description": "Mission category header: content"
-  },
+  "@missionsCategoryContent": { "description": "Mission category header: content" },
   "missionsCategoryReferral": "Referrals",
-  "@missionsCategoryReferral": {
-    "description": "Mission category header: referral"
-  },
+  "@missionsCategoryReferral": { "description": "Mission category header: referral" },
   "missionsCategoryGrowth": "Growth",
-  "@missionsCategoryGrowth": {
-    "description": "Mission category header: growth"
-  },
+  "@missionsCategoryGrowth": { "description": "Mission category header: growth" },
   "missionsCategorySocial": "Social",
-  "@missionsCategorySocial": {
-    "description": "Mission category header: social"
-  },
+  "@missionsCategorySocial": { "description": "Mission category header: social" },
   "missionsCategoryMilestone": "Milestones",
-  "@missionsCategoryMilestone": {
-    "description": "Mission category header: milestone"
-  },
+  "@missionsCategoryMilestone": { "description": "Mission category header: milestone" },
   "missionsCategoryOther": "Other",
-  "@missionsCategoryOther": {
-    "description": "Mission category header: unknown/other category fallback"
-  },
+  "@missionsCategoryOther": { "description": "Mission category header: unknown/other category fallback" },
   "consentAgreeLead": "I agree to the ",
-  "@consentAgreeLead": {
-    "description": "Leading text before the Terms of Service link in the sign-up consent checkbox"
-  },
+  "@consentAgreeLead": { "description": "Leading text before the Terms of Service link in the sign-up consent checkbox" },
   "consentTermsLabel": "Terms of Service",
-  "@consentTermsLabel": {
-    "description": "Tappable label linking to the Terms of Service page"
-  },
+  "@consentTermsLabel": { "description": "Tappable label linking to the Terms of Service page" },
   "consentAgreeConjunction": " and ",
-  "@consentAgreeConjunction": {
-    "description": "Conjunction between the Terms of Service and Privacy Policy links"
-  },
+  "@consentAgreeConjunction": { "description": "Conjunction between the Terms of Service and Privacy Policy links" },
   "consentPrivacyLabel": "Privacy Policy",
-  "@consentPrivacyLabel": {
-    "description": "Tappable label linking to the Privacy Policy page"
-  },
+  "@consentPrivacyLabel": { "description": "Tappable label linking to the Privacy Policy page" },
   "reconsentTitle": "We've updated our terms",
-  "@reconsentTitle": {
-    "description": "Title of the blocking re-consent screen shown when the agreement version changed"
-  },
+  "@reconsentTitle": { "description": "Title of the blocking re-consent screen shown when the agreement version changed" },
   "reconsentBody": "To keep using Kolabing, please review and accept our updated agreements.",
-  "@reconsentBody": {
-    "description": "Body text of the re-consent screen"
-  },
+  "@reconsentBody": { "description": "Body text of the re-consent screen" },
   "reconsentAcceptButton": "Accept and continue",
-  "@reconsentAcceptButton": {
-    "description": "Button that records consent on the re-consent screen"
-  },
+  "@reconsentAcceptButton": { "description": "Button that records consent on the re-consent screen" },
   "reconsentError": "Something went wrong. Please try again.",
-  "@reconsentError": {
-    "description": "Error shown when recording consent fails"
-  },
+  "@reconsentError": { "description": "Error shown when recording consent fails" },
   "authNoToleranceNotice": "We have zero tolerance for objectionable content and abusive users.",
-  "@authNoToleranceNotice": {
-    "description": "Zero-tolerance EULA notice shown near the Terms consent checkbox on sign-up (App Review Guideline 1.2)."
-  },
+  "@authNoToleranceNotice": { "description": "Zero-tolerance EULA notice shown near the Terms consent checkbox on sign-up (App Review Guideline 1.2)." },
   "moderationReport": "Report",
-  "@moderationReport": {
-    "description": "Overflow menu action to report content or a user."
-  },
+  "@moderationReport": { "description": "Overflow menu action to report content or a user." },
   "moderationBlockUser": "Block user",
-  "@moderationBlockUser": {
-    "description": "Overflow menu action to block a user."
-  },
+  "@moderationBlockUser": { "description": "Overflow menu action to block a user." },
   "moderationReportUser": "Report user",
-  "@moderationReportUser": {
-    "description": "Overflow menu action to report a user's profile."
-  },
+  "@moderationReportUser": { "description": "Overflow menu action to report a user's profile." },
   "moderationReportKolab": "Report this Kolab",
-  "@moderationReportKolab": {
-    "description": "Overflow menu action to report a Kolab / opportunity."
-  },
+  "@moderationReportKolab": { "description": "Overflow menu action to report a Kolab / opportunity." },
   "moderationReportReview": "Report review",
-  "@moderationReportReview": {
-    "description": "Per-row action to report a review."
-  },
+  "@moderationReportReview": { "description": "Per-row action to report a review." },
   "moderationReportSheetTitle": "Report content",
-  "@moderationReportSheetTitle": {
-    "description": "Title of the report bottom sheet."
-  },
+  "@moderationReportSheetTitle": { "description": "Title of the report bottom sheet." },
   "moderationReportSheetSubtitle": "Tell us why. Your report is confidential.",
-  "@moderationReportSheetSubtitle": {
-    "description": "Subtitle explaining the report sheet."
-  },
+  "@moderationReportSheetSubtitle": { "description": "Subtitle explaining the report sheet." },
   "moderationReasonSpam": "Spam",
-  "@moderationReasonSpam": {
-    "description": "Report reason: spam."
-  },
+  "@moderationReasonSpam": { "description": "Report reason: spam." },
   "moderationReasonHarassment": "Harassment",
-  "@moderationReasonHarassment": {
-    "description": "Report reason: harassment or bullying."
-  },
+  "@moderationReasonHarassment": { "description": "Report reason: harassment or bullying." },
   "moderationReasonInappropriate": "Inappropriate content",
-  "@moderationReasonInappropriate": {
-    "description": "Report reason: inappropriate or objectionable content."
-  },
+  "@moderationReasonInappropriate": { "description": "Report reason: inappropriate or objectionable content." },
   "moderationReasonOther": "Other",
-  "@moderationReasonOther": {
-    "description": "Report reason: other."
-  },
+  "@moderationReasonOther": { "description": "Report reason: other." },
   "moderationNoteHint": "Add details (optional)",
-  "@moderationNoteHint": {
-    "description": "Placeholder for the optional note field in the report sheet."
-  },
+  "@moderationNoteHint": { "description": "Placeholder for the optional note field in the report sheet." },
   "moderationSubmitReport": "Submit report",
-  "@moderationSubmitReport": {
-    "description": "Primary button to submit a report."
-  },
+  "@moderationSubmitReport": { "description": "Primary button to submit a report." },
   "moderationReportSuccess": "Thanks — your report has been sent.",
-  "@moderationReportSuccess": {
-    "description": "Snackbar confirming a report was submitted."
-  },
+  "@moderationReportSuccess": { "description": "Snackbar confirming a report was submitted." },
   "moderationReportError": "Couldn't send your report. Please try again.",
-  "@moderationReportError": {
-    "description": "Snackbar shown when submitting a report fails."
-  },
+  "@moderationReportError": { "description": "Snackbar shown when submitting a report fails." },
   "moderationBlockConfirmTitle": "Block this user?",
-  "@moderationBlockConfirmTitle": {
-    "description": "Title of the block confirmation dialog."
-  },
+  "@moderationBlockConfirmTitle": { "description": "Title of the block confirmation dialog." },
   "moderationBlockConfirmBody": "You won't see their content and they won't be able to reach you. You can unblock them later.",
-  "@moderationBlockConfirmBody": {
-    "description": "Body of the block confirmation dialog."
-  },
+  "@moderationBlockConfirmBody": { "description": "Body of the block confirmation dialog." },
   "moderationBlockConfirmAction": "Block",
-  "@moderationBlockConfirmAction": {
-    "description": "Confirm button in the block dialog."
-  },
+  "@moderationBlockConfirmAction": { "description": "Confirm button in the block dialog." },
   "moderationBlockSuccess": "User blocked.",
-  "@moderationBlockSuccess": {
-    "description": "Snackbar confirming a user was blocked."
-  },
+  "@moderationBlockSuccess": { "description": "Snackbar confirming a user was blocked." },
   "moderationBlockError": "Couldn't block this user. Please try again.",
-  "@moderationBlockError": {
-    "description": "Snackbar shown when blocking fails."
-  },
+  "@moderationBlockError": { "description": "Snackbar shown when blocking fails." },
   "subscriptionLegalAutoRenewNotice": "Payment is charged to your store account at confirmation of purchase. Subscriptions renew automatically unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in your account settings.",
-  "@subscriptionLegalAutoRenewNotice": {
-    "description": "Auto-renewal disclosure shown at the point of purchase on the subscription paywall (App Store Guideline 3.1.2)."
-  },
+  "@subscriptionLegalAutoRenewNotice": { "description": "Auto-renewal disclosure shown at the point of purchase on the subscription paywall (App Store Guideline 3.1.2)." },
   "subscriptionLegalTermsOfUse": "Terms of Use (EULA)",
-  "@subscriptionLegalTermsOfUse": {
-    "description": "Tappable paywall label linking to the Terms of Use / EULA."
-  },
+  "@subscriptionLegalTermsOfUse": { "description": "Tappable paywall label linking to the Terms of Use / EULA." },
   "subscriptionLegalPrivacyPolicy": "Privacy Policy",
-  "@subscriptionLegalPrivacyPolicy": {
-    "description": "Tappable paywall label linking to the Privacy Policy."
-  },
+  "@subscriptionLegalPrivacyPolicy": { "description": "Tappable paywall label linking to the Privacy Policy." },
   "permissionScreenTitle": "Get the most out of Kolabing",
-  "@permissionScreenTitle": {
-    "description": "Title of the post-signup permission screen. Deliberately avoids the word 'Allow' (App Review Guideline 5.1.1(iv))."
-  },
+  "@permissionScreenTitle": { "description": "Title of the post-signup permission screen. Deliberately avoids the word 'Allow' (App Review Guideline 5.1.1(iv))." },
   "permissionScreenSubtitle": "Notifications keep you updated on messages and collaborations.",
-  "@permissionScreenSubtitle": {
-    "description": "Permission screen subtitle when only the notifications row is shown."
-  },
+  "@permissionScreenSubtitle": { "description": "Permission screen subtitle when only the notifications row is shown." },
   "permissionScreenSubtitleWithLocation": "Location helps us show nearby kolabs.\nNotifications keep you updated.",
-  "@permissionScreenSubtitleWithLocation": {
-    "description": "Permission screen subtitle when the location row is also shown."
-  },
+  "@permissionScreenSubtitleWithLocation": { "description": "Permission screen subtitle when the location row is also shown." },
   "permissionScreenHelper": "You can change this later in settings.",
-  "@permissionScreenHelper": {
-    "description": "Helper text under the permission screen's dismiss button."
-  },
+  "@permissionScreenHelper": { "description": "Helper text under the permission screen's dismiss button." },
   "permissionLocationTitle": "Location",
-  "@permissionLocationTitle": {
-    "description": "Permission row title: device location."
-  },
+  "@permissionLocationTitle": { "description": "Permission row title: device location." },
   "permissionLocationSubtitle": "Nearby kolabs",
-  "@permissionLocationSubtitle": {
-    "description": "Permission row subtitle explaining why location is useful."
-  },
+  "@permissionLocationSubtitle": { "description": "Permission row subtitle explaining why location is useful." },
   "permissionNotificationsTitle": "Notifications",
-  "@permissionNotificationsTitle": {
-    "description": "Permission row title: push notifications."
-  },
+  "@permissionNotificationsTitle": { "description": "Permission row title: push notifications." },
   "permissionNotificationsSubtitle": "Messages & updates",
-  "@permissionNotificationsSubtitle": {
-    "description": "Permission row subtitle explaining why notifications are useful."
-  },
+  "@permissionNotificationsSubtitle": { "description": "Permission row subtitle explaining why notifications are useful." },
   "permissionDeniedDialogTitle": "{permission} permission",
   "@permissionDeniedDialogTitle": {
     "description": "Title of the dialog shown after a permission request is denied.",
-    "placeholders": {
-      "permission": {
-        "type": "String",
-        "example": "Notifications"
-      }
-    }
+    "placeholders": { "permission": { "type": "String", "example": "Notifications" } }
   },
   "permissionDeniedDialogBody": "{permission} access was denied. You can enable it from your device settings.",
   "@permissionDeniedDialogBody": {
     "description": "Body of the dialog shown after a permission request is denied.",
-    "placeholders": {
-      "permission": {
-        "type": "String",
-        "example": "Notifications"
-      }
-    }
+    "placeholders": { "permission": { "type": "String", "example": "Notifications" } }
   },
   "permissionDeniedDialogLater": "Later",
-  "@permissionDeniedDialogLater": {
-    "description": "Dismiss action on the permission-denied dialog."
-  },
+  "@permissionDeniedDialogLater": { "description": "Dismiss action on the permission-denied dialog." },
   "permissionDeniedDialogOpenSettings": "Open Settings",
-  "@permissionDeniedDialogOpenSettings": {
-    "description": "Action that opens the system settings from the permission-denied dialog."
-  },
+  "@permissionDeniedDialogOpenSettings": { "description": "Action that opens the system settings from the permission-denied dialog." },
   "subscriptionManageAppleFailed": "Couldn't open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.",
-  "@subscriptionManageAppleFailed": {
-    "description": "Shown when the App Store subscription management page cannot be opened from the app."
-  },
+  "@subscriptionManageAppleFailed": { "description": "Shown when the App Store subscription management page cannot be opened from the app." },
+  "onboardingStepOf": "Step {current} of {total}",
+  "@onboardingStepOf": {"description": "Onboarding header step counter.", "placeholders": {"current": {"type": "int", "example": "3"}, "total": {"type": "int", "example": "4"}}},
+  "challengeCompletionStatusCancelled": "Cancelled",
+  "@challengeCompletionStatusCancelled": {"description": "Status badge for a challenge request the challenger withdrew."},
+  "challengeCompletionStatusExpired": "Expired",
+  "@challengeCompletionStatusExpired": {"description": "Status badge for a challenge request nobody answered in time."},
+  "challengeTogetherCancel": "Cancel this request",
+  "@challengeTogetherCancel": {"description": "Button on the waiting screen: withdraws the request."},
+  "challengeTogetherCancelled": "Request cancelled.",
+  "@challengeTogetherCancelled": {"description": "Confirmation after cancelling a challenge request."},
+  "challengeTogetherCancelFailed": "Couldn't cancel that — they may have already answered.",
+  "@challengeTogetherCancelFailed": {"description": "Failure after trying to cancel a challenge request."},
   "qrHubTitle": "Scan or share",
-  "@qrHubTitle": {
-    "description": "Title of the attendee QR hub sheet."
-  },
+  "@qrHubTitle": {"description": "Title of the attendee QR hub sheet."},
   "qrHubScanTitle": "Scan a code",
-  "@qrHubScanTitle": {
-    "description": "QR hub action that opens the camera."
-  },
+  "@qrHubScanTitle": {"description": "QR hub action that opens the camera."},
   "qrHubScanSubtitle": "Check in to an event, or pair up to play a challenge",
-  "@qrHubScanSubtitle": {
-    "description": "Explains what the scanner can read."
-  },
+  "@qrHubScanSubtitle": {"description": "Explains what the scanner can read."},
   "qrHubMyQrTitle": "My QR code",
-  "@qrHubMyQrTitle": {
-    "description": "QR hub action that shows the member's own profile QR."
-  },
+  "@qrHubMyQrTitle": {"description": "QR hub action that shows the member's own profile QR."},
   "qrHubMyQrSubtitle": "Let someone scan you to pair up",
-  "@qrHubMyQrSubtitle": {
-    "description": "Explains why a member would show their own QR."
-  },
+  "@qrHubMyQrSubtitle": {"description": "Explains why a member would show their own QR."},
   "scannerUnknownCode": "That isn't a Kolabing QR code.",
-  "@scannerUnknownCode": {
-    "description": "Shown when a scanned code is not one the app understands."
-  },
+  "@scannerUnknownCode": {"description": "Shown when a scanned code is not one the app understands."},
   "scannerOwnCode": "That's your own code — ask the other person to show theirs.",
-  "@scannerOwnCode": {
-    "description": "Shown when the member scans their own profile QR."
-  },
+  "@scannerOwnCode": {"description": "Shown when the member scans their own profile QR."},
   "scannerTorchTooltip": "Toggle flash",
-  "@scannerTorchTooltip": {
-    "description": "Tooltip on the scanner's torch button."
-  },
+  "@scannerTorchTooltip": {"description": "Tooltip on the scanner's torch button."},
   "checkinSuccessBody": "You're checked in to {eventName}.",
-  "@checkinSuccessBody": {
-    "description": "Confirmation after a successful event check-in.",
-    "placeholders": {
-      "eventName": {
-        "type": "String",
-        "example": "Sunset Run"
-      }
-    }
-  },
+  "@checkinSuccessBody": {"description": "Confirmation after a successful event check-in.", "placeholders": {"eventName": {"type": "String", "example": "Sunset Run"}}},
   "checkinXpEarned": "+{points} XP",
-  "@checkinXpEarned": {
-    "description": "XP earned badge. Points come from the server, never guessed locally.",
-    "placeholders": {
-      "points": {
-        "type": "int",
-        "example": "5"
-      }
-    }
-  },
+  "@checkinXpEarned": {"description": "XP earned badge. Points come from the server, never guessed locally.", "placeholders": {"points": {"type": "int", "example": "5"}}},
   "checkinNextStep": "Now scan someone's profile QR to play a challenge together.",
-  "@checkinNextStep": {
-    "description": "Points the member at the next step of the loop after check-in."
-  },
+  "@checkinNextStep": {"description": "Points the member at the next step of the loop after check-in."},
   "checkinScanPeer": "SCAN SOMEONE",
-  "@checkinScanPeer": {
-    "description": "Action that reopens the scanner to pair with another member."
-  },
+  "@checkinScanPeer": {"description": "Action that reopens the scanner to pair with another member."},
   "peerPairedTitle": "Paired with {name}",
-  "@peerPairedTitle": {
-    "description": "Header of the pairing sheet after scanning another member.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "Ana"
-      }
-    }
-  },
+  "@peerPairedTitle": {"description": "Header of the pairing sheet after scanning another member.", "placeholders": {"name": {"type": "String", "example": "Ana"}}},
   "peerPairedSubtitle": "Pick a challenge to play together.",
-  "@peerPairedSubtitle": {
-    "description": "Subtitle of the pairing sheet."
-  },
+  "@peerPairedSubtitle": {"description": "Subtitle of the pairing sheet."},
   "peerPairedAtEvent": "At {eventName}",
-  "@peerPairedAtEvent": {
-    "description": "Shows which event's challenges are listed.",
-    "placeholders": {
-      "eventName": {
-        "type": "String",
-        "example": "Sunset Run"
-      }
-    }
-  },
+  "@peerPairedAtEvent": {"description": "Shows which event's challenges are listed.", "placeholders": {"eventName": {"type": "String", "example": "Sunset Run"}}},
   "peerChallengesEmpty": "This event has no challenges yet.",
-  "@peerChallengesEmpty": {
-    "description": "Empty state when an event has no challenges."
-  },
+  "@peerChallengesEmpty": {"description": "Empty state when an event has no challenges."},
   "peerChallengePlay": "PLAY",
-  "@peerChallengePlay": {
-    "description": "Action that starts a challenge with the paired member."
-  },
+  "@peerChallengePlay": {"description": "Action that starts a challenge with the paired member."},
   "peerNoSessionTitle": "Check in first",
-  "@peerNoSessionTitle": {
-    "description": "Title shown when pairing without an active event check-in."
-  },
+  "@peerNoSessionTitle": {"description": "Title shown when pairing without an active event check-in."},
   "peerNoSessionBody": "Scan the event's QR code to check in, then pair up to play its challenges.",
-  "@peerNoSessionBody": {
-    "description": "Explains why pairing needs a check-in first."
-  },
+  "@peerNoSessionBody": {"description": "Explains why pairing needs a check-in first."},
   "peerNoSessionAction": "SCAN EVENT CODE",
-  "@peerNoSessionAction": {
-    "description": "Action that reopens the scanner for an event check-in code."
-  },
+  "@peerNoSessionAction": {"description": "Action that reopens the scanner for an event check-in code."},
   "peerInitiateBothCheckedIn": "Couldn't start this challenge. Make sure you're both checked in to this event.",
-  "@peerInitiateBothCheckedIn": {
-    "description": "Backend 422 on /challenges/initiate — the pair are not both checked in."
-  },
+  "@peerInitiateBothCheckedIn": {"description": "Backend 422 on /challenges/initiate — the pair are not both checked in."},
   "peerInitiateFailed": "Couldn't start the challenge.",
   "challengeFirstChoose": "Choose a challenge",
-  "@challengeFirstChoose": {
-    "description": "Primary action after checking in: opens this event's challenge list."
-  },
+  "@challengeFirstChoose": {"description": "Primary action after checking in: opens this event's challenge list."},
   "challengeFirstScanThem": "Scan the person you're doing it with",
-  "@challengeFirstScanThem": {
-    "description": "Button on a challenge's details: opens the scanner with that challenge already chosen."
-  },
+  "@challengeFirstScanThem": {"description": "Button on a challenge's details: opens the scanner with that challenge already chosen."},
   "communityChallengesTitle": "Challenges",
   "communityChallengesHubSubtitle": "Choose what your events play",
-  "@communityChallengesHubSubtitle": {
-    "description": "Subtitle of the Challenges row on the community hub."
-  },
-  "@communityChallengesTitle": {
-    "description": "Title of the leader screen for choosing which challenges the community plays."
-  },
+  "@communityChallengesHubSubtitle": {"description": "Subtitle of the Challenges row on the community hub."},
+  "@communityChallengesTitle": {"description": "Title of the leader screen for choosing which challenges the community plays."},
   "communityChallengesDefaultHint": "Nothing chosen, so your events play every Kolabing challenge. Tick some to narrow it down.",
-  "@communityChallengesDefaultHint": {
-    "description": "Banner shown when the community has not curated \u2014 explains that empty means everything, not nothing."
-  },
+  "@communityChallengesDefaultHint": {"description": "Banner shown when the community has not curated — explains that empty means everything, not nothing."},
   "communityChallengesCuratedHint": "Your events play only what's ticked here, plus anything you add to a single event.",
-  "@communityChallengesCuratedHint": {
-    "description": "Banner shown when the community has curated."
-  },
+  "@communityChallengesCuratedHint": {"description": "Banner shown when the community has curated."},
   "communityChallengesAllowRepeat": "Let the same two people repeat it",
-  "@communityChallengesAllowRepeat": {
-    "description": "Switch label for allow_repeat_with_same_person."
-  },
+  "@communityChallengesAllowRepeat": {"description": "Switch label for allow_repeat_with_same_person."},
   "communityChallengesRequiresNewPerson": "Only with someone they haven't played with",
-  "@communityChallengesRequiresNewPerson": {
-    "description": "Switch label for requires_new_person."
-  },
+  "@communityChallengesRequiresNewPerson": {"description": "Switch label for requires_new_person."},
   "communityChallengesSaved": "Saved.",
-  "@communityChallengesSaved": {
-    "description": "Confirmation after saving the community's challenge set."
-  },
+  "@communityChallengesSaved": {"description": "Confirmation after saving the community's challenge set."},
   "communityChallengesSaveFailed": "Couldn't save that. Try again.",
-  "@communityChallengesSaveFailed": {
-    "description": "Failure after saving the community's challenge set."
-  },
+  "@communityChallengesSaveFailed": {"description": "Failure after saving the community's challenge set."},
   "communityChallengesUnavailable": "The challenge library isn't available yet.",
-  "@communityChallengesUnavailable": {
-    "description": "Shown when the library endpoint is not deployed."
-  },
+  "@communityChallengesUnavailable": {"description": "Shown when the library endpoint is not deployed."},
   "communityChallengesEmptyLibrary": "There are no challenges to choose from yet.",
-  "@communityChallengesEmptyLibrary": {
-    "description": "Shown when the library is empty."
-  },
+  "@communityChallengesEmptyLibrary": {"description": "Shown when the library is empty."},
   "peerInitiateAlreadyPending": "You've already asked them to confirm this one.",
-  "@peerInitiateAlreadyPending": {
-    "description": "Refusal shown when a pending request for the same challenge and pair already exists."
-  },
+  "@peerInitiateAlreadyPending": {"description": "Refusal shown when a pending request for the same challenge and pair already exists."},
   "peerInitiateAlreadyCompleted": "You two have already done this one. Try another.",
-  "@peerInitiateAlreadyCompleted": {
-    "description": "Refusal shown when the pair completed this challenge and the community does not allow repeats."
-  },
+  "@peerInitiateAlreadyCompleted": {"description": "Refusal shown when the pair completed this challenge and the community does not allow repeats."},
   "peerInitiateNeedsNewPerson": "This one's for someone you haven't played with yet.",
-  "@peerInitiateNeedsNewPerson": {
-    "description": "Refusal shown for a challenge that requires a new person."
-  },
+  "@peerInitiateNeedsNewPerson": {"description": "Refusal shown for a challenge that requires a new person."},
   "peerInitiateEventLimit": "You've done all the challenges you can at this event.",
-  "@peerInitiateEventLimit": {
-    "description": "Refusal shown when the event's per-attendee challenge limit is reached."
-  },
-  "@peerInitiateFailed": {
-    "description": "Generic failure when starting a challenge."
-  },
+  "@peerInitiateEventLimit": {"description": "Refusal shown when the event's per-attendee challenge limit is reached."},
+  "@peerInitiateFailed": {"description": "Generic failure when starting a challenge."},
   "verifyQrTitle": "Get it confirmed",
-  "@verifyQrTitle": {
-    "description": "Title of the screen showing the challenger's verification QR."
-  },
+  "@verifyQrTitle": {"description": "Title of the screen showing the challenger's verification QR."},
   "verifyQrBody": "Ask {name} to scan this code to confirm you did it.",
-  "@verifyQrBody": {
-    "description": "Instruction on the verification QR screen.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "Ana"
-      }
-    }
-  },
+  "@verifyQrBody": {"description": "Instruction on the verification QR screen.", "placeholders": {"name": {"type": "String", "example": "Ana"}}},
   "verifyQrWaiting": "Waiting for confirmation…",
-  "@verifyQrWaiting": {
-    "description": "Status while polling for the verifier's confirmation."
-  },
+  "@verifyQrWaiting": {"description": "Status while polling for the verifier's confirmation."},
   "verifyQrVerifiedTitle": "Challenge complete!",
-  "@verifyQrVerifiedTitle": {
-    "description": "Celebration title once the challenge is verified."
-  },
+  "@verifyQrVerifiedTitle": {"description": "Celebration title once the challenge is verified."},
   "verifyQrRejectedTitle": "Not confirmed",
-  "@verifyQrRejectedTitle": {
-    "description": "Title when the verifier rejected the challenge."
-  },
+  "@verifyQrRejectedTitle": {"description": "Title when the verifier rejected the challenge."},
   "verifyQrRejectedBody": "This one wasn't confirmed. You can try another challenge.",
-  "@verifyQrRejectedBody": {
-    "description": "Body when the verifier rejected the challenge."
-  },
+  "@verifyQrRejectedBody": {"description": "Body when the verifier rejected the challenge."},
   "verifyQrTimeoutTitle": "Still waiting",
-  "@verifyQrTimeoutTitle": {
-    "description": "Title when polling times out with no confirmation."
-  },
+  "@verifyQrTimeoutTitle": {"description": "Title when polling times out with no confirmation."},
   "verifyQrTimeoutBody": "No confirmation yet. Keep this code open, or show it again later from your challenge history.",
-  "@verifyQrTimeoutBody": {
-    "description": "Body when polling times out with no confirmation."
-  },
+  "@verifyQrTimeoutBody": {"description": "Body when polling times out with no confirmation."},
   "verifyQrKeepWaiting": "KEEP WAITING",
-  "@verifyQrKeepWaiting": {
-    "description": "Action that resumes polling after a timeout."
-  },
+  "@verifyQrKeepWaiting": {"description": "Action that resumes polling after a timeout."},
   "verifyScanTitle": "Confirm a challenge",
-  "@verifyScanTitle": {
-    "description": "Title of the sheet shown after scanning a verification QR."
-  },
+  "@verifyScanTitle": {"description": "Title of the sheet shown after scanning a verification QR."},
   "verifyScanQuestion": "Did {name} complete “{challenge}”?",
-  "@verifyScanQuestion": {
-    "description": "Asks the verifier to confirm a named challenge.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "Ana"
-      },
-      "challenge": {
-        "type": "String",
-        "example": "Meet three new people"
-      }
-    }
-  },
+  "@verifyScanQuestion": {"description": "Asks the verifier to confirm a named challenge.", "placeholders": {"name": {"type": "String", "example": "Ana"}, "challenge": {"type": "String", "example": "Meet three new people"}}},
   "verifyScanQuestionFallback": "Did {name} complete their challenge?",
-  "@verifyScanQuestionFallback": {
-    "description": "Fallback when the challenge name is unavailable.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "Ana"
-      }
-    }
-  },
+  "@verifyScanQuestionFallback": {"description": "Fallback when the challenge name is unavailable.", "placeholders": {"name": {"type": "String", "example": "Ana"}}},
   "verifyScanNotForYou": "That challenge isn't waiting for your confirmation.",
-  "@verifyScanNotForYou": {
-    "description": "Shown when the scanned completion does not belong to this verifier."
-  },
+  "@verifyScanNotForYou": {"description": "Shown when the scanned completion does not belong to this verifier."},
   "verifyScanConfirmedTitle": "Confirmed",
-  "@verifyScanConfirmedTitle": {
-    "description": "Title after the verifier confirms a challenge."
-  },
+  "@verifyScanConfirmedTitle": {"description": "Title after the verifier confirms a challenge."},
   "verifyScanConfirmedBody": "{name} earned {points} XP.",
-  "@verifyScanConfirmedBody": {
-    "description": "Body after the verifier confirms a challenge.",
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "Ana"
-      },
-      "points": {
-        "type": "int",
-        "example": "15"
-      }
-    }
-  },
+  "@verifyScanConfirmedBody": {"description": "Body after the verifier confirms a challenge.", "placeholders": {"name": {"type": "String", "example": "Ana"}, "points": {"type": "int", "example": "15"}}},
   "verifyScanRejectedTitle": "Rejected",
-  "@verifyScanRejectedTitle": {
-    "description": "Title after the verifier rejects a challenge."
-  },
+  "@verifyScanRejectedTitle": {"description": "Title after the verifier rejects a challenge."},
   "verifyScanFailed": "Couldn't confirm the challenge.",
-  "@verifyScanFailed": {
-    "description": "Generic failure confirming a challenge."
-  },
+  "@verifyScanFailed": {"description": "Generic failure confirming a challenge."},
   "eventHubShowCheckinQr": "Show check-in QR",
-  "@eventHubShowCheckinQr": {
-    "description": "Organizer action that displays the event's check-in QR code."
-  },
+  "@eventHubShowCheckinQr": {"description": "Organizer action that displays the event's check-in QR code."},
   "eventCheckinImHere": "I'm here",
-  "@eventCheckinImHere": {
-    "description": "Self check-in button on the event screen: checks the attendee in without an organizer's QR."
-  },
+  "@eventCheckinImHere": {"description": "Self check-in button on the event screen: checks the attendee in without an organizer's QR."},
   "eventCheckinScanOrganizerQr": "Scan the organizer's QR instead",
-  "@eventCheckinScanOrganizerQr": {
-    "description": "Secondary option under the self check-in button."
-  },
+  "@eventCheckinScanOrganizerQr": {"description": "Secondary option under the self check-in button."},
   "eventCheckinScanSomeone": "Scan someone",
-  "@eventCheckinScanSomeone": {
-    "description": "Button shown once checked in: opens the scanner to pair with another attendee."
-  },
+  "@eventCheckinScanSomeone": {"description": "Button shown once checked in: opens the scanner to pair with another attendee."},
   "eventCheckinYoureIn": "You're in. Find someone to play a challenge with.",
-  "@eventCheckinYoureIn": {
-    "description": "Confirmation after a successful self check-in."
-  },
+  "@eventCheckinYoureIn": {"description": "Confirmation after a successful self check-in."},
   "eventCheckinPickEvent": "Which event are you at?",
-  "@eventCheckinPickEvent": {
-    "description": "Title of the sheet listing today's events the attendee is going to."
-  },
+  "@eventCheckinPickEvent": {"description": "Title of the sheet listing today's events the attendee is going to."},
   "eventCheckinPickEventEmpty": "You're not going to anything today.",
-  "@eventCheckinPickEventEmpty": {
-    "description": "Empty state of the pick-an-event sheet."
-  },
+  "@eventCheckinPickEventEmpty": {"description": "Empty state of the pick-an-event sheet."},
   "eventCheckinNoEventYet": "Check in to an event first",
-  "@eventCheckinNoEventYet": {
-    "description": "Scanner hint when there is no active event session."
-  },
+  "@eventCheckinNoEventYet": {"description": "Scanner hint when there is no active event session."},
   "eventHubCheckIn": "Check in",
-  "@eventHubCheckIn": {
-    "description": "Member action that opens the scanner to check in to the event."
-  },
+  "@eventHubCheckIn": {"description": "Member action that opens the scanner to check in to the event."},
   "checkinInvalidToken": "That check-in code isn't valid any more. Ask the organizer to show it again.",
-  "@checkinInvalidToken": {
-    "description": "Shown when POST /checkin returns 404 for an unknown or rotated token."
-  },
+  "@checkinInvalidToken": {"description": "Shown when POST /checkin returns 404 for an unknown or rotated token."},
   "checkinNotAccepting": "This event isn't taking check-ins right now.",
-  "@checkinNotAccepting": {
-    "description": "Shown when POST /checkin returns 422 because the event is closed to check-ins."
-  },
+  "@checkinNotAccepting": {"description": "Shown when POST /checkin returns 422 because the event is closed to check-ins."},
   "scannerCameraBlocked": "Kolabing needs camera access to scan QR codes.",
-  "@scannerCameraBlocked": {
-    "description": "Shown in place of the camera preview when camera permission is unavailable."
-  },
+  "@scannerCameraBlocked": {"description": "Shown in place of the camera preview when camera permission is unavailable."},
   "scannerAlreadyCheckedIn": "You were already checked in — you're all set.",
-  "@scannerAlreadyCheckedIn": {
-    "description": "Shown when POST /checkin returns 409. The response carries no event, so the message names none."
-  },
+  "@scannerAlreadyCheckedIn": {"description": "Shown when POST /checkin returns 409. The response carries no event, so the message names none."},
   "peerPairedTitleFallback": "Paired up",
-  "@peerPairedTitleFallback": {
-    "description": "Pairing header when the other member's name is unavailable."
-  },
+  "@peerPairedTitleFallback": {"description": "Pairing header when the other member's name is unavailable."},
   "verifyQrBodyFallback": "Ask them to scan this code to confirm you did it.",
-  "@verifyQrBodyFallback": {
-    "description": "Verification-QR instruction when the verifier's name is unavailable."
-  },
+  "@verifyQrBodyFallback": {"description": "Verification-QR instruction when the verifier's name is unavailable."},
   "peerChallengesLoadFailed": "Couldn't load this event's challenges.",
-  "@peerChallengesLoadFailed": {
-    "description": "Error state on the pairing sheet's challenge list."
-  },
+  "@peerChallengesLoadFailed": {"description": "Error state on the pairing sheet's challenge list."},
   "eventQrNotAuthorized": "Only this event's organizer can show its check-in code.",
-  "@eventQrNotAuthorized": {
-    "description": "Shown when POST /events/{id}/generate-qr returns 403."
-  },
+  "@eventQrNotAuthorized": {"description": "Shown when POST /events/{id}/generate-qr returns 403."},
   "verifyScanErrorTitle": "Couldn't confirm",
-  "@verifyScanErrorTitle": {
-    "description": "Title for a failed challenge verification. Distinct from the check-in error title."
-  },
+  "@verifyScanErrorTitle": {"description": "Title for a failed challenge verification. Distinct from the check-in error title."},
   "checkinAlreadyTitle": "You're checked in",
-  "@checkinAlreadyTitle": {
-    "description": "Title shown when POST /checkin returns 409 — informational, not a failure."
-  },
+  "@checkinAlreadyTitle": {"description": "Title shown when POST /checkin returns 409 — informational, not a failure."},
   "verifyScanUnreachable": "Couldn't reach the server. Check your connection and scan again.",
-  "@verifyScanUnreachable": {
-    "description": "Shown when confirming a challenge fails for network reasons rather than because the code is foreign."
-  },
-  "eventQrViewCheckins": "View Check-ins",
-  "@eventQrViewCheckins": {
-    "description": "Button to view event check-ins"
-  },
+  "@verifyScanUnreachable": {"description": "Shown when confirming a challenge fails for network reasons rather than because the code is foreign."},
   "communityFollow": "Follow",
-  "@communityFollow": {
-    "description": "Action that follows a community — one tap, no approval."
-  },
+  "@communityFollow": {"description": "Action that follows a community — one tap, no approval."},
   "communityFollowing": "Following",
-  "@communityFollowing": {
-    "description": "State shown when the viewer already follows a community."
-  },
+  "@communityFollowing": {"description": "State shown when the viewer already follows a community."},
   "communityFollowedSnack": "Following. Their events will show up in your feed.",
-  "@communityFollowedSnack": {
-    "description": "Confirmation after following a community."
-  },
+  "@communityFollowedSnack": {"description": "Confirmation after following a community."},
   "communityUnfollowedSnack": "Unfollowed.",
-  "@communityUnfollowedSnack": {
-    "description": "Confirmation after unfollowing."
-  },
+  "@communityUnfollowedSnack": {"description": "Confirmation after unfollowing."},
   "communityFollowFailed": "Couldn't update that. Try again.",
-  "@communityFollowFailed": {
-    "description": "Shown when following or unfollowing fails."
-  },
+  "@communityFollowFailed": {"description": "Shown when following or unfollowing fails."},
   "communityBecomeMember": "Become a member",
   "membershipPromptTitle": "You're at {community}",
-  "@membershipPromptTitle": {
-    "description": "Title of the sheet offering membership after a check-in. Placeholder is the community name.",
-    "placeholders": { "community": { "type": "String" } }
-  },
+  "@membershipPromptTitle": {"description": "Title of the sheet offering membership after a check-in. Placeholder is the community name.", "placeholders": {"community": {"type": "String"}}},
   "membershipPromptBody": "Members get the community chat, member-only events and its rewards.",
-  "@membershipPromptBody": {
-    "description": "Body of the post-check-in membership prompt."
-  },
+  "@membershipPromptBody": {"description": "Body of the post-check-in membership prompt."},
   "membershipPromptNotNow": "Not now",
-  "@membershipPromptNotNow": {
-    "description": "Dismiss button on the post-check-in membership prompt."
-  },
-  "@communityBecomeMember": {
-    "description": "Action that starts the membership application."
-  },
+  "@membershipPromptNotNow": {"description": "Dismiss button on the post-check-in membership prompt."},
+  "@communityBecomeMember": {"description": "Action that starts the membership application."},
   "communityMemberBadge": "Member",
-  "@communityMemberBadge": {
-    "description": "Shown when the viewer is already a member of the community."
-  },
+  "@communityMemberBadge": {"description": "Shown when the viewer is already a member of the community."},
   "communityApplicationTitle": "Become a member",
-  "@communityApplicationTitle": {
-    "description": "Title of the membership application sheet."
-  },
+  "@communityApplicationTitle": {"description": "Title of the membership application sheet."},
   "communityApplicationIntro": "{community} asks a few questions before adding new members.",
-  "@communityApplicationIntro": {
-    "description": "Explains why the application form is being shown.",
-    "placeholders": {
-      "community": {
-        "type": "String",
-        "example": "Eixample Runners"
-      }
-    }
-  },
+  "@communityApplicationIntro": {"description": "Explains why the application form is being shown.", "placeholders": {"community": {"type": "String", "example": "Eixample Runners"}}},
   "communityApplicationOptional": "Optional",
-  "@communityApplicationOptional": {
-    "description": "Marks a question that may be left blank."
-  },
+  "@communityApplicationOptional": {"description": "Marks a question that may be left blank."},
   "communityApplicationRequiredError": "Please answer this",
-  "@communityApplicationRequiredError": {
-    "description": "Validation message on a required application question."
-  },
+  "@communityApplicationRequiredError": {"description": "Validation message on a required application question."},
   "communityApplicationSubmit": "SEND APPLICATION",
-  "@communityApplicationSubmit": {
-    "description": "Submits the membership application."
-  },
+  "@communityApplicationSubmit": {"description": "Submits the membership application."},
   "communityApplicationSentSnack": "Application sent. The organiser will review it.",
-  "@communityApplicationSentSnack": {
-    "description": "Confirmation after an application that needs approval."
-  },
+  "@communityApplicationSentSnack": {"description": "Confirmation after an application that needs approval."},
   "communityApplicationJoinedSnack": "You're a member now.",
-  "@communityApplicationJoinedSnack": {
-    "description": "Confirmation when the application was accepted immediately."
-  },
+  "@communityApplicationJoinedSnack": {"description": "Confirmation when the application was accepted immediately."},
   "communityApplicationFailed": "Couldn't send your application. Try again.",
-  "@communityApplicationFailed": {
-    "description": "Shown when submitting the application fails."
-  },
+  "@communityApplicationFailed": {"description": "Shown when submitting the application fails."},
   "challengeTogetherTitle": "Together",
   "@challengeTogetherTitle": {"description": "Title of the shared challenge screen both devices show."},
   "challengeTogetherWaiting": "Waiting for {name} to confirm…",

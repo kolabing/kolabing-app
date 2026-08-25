@@ -2421,7 +2421,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get attendeeMyQrSubtitle =>
-      'Deixa que algú l\'escanegi per fer-te check-in o emparellar-vos en un repte.';
+      'Mostra\'l a un amfitrió per registrar-te o connectar.';
 
   @override
   String get attendeeMyQrTooltip => 'El meu codi QR';
@@ -2873,6 +2873,9 @@ class AppLocalizationsCa extends AppLocalizations {
       'Els assistents poden escanejar aquest codi QR per registrar-se al teu esdeveniment';
 
   @override
+  String get eventQrViewCheckins => 'Mostra els registres';
+
+  @override
   String get eventQrGenerating => 'Generant el codi QR...';
 
   @override
@@ -2964,11 +2967,11 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get qrScannerInstructionTitle =>
-      'Apunta la càmera a un codi QR de Kolabing';
+      'Apunta la càmera al codi QR de l\'esdeveniment';
 
   @override
   String get qrScannerInstructionSubtitle =>
-      'El codi de check-in d\'un esdeveniment o el QR de perfil d\'un altre membre';
+      'L\'organitzador de l\'esdeveniment mostrarà el codi QR';
 
   @override
   String get rewardWalletTitle => 'Les meves recompenses';
@@ -3004,22 +3007,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get challengeCompletionStatusPending => 'Pendent';
-
-  @override
-  String get challengeCompletionStatusCancelled => 'Cancel·lat';
-
-  @override
-  String get challengeCompletionStatusExpired => 'Caducat';
-
-  @override
-  String get challengeTogetherCancel => 'Cancel·la la sol·licitud';
-
-  @override
-  String get challengeTogetherCancelled => 'Sol·licitud cancel·lada.';
-
-  @override
-  String get challengeTogetherCancelFailed =>
-      'No s\'ha pogut cancel·lar; potser ja han respost.';
 
   @override
   String get mediaTitleVenue => 'MOSTRA EL TEU LOCAL';
@@ -7215,6 +7202,27 @@ class AppLocalizationsCa extends AppLocalizations {
       'No s\'han pogut obrir les teves subscripcions de l\'App Store. Ves a Configuració › el teu nom › Subscripcions per gestionar-la o cancel·lar-la.';
 
   @override
+  String onboardingStepOf(int current, int total) {
+    return 'Pas $current de $total';
+  }
+
+  @override
+  String get challengeCompletionStatusCancelled => 'Cancel·lat';
+
+  @override
+  String get challengeCompletionStatusExpired => 'Caducat';
+
+  @override
+  String get challengeTogetherCancel => 'Cancel·la la sol·licitud';
+
+  @override
+  String get challengeTogetherCancelled => 'Sol·licitud cancel·lada.';
+
+  @override
+  String get challengeTogetherCancelFailed =>
+      'No s\'ha pogut cancel·lar; potser ja han respost.';
+
+  @override
   String get qrHubTitle => 'Escaneja o comparteix';
 
   @override
@@ -7482,9 +7490,6 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get verifyScanUnreachable =>
       'No s\'ha pogut connectar amb el servidor. Comprova la connexió i torna a escanejar.';
-
-  @override
-  String get eventQrViewCheckins => 'Mostra els registres';
 
   @override
   String get communityFollow => 'Segueix';

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import 'progress_indicator.dart';
 
 /// Onboarding header with back, skip buttons and progress indicator
@@ -33,43 +34,49 @@ class OnboardingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-        children: [
-          // Top row with back and skip buttons
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Back button
-                _BackButton(onPressed: onBack),
+    children: [
+      // Top row with back and skip buttons
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Back button
+            _BackButton(onPressed: onBack),
 
-                // Skip button
-                if (showSkip && onSkip != null)
-                  _SkipButton(onPressed: onSkip!)
-                else
-                  const SizedBox(width: 60),
-              ],
-            ),
+            // Skip button
+            if (showSkip && onSkip != null)
+              _SkipButton(onPressed: onSkip!)
+            else
+              const SizedBox(width: 60),
+          ],
+        ),
+      ),
+
+      // Step text
+      Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Text(
+          AppLocalizations.of(
+            context,
+          ).onboardingStepOf(currentStep, totalSteps),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: context.colors.textTertiary,
           ),
+        ),
+      ),
 
-          // Step text
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              'Step $currentStep of $totalSteps',
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: context.colors.textTertiary),
-            ),
-          ),
+      const SizedBox(height: 12),
 
-          const SizedBox(height: 12),
-
-          // Progress indicator
-          OnboardingProgressIndicator(
-            currentStep: currentStep,
-            totalSteps: totalSteps,
-          ),
-        ],
-      );
+      // Progress indicator
+      OnboardingProgressIndicator(
+        currentStep: currentStep,
+        totalSteps: totalSteps,
+      ),
+    ],
+  );
 }
 
 /// Back button widget
@@ -87,36 +94,39 @@ class _BackButtonState extends State<_BackButton> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
-        onTapUp: (_) => setState(() => _isPressed = false),
-        onTapCancel: () => setState(() => _isPressed = false),
-        onTap: () {
-          HapticFeedback.lightImpact();
-          widget.onPressed();
-        },
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 100),
-          opacity: _isPressed ? 0.6 : 1.0,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.arrow_back_ios_rounded,
-                  size: 20,
-                  color: context.colors.onSurface,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'Back',
-                  style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurface),
-                ),
-              ],
+    onTapDown: (_) => setState(() => _isPressed = true),
+    onTapUp: (_) => setState(() => _isPressed = false),
+    onTapCancel: () => setState(() => _isPressed = false),
+    onTap: () {
+      HapticFeedback.lightImpact();
+      widget.onPressed();
+    },
+    child: AnimatedOpacity(
+      duration: const Duration(milliseconds: 100),
+      opacity: _isPressed ? 0.6 : 1.0,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.arrow_back_ios_rounded,
+              size: 20,
+              color: context.colors.onSurface,
             ),
-          ),
+            const SizedBox(width: 4),
+            Text(
+              AppLocalizations.of(context).commonBack,
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontWeight: FontWeight.w500,
+                color: context.colors.onSurface,
+              ),
+            ),
+          ],
         ),
-      );
+      ),
+    ),
+  );
 }
 
 /// Skip button widget
@@ -134,23 +144,26 @@ class _SkipButtonState extends State<_SkipButton> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
-        onTapUp: (_) => setState(() => _isPressed = false),
-        onTapCancel: () => setState(() => _isPressed = false),
-        onTap: () {
-          HapticFeedback.lightImpact();
-          widget.onPressed();
-        },
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 100),
-          opacity: _isPressed ? 0.6 : 1.0,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Text(
-              'Skip',
-              style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500, color: context.colors.textTertiary),
-            ),
+    onTapDown: (_) => setState(() => _isPressed = true),
+    onTapUp: (_) => setState(() => _isPressed = false),
+    onTapCancel: () => setState(() => _isPressed = false),
+    onTap: () {
+      HapticFeedback.lightImpact();
+      widget.onPressed();
+    },
+    child: AnimatedOpacity(
+      duration: const Duration(milliseconds: 100),
+      opacity: _isPressed ? 0.6 : 1.0,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: Text(
+          AppLocalizations.of(context).commonSkip,
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w500,
+            color: context.colors.textTertiary,
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
