@@ -7200,4 +7200,9 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get subscriptionManageAppleFailed =>
       'No s\'han pogut obrir les teves subscripcions de l\'App Store. Ves a Configuració › el teu nom › Subscripcions per gestionar-la o cancel·lar-la.';
+
+  @override
+  String onboardingStepOf(int current, int total) {
+    return 'Pas $current de $total';
+  }
 }

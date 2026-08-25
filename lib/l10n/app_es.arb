@@ -2128,5 +2128,6 @@
   "permissionDeniedDialogBody": "Se ha denegado el acceso a {permission}. Puedes activarlo desde los ajustes del dispositivo.",
   "permissionDeniedDialogLater": "Más tarde",
   "permissionDeniedDialogOpenSettings": "Abrir ajustes",
-  "subscriptionManageAppleFailed": "No se han podido abrir tus suscripciones de la App Store. Ve a Ajustes › tu nombre › Suscripciones para gestionarla o cancelarla."
+  "subscriptionManageAppleFailed": "No se han podido abrir tus suscripciones de la App Store. Ve a Ajustes › tu nombre › Suscripciones para gestionarla o cancelarla.",
+  "onboardingStepOf": "Paso {current} de {total}"
 }

@@ -7092,4 +7092,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get subscriptionManageAppleFailed =>
       'Couldn\'t open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.';
+
+  @override
+  String onboardingStepOf(int current, int total) {
+    return 'Step $current of $total';
+  }
 }

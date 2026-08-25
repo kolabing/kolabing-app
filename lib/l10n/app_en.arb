@@ -7650,5 +7650,7 @@
   "permissionDeniedDialogOpenSettings": "Open Settings",
   "@permissionDeniedDialogOpenSettings": { "description": "Action that opens the system settings from the permission-denied dialog." },
   "subscriptionManageAppleFailed": "Couldn't open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.",
-  "@subscriptionManageAppleFailed": { "description": "Shown when the App Store subscription management page cannot be opened from the app." }
+  "@subscriptionManageAppleFailed": { "description": "Shown when the App Store subscription management page cannot be opened from the app." },
+  "onboardingStepOf": "Step {current} of {total}",
+  "@onboardingStepOf": {"description": "Onboarding header step counter.", "placeholders": {"current": {"type": "int", "example": "3"}, "total": {"type": "int", "example": "4"}}}
 }

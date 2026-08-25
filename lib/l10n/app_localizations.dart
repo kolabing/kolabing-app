@@ -12559,6 +12559,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.'**
   String get subscriptionManageAppleFailed;
+
+  /// Onboarding header step counter.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String onboardingStepOf(int current, int total);
 }
 
 class _AppLocalizationsDelegate
