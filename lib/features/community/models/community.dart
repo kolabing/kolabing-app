@@ -82,6 +82,31 @@ enum CommunityJoinPolicy {
 /// (the marketplace identity in features/auth). One leader gets one community
 /// free; a 2nd+ is gated behind Community Premium (NF-7). See
 /// docs/plans/community-members-tiers-phase1.md §3.
+/// The viewer's tier inside a community, as `CommunityResource` sends it.
+class CommunityTierBadge {
+  const CommunityTierBadge({
+    required this.id,
+    required this.name,
+    this.color,
+    this.rank,
+  });
+
+  factory CommunityTierBadge.fromJson(Map<String, dynamic> json) =>
+      CommunityTierBadge(
+        id: json['id']?.toString() ?? '',
+        name: json['name'] as String? ?? '',
+        color: json['color'] as String?,
+        rank: (json['rank'] as num?)?.toInt(),
+      );
+
+  final String id;
+  final String name;
+
+  /// Hex string chosen by the leader, e.g. `#E8B4213`. Null for older tiers.
+  final String? color;
+  final int? rank;
+}
+
 class Community {
   const Community({
     required this.id,
@@ -102,6 +127,9 @@ class Community {
     this.isMember,
     this.myJoinRequestStatus,
     this.inviteUrl,
+    this.myPoints = 0,
+    this.myTier,
+    this.myCanManage = false,
   });
 
   factory Community.fromJson(Map<String, dynamic> json) {
@@ -138,6 +166,11 @@ class Community {
       // in parallel, so null on older payloads — callers fall back to a
       // slug-based link.
       inviteUrl: (json['invite_url'] ?? json['join_url']) as String?,
+      myPoints: (json['my_points'] as num?)?.toInt() ?? 0,
+      myTier: json['my_tier'] is Map<String, dynamic>
+          ? CommunityTierBadge.fromJson(json['my_tier'] as Map<String, dynamic>)
+          : null,
+      myCanManage: json['my_can_manage'] as bool? ?? false,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'] as String)
           : DateTime.fromMillisecondsSinceEpoch(0),
@@ -186,6 +219,17 @@ class Community {
   /// Null until the backend exposes it; use [shareInviteUrl] which falls back
   /// to a slug-based link.
   final String? inviteUrl;
+
+  /// The viewer's points in this community. Sent by `CommunityResource` in the
+  /// same payload the page already fetches — reading it here saves the standing
+  /// row a second round trip to the rewards hub.
+  final int myPoints;
+
+  /// The viewer's tier, when they have one.
+  final CommunityTierBadge? myTier;
+
+  /// Whether the viewer may manage this community (`my_can_manage`).
+  final bool myCanManage;
 
   /// Convenience: a pending join request is outstanding for the viewer.
   bool get hasPendingJoinRequest => myJoinRequestStatus == 'pending';

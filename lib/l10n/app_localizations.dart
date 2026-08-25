@@ -4366,12 +4366,6 @@ abstract class AppLocalizations {
   /// **'Your profile QR isn\'t ready yet.'**
   String get attendeeMyQrUnavailable;
 
-  /// Attendee home greeting above the user name
-  ///
-  /// In en, this message translates to:
-  /// **'Welcome back'**
-  String get attendeeHomeWelcomeBack;
-
   /// Attendee home section header for nearby events list
   ///
   /// In en, this message translates to:
@@ -4413,24 +4407,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Load More'**
   String get attendeeHomeLoadMore;
-
-  /// Attendee home stat card label: points
-  ///
-  /// In en, this message translates to:
-  /// **'Points'**
-  String get attendeeHomeStatPoints;
-
-  /// Attendee home stat card label: challenges
-  ///
-  /// In en, this message translates to:
-  /// **'Challenges'**
-  String get attendeeHomeStatChallenges;
-
-  /// Attendee home stat card label: events
-  ///
-  /// In en, this message translates to:
-  /// **'Events'**
-  String get attendeeHomeStatEvents;
 
   /// Heading shown when location access is needed
   ///
@@ -9284,6 +9260,138 @@ abstract class AppLocalizations {
   /// **'{count} spot(s) left'**
   String eventHubSpotsLeft(num count);
 
+  /// Event page: details section label
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get eventPageDetailsTitle;
+
+  /// Event page: opens the venue in a maps app
+  ///
+  /// In en, this message translates to:
+  /// **'Directions'**
+  String get eventPageDirections;
+
+  /// Event page: chip on an occurrence of a series
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get eventPageRecurring;
+
+  /// Event page: which occurrence this is
+  ///
+  /// In en, this message translates to:
+  /// **'#{index} in the series'**
+  String eventPageSeriesOccurrence(num index);
+
+  /// Event page: public visibility, in words
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone can see and join this event'**
+  String get eventPageWhoCanSeePublic;
+
+  /// Event page: members-only visibility, in words
+  ///
+  /// In en, this message translates to:
+  /// **'Members of this community only'**
+  String get eventPageWhoCanSeeMembers;
+
+  /// Event page: tier-gated visibility, in words
+  ///
+  /// In en, this message translates to:
+  /// **'Limited to certain membership tiers'**
+  String get eventPageWhoCanSeeTier;
+
+  /// Event page: opens the holder’s ticket
+  ///
+  /// In en, this message translates to:
+  /// **'My ticket'**
+  String get eventPageMyTicket;
+
+  /// Event page: how many attendees are through the door
+  ///
+  /// In en, this message translates to:
+  /// **'{count} admitted'**
+  String eventPageAdmittedCount(num count);
+
+  /// Ticket sheet: title
+  ///
+  /// In en, this message translates to:
+  /// **'Your ticket'**
+  String get eventTicketSheetTitle;
+
+  /// Ticket sheet: what to do with it
+  ///
+  /// In en, this message translates to:
+  /// **'Show this at the door'**
+  String get eventTicketShowAtDoor;
+
+  /// Ticket sheet: already used
+  ///
+  /// In en, this message translates to:
+  /// **'Admitted at {time}'**
+  String eventTicketAdmitted(String time);
+
+  /// Ticket sheet: waitlisted holder
+  ///
+  /// In en, this message translates to:
+  /// **'You’re on the waitlist. This ticket works once a spot opens.'**
+  String get eventTicketWaitlistedBody;
+
+  /// Ticket sheet: label above the ticket code
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get eventTicketCodeLabel;
+
+  /// Ticket sheet: fallback when no QR came back
+  ///
+  /// In en, this message translates to:
+  /// **'Show this code at the door.'**
+  String get eventTicketNoQr;
+
+  /// Generic label for a website link
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get commonWebsite;
+
+  /// Community page: photo strip section label
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get communityPagePhotosTitle;
+
+  /// Community page: filter chip for upcoming events
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get communityPageFilterUpcoming;
+
+  /// Community page: filter chip for past events
+  ///
+  /// In en, this message translates to:
+  /// **'Past'**
+  String get communityPageFilterPast;
+
+  /// Event badge: no spots left
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get eventCapacityFull;
+
+  /// Event badge: few spots left
+  ///
+  /// In en, this message translates to:
+  /// **'Near capacity'**
+  String get eventCapacityNearly;
+
+  /// Event badge: spots remaining
+  ///
+  /// In en, this message translates to:
+  /// **'{count} left'**
+  String eventCapacityLeft(num count);
+
   /// Event hub: unlimited capacity label
   ///
   /// In en, this message translates to:
@@ -11318,12 +11426,6 @@ abstract class AppLocalizations {
   /// **'No Kolabing account matches that email or handle.'**
   String get rosterNoAccountForIdentifier;
 
-  /// Attendee home events section header.
-  ///
-  /// In en, this message translates to:
-  /// **'EVENTS'**
-  String get attendeeHomeEventsTitle;
-
   /// City picker button label when no city is selected.
   ///
   /// In en, this message translates to:
@@ -11455,18 +11557,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Follow more communities'**
   String get attendeeHomeFollowMore;
-
-  /// Event card badge for a business-hosted event.
-  ///
-  /// In en, this message translates to:
-  /// **'Business'**
-  String get eventPartnerBusiness;
-
-  /// Event card badge for a community-hosted event.
-  ///
-  /// In en, this message translates to:
-  /// **'Community'**
-  String get eventPartnerCommunity;
 
   /// Event card relative date: today.
   ///
@@ -12085,6 +12175,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tier'**
   String get communityEventVisibilityTier;
+
+  /// Event row badge: the viewer has a confirmed sign-up.
+  ///
+  /// In en, this message translates to:
+  /// **'Going'**
+  String get communityEventBadgeGoing;
+
+  /// Event row badge: the viewer is on the waitlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Waitlisted'**
+  String get communityEventBadgeWaitlisted;
 
   /// Business onboarding goal step: title
   ///
@@ -13273,6 +13375,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You two: {challenge}'**
   String challengeTogetherPrompt(String challenge);
+
+  /// Event row when-line joining a day label and a clock time.
+  ///
+  /// In en, this message translates to:
+  /// **'{day}, {time}'**
+  String eventWhenDayTime(String day, String time);
+
+  /// Attendee feed section heading above the events the viewer signed up for.
+  ///
+  /// In en, this message translates to:
+  /// **'Your events'**
+  String get attendeeFeedYourEvents;
+
+  /// Attendee feed section action opening the full list.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get attendeeFeedViewAll;
+
+  /// Attendee feed section heading above the followed-community logo tiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Communities you follow'**
+  String get attendeeFeedFollowing;
+
+  /// Attendee feed section heading above the city discovery list.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on'**
+  String get attendeeFeedWhatsOn;
+
+  /// Attendee feed points line: total points and events attended.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} points · {events, plural, =1{1 event} other{{events} events}}'**
+  String attendeeFeedPointsStrip(String points, int events);
+
+  /// Title of the screen listing every upcoming event the attendee signed up for.
+  ///
+  /// In en, this message translates to:
+  /// **'My events'**
+  String get myEventsTitle;
+
+  /// Empty state title on the My events screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing coming up'**
+  String get myEventsEmpty;
+
+  /// Empty state body on the My events screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Events you sign up for will show up here.'**
+  String get myEventsEmptyHint;
 }
 
 class _AppLocalizationsDelegate

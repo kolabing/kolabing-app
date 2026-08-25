@@ -267,6 +267,10 @@ abstract final class KolabingRoutes {
   /// per-community points & redeemable rewards. Fed by /me/rewards-overview.
   static const String rewards = '/rewards';
 
+  /// Every upcoming event the attendee has signed up for — the "View all"
+  /// behind the feed's "Your events" section (#161).
+  static const String myEvents = '/my-events';
+
   /// Gamification missions — the signed-in user's missions + progress.
   /// Fed by GET /me/missions (role-scoped + filtered server-side).
   static const String missions = '/missions';
@@ -916,6 +920,12 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'addFriend',
       builder: (BuildContext context, GoRouterState state) =>
           const AddFriendScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.myEvents,
+      name: 'myEvents',
+      builder: (BuildContext context, GoRouterState state) =>
+          const MyEventsScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.discoverCommunities,

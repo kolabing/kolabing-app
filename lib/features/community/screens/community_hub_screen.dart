@@ -12,7 +12,7 @@ import '../../chat/screens/chat_thread_screen.dart';
 import '../../chat/services/chat_service.dart';
 import '../../event/providers/event_provider.dart';
 import '../../event/screens/create_event_screen.dart';
-import '../../event/screens/event_hub_screen.dart';
+import '../../event/screens/event_detail_screen.dart';
 import '../../gamification/screens/community_challenges_screen.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
@@ -280,8 +280,8 @@ class _EventsSection extends ConsumerWidget {
                   onTap: () async {
                     await Navigator.of(context).push<void>(
                       MaterialPageRoute<void>(
-                        builder: (_) => EventHubScreen(
-                          event: e,
+                        builder: (_) => EventDetailScreen.forEvent(
+                          e,
                           isLeader: true,
                           communityName: communityName,
                         ),

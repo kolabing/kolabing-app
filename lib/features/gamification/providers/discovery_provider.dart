@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/utils/auth_scope_guard.dart';
-import '../models/discovered_event.dart';
+import '../../event/models/event.dart';
 import '../services/discovery_service.dart';
 
 /// Provider for DiscoveryService
@@ -67,7 +67,7 @@ class DiscoveryState {
   /// communities the viewer follows.
   final bool following;
 
-  final List<DiscoveredEvent> events;
+  final List<Event> events;
   final bool isLoading;
   final String? error;
   final int currentPage;
@@ -91,7 +91,7 @@ class DiscoveryState {
     String? typeName,
     bool clearType = false,
     bool? following,
-    List<DiscoveredEvent>? events,
+    List<Event>? events,
     bool? isLoading,
     String? error,
     int? currentPage,
