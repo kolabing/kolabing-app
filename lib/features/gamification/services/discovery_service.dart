@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../../auth/services/auth_service.dart';
-import '../models/discovered_event.dart';
+import '../../event/models/event.dart';
 import '../../../config/constants/api.dart';
 
 /// API configuration
@@ -39,7 +39,7 @@ class DiscoveryService {
   /// silently unscoped list, but it does mean the backend half ships first.
   ///
   /// GET /api/v1/events/discover?lat&lng&radius_km&city_id&date&type&following&page&limit
-  Future<DiscoveredEventsResponse> discoverEvents({
+  Future<DiscoverEventsResponse> discoverEvents({
     double? latitude,
     double? longitude,
     double radiusKm = 10.0,
@@ -88,7 +88,7 @@ class DiscoveryService {
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
-        return DiscoveredEventsResponse.fromJson(
+        return DiscoverEventsResponse.fromJson(
           json['data'] as Map<String, dynamic>,
         );
       } else {
@@ -104,6 +104,51 @@ class DiscoveryService {
       throw DiscoveryException('Network error: $e');
     }
   }
+}
+
+/// A page of discovered events.
+///
+/// Carries [Event], the same model `GET /events` returns, rather than a
+/// discovery-only shape. `Event.fromJson` needs only `id`, `name`, `date` and
+/// `created_at` — all of which `/events/discover` already sends — so this
+/// parses against today's backend and simply gains the start time, venue,
+/// capacity and sign-up state as the richer resource ships (#161).
+class DiscoverEventsResponse {
+  const DiscoverEventsResponse({
+    required this.events,
+    required this.pagination,
+  });
+
+  factory DiscoverEventsResponse.fromJson(Map<String, dynamic> json) {
+    final rawEvents = (json['events'] as List<dynamic>?) ?? const [];
+    final events = <Event>[];
+    for (final raw in rawEvents) {
+      if (raw is! Map<String, dynamic>) continue;
+      try {
+        events.add(Event.fromJson(raw));
+      } catch (e) {
+        // One malformed row must not empty the whole feed.
+        debugPrint('DiscoverEventsResponse: skipped an event ($e)');
+      }
+    }
+    final rawPagination = json['pagination'] as Map<String, dynamic>?;
+    return DiscoverEventsResponse(
+      events: events,
+      pagination: rawPagination != null
+          ? EventPagination.fromJson(rawPagination)
+          : EventPagination(
+              currentPage: 1,
+              totalPages: 1,
+              totalCount: events.length,
+              perPage: events.length,
+            ),
+    );
+  }
+
+  final List<Event> events;
+  final EventPagination pagination;
+
+  bool get hasMore => pagination.hasMore;
 }
 
 /// Exception for discovery operations

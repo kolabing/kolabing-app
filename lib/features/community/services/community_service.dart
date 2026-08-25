@@ -302,6 +302,25 @@ class CommunityService {
         .toList(growable: false);
   }, 'myFollowedCommunityIds');
 
+  /// `GET /me/community-follows` — the communities the viewer follows, whole.
+  ///
+  /// The same call as [myFollowedCommunityIds]; the payload has always nested a
+  /// full `community` object and the app read the id out of it and threw the
+  /// rest away. The attendee feed needs the name and the avatar to show what
+  /// you follow (#161), and no backend change is required to get them.
+  Future<List<Community>> myFollowedCommunities() => _guard(() async {
+    final res = await _httpClient.get(
+      Uri.parse('$_baseUrl/me/community-follows'),
+      headers: await _headers(),
+    );
+    _selfGateIfMissing(res);
+    return _asList(_unwrap(res))
+        .map((row) => row['community'])
+        .whereType<Map<String, dynamic>>()
+        .map(Community.fromJson)
+        .toList(growable: false);
+  }, 'myFollowedCommunities');
+
   // ---------------------------------------------------------------------------
   // Membership application (#138)
   // ---------------------------------------------------------------------------

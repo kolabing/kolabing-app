@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/providers/auth_provider.dart';
@@ -29,9 +30,23 @@ final qrTokenProvider = FutureProvider.family<EventCheckinQr, String>((
 /// rotate: `CheckinService::openDoor` is idempotent by design, so reopening the
 /// screen does not invalidate a QR people are queuing in front of. Rotating is
 /// the deliberate act of retiring a leaked code.
-Future<void> rotateEventCheckinCode(WidgetRef ref, String eventId) async {
-  await ref.read(checkinServiceProvider).generateQr(eventId, rotate: true);
-  ref.invalidate(qrTokenProvider(eventId));
+/// Returns whether it worked, so the caller can say so.
+///
+/// It used to be `Future<void>` with no try/catch, wired straight into an
+/// `onPressed` that discarded the future: a failed rotate became an unhandled
+/// async error, `invalidate` never ran, and the organizer kept looking at the
+/// old QR with no indication that anything had gone wrong. The
+/// `ref.invalidate` this replaced was synchronous and surfaced failures through
+/// the `AsyncValue` error state, so silence was a regression.
+Future<bool> rotateEventCheckinCode(WidgetRef ref, String eventId) async {
+  try {
+    await ref.read(checkinServiceProvider).generateQr(eventId, rotate: true);
+    ref.invalidate(qrTokenProvider(eventId));
+    return true;
+  } on Object catch (e) {
+    debugPrint('rotateEventCheckinCode failed: $e');
+    return false;
+  }
 }
 
 // =============================================================================

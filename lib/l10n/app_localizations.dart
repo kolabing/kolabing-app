@@ -4351,7 +4351,7 @@ abstract class AppLocalizations {
   /// Attendee: helper text under the user's own profile QR code
   ///
   /// In en, this message translates to:
-  /// **'Show this to a host to check in or connect.'**
+  /// **'Let someone scan this to check you in or pair up for a challenge.'**
   String get attendeeMyQrSubtitle;
 
   /// Attendee app bar: tooltip for the my-profile-QR action
@@ -4365,12 +4365,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your profile QR isn\'t ready yet.'**
   String get attendeeMyQrUnavailable;
-
-  /// Attendee home greeting above the user name
-  ///
-  /// In en, this message translates to:
-  /// **'Welcome back'**
-  String get attendeeHomeWelcomeBack;
 
   /// Attendee home section header for nearby events list
   ///
@@ -4413,24 +4407,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Load More'**
   String get attendeeHomeLoadMore;
-
-  /// Attendee home stat card label: points
-  ///
-  /// In en, this message translates to:
-  /// **'Points'**
-  String get attendeeHomeStatPoints;
-
-  /// Attendee home stat card label: challenges
-  ///
-  /// In en, this message translates to:
-  /// **'Challenges'**
-  String get attendeeHomeStatChallenges;
-
-  /// Attendee home stat card label: events
-  ///
-  /// In en, this message translates to:
-  /// **'Events'**
-  String get attendeeHomeStatEvents;
 
   /// Heading shown when location access is needed
   ///
@@ -5164,12 +5140,6 @@ abstract class AppLocalizations {
   /// **'Attendees can scan this QR code to check in to your event'**
   String get eventQrInstructions;
 
-  /// Button to view event check-ins
-  ///
-  /// In en, this message translates to:
-  /// **'View Check-ins'**
-  String get eventQrViewCheckins;
-
   /// Loading message while the QR code is generated
   ///
   /// In en, this message translates to:
@@ -5335,13 +5305,13 @@ abstract class AppLocalizations {
   /// Primary instruction in the QR scanner
   ///
   /// In en, this message translates to:
-  /// **'Point your camera at the event QR code'**
+  /// **'Point your camera at a Kolabing QR code'**
   String get qrScannerInstructionTitle;
 
   /// Secondary instruction in the QR scanner
   ///
   /// In en, this message translates to:
-  /// **'The QR code will be displayed by the event organizer'**
+  /// **'An event\'s check-in code, or another member\'s profile QR'**
   String get qrScannerInstructionSubtitle;
 
   /// App bar title of the reward wallet screen
@@ -5409,6 +5379,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pending'**
   String get challengeCompletionStatusPending;
+
+  /// Status badge for a challenge request the challenger withdrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get challengeCompletionStatusCancelled;
+
+  /// Status badge for a challenge request nobody answered in time.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get challengeCompletionStatusExpired;
+
+  /// Button on the waiting screen: withdraws the request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this request'**
+  String get challengeTogetherCancel;
+
+  /// Confirmation after cancelling a challenge request.
+  ///
+  /// In en, this message translates to:
+  /// **'Request cancelled.'**
+  String get challengeTogetherCancelled;
+
+  /// Failure after trying to cancel a challenge request.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t cancel that — they may have already answered.'**
+  String get challengeTogetherCancelFailed;
 
   /// Media step header when promoting a venue
   ///
@@ -9260,6 +9260,138 @@ abstract class AppLocalizations {
   /// **'{count} spot(s) left'**
   String eventHubSpotsLeft(num count);
 
+  /// Event page: details section label
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get eventPageDetailsTitle;
+
+  /// Event page: opens the venue in a maps app
+  ///
+  /// In en, this message translates to:
+  /// **'Directions'**
+  String get eventPageDirections;
+
+  /// Event page: chip on an occurrence of a series
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get eventPageRecurring;
+
+  /// Event page: which occurrence this is
+  ///
+  /// In en, this message translates to:
+  /// **'#{index} in the series'**
+  String eventPageSeriesOccurrence(num index);
+
+  /// Event page: public visibility, in words
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone can see and join this event'**
+  String get eventPageWhoCanSeePublic;
+
+  /// Event page: members-only visibility, in words
+  ///
+  /// In en, this message translates to:
+  /// **'Members of this community only'**
+  String get eventPageWhoCanSeeMembers;
+
+  /// Event page: tier-gated visibility, in words
+  ///
+  /// In en, this message translates to:
+  /// **'Limited to certain membership tiers'**
+  String get eventPageWhoCanSeeTier;
+
+  /// Event page: opens the holder’s ticket
+  ///
+  /// In en, this message translates to:
+  /// **'My ticket'**
+  String get eventPageMyTicket;
+
+  /// Event page: how many attendees are through the door
+  ///
+  /// In en, this message translates to:
+  /// **'{count} admitted'**
+  String eventPageAdmittedCount(num count);
+
+  /// Ticket sheet: title
+  ///
+  /// In en, this message translates to:
+  /// **'Your ticket'**
+  String get eventTicketSheetTitle;
+
+  /// Ticket sheet: what to do with it
+  ///
+  /// In en, this message translates to:
+  /// **'Show this at the door'**
+  String get eventTicketShowAtDoor;
+
+  /// Ticket sheet: already used
+  ///
+  /// In en, this message translates to:
+  /// **'Admitted at {time}'**
+  String eventTicketAdmitted(String time);
+
+  /// Ticket sheet: waitlisted holder
+  ///
+  /// In en, this message translates to:
+  /// **'You’re on the waitlist. This ticket works once a spot opens.'**
+  String get eventTicketWaitlistedBody;
+
+  /// Ticket sheet: label above the ticket code
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get eventTicketCodeLabel;
+
+  /// Ticket sheet: fallback when no QR came back
+  ///
+  /// In en, this message translates to:
+  /// **'Show this code at the door.'**
+  String get eventTicketNoQr;
+
+  /// Generic label for a website link
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get commonWebsite;
+
+  /// Community page: photo strip section label
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get communityPagePhotosTitle;
+
+  /// Community page: filter chip for upcoming events
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get communityPageFilterUpcoming;
+
+  /// Community page: filter chip for past events
+  ///
+  /// In en, this message translates to:
+  /// **'Past'**
+  String get communityPageFilterPast;
+
+  /// Event badge: no spots left
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get eventCapacityFull;
+
+  /// Event badge: few spots left
+  ///
+  /// In en, this message translates to:
+  /// **'Near capacity'**
+  String get eventCapacityNearly;
+
+  /// Event badge: spots remaining
+  ///
+  /// In en, this message translates to:
+  /// **'{count} left'**
+  String eventCapacityLeft(num count);
+
   /// Event hub: unlimited capacity label
   ///
   /// In en, this message translates to:
@@ -11294,12 +11426,6 @@ abstract class AppLocalizations {
   /// **'No Kolabing account matches that email or handle.'**
   String get rosterNoAccountForIdentifier;
 
-  /// Attendee home events section header.
-  ///
-  /// In en, this message translates to:
-  /// **'EVENTS'**
-  String get attendeeHomeEventsTitle;
-
   /// City picker button label when no city is selected.
   ///
   /// In en, this message translates to:
@@ -11384,17 +11510,53 @@ abstract class AppLocalizations {
   /// **'Try another city or clear your filters.'**
   String get attendeeHomeNoEventsCityHint;
 
-  /// Event card badge for a business-hosted event.
+  /// Feed scope tab: every public event in the selected city.
   ///
   /// In en, this message translates to:
-  /// **'Business'**
-  String get eventPartnerBusiness;
+  /// **'All events'**
+  String get attendeeHomeScopeAll;
 
-  /// Event card badge for a community-hosted event.
+  /// Shown when rotating an event's check-in QR fails.
   ///
   /// In en, this message translates to:
-  /// **'Community'**
-  String get eventPartnerCommunity;
+  /// **'Couldn\'t get a new code. Try again.'**
+  String get eventQrRotateFailed;
+
+  /// Feed scope tab: only events from communities the attendee follows.
+  ///
+  /// In en, this message translates to:
+  /// **'Following'**
+  String get attendeeHomeScopeFollowing;
+
+  /// Empty state in the Following feed when the attendee follows no community.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t follow anyone yet'**
+  String get attendeeHomeNoFollowsTitle;
+
+  /// Hint under the no-follows empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow a community and everything it puts on shows up here.'**
+  String get attendeeHomeNoFollowsHint;
+
+  /// Empty state in the Following feed when followed communities have no upcoming events.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing coming up'**
+  String get attendeeHomeNoFollowedEventsTitle;
+
+  /// Hint under the no-followed-events empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'The communities you follow haven\'t announced anything yet.'**
+  String get attendeeHomeNoFollowedEventsHint;
+
+  /// Button in the Following feed's empty state, opens community discovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow more communities'**
+  String get attendeeHomeFollowMore;
 
   /// Event card relative date: today.
   ///
@@ -12014,6 +12176,18 @@ abstract class AppLocalizations {
   /// **'Tier'**
   String get communityEventVisibilityTier;
 
+  /// Event row badge: the viewer has a confirmed sign-up.
+  ///
+  /// In en, this message translates to:
+  /// **'Going'**
+  String get communityEventBadgeGoing;
+
+  /// Event row badge: the viewer is on the waitlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Waitlisted'**
+  String get communityEventBadgeWaitlisted;
+
   /// Business onboarding goal step: title
   ///
   /// In en, this message translates to:
@@ -12205,6 +12379,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Missions'**
   String get missionsTitle;
+
+  /// Attendee profile row opening the auto-verified challenges (missions).
+  ///
+  /// In en, this message translates to:
+  /// **'Challenges you do on your own'**
+  String get soloChallengesTitle;
+
+  /// Explainer at the top of the solo challenges screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Kolabing tracks these from your check-ins. Nobody has to confirm them.'**
+  String get soloChallengesHint;
 
   /// Mission progress as current over target, e.g. 2/5
   ///
@@ -12560,42 +12746,6 @@ abstract class AppLocalizations {
   /// **'Couldn\'t open your App Store subscriptions. Go to Settings › your name › Subscriptions to manage or cancel.'**
   String get subscriptionManageAppleFailed;
 
-  /// Onboarding header step counter.
-  ///
-  /// In en, this message translates to:
-  /// **'Step {current} of {total}'**
-  String onboardingStepOf(int current, int total);
-
-  /// Status badge for a challenge request the challenger withdrew.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancelled'**
-  String get challengeCompletionStatusCancelled;
-
-  /// Status badge for a challenge request nobody answered in time.
-  ///
-  /// In en, this message translates to:
-  /// **'Expired'**
-  String get challengeCompletionStatusExpired;
-
-  /// Button on the waiting screen: withdraws the request.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel this request'**
-  String get challengeTogetherCancel;
-
-  /// Confirmation after cancelling a challenge request.
-  ///
-  /// In en, this message translates to:
-  /// **'Request cancelled.'**
-  String get challengeTogetherCancelled;
-
-  /// Failure after trying to cancel a challenge request.
-  ///
-  /// In en, this message translates to:
-  /// **'Couldn\'t cancel that — they may have already answered.'**
-  String get challengeTogetherCancelFailed;
-
   /// Title of the attendee QR hub sheet.
   ///
   /// In en, this message translates to:
@@ -12799,6 +12949,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'There are no challenges to choose from yet.'**
   String get communityChallengesEmptyLibrary;
+
+  /// Shown when the community's challenge set fails to load, so the checklist is not rendered unusable.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this community\'s challenges. Try again.'**
+  String get communityChallengesLoadFailed;
 
   /// Refusal shown when a pending request for the same challenge and pair already exists.
   ///
@@ -13046,6 +13202,12 @@ abstract class AppLocalizations {
   /// **'Couldn\'t reach the server. Check your connection and scan again.'**
   String get verifyScanUnreachable;
 
+  /// Button to view event check-ins
+  ///
+  /// In en, this message translates to:
+  /// **'View Check-ins'**
+  String get eventQrViewCheckins;
+
   /// Action that follows a community — one tap, no approval.
   ///
   /// In en, this message translates to:
@@ -13166,6 +13328,30 @@ abstract class AppLocalizations {
   /// **'Waiting for {name} to confirm…'**
   String challengeTogetherWaiting(String name);
 
+  /// Shown when a challenge request was withdrawn or ran out.
+  ///
+  /// In en, this message translates to:
+  /// **'This challenge isn\'t happening any more.'**
+  String get challengeTogetherNoLongerWaiting;
+
+  /// Shown when the app stopped polling for a confirmation after two minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Still waiting on {name}'**
+  String challengeTogetherStillWaitingTitle(String name);
+
+  /// Body of the stopped-watching state.
+  ///
+  /// In en, this message translates to:
+  /// **'Some challenges take a while. Keep waiting, or come back to it later.'**
+  String get challengeTogetherStillWaitingBody;
+
+  /// Button that resumes polling for the partner's confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep waiting'**
+  String get challengeTogetherKeepWaiting;
+
   /// How much both people earn — the challenge pays both sides.
   ///
   /// In en, this message translates to:
@@ -13190,47 +13376,65 @@ abstract class AppLocalizations {
   /// **'You two: {challenge}'**
   String challengeTogetherPrompt(String challenge);
 
-  /// Feed scope tab: every public event in the selected city.
+  /// Event row when-line joining a day label and a clock time.
   ///
   /// In en, this message translates to:
-  /// **'All events'**
-  String get attendeeHomeScopeAll;
+  /// **'{day}, {time}'**
+  String eventWhenDayTime(String day, String time);
 
-  /// Feed scope tab: only events from communities the attendee follows.
+  /// Attendee feed section heading above the events the viewer signed up for.
   ///
   /// In en, this message translates to:
-  /// **'Following'**
-  String get attendeeHomeScopeFollowing;
+  /// **'Your events'**
+  String get attendeeFeedYourEvents;
 
-  /// Empty state in the Following feed when the attendee follows no community.
+  /// Attendee feed section action opening the full list.
   ///
   /// In en, this message translates to:
-  /// **'You don\'t follow anyone yet'**
-  String get attendeeHomeNoFollowsTitle;
+  /// **'View all'**
+  String get attendeeFeedViewAll;
 
-  /// Hint under the no-follows empty state.
+  /// Attendee feed section heading above the followed-community logo tiles.
   ///
   /// In en, this message translates to:
-  /// **'Follow a community and everything it puts on shows up here.'**
-  String get attendeeHomeNoFollowsHint;
+  /// **'Communities you follow'**
+  String get attendeeFeedFollowing;
 
-  /// Empty state in the Following feed when followed communities have no upcoming events.
+  /// Attendee feed section heading above the city discovery list.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on'**
+  String get attendeeFeedWhatsOn;
+
+  /// Attendee feed points line: total points and events attended.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} points · {events, plural, =1{1 event} other{{events} events}}'**
+  String attendeeFeedPointsStrip(String points, int events);
+
+  /// Title of the screen listing every upcoming event the attendee signed up for.
+  ///
+  /// In en, this message translates to:
+  /// **'My events'**
+  String get myEventsTitle;
+
+  /// Empty state title on the My events screen.
   ///
   /// In en, this message translates to:
   /// **'Nothing coming up'**
-  String get attendeeHomeNoFollowedEventsTitle;
+  String get myEventsEmpty;
 
-  /// Hint under the no-followed-events empty state.
+  /// Empty state body on the My events screen.
   ///
   /// In en, this message translates to:
-  /// **'The communities you follow haven\'t announced anything yet.'**
-  String get attendeeHomeNoFollowedEventsHint;
+  /// **'Events you sign up for will show up here.'**
+  String get myEventsEmptyHint;
 
-  /// Button in the Following feed's empty state, opens community discovery.
+  /// Onboarding header step counter.
   ///
   /// In en, this message translates to:
-  /// **'Follow more communities'**
-  String get attendeeHomeFollowMore;
+  /// **'Step {current} of {total}'**
+  String onboardingStepOf(int current, int total);
 }
 
 class _AppLocalizationsDelegate

@@ -45,6 +45,16 @@ const bool kCommunityMembersTabEnabled = true;
 /// reachable from the user-type selection screen. It was closed deliberately;
 /// whether it reopens is a product call, and this flag must be reviewed before
 /// any store build. The account type itself has always worked — existing
+/// ⚠️ RELEASE CHECK — this and [kCommunityMembersTabEnabled] are BOTH on for QA
+/// (kolabing-app#137), not because the tracks are launch-ready. Two independent
+/// code reviews flagged the pair as a release risk, and they are right: as
+/// committed, an App Store build ships attendee sign-up publicly reachable from
+/// the user-type selection screen.
+///
+/// Left ON deliberately — turning them off would break the QA currently running
+/// against the dev API — so this is the reminder rather than the fix. Decide
+/// both before `make ipa-prod`, and note that flipping either one is a product
+/// call, not a cleanup.
 /// attendees can sign in either way.
 const bool kAttendeeSignupEnabled = true;
 

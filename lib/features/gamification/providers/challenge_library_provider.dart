@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/challenge.dart';
 import '../models/community_challenge.dart';
-import '../services/challenge_service.dart';
 import 'challenge_provider.dart';
 
 /// The challenge library a leader picks from (#150).

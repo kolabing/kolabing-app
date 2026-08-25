@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kolabing_app/features/auth/models/user_model.dart';
 import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
 import 'package:kolabing_app/features/auth/services/auth_service.dart';
-import 'package:kolabing_app/features/gamification/models/discovered_event.dart';
+import 'package:kolabing_app/features/event/models/event.dart';
 import 'package:kolabing_app/features/gamification/providers/discovery_provider.dart';
 import 'package:kolabing_app/features/gamification/services/discovery_service.dart';
 
@@ -19,13 +19,13 @@ void main() {
       final authNotifier = _MutableAuthNotifier(_attendeeUser('attendee-1'));
       final service = _ScriptedDiscoveryService(
         responses: <Object>[
-          Completer<DiscoveredEventsResponse>(),
+          Completer<DiscoverEventsResponse>(),
           _responseFor(_event('event-2')),
         ],
       );
 
       final firstLoad =
-          service.responses.first as Completer<DiscoveredEventsResponse>;
+          service.responses.first as Completer<DiscoverEventsResponse>;
 
       final container = ProviderContainer(
         overrides: [
@@ -72,28 +72,26 @@ void main() {
 UserModel _attendeeUser(String id) =>
     UserModel(id: id, email: '$id@example.com', userType: UserType.attendee);
 
-DiscoveredEvent _event(String id) => DiscoveredEvent(
+Event _event(String id) => Event(
   id: id,
   name: 'Event $id',
-  partnerName: 'Partner $id',
-  partnerType: 'business',
-  date: '2026-05-24',
+  partner: EventPartner(name: 'Partner $id', type: PartnerType.business),
+  date: DateTime.parse('2026-05-24T00:00:00Z'),
   attendeeCount: 10,
-  locationLat: 41.0,
-  locationLng: 2.0,
-  distanceKm: 1.5,
+  photos: const [],
   createdAt: DateTime.parse('2026-05-24T10:00:00Z'),
   updatedAt: DateTime.parse('2026-05-24T10:00:00Z'),
 );
 
-DiscoveredEventsResponse _responseFor(DiscoveredEvent event) =>
-    DiscoveredEventsResponse(
-      events: <DiscoveredEvent>[event],
-      currentPage: 1,
-      totalPages: 1,
-      totalCount: 1,
-      perPage: 10,
-    );
+DiscoverEventsResponse _responseFor(Event event) => DiscoverEventsResponse(
+  events: <Event>[event],
+  pagination: const EventPagination(
+    currentPage: 1,
+    totalPages: 1,
+    totalCount: 1,
+    perPage: 10,
+  ),
+);
 
 class _MutableAuthNotifier extends AuthNotifier {
   _MutableAuthNotifier(this._initialUser);
@@ -128,7 +126,7 @@ class _ScriptedDiscoveryService extends DiscoveryService {
   int _index = 0;
 
   @override
-  Future<DiscoveredEventsResponse> discoverEvents({
+  Future<DiscoverEventsResponse> discoverEvents({
     double? latitude,
     double? longitude,
     double radiusKm = 10.0,
@@ -141,10 +139,10 @@ class _ScriptedDiscoveryService extends DiscoveryService {
   }) async {
     final response =
         responses[_index < responses.length ? _index++ : responses.length - 1];
-    if (response is Completer<DiscoveredEventsResponse>) {
+    if (response is Completer<DiscoverEventsResponse>) {
       return response.future;
     }
-    if (response is DiscoveredEventsResponse) {
+    if (response is DiscoverEventsResponse) {
       return response;
     }
     throw StateError('Unexpected discovery response: $response');

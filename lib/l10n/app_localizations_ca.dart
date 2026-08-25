@@ -2421,7 +2421,7 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get attendeeMyQrSubtitle =>
-      'Mostra\'l a un amfitrió per registrar-te o connectar.';
+      'Deixa que algú l\'escanegi per fer-te check-in o emparellar-vos en un repte.';
 
   @override
   String get attendeeMyQrTooltip => 'El meu codi QR';
@@ -2429,9 +2429,6 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get attendeeMyQrUnavailable =>
       'El teu QR de perfil encara no està a punt.';
-
-  @override
-  String get attendeeHomeWelcomeBack => 'Benvingut de nou';
 
   @override
   String get attendeeHomeNearbyEvents => 'ESDEVENIMENTS PROPERS';
@@ -2459,15 +2456,6 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get attendeeHomeLoadMore => 'Carregar més';
-
-  @override
-  String get attendeeHomeStatPoints => 'Punts';
-
-  @override
-  String get attendeeHomeStatChallenges => 'Reptes';
-
-  @override
-  String get attendeeHomeStatEvents => 'Esdeveniments';
 
   @override
   String get attendeeHomeLocationRequired => 'Cal la ubicació';
@@ -2873,9 +2861,6 @@ class AppLocalizationsCa extends AppLocalizations {
       'Els assistents poden escanejar aquest codi QR per registrar-se al teu esdeveniment';
 
   @override
-  String get eventQrViewCheckins => 'Mostra els registres';
-
-  @override
   String get eventQrGenerating => 'Generant el codi QR...';
 
   @override
@@ -2967,11 +2952,11 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get qrScannerInstructionTitle =>
-      'Apunta la càmera al codi QR de l\'esdeveniment';
+      'Apunta la càmera a un codi QR de Kolabing';
 
   @override
   String get qrScannerInstructionSubtitle =>
-      'L\'organitzador de l\'esdeveniment mostrarà el codi QR';
+      'El codi de check-in d\'un esdeveniment o el QR de perfil d\'un altre membre';
 
   @override
   String get rewardWalletTitle => 'Les meves recompenses';
@@ -3007,6 +2992,22 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get challengeCompletionStatusPending => 'Pendent';
+
+  @override
+  String get challengeCompletionStatusCancelled => 'Cancel·lat';
+
+  @override
+  String get challengeCompletionStatusExpired => 'Caducat';
+
+  @override
+  String get challengeTogetherCancel => 'Cancel·la la sol·licitud';
+
+  @override
+  String get challengeTogetherCancelled => 'Sol·licitud cancel·lada.';
+
+  @override
+  String get challengeTogetherCancelFailed =>
+      'No s\'ha pogut cancel·lar; potser ja han respost.';
 
   @override
   String get mediaTitleVenue => 'MOSTRA EL TEU LOCAL';
@@ -5283,6 +5284,82 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
+  String get eventPageDetailsTitle => 'Detalls';
+
+  @override
+  String get eventPageDirections => 'Com arribar';
+
+  @override
+  String get eventPageRecurring => 'Recurrent';
+
+  @override
+  String eventPageSeriesOccurrence(num index) {
+    return '#$index de la sèrie';
+  }
+
+  @override
+  String get eventPageWhoCanSeePublic =>
+      'Qualsevol pot veure i unir-se a aquest esdeveniment';
+
+  @override
+  String get eventPageWhoCanSeeMembers => 'Només membres d’aquesta comunitat';
+
+  @override
+  String get eventPageWhoCanSeeTier => 'Limitat a certs nivells de membresia';
+
+  @override
+  String get eventPageMyTicket => 'La meva entrada';
+
+  @override
+  String eventPageAdmittedCount(num count) {
+    return '$count admesos';
+  }
+
+  @override
+  String get eventTicketSheetTitle => 'La teva entrada';
+
+  @override
+  String get eventTicketShowAtDoor => 'Mostra-la a la porta';
+
+  @override
+  String eventTicketAdmitted(String time) {
+    return 'Admès a les $time';
+  }
+
+  @override
+  String get eventTicketWaitlistedBody =>
+      'Estàs a la llista d’espera. Aquesta entrada servirà quan s’alliberi una plaça.';
+
+  @override
+  String get eventTicketCodeLabel => 'Codi';
+
+  @override
+  String get eventTicketNoQr => 'Mostra aquest codi a la porta.';
+
+  @override
+  String get commonWebsite => 'Web';
+
+  @override
+  String get communityPagePhotosTitle => 'Fotos';
+
+  @override
+  String get communityPageFilterUpcoming => 'Propers';
+
+  @override
+  String get communityPageFilterPast => 'Passats';
+
+  @override
+  String get eventCapacityFull => 'Complet';
+
+  @override
+  String get eventCapacityNearly => 'Gairebé complet';
+
+  @override
+  String eventCapacityLeft(num count) {
+    return 'En queden $count';
+  }
+
+  @override
   String get eventHubUnlimited => 'Il·limitat';
 
   @override
@@ -6442,9 +6519,6 @@ class AppLocalizationsCa extends AppLocalizations {
       'Cap compte de Kolabing coincideix amb aquest correu o nom d\'usuari.';
 
   @override
-  String get attendeeHomeEventsTitle => 'ESDEVENIMENTS';
-
-  @override
   String get attendeeHomeChooseCity => 'Tria ciutat';
 
   @override
@@ -6490,10 +6564,31 @@ class AppLocalizationsCa extends AppLocalizations {
       'Prova una altra ciutat o esborra els filtres.';
 
   @override
-  String get eventPartnerBusiness => 'Negoci';
+  String get attendeeHomeScopeAll => 'Tots els esdeveniments';
 
   @override
-  String get eventPartnerCommunity => 'Comunitat';
+  String get eventQrRotateFailed =>
+      'No s\'ha pogut generar un codi nou. Torna-ho a provar.';
+
+  @override
+  String get attendeeHomeScopeFollowing => 'Seguint';
+
+  @override
+  String get attendeeHomeNoFollowsTitle => 'Encara no segueixes ningú';
+
+  @override
+  String get attendeeHomeNoFollowsHint =>
+      'Segueix una comunitat i tot el que organitzi apareixerà aquí.';
+
+  @override
+  String get attendeeHomeNoFollowedEventsTitle => 'Res de pròxim';
+
+  @override
+  String get attendeeHomeNoFollowedEventsHint =>
+      'Les comunitats que segueixes encara no han anunciat res.';
+
+  @override
+  String get attendeeHomeFollowMore => 'Segueix més comunitats';
 
   @override
   String get eventDateToday => 'Avui';
@@ -6894,6 +6989,12 @@ class AppLocalizationsCa extends AppLocalizations {
   String get communityEventVisibilityTier => 'Nivell';
 
   @override
+  String get communityEventBadgeGoing => 'Hi vaig';
+
+  @override
+  String get communityEventBadgeWaitlisted => 'A la llista d\'espera';
+
+  @override
   String get businessGoalTitle => 'Quin és el teu objectiu?';
 
   @override
@@ -7004,6 +7105,13 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get missionsTitle => 'Missions';
+
+  @override
+  String get soloChallengesTitle => 'Reptes que fas pel teu compte';
+
+  @override
+  String get soloChallengesHint =>
+      'Kolabing els segueix amb els teus registres d\'assistència. Ningú els ha de confirmar.';
 
   @override
   String missionsProgress(int progress, int target) {
@@ -7202,27 +7310,6 @@ class AppLocalizationsCa extends AppLocalizations {
       'No s\'han pogut obrir les teves subscripcions de l\'App Store. Ves a Configuració › el teu nom › Subscripcions per gestionar-la o cancel·lar-la.';
 
   @override
-  String onboardingStepOf(int current, int total) {
-    return 'Pas $current de $total';
-  }
-
-  @override
-  String get challengeCompletionStatusCancelled => 'Cancel·lat';
-
-  @override
-  String get challengeCompletionStatusExpired => 'Caducat';
-
-  @override
-  String get challengeTogetherCancel => 'Cancel·la la sol·licitud';
-
-  @override
-  String get challengeTogetherCancelled => 'Sol·licitud cancel·lada.';
-
-  @override
-  String get challengeTogetherCancelFailed =>
-      'No s\'ha pogut cancel·lar; potser ja han respost.';
-
-  @override
   String get qrHubTitle => 'Escaneja o comparteix';
 
   @override
@@ -7345,6 +7432,10 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get communityChallengesEmptyLibrary =>
       'Encara no hi ha reptes per triar.';
+
+  @override
+  String get communityChallengesLoadFailed =>
+      'No s\'han pogut carregar els reptes d\'aquesta comunitat. Torna-ho a provar.';
 
   @override
   String get peerInitiateAlreadyPending =>
@@ -7492,6 +7583,9 @@ class AppLocalizationsCa extends AppLocalizations {
       'No s\'ha pogut connectar amb el servidor. Comprova la connexió i torna a escanejar.';
 
   @override
+  String get eventQrViewCheckins => 'Mostra els registres';
+
+  @override
   String get communityFollow => 'Segueix';
 
   @override
@@ -7563,6 +7657,21 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
+  String get challengeTogetherNoLongerWaiting => 'Aquest repte ja no segueix.';
+
+  @override
+  String challengeTogetherStillWaitingTitle(String name) {
+    return 'Encara esperem $name';
+  }
+
+  @override
+  String get challengeTogetherStillWaitingBody =>
+      'Alguns reptes triguen. Segueix esperant o torna-hi més tard.';
+
+  @override
+  String get challengeTogetherKeepWaiting => 'Segueix esperant';
+
+  @override
   String challengeTogetherEachEarns(int points) {
     return '$points XP per a cadascú';
   }
@@ -7581,25 +7690,45 @@ class AppLocalizationsCa extends AppLocalizations {
   }
 
   @override
-  String get attendeeHomeScopeAll => 'Tots els esdeveniments';
+  String eventWhenDayTime(String day, String time) {
+    return '$day, $time';
+  }
 
   @override
-  String get attendeeHomeScopeFollowing => 'Seguint';
+  String get attendeeFeedYourEvents => 'Els teus esdeveniments';
 
   @override
-  String get attendeeHomeNoFollowsTitle => 'Encara no segueixes ningú';
+  String get attendeeFeedViewAll => 'Veure-ho tot';
 
   @override
-  String get attendeeHomeNoFollowsHint =>
-      'Segueix una comunitat i tot el que organitzi apareixerà aquí.';
+  String get attendeeFeedFollowing => 'Comunitats que segueixes';
 
   @override
-  String get attendeeHomeNoFollowedEventsTitle => 'Res de pròxim';
+  String get attendeeFeedWhatsOn => 'Agenda';
 
   @override
-  String get attendeeHomeNoFollowedEventsHint =>
-      'Les comunitats que segueixes encara no han anunciat res.';
+  String attendeeFeedPointsStrip(String points, int events) {
+    String _temp0 = intl.Intl.pluralLogic(
+      events,
+      locale: localeName,
+      other: '$events esdeveniments',
+      one: '1 esdeveniment',
+    );
+    return '$points punts · $_temp0';
+  }
 
   @override
-  String get attendeeHomeFollowMore => 'Segueix més comunitats';
+  String get myEventsTitle => 'Els meus esdeveniments';
+
+  @override
+  String get myEventsEmpty => 'Res a la vista';
+
+  @override
+  String get myEventsEmptyHint =>
+      'Els esdeveniments als quals t\'apuntis apareixeran aquí.';
+
+  @override
+  String onboardingStepOf(int current, int total) {
+    return 'Pas $current de $total';
+  }
 }

@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/utils/auth_scope_guard.dart';
-import '../models/discovered_event.dart';
+import '../../event/models/event.dart';
 import '../services/discovery_service.dart';
 
 /// Provider for DiscoveryService
@@ -67,7 +67,7 @@ class DiscoveryState {
   /// communities the viewer follows.
   final bool following;
 
-  final List<DiscoveredEvent> events;
+  final List<Event> events;
   final bool isLoading;
   final String? error;
   final int currentPage;
@@ -91,7 +91,7 @@ class DiscoveryState {
     String? typeName,
     bool clearType = false,
     bool? following,
-    List<DiscoveredEvent>? events,
+    List<Event>? events,
     bool? isLoading,
     String? error,
     int? currentPage,
@@ -196,12 +196,21 @@ class DiscoveryNotifier extends Notifier<DiscoveryState>
 
     state = state.copyWith(
       following: following,
-      isLoading: true,
+      isLoading: false,
       error: null,
       events: [],
       currentPage: 1,
       hasMore: true,
     );
+
+    // Turning Following OFF can leave nothing to scope by: someone who denied
+    // location and never picked a city could switch it on (the toggle is always
+    // there) and back off, and the fetch would go out with no `lat` and no
+    // `city_id` — a 422 rendered as a broken feed, where the screen already has
+    // a "pick a city" prompt ready for exactly this state.
+    if (!state.canQuery) return;
+
+    state = state.copyWith(isLoading: true);
 
     await _fetchEvents();
   }

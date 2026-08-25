@@ -20,6 +20,7 @@ class CategoryChip extends StatelessWidget {
     required this.label,
     this.leading,
     this.dense = false,
+    this.forceLightSurface = false,
     super.key,
   });
 
@@ -33,9 +34,24 @@ class CategoryChip extends StatelessWidget {
   /// Slightly tighter vertical rhythm, used inside dense list cards.
   final bool dense;
 
+  /// Resolve colours against the LIGHT palette regardless of the active theme.
+  ///
+  /// For the one card that paints itself `Colors.white` unconditionally
+  /// (`ExploreSwipeCard`). Without this, dark mode gave that card near-black
+  /// pills with light text on a white background — the chip was theme-aware and
+  /// the surface under it was not.
+  ///
+  /// A flag rather than fixing the card: making that card theme-aware touches
+  /// every colour in it and belongs in the redesign that owns it, not in a
+  /// review fix.
+  final bool forceLightSurface;
+
   @override
   Widget build(BuildContext context) {
-    final style = CategoryStyleResolver.styleFor(label, context.colors);
+    final tokens = forceLightSurface
+        ? KolabingColorTokens.light
+        : context.colors;
+    final style = CategoryStyleResolver.styleFor(label, tokens);
 
     return Container(
       padding: EdgeInsets.symmetric(

@@ -46,6 +46,31 @@ class Event {
   /// members by the backend default).
   final String? visibility;
 
+  /// When it ends. The API has always sent `ends_at`; nothing parsed it, so
+  /// every event read as a single instant rather than a span.
+  final DateTime? endsAt;
+
+  /// Street address — distinct from [location], which is the venue's *name*
+  /// ("La Fabrica &Co" vs "Carrer de Pujades 191"). Both are sent; showing one
+  /// and calling it the other is how you send someone to the wrong door.
+  final String? address;
+
+  /// The city the event belongs to, resolved by the backend.
+  final String? cityName;
+
+  /// The host community's display name from the API, when the payload loaded
+  /// the relation. Falls back to [EventPartner.name].
+  final String? communityName;
+
+  /// The host community's raw type slug, for the dynamic taxonomy label
+  /// (`communityTypeLabelProvider`). Never branch logic on it — it is a display
+  /// key, and unknown slugs are legitimate.
+  final String? communityType;
+
+  /// The tiers allowed to sign up, or null when every member may. Only its
+  /// emptiness is read: the page says "tier-gated", never which tier.
+  final List<dynamic>? tierGate;
+
   const Event({
     required this.id,
     required this.name,
@@ -70,6 +95,12 @@ class Event {
     this.seriesId,
     this.occurrenceIndex,
     this.visibility,
+    this.endsAt,
+    this.address,
+    this.cityName,
+    this.communityName,
+    this.communityType,
+    this.tierGate,
   });
 
   /// True when this event belongs to a recurring series.
@@ -132,6 +163,14 @@ class Event {
       seriesId: json['series_id'] as String?,
       occurrenceIndex: (json['occurrence_index'] as num?)?.toInt(),
       visibility: json['visibility'] as String?,
+      endsAt: json['ends_at'] != null
+          ? DateTime.tryParse(json['ends_at'] as String)
+          : null,
+      address: json['address'] as String?,
+      cityName: json['city_name'] as String?,
+      communityName: json['community_name'] as String?,
+      communityType: json['community_type'] as String?,
+      tierGate: json['tier_gate'] as List<dynamic>?,
       photos:
           (json['photos'] as List<dynamic>?)
               ?.map((e) => EventPhoto.fromJson(e as Map<String, dynamic>))
@@ -185,6 +224,12 @@ class Event {
     String? seriesId,
     int? occurrenceIndex,
     String? visibility,
+    DateTime? endsAt,
+    String? address,
+    String? cityName,
+    String? communityName,
+    String? communityType,
+    List<dynamic>? tierGate,
   }) => Event(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -209,7 +254,26 @@ class Event {
     seriesId: seriesId ?? this.seriesId,
     occurrenceIndex: occurrenceIndex ?? this.occurrenceIndex,
     visibility: visibility ?? this.visibility,
+    endsAt: endsAt ?? this.endsAt,
+    address: address ?? this.address,
+    cityName: cityName ?? this.cityName,
+    communityName: communityName ?? this.communityName,
+    communityType: communityType ?? this.communityType,
+    tierGate: tierGate ?? this.tierGate,
   );
+
+  /// True when the event's sign-ups are limited to particular tiers.
+  bool get isTierGated => tierGate != null && tierGate!.isNotEmpty;
+
+  /// Spots left, or null when the capacity is unlimited.
+  int? get spotsLeft =>
+      capacity == null ? null : (capacity! - goingCount).clamp(0, capacity!);
+
+  /// The host's display name: the API's community name when it loaded the
+  /// relation, else the partner name the event always carries.
+  String get hostName => (communityName != null && communityName!.isNotEmpty)
+      ? communityName!
+      : partner.name;
 
   /// Returns the best available cover media thumbnail.
   String? get coverPhotoUrl => photos.isNotEmpty

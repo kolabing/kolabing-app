@@ -7,7 +7,7 @@ import 'package:http/testing.dart';
 import 'package:kolabing_app/features/auth/models/user_model.dart';
 import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
 import 'package:kolabing_app/features/auth/services/auth_service.dart';
-import 'package:kolabing_app/features/gamification/models/discovered_event.dart';
+import 'package:kolabing_app/features/event/models/event.dart';
 import 'package:kolabing_app/features/gamification/providers/discovery_provider.dart';
 import 'package:kolabing_app/features/gamification/services/discovery_service.dart';
 
@@ -195,7 +195,7 @@ class _RecordingDiscoveryService extends DiscoveryService {
   final List<_Call> calls = <_Call>[];
 
   @override
-  Future<DiscoveredEventsResponse> discoverEvents({
+  Future<DiscoverEventsResponse> discoverEvents({
     double? latitude,
     double? longitude,
     double radiusKm = 10.0,
@@ -215,12 +215,14 @@ class _RecordingDiscoveryService extends DiscoveryService {
         latitude: latitude,
       ),
     );
-    return const DiscoveredEventsResponse(
-      events: <DiscoveredEvent>[],
-      currentPage: 1,
-      totalPages: 1,
-      totalCount: 0,
-      perPage: 10,
+    return const DiscoverEventsResponse(
+      events: <Event>[],
+      pagination: EventPagination(
+        currentPage: 1,
+        totalPages: 1,
+        totalCount: 0,
+        perPage: 10,
+      ),
     );
   }
 }

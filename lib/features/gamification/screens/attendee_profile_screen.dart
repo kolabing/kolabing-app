@@ -336,6 +336,18 @@ class _AttendeeProfileScreenState extends ConsumerState<AttendeeProfileScreen> {
                     height: 1,
                     color: KolabingColors.outlineVariant,
                   ),
+                  // Challenges nobody has to confirm (#158, §5). The
+                  // trigger-driven ones — "attend 3 events this month" — have
+                  // always existed and been progressed from check-ins, and
+                  // `/missions` was reachable from the business and community
+                  // profiles and from nowhere an attendee could get to. So the
+                  // one role the examples in the product model are about could
+                  // not see them.
+                  _SettingsRow(
+                    icon: LucideIcons.target,
+                    label: l10n.soloChallengesTitle,
+                    onTap: () => context.push(KolabingRoutes.missions),
+                  ),
                   _SettingsRow(
                     icon: LucideIcons.bell,
                     label: l10n.notifSettingsTitle,

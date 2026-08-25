@@ -2,7 +2,6 @@ export 'attendee_profile.dart';
 export 'badge.dart';
 export 'challenge.dart';
 export 'challenge_completion.dart';
-export 'discovered_event.dart';
 export 'event_checkin.dart';
 export 'event_reward.dart';
 export 'gamification_stats.dart';

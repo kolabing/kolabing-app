@@ -2,7 +2,6 @@ export 'badge_card.dart';
 export 'challenge_card.dart';
 export 'challenge_completion_card.dart';
 export 'difficulty_badge.dart';
-export 'discovered_event_card.dart';
 export 'leaderboard_entry_tile.dart';
 export 'leaderboard_podium.dart';
 export 'points_badge.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../models/community.dart';
 import '../models/community_join_question.dart';
 import '../services/community_service.dart';
 import 'community_providers.dart';
@@ -70,6 +71,30 @@ final communityFollowsProvider =
     NotifierProvider<CommunityFollowsNotifier, Set<String>>(
       CommunityFollowsNotifier.new,
     );
+
+/// The communities the viewer follows, whole — name, avatar, type.
+///
+/// [communityFollowsProvider] holds only ids, because that is all a Follow
+/// button needs. The attendee feed needs to *show* what you follow, so this
+/// keeps the objects. Watching the id set means the strip gains or loses a tile
+/// the moment the viewer taps Follow, without a manual invalidate.
+///
+/// An undeployed endpoint returns an empty list rather than an error: a missing
+/// strip is a smaller lie than an error where a strip should be.
+final followedCommunitiesProvider = FutureProvider<List<Community>>((
+  ref,
+) async {
+  ref.watch(communityFollowsProvider);
+  try {
+    return await ref.read(communityServiceProvider).myFollowedCommunities();
+  } on CommunityException catch (e) {
+    debugPrint('followedCommunities: unavailable (${e.code})');
+    return const [];
+  } on Object catch (e) {
+    debugPrint('followedCommunities: failed: $e');
+    return const [];
+  }
+});
 
 /// What a community asks before admitting a member.
 ///

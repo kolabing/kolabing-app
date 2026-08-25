@@ -40,21 +40,33 @@ class ChallengeService {
     final url = '$_baseUrl/challenge-completions/$completionId/cancel';
     debugPrint('🎯 Cancel: POST $url');
 
-    final response = await _httpClient.post(
-      Uri.parse(url),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-    );
+    try {
+      final response = await _httpClient.post(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
 
-    if (response.statusCode == 200) return;
+      if (response.statusCode == 200) return;
 
-    // 404 means the route is not deployed; 409 means they answered first. Both
-    // are "you cannot take it back", and neither is worth two messages.
-    throw ChallengeException(
-      'Could not cancel that.',
-      kind: response.statusCode == 409
-          ? ChallengeFailure.conflict
-          : ChallengeFailure.notFound,
-    );
+      // 404 means the route is not deployed; 409 means they answered first. Both
+      // are "you cannot take it back", and neither is worth two messages.
+      throw ChallengeException(
+        'Could not cancel that.',
+        kind: response.statusCode == 409
+            ? ChallengeFailure.conflict
+            : ChallengeFailure.notFound,
+      );
+    } catch (e) {
+      if (e is ChallengeException || e is AuthException) rethrow;
+      debugPrint('🎯 Cancel error: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
+    }
   }
 
   /// The challenge library — what a leader picks from (#150).
@@ -67,24 +79,38 @@ class ChallengeService {
     final url = '$_baseUrl/challenge-library?page=$page&limit=$limit';
     debugPrint('🎯 Library: GET $url');
 
-    final response = await _httpClient.get(
-      Uri.parse(url),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-    );
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body) as Map<String, dynamic>;
-      return ChallengesResponse.fromJson(json['data'] as Map<String, dynamic>);
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        return ChallengesResponse.fromJson(
+          json['data'] as Map<String, dynamic>,
+        );
+      }
+
+      // 404 = not deployed yet. Typed, so the screen can say "not available"
+      // rather than showing an error for a backend that simply predates it.
+      throw ChallengeException(
+        'Could not load the challenge library.',
+        kind: response.statusCode == 404
+            ? ChallengeFailure.notFound
+            : ChallengeFailure.unknown,
+      );
+    } catch (e) {
+      if (e is ChallengeException || e is AuthException) rethrow;
+      debugPrint('🎯 Library error: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
+      );
     }
-
-    // 404 = not deployed yet. Typed, so the screen can say "not available"
-    // rather than showing an error for a backend that simply predates it.
-    throw ChallengeException(
-      'Could not load the challenge library.',
-      kind: response.statusCode == 404
-          ? ChallengeFailure.notFound
-          : ChallengeFailure.unknown,
-    );
   }
 
   /// What a community has chosen, and how strictly (#150).
@@ -99,24 +125,36 @@ class ChallengeService {
     final url = '$_baseUrl/communities/$communityId/challenges';
     debugPrint('🎯 Community challenges: GET $url');
 
-    final response = await _httpClient.get(
-      Uri.parse(url),
-      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
-    );
+    try {
+      final response = await _httpClient.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body) as Map<String, dynamic>;
-      return CommunityChallengeSet.fromJson(
-        json['data'] as Map<String, dynamic>,
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        return CommunityChallengeSet.fromJson(
+          json['data'] as Map<String, dynamic>,
+        );
+      }
+
+      throw ChallengeException(
+        'Could not load this community\'s challenges.',
+        kind: response.statusCode == 404
+            ? ChallengeFailure.notFound
+            : ChallengeFailure.unknown,
+      );
+    } catch (e) {
+      if (e is ChallengeException || e is AuthException) rethrow;
+      debugPrint('🎯 Community challenges error: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
       );
     }
-
-    throw ChallengeException(
-      'Could not load this community\'s challenges.',
-      kind: response.statusCode == 404
-          ? ChallengeFailure.notFound
-          : ChallengeFailure.unknown,
-    );
   }
 
   /// Replace a community's whole set (#150).
@@ -135,32 +173,42 @@ class ChallengeService {
     final url = '$_baseUrl/communities/$communityId/challenges';
     debugPrint('🎯 Community challenges: PUT $url (${selections.length})');
 
-    final response = await _httpClient.put(
-      Uri.parse(url),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: jsonEncode({
-        'challenges': selections.map((s) => s.toJson()).toList(),
-      }),
-    );
+    try {
+      final response = await _httpClient.put(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'challenges': selections.map((s) => s.toJson()).toList(),
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body) as Map<String, dynamic>;
-      return CommunityChallengeSet.fromJson(
-        json['data'] as Map<String, dynamic>,
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        return CommunityChallengeSet.fromJson(
+          json['data'] as Map<String, dynamic>,
+        );
+      }
+
+      throw ChallengeException(
+        // Not an unconditional decode: a 500 behind a proxy answers with HTML,
+        // and parsing it threw a FormatException straight out of the save path.
+        _messageFrom(response.body) ?? 'Could not save.',
+        kind: response.statusCode == 403
+            ? ChallengeFailure.forbidden
+            : ChallengeFailure.unknown,
+      );
+    } catch (e) {
+      if (e is ChallengeException || e is AuthException) rethrow;
+      debugPrint('🎯 Sync community challenges error: $e');
+      throw ChallengeException(
+        'Failed to connect to server: $e',
+        kind: ChallengeFailure.network,
       );
     }
-
-    final json = jsonDecode(response.body) as Map<String, dynamic>;
-    throw ChallengeException(
-      json['message'] as String? ?? 'Could not save.',
-      kind: response.statusCode == 403
-          ? ChallengeFailure.forbidden
-          : ChallengeFailure.unknown,
-    );
   }
 
   /// GET /api/v1/events/{event_id}/challenges
@@ -715,6 +763,20 @@ class ChallengeCompletionsResponse {
 /// returns when the challenger and the verifier are not both checked in to the
 /// event — the most common failure in the peer flow, and the one that needs a
 /// helpful message rather than a generic one.
+/// The `message` out of an error body, when the body is actually JSON.
+///
+/// A 500 behind a proxy answers with an HTML page, and decoding that threw a
+/// `FormatException` out of whatever call site was unlucky enough to hit it.
+String? _messageFrom(String body) {
+  try {
+    final decoded = jsonDecode(body);
+    if (decoded is Map<String, dynamic>) return decoded['message'] as String?;
+  } on Object {
+    // Not JSON. Nothing to read, and nothing to apologise for.
+  }
+  return null;
+}
+
 /// Maps the backend's refusal reason onto something the app can localize.
 ///
 /// An unknown or absent reason falls back to [ChallengeFailure.conflict], which
