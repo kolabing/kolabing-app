@@ -14,12 +14,25 @@ final checkinServiceProvider = Provider<CheckinService>((ref) {
 // QR Token Provider
 // =============================================================================
 
-/// Provider for generating QR tokens (organizer)
-final qrTokenProvider =
-    FutureProvider.family<String, String>((ref, eventId) async {
+/// Provider for the organizer's check-in QR (token + short code + link).
+final qrTokenProvider = FutureProvider.family<EventCheckinQr, String>((
+  ref,
+  eventId,
+) async {
   final service = ref.watch(checkinServiceProvider);
-  return service.generateQRToken(eventId);
+  return service.generateQr(eventId);
 });
+
+/// Rotates the event's check-in code, retiring the current one.
+///
+/// Kept separate from [qrTokenProvider] because a plain re-read must NOT
+/// rotate: `CheckinService::openDoor` is idempotent by design, so reopening the
+/// screen does not invalidate a QR people are queuing in front of. Rotating is
+/// the deliberate act of retiring a leaked code.
+Future<void> rotateEventCheckinCode(WidgetRef ref, String eventId) async {
+  await ref.read(checkinServiceProvider).generateQr(eventId, rotate: true);
+  ref.invalidate(qrTokenProvider(eventId));
+}
 
 // =============================================================================
 // Check-in Provider
@@ -31,26 +44,35 @@ class CheckinState {
     this.checkin,
     this.isLoading = false,
     this.error,
+    this.failure,
     this.isSuccess = false,
   });
 
   final EventCheckin? checkin;
   final bool isLoading;
+
+  /// Raw message from the service. May be backend English — prefer [failure]
+  /// for anything shown to the user.
   final String? error;
+
+  /// Classified reason the check-in failed, for localized messaging.
+  final CheckinFailure? failure;
+
   final bool isSuccess;
 
   CheckinState copyWith({
     EventCheckin? checkin,
     bool? isLoading,
     String? error,
+    CheckinFailure? failure,
     bool? isSuccess,
-  }) =>
-      CheckinState(
-        checkin: checkin ?? this.checkin,
-        isLoading: isLoading ?? this.isLoading,
-        error: error,
-        isSuccess: isSuccess ?? this.isSuccess,
-      );
+  }) => CheckinState(
+    checkin: checkin ?? this.checkin,
+    isLoading: isLoading ?? this.isLoading,
+    error: error,
+    failure: failure,
+    isSuccess: isSuccess ?? this.isSuccess,
+  );
 }
 
 /// Notifier for check-in operation (attendee)
@@ -68,10 +90,20 @@ class CheckinNotifier extends Notifier<CheckinState> {
       state = CheckinState(checkin: checkin, isSuccess: true);
       return true;
     } on CheckinException catch (e) {
-      state = state.copyWith(isLoading: false, error: e.message);
+      state = state.copyWith(
+        isLoading: false,
+        error: e.message,
+        failure: e.kind,
+        // A 409 may still tell us which event they are at.
+        checkin: e.checkin,
+      );
       return false;
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: 'Failed to check in');
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to check in',
+        failure: CheckinFailure.unknown,
+      );
       return false;
     }
   }
@@ -91,8 +123,10 @@ final checkinProvider = NotifierProvider<CheckinNotifier, CheckinState>(
 // =============================================================================
 
 /// Provider for event check-ins list
-final eventCheckinsProvider =
-    FutureProvider.family<CheckinsResponse, String>((ref, eventId) async {
+final eventCheckinsProvider = FutureProvider.family<CheckinsResponse, String>((
+  ref,
+  eventId,
+) async {
   final service = ref.watch(checkinServiceProvider);
   return service.getEventCheckins(eventId);
 });

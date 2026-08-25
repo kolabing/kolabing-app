@@ -32,24 +32,36 @@ class InitiateChallengeState {
     this.completion,
     this.isLoading = false,
     this.error,
+    this.failure,
     this.isSuccess = false,
   });
 
   final ChallengeCompletion? completion;
   final bool isLoading;
+
+  /// Raw message from the service. May be backend English — prefer [failure]
+  /// for anything shown to the user.
   final String? error;
+
+  /// Classified reason the call failed, for localized messaging. The important
+  /// one is [ChallengeFailure.bothMustCheckIn]: the 422 the backend returns
+  /// when the pair are not both checked in to the event.
+  final ChallengeFailure? failure;
+
   final bool isSuccess;
 
   InitiateChallengeState copyWith({
     ChallengeCompletion? completion,
     bool? isLoading,
     String? error,
+    ChallengeFailure? failure,
     bool? isSuccess,
   }) =>
       InitiateChallengeState(
         completion: completion ?? this.completion,
         isLoading: isLoading ?? this.isLoading,
         error: error,
+        failure: failure,
         isSuccess: isSuccess ?? this.isSuccess,
       );
 }
@@ -77,12 +89,17 @@ class InitiateChallengeNotifier extends Notifier<InitiateChallengeState> {
       state = InitiateChallengeState(completion: completion, isSuccess: true);
       return completion;
     } on ChallengeException catch (e) {
-      state = state.copyWith(isLoading: false, error: e.message);
+      state = state.copyWith(
+        isLoading: false,
+        error: e.message,
+        failure: e.kind,
+      );
       return null;
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         error: 'Failed to initiate challenge',
+        failure: ChallengeFailure.unknown,
       );
       return null;
     }
