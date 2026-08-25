@@ -13,6 +13,7 @@ import '../../../widgets/kolab_chip.dart';
 import '../../../widgets/kolab_status_badge.dart';
 import '../../multi_kolab/models/multi_kolab_enums.dart';
 import '../../multi_kolab/models/multi_kolab_event_summary.dart';
+import '../../multi_kolab/providers/multi_kolab_repository_provider.dart';
 
 /// One organizer-owned Multi-Kolab event rendered as an ORDINARY My Kolabs
 /// card.
@@ -44,9 +45,7 @@ class MyMultiKolabCard extends StatelessWidget {
       };
 
   String get _initials {
-    final cleaned = event.title
-        .replaceAll(RegExp('^[^A-Za-z0-9]+'), '')
-        .trim();
+    final cleaned = event.title.replaceAll(RegExp('^[^A-Za-z0-9]+'), '').trim();
     return cleaned.isNotEmpty ? cleaned[0].toUpperCase() : 'K';
   }
 
@@ -90,6 +89,23 @@ class MyMultiKolabCard extends StatelessWidget {
                 variant: KolabChipVariant.purple,
                 icon: LucideIcons.users,
               ),
+              // Says out loud that this row is a fixture, not the backend.
+              //
+              // The mock repository has no auth awareness — its viewer is a
+              // constant — so it hands the same "my events" to whoever signs
+              // in. Signing in as a second account therefore shows the first
+              // account's events, which reads exactly like an ownership leak
+              // and was reported as one. Not localized on purpose: it is
+              // compile-time impossible in a release build
+              // (`kMultiKolabMockData` is `define && !kReleaseMode`), so it is
+              // a developer marker rather than user-facing copy.
+              if (kMultiKolabMockData)
+                const KolabChip(
+                  key: Key('myKolabsMultiKolabMockBadge'),
+                  label: 'MOCK DATA',
+                  variant: KolabChipVariant.purple,
+                  icon: LucideIcons.flaskConical,
+                ),
             ],
           ),
           const SizedBox(height: 7),
