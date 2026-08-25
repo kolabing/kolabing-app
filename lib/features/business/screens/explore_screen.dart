@@ -14,6 +14,7 @@ import '../../../widgets/explore_detail_sheet.dart';
 import '../../../widgets/explore_filter_sheet.dart';
 import '../../../widgets/explore_swipe_card.dart';
 import '../../../widgets/page_title.dart';
+import '../../../widgets/profile_link.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../application/widgets/apply_success_sheet.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -163,7 +164,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           ? null
           : () {
               Navigator.of(context).pop();
-              context.push('/profile/${item.creatorProfile.id}');
+              ProfileLink.open(
+                context,
+                ref,
+                profileId: item.creatorProfile.id,
+              );
             },
       // When the business is free, the Apply button becomes an "unlock" CTA that
       // opens the paywall sheet. This is the gate — there is NO discovery-level
@@ -444,9 +449,30 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   void _openSavedOpportunity(Opportunity opportunity) {
     final hasSub = _hasBusinessSubscription;
     final isOwn = opportunity.isOwn ?? false;
+    // A saved Kolab is the same Kolab: the deck blurred the community identity
+    // for a free business (§2.5) and this sheet did not, so saving one was a way
+    // around the blur. `hasSub` is already true for a community viewer, so this
+    // only ever hides a community from a free business.
+    final hideCreatorIdentity =
+        !hasSub && (opportunity.creatorProfile?.isCommunity ?? false);
     ExploreDetailSheet.show(
       context,
       opportunity: opportunity,
+      hideCreatorIdentity: hideCreatorIdentity,
+      // The creator's name and logo open their profile here too.
+      onViewCreatorProfile:
+          hideCreatorIdentity ||
+              !hasSub ||
+              (opportunity.creatorProfile?.id.isEmpty ?? true)
+          ? null
+          : () {
+              Navigator.of(context).pop();
+              ProfileLink.open(
+                context,
+                ref,
+                profileId: opportunity.creatorProfile!.id,
+              );
+            },
       onApply: hasSub && !isOwn
           ? () {
               Navigator.of(context).pop();
