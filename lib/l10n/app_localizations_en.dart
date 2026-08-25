@@ -2964,6 +2964,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get challengeCompletionStatusPending => 'Pending';
 
   @override
+  String get challengeCompletionStatusCancelled => 'Cancelled';
+
+  @override
+  String get challengeCompletionStatusExpired => 'Expired';
+
+  @override
+  String get challengeTogetherCancel => 'Cancel this request';
+
+  @override
+  String get challengeTogetherCancelled => 'Request cancelled.';
+
+  @override
+  String get challengeTogetherCancelFailed =>
+      'Couldn\'t cancel that — they may have already answered.';
+
+  @override
   String get mediaTitleVenue => 'SHOW OFF YOUR VENUE';
 
   @override

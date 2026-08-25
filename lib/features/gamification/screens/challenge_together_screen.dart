@@ -105,6 +105,7 @@ class ChallengeTogetherScreen extends ConsumerStatefulWidget {
 class _ChallengeTogetherScreenState
     extends ConsumerState<ChallengeTogetherScreen> {
   bool _submitting = false;
+  bool _cancelling = false;
 
   /// Set once this device has settled it, so the partner sees the reveal
   /// immediately rather than waiting for a poll to come back.
@@ -133,6 +134,33 @@ class _ChallengeTogetherScreenState
       if (!mounted) return;
       setState(() => _submitting = false);
       Navigator.of(context).maybePop();
+    }
+  }
+
+  /// Takes the request back. Only the starter can, and only while nobody has
+  /// answered — the server enforces both.
+  Future<void> _cancel() async {
+    if (_cancelling) return;
+    setState(() => _cancelling = true);
+    final l10n = AppLocalizations.of(context);
+
+    try {
+      await ref
+          .read(challengeServiceProvider)
+          .cancelChallenge(widget.completionId);
+      ref.read(myChallengeCompletionsProvider.notifier).refresh();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.challengeTogetherCancelled)));
+      Navigator.of(context).maybePop();
+    } on Object {
+      if (!mounted) return;
+      setState(() => _cancelling = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.challengeTogetherCancelFailed)),
+      );
     }
   }
 
@@ -200,6 +228,8 @@ class _ChallengeTogetherScreenState
                   submitting: _submitting,
                   onConfirm: () => _decide(confirm: true),
                   onDecline: () => _decide(confirm: false),
+                  cancelling: _cancelling,
+                  onCancel: _cancel,
                 ),
         ),
       ),
@@ -219,6 +249,8 @@ class _Agreed extends StatelessWidget {
     required this.submitting,
     required this.onConfirm,
     required this.onDecline,
+    required this.cancelling,
+    required this.onCancel,
   });
 
   final String challengeName;
@@ -229,6 +261,10 @@ class _Agreed extends StatelessWidget {
   final bool submitting;
   final VoidCallback onConfirm;
   final VoidCallback onDecline;
+
+  /// Withdrawing is the starter's only move while they wait (#154).
+  final bool cancelling;
+  final VoidCallback onCancel;
 
   @override
   Widget build(BuildContext context) {
@@ -339,6 +375,18 @@ class _Agreed extends StatelessWidget {
               ),
             ],
           ),
+        if (role == TogetherRole.starter) ...[
+          const SizedBox(height: KolabingSpacing.sm),
+          TextButton(
+            onPressed: cancelling ? null : onCancel,
+            child: Text(
+              l10n.challengeTogetherCancel,
+              style: KolabingTextStyles.button.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
         const SizedBox(height: KolabingSpacing.lg),
       ],
     );

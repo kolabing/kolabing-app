@@ -27,6 +27,36 @@ class ChallengeService {
 
   /// Get challenges for an event (system + custom)
   ///
+  /// The challenger takes back a request nobody answered yet (#154).
+  ///
+  /// Needed because the flow reversed (#152): choosing a challenge and then
+  /// scanning means a mis-scan sends a real request to the wrong person.
+  ///
+  /// POST /api/v1/challenge-completions/{id}/cancel
+  Future<void> cancelChallenge(String completionId) async {
+    final token = await _authService.getToken();
+    if (token == null) throw const AuthException('Not authenticated');
+
+    final url = '$_baseUrl/challenge-completions/$completionId/cancel';
+    debugPrint('🎯 Cancel: POST $url');
+
+    final response = await _httpClient.post(
+      Uri.parse(url),
+      headers: {'Authorization': 'Bearer $token', 'Accept': 'application/json'},
+    );
+
+    if (response.statusCode == 200) return;
+
+    // 404 means the route is not deployed; 409 means they answered first. Both
+    // are "you cannot take it back", and neither is worth two messages.
+    throw ChallengeException(
+      'Could not cancel that.',
+      kind: response.statusCode == 409
+          ? ChallengeFailure.conflict
+          : ChallengeFailure.notFound,
+    );
+  }
+
   /// The challenge library — what a leader picks from (#150).
   ///
   /// GET /api/v1/challenge-library
