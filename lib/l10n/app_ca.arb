@@ -2449,5 +2449,14 @@
   "multiKolabErrorNotOwner": "Nomes l’organitzador pot fer aixo.",
   "multiKolabErrorInvalidTransition": "Aixo ja no es possible per a aquest esdeveniment.",
   "multiKolabErrorRoleCapacity": "Aquest rol ja esta complet.",
-  "multiKolabErrorGeneric": "Alguna cosa ha anat malament. Torna-ho a provar."
+  "multiKolabErrorGeneric": "Alguna cosa ha anat malament. Torna-ho a provar.",
+  "communityManageSectionTitle": "Gestionar",
+  "communityManageInvite": "Enllaç d'invitació",
+  "communityManageNewEvent": "Nou esdeveniment",
+  "communityManageInviteCopied": "Enllaç d'invitació copiat",
+  "communityManageInviteUnavailable": "Aquesta comunitat encara no té enllaç d'invitació.",
+  "communityManageTiers": "Nivells",
+  "communityManageTiersSubtitle": "Nivells de membres i què desbloqueja cadascun",
+  "communityManageRewardsSubtitle": "Objectius, recompenses i insígnies",
+  "communityManageEventsSubtitle": "Tot el que tens programat"
 }

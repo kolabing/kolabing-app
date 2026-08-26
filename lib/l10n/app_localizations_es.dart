@@ -8411,4 +8411,34 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get multiKolabErrorGeneric =>
       'Algo ha salido mal. Intentalo de nuevo.';
+
+  @override
+  String get communityManageSectionTitle => 'Gestionar';
+
+  @override
+  String get communityManageInvite => 'Enlace de invitación';
+
+  @override
+  String get communityManageNewEvent => 'Nuevo evento';
+
+  @override
+  String get communityManageInviteCopied => 'Enlace de invitación copiado';
+
+  @override
+  String get communityManageInviteUnavailable =>
+      'Esta comunidad aún no tiene enlace de invitación.';
+
+  @override
+  String get communityManageTiers => 'Niveles';
+
+  @override
+  String get communityManageTiersSubtitle =>
+      'Niveles de membresía y qué desbloquea cada uno';
+
+  @override
+  String get communityManageRewardsSubtitle =>
+      'Objetivos, recompensas e insignias';
+
+  @override
+  String get communityManageEventsSubtitle => 'Todo lo que tienes programado';
 }

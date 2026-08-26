@@ -2449,5 +2449,14 @@
   "multiKolabErrorNotOwner": "Solo el organizador puede hacer esto.",
   "multiKolabErrorInvalidTransition": "Esto ya no es posible para este evento.",
   "multiKolabErrorRoleCapacity": "Este rol ya esta completo.",
-  "multiKolabErrorGeneric": "Algo ha salido mal. Intentalo de nuevo."
+  "multiKolabErrorGeneric": "Algo ha salido mal. Intentalo de nuevo.",
+  "communityManageSectionTitle": "Gestionar",
+  "communityManageInvite": "Enlace de invitación",
+  "communityManageNewEvent": "Nuevo evento",
+  "communityManageInviteCopied": "Enlace de invitación copiado",
+  "communityManageInviteUnavailable": "Esta comunidad aún no tiene enlace de invitación.",
+  "communityManageTiers": "Niveles",
+  "communityManageTiersSubtitle": "Niveles de membresía y qué desbloquea cada uno",
+  "communityManageRewardsSubtitle": "Objetivos, recompensas e insignias",
+  "communityManageEventsSubtitle": "Todo lo que tienes programado"
 }

@@ -23,8 +23,44 @@ import '../../business/providers/profile_provider.dart';
 import '../../event/widgets/past_events_section.dart';
 import '../providers/community_providers.dart';
 import '../../rewards/providers/wallet_provider.dart';
+import '../widgets/community_manage_sections.dart';
+import '../widgets/community_page_sections.dart';
+import '../providers/community_media_provider.dart';
+import '../../event/widgets/add_event_modal.dart';
+import 'community_detail_screen.dart';
+import '../models/community_membership.dart';
 
-/// Community profile screen
+// =============================================================================
+// Spacing scale
+// =============================================================================
+//
+// Named once, used everywhere on this page. The old page mixed `md` gaps between
+// sections with ad-hoc padding inside the header, which is what made the rhythm
+// look arbitrary and the action buttons sit unevenly (#174).
+
+/// Between two sections.
+const double _sectionGap = KolabingSpacing.lg;
+
+/// Page side padding for everything except the full-bleed hero.
+const double _sidePad = KolabingSpacing.md;
+
+/// One page for seeing AND running your community (#174).
+///
+/// Before this, a leader had the community spread over two screens that
+/// disagreed about their job: the Community tab showed a Luma-style scroll with
+/// management scattered through it behind twenty separate `canManage` gates,
+/// while this page held About / details / contact / notifications / account and
+/// no management at all. So you edited the community in one place and ran it in
+/// another, and neither page was a complete answer.
+///
+/// The order is what a leader actually needs: identity, the two things they do
+/// most (edit, invite), then **Manage**, and only then the descriptive and
+/// account sections. A leader does not open this page to read their own About
+/// text.
+///
+/// The visitor's view is untouched — [AttendeeCommunityProfileScreen] stays the
+/// Luma-shaped page an outsider meets. Two audiences, two pages; the leader
+/// only ever sees this one.
 class CommunityProfileScreen extends ConsumerStatefulWidget {
   const CommunityProfileScreen({super.key});
 
@@ -482,74 +518,130 @@ class _CommunityProfileScreenState
     final about = profile.communityProfile?.about;
     final hasAbout = about != null && about.isNotEmpty;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _buildProfileScreenHeader(isDark),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: () => ref.read(profileProvider.notifier).refresh(),
-            color: context.colors.primary,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(KolabingSpacing.md),
+    // The leader's own community, when they have one. It carries the cover
+    // photo, the member count and everything Manage routes into. A leader with
+    // no community yet simply gets the profile sections.
+    final community = ref
+        .watch(communityManageProvider)
+        .communities
+        .maybeWhen(
+          data: (list) => list.isEmpty ? null : list.first,
+          orElse: () => null,
+        );
+
+    return RefreshIndicator(
+      onRefresh: () => ref.read(profileProvider.notifier).refresh(),
+      color: context.colors.primary,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Full-bleed: the hero owns the screen edges, so it sits OUTSIDE
+            // the page padding every other section shares.
+            if (community != null)
+              Consumer(
+                builder: (context, ref, _) => CommunityCoverHero(
+                  name: community.name,
+                  avatarUrl: community.avatarUrl,
+                  showBack: false,
+                  coverUrl: ref.watch(
+                    communityCoverPhotoProvider((
+                      communityId: community.id,
+                      ownerProfileId: community.ownerProfileId,
+                    )),
+                  ),
+                ),
+              )
+            else
+              _buildProfileScreenHeader(isDark),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                _sidePad,
+                KolabingSpacing.sm,
+                _sidePad,
+                KolabingSpacing.xxl,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Profile Header Card
-                  _buildProfileHeader(profile, state.isUpdating, isDark),
+                  if (community != null) ...[
+                    CommunityIdentity(community: community),
+                    const SizedBox(height: _sectionGap),
+                    CommunityActionRow(
+                      community: community,
+                      onNewEvent: () => showModalBottomSheet<void>(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (_) => const AddEventModal(),
+                      ),
+                    ),
+                    const SizedBox(height: _sectionGap),
+                    // Manage is present or absent as one block, instead of
+                    // twenty separate gates scattered down the page.
+                    CommunityManageSection(
+                      community: community,
+                      // The leader's own community, so managing it is the point
+                      // of the page; a member never reaches this branch.
+                      canManage: community.myCanManage,
+                      // Pushes the existing rich events surface as a MANAGE
+                      // sub-screen. `CommunityDetailScreen` stops being the
+                      // Community tab but stays exactly as good as it was at
+                      // this one job — retiring it from the tab is not a reason
+                      // to throw the working screen away.
+                      onOpenEvents: () => Navigator.of(context).push<void>(
+                        MaterialPageRoute<void>(
+                          builder: (_) => CommunityDetailScreen(
+                            membership: CommunityMembership(
+                              community: community,
+                              canManage: true,
+                            ),
+                          ),
+                        ),
+                      ),
+                      onOpenRewards: () => context.push(KolabingRoutes.rewards),
+                    ),
+                    const SizedBox(height: _sectionGap),
+                  ] else
+                    _buildProfileHeader(profile, state.isUpdating, isDark),
 
-                  const SizedBox(height: KolabingSpacing.md),
-
-                  // About Section
                   if (hasAbout) ...[
                     _buildAboutSection(about, isDark),
-                    const SizedBox(height: KolabingSpacing.md),
+                    const SizedBox(height: _sectionGap),
                   ],
 
-                  // Community details (editable: community size)
                   _buildCommunityDetailsSection(
                     profile,
                     state.isUpdating,
                     isDark,
                   ),
+                  const SizedBox(height: _sectionGap),
 
-                  const SizedBox(height: KolabingSpacing.md),
-
-                  // Gallery Section
                   const ProfileGallerySection(),
+                  const SizedBox(height: _sectionGap),
 
-                  const SizedBox(height: KolabingSpacing.md),
-
-                  // Past Events Section
                   const PastEventsSection(),
+                  const SizedBox(height: _sectionGap),
 
-                  const SizedBox(height: KolabingSpacing.md),
-
-                  // Contact Info Section
                   _buildContactInfoSection(profile, isDark),
+                  const SizedBox(height: _sectionGap),
 
-                  const SizedBox(height: KolabingSpacing.md),
-
-                  // Notification Preferences Section
                   _buildNotificationPreferencesSection(
                     state.notificationPrefs,
                     state.isUpdating,
                     isDark,
                   ),
+                  const SizedBox(height: _sectionGap),
 
-                  const SizedBox(height: KolabingSpacing.md),
-
-                  // Account Section
                   _buildAccountSection(profile.email, state.isUpdating, isDark),
-
-                  const SizedBox(height: KolabingSpacing.xxl),
                 ],
               ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

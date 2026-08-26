@@ -23,6 +23,7 @@ import '../models/community_membership.dart';
 import '../providers/community_providers.dart';
 import 'community_detail_screen.dart';
 import 'community_hub_screen.dart';
+import 'community_profile_screen.dart';
 
 /// Community user main screen with bottom navigation
 ///
@@ -248,14 +249,13 @@ class _CommunityLeaderTab extends ConsumerWidget {
     return communities.maybeWhen(
       data: (list) {
         if (list.isEmpty) return const CommunityHubScreen();
-        // v1: a leader runs one community (the free cap). Show it tabbed.
-        return CommunityDetailScreen(
-          membership: CommunityMembership(
-            community: list.first,
-            canManage: true,
-          ),
-          embedded: true,
-        );
+        // One page for seeing AND running the community (#174). The leader used
+        // to land on `CommunityDetailScreen` here, which showed the community
+        // but scattered management down it, while everything editable lived on
+        // a separate profile page reached from the app-bar avatar. Both doors
+        // now open the same page; `CommunityDetailScreen` survives as the
+        // events management surface that page pushes into.
+        return const CommunityProfileScreen();
       },
       orElse: () => const CommunityHubScreen(),
     );

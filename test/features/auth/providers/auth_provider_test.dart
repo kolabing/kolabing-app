@@ -199,9 +199,10 @@ class _SuccessfulLoginAuthService extends AuthService {
 
 class _FakeDashboardService extends DashboardService {
   @override
-  Future<DashboardResponse> getDashboard() async => const DashboardResponse(
-    businessDashboard: BusinessDashboard(
-      opportunities: OpportunityStats(total: 1),
-    ),
-  );
+  Future<DashboardResponse> getDashboard({UserType? userType}) async =>
+      const DashboardResponse(
+        businessDashboard: BusinessDashboard(
+          opportunities: OpportunityStats(total: 1),
+        ),
+      );
 }

@@ -14677,6 +14677,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong. Please try again.'**
   String get multiKolabErrorGeneric;
+
+  /// Section heading above the leader's management rows.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get communityManageSectionTitle;
+
+  /// Action: copy the community's invite link.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite link'**
+  String get communityManageInvite;
+
+  /// Action: create a new community event.
+  ///
+  /// In en, this message translates to:
+  /// **'New event'**
+  String get communityManageNewEvent;
+
+  /// Confirmation after copying the invite link.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite link copied'**
+  String get communityManageInviteCopied;
+
+  /// Shown when the community has no invite link.
+  ///
+  /// In en, this message translates to:
+  /// **'This community has no invite link yet.'**
+  String get communityManageInviteUnavailable;
+
+  /// Manage row: membership tiers.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiers'**
+  String get communityManageTiers;
+
+  /// Subtitle for the tiers management row.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership levels and what each unlocks'**
+  String get communityManageTiersSubtitle;
+
+  /// Subtitle for the rewards management row.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals, rewards and badges'**
+  String get communityManageRewardsSubtitle;
+
+  /// Subtitle for the events management row.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you have scheduled'**
+  String get communityManageEventsSubtitle;
 }
 
 class _AppLocalizationsDelegate
