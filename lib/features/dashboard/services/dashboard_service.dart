@@ -7,6 +7,7 @@ import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/dashboard_model.dart';
 import '../../../config/constants/api.dart';
+import '../../auth/models/user_model.dart';
 
 /// API base URL
 const String _baseUrl = ApiConfig.baseUrl;
@@ -63,13 +64,25 @@ class DashboardService {
   /// Fetch dashboard data for the current user.
   ///
   /// The API returns different payloads depending on user type:
-  /// - Business users: contains `opportunities` key
-  /// - Community users: contains `applications_sent` key
-  Future<DashboardResponse> getDashboard() async {
-    return _getDashboard(allowRetry: true);
+  /// [userType] decides which shape to parse. It must come from the signed-in
+  /// user, NOT from the payload: the previous version keyed off
+  /// `data.containsKey('opportunities')`, and when the backend gave communities
+  /// an `opportunities` block for parity (kolabing-v2#227) every community
+  /// started being parsed as a business. `communityDashboard` came back null,
+  /// the screen showed "Unable to load dashboard data", and because the request
+  /// was a clean 200 with valid JSON there was no exception anywhere — nothing
+  /// in either Sentry project, nothing in the backend logs.
+  ///
+  /// Sniffing is kept only as a fallback for a null [userType], so a role we
+  /// cannot read still renders something.
+  Future<DashboardResponse> getDashboard({UserType? userType}) async {
+    return _getDashboard(allowRetry: true, userType: userType);
   }
 
-  Future<DashboardResponse> _getDashboard({required bool allowRetry}) async {
+  Future<DashboardResponse> _getDashboard({
+    required bool allowRetry,
+    UserType? userType,
+  }) async {
     final uri = Uri.parse('$_baseUrl/me/dashboard');
     debugPrint('DashboardService: GET $uri');
 
@@ -89,14 +102,29 @@ class DashboardService {
           throw const NetworkException('Invalid response format');
         }
 
-        // Determine user type from the response payload
-        if (data.containsKey('opportunities')) {
+        // The signed-in role decides, because the two payloads are no longer
+        // distinguishable by their keys.
+        if (userType == UserType.business) {
           return DashboardResponse(
             businessDashboard: BusinessDashboard.fromJson(data),
           );
-        } else if (data.containsKey('applications_sent')) {
+        }
+        if (userType == UserType.community) {
           return DashboardResponse(
             communityDashboard: CommunityDashboard.fromJson(data),
+          );
+        }
+
+        // Role unknown — fall back to shape. `applications_sent` is checked
+        // FIRST because it is the community marker that businesses never send,
+        // while `opportunities` is now sent to both.
+        if (data.containsKey('applications_sent')) {
+          return DashboardResponse(
+            communityDashboard: CommunityDashboard.fromJson(data),
+          );
+        } else if (data.containsKey('opportunities')) {
+          return DashboardResponse(
+            businessDashboard: BusinessDashboard.fromJson(data),
           );
         } else {
           // Fallback: try to parse as business first, then community
