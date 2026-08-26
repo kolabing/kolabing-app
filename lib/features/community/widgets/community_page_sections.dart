@@ -14,8 +14,6 @@
 /// gradient) rather than showing a placeholder for a field that does not exist.
 library;
 
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -43,7 +41,16 @@ class CommunityCoverHero extends StatelessWidget {
     this.coverUrl,
     this.showBack = true,
     this.actions = const <Widget>[],
+    this.onTapCover,
+    this.onTapLogo,
   });
+
+  /// Tapping the cover band. Null on the pages where the viewer owns nothing
+  /// here, which is every page except the leader's own (#174).
+  final VoidCallback? onTapCover;
+
+  /// Tapping the logo tile.
+  final VoidCallback? onTapLogo;
 
   /// Cover band height, before the logo overhang.
   static const double coverHeight = 168;
@@ -76,7 +83,10 @@ class CommunityCoverHero extends StatelessWidget {
           left: 0,
           right: 0,
           height: coverHeight,
-          child: _Cover(avatarUrl: avatarUrl, coverUrl: coverUrl),
+          child: _Tappable(
+            onTap: onTapCover,
+            child: _Cover(coverUrl: coverUrl),
+          ),
         ),
         Positioned(
           top: 0,
@@ -99,17 +109,73 @@ class CommunityCoverHero extends StatelessWidget {
         Positioned(
           left: KolabingSpacing.md,
           bottom: 0,
-          child: _LogoTile(name: name, avatarUrl: avatarUrl),
+          child: _Tappable(
+            onTap: onTapLogo,
+            // A pencil badge only where the tap exists, so the affordance and
+            // the capability cannot disagree.
+            badge: onTapLogo != null,
+            child: _LogoTile(name: name, avatarUrl: avatarUrl),
+          ),
         ),
       ],
     ),
   );
 }
 
-class _Cover extends StatelessWidget {
-  const _Cover({this.avatarUrl, this.coverUrl});
+/// Wraps a hero element in a tap target, and only then advertises it.
+///
+/// With no `onTap` this is the bare child — the attendee-facing page and the
+/// member's view render exactly as before.
+class _Tappable extends StatelessWidget {
+  const _Tappable({required this.child, this.onTap, this.badge = false});
 
-  final String? avatarUrl;
+  final Widget child;
+  final VoidCallback? onTap;
+  final bool badge;
+
+  @override
+  Widget build(BuildContext context) {
+    if (onTap == null) return child;
+
+    // No Positioned.fill and no ClipRRect here. Both elements are already
+    // placed by the hero's own Stack, so filling swallowed the logo tile's
+    // geometry entirely and the rounding leaked onto the cover band.
+    // This wrapper must be size-neutral: it adds a gesture, nothing else.
+    final tappable = Material(
+      color: Colors.transparent,
+      child: InkWell(onTap: onTap, child: child),
+    );
+    if (!badge) return tappable;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        tappable,
+        Positioned(
+          right: -2,
+          bottom: -2,
+          child: Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              shape: BoxShape.circle,
+              border: Border.all(color: context.colors.outlineVariant),
+            ),
+            child: Icon(
+              LucideIcons.pencil,
+              size: 13,
+              color: context.colors.onSurface,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Cover extends StatelessWidget {
+  const _Cover({this.coverUrl});
+
   final String? coverUrl;
 
   @override
@@ -129,27 +195,14 @@ class _Cover extends StatelessWidget {
         ],
       );
     }
-    if (avatarUrl == null) return const _BrandCover();
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        // No cover-photo field exists yet, so the avatar stands in — blurred
-        // hard enough to read as a band of colour, not a stretched logo.
-        ImageFiltered(
-          imageFilter: ui.ImageFilter.blur(
-            sigmaX: 28,
-            sigmaY: 28,
-            tileMode: TileMode.clamp,
-          ),
-          child: Image.network(
-            avatarUrl!,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => const _BrandCover(),
-          ),
-        ),
-        ColoredBox(color: Colors.black.withValues(alpha: 0.16)),
-      ],
-    );
+    // No cover set: the brand band, NOT a blurred copy of the logo.
+    //
+    // The blur used to stand in because there was no cover-photo field to read
+    // — which meant every community's "background" was its own avatar, with no
+    // way to change it. `community_profiles.cover_photo` exists now
+    // (kolabing-v2#239), so an absent cover should look absent rather than
+    // quietly reuse the one picture the community did set.
+    return const _BrandCover();
   }
 }
 

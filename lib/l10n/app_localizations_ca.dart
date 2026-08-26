@@ -8484,4 +8484,45 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get communityManageEventsSubtitle => 'Tot el que tens programat';
+
+  @override
+  String get communityManageCoverSheetTitle => 'Canviar la foto de portada';
+
+  @override
+  String get communityManageCoverSheetBody =>
+      'Tria la fotografia que va darrere del nom de la teva comunitat.';
+
+  @override
+  String get communityManageCoverAdded => 'Foto afegida a la teva comunitat';
+
+  @override
+  String get communityManageCoverFailed => 'No s\'ha pogut afegir la foto';
+
+  @override
+  String get communityRewardsAdminTitle => 'Programa de recompenses';
+
+  @override
+  String get communityRewardsAdminBlurb =>
+      'Defineix amb què guanyen punts els teus membres i en què els poden gastar.';
+
+  @override
+  String communityRewardsGoalTarget(int target) {
+    return 'Objectiu $target';
+  }
+
+  @override
+  String communityRewardsBadgeCriteria(int value) {
+    return 'Es desbloqueja a $value';
+  }
+
+  @override
+  String get communityRewardsPaused => 'En pausa';
+
+  @override
+  String get communityRewardsLoadFailed =>
+      'No s\'ha pogut carregar aquesta llista';
+
+  @override
+  String get communityRewardsDeleteFailed =>
+      'No s\'ha pogut eliminar. Torna-ho a provar.';
 }

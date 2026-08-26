@@ -136,24 +136,33 @@ class ProfileService {
   /// multipart form-data — NOT a base64 data-URI string in JSON, which fails
   /// with HTTP 422 ("validation failed"). Uses POST with `_method=PUT` because
   /// PHP/Laravel does not parse multipart bodies on a real PUT request.
-  Future<UserModel> updateProfilePhotoFile({required String filePath}) =>
-      _updateProfilePhotoFile(filePath: filePath, allowRetry: true);
+  /// [fieldName] picks which picture is being replaced: `profile_photo` (the
+  /// logo, the default) or `cover_photo` (the community's cover band, added in
+  /// kolabing-v2#239). Both are validated the same way server-side, so they
+  /// share this one upload path rather than growing a second copy of it.
+  Future<UserModel> updateProfilePhotoFile({
+    required String filePath,
+    String fieldName = 'profile_photo',
+  }) => _updateProfilePhotoFile(
+    filePath: filePath,
+    fieldName: fieldName,
+    allowRetry: true,
+  );
 
   Future<UserModel> _updateProfilePhotoFile({
     required String filePath,
     required bool allowRetry,
+    String fieldName = 'profile_photo',
   }) async {
     final uri = Uri.parse('$_baseUrl/me/profile');
-    debugPrint('Profile: POST(_method=PUT) $uri [multipart profile_photo]');
+    debugPrint('Profile: POST(_method=PUT) $uri [multipart $fieldName]');
 
     try {
       final token = await _authService.getToken();
       final request = http.MultipartRequest('POST', uri)
         ..headers['Accept'] = 'application/json'
         ..fields['_method'] = 'PUT'
-        ..files.add(
-          await http.MultipartFile.fromPath('profile_photo', filePath),
-        );
+        ..files.add(await http.MultipartFile.fromPath(fieldName, filePath));
       if (token != null) {
         request.headers['Authorization'] = 'Bearer $token';
       }
@@ -170,7 +179,11 @@ class ProfileService {
       } else if (response.statusCode == 401) {
         if (allowRetry) {
           await _authService.refreshSession();
-          return _updateProfilePhotoFile(filePath: filePath, allowRetry: false);
+          return _updateProfilePhotoFile(
+            filePath: filePath,
+            fieldName: fieldName,
+            allowRetry: false,
+          );
         }
         throw const AuthException('Session expired. Please sign in again.');
       } else {

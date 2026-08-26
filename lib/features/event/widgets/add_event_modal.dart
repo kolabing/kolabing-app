@@ -26,7 +26,6 @@ class AddEventModal extends ConsumerStatefulWidget {
 class _AddEventModalState extends ConsumerState<AddEventModal> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _partnerController = TextEditingController();
   final _attendeeCountController = TextEditingController();
 
   DateTime _selectedDate = DateTime.now().subtract(const Duration(days: 30));
@@ -39,7 +38,6 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
   @override
   void dispose() {
     _nameController.dispose();
-    _partnerController.dispose();
     _attendeeCountController.dispose();
     super.dispose();
   }
@@ -138,7 +136,11 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
     try {
       final request = EventCreateRequest(
         name: _nameController.text.trim(),
-        partnerName: _partnerController.text.trim(),
+        // The form no longer asks "Kolab with": a past event a community adds
+        // to its own showcase has no counterpart to name, and making it a
+        // required field meant inventing one to get past validation. The API
+        // still wants `partner_name`, so it carries the event's own name.
+        partnerName: _nameController.text.trim(),
         partnerType: PartnerType.community,
         date: _selectedDate,
         attendeeCount: int.tryParse(_attendeeCountController.text) ?? 0,
@@ -226,7 +228,9 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
 
           Divider(
             height: 1,
-            color: isDark ? context.colors.darkBorder : context.colors.darkBorder,
+            color: isDark
+                ? context.colors.darkBorder
+                : context.colors.darkBorder,
           ),
 
           // Form
@@ -252,22 +256,6 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return l10n.addEventNameError;
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: KolabingSpacing.md),
-
-                    // Partner Name
-                    _buildTextField(
-                      controller: _partnerController,
-                      label: l10n.addEventPartnerLabel,
-                      hint: l10n.addEventPartnerHint,
-                      icon: LucideIcons.users,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return l10n.addEventPartnerError;
                         }
                         return null;
                       },
@@ -375,10 +363,7 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
-              borderSide: BorderSide(
-                color: context.colors.primary,
-                width: 2,
-              ),
+              borderSide: BorderSide(color: context.colors.primary, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: KolabingRadius.borderRadiusMd,
@@ -462,7 +447,9 @@ class _AddEventModalState extends ConsumerState<AddEventModal> {
             ),
             const SizedBox(width: KolabingSpacing.xs),
             Text(
-              AppLocalizations.of(context).addEventPhotosCounter(_selectedPhotos.length),
+              AppLocalizations.of(
+                context,
+              ).addEventPhotosCounter(_selectedPhotos.length),
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: context.colors.textTertiary,
               ),

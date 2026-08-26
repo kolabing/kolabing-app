@@ -68,22 +68,19 @@ class CommunityIdentity extends StatelessWidget {
       .join(' ');
 }
 
-/// Invite link · New event — one row, one gap, equal halves.
+/// The one action that belongs at the top of the page: hand out the invite.
 ///
-/// Both do something real. There is deliberately no "Edit community": the
-/// service has `updateCommunity()` but nothing in the app calls it, and a
-/// control that goes nowhere is worse than an absent one — the same trap the
-/// dead "Save for later" button fell into. What IS editable about a community
-/// already lives in the Community details section further down this page.
+/// It is alone on purpose. "New event" was here and came out — creating an event
+/// is not what a leader opens this page to do, and Manage → Events is one tap
+/// away for it. "Edit community" never shipped either: the service has
+/// `updateCommunity()` but nothing in the app calls it, and a control that goes
+/// nowhere is the trap the dead "Save for later" button already fell into.
+///
+/// Full width rather than half a row with a gap beside nothing.
 class CommunityActionRow extends StatelessWidget {
-  const CommunityActionRow({
-    super.key,
-    required this.community,
-    required this.onNewEvent,
-  });
+  const CommunityActionRow({super.key, required this.community});
 
   final Community community;
-  final VoidCallback onNewEvent;
 
   Future<void> _copyInvite(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
@@ -105,24 +102,10 @@ class CommunityActionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Row(
-      children: [
-        Expanded(
-          child: _ActionButton(
-            icon: LucideIcons.link2,
-            label: l10n.communityManageInvite,
-            onTap: () => _copyInvite(context),
-          ),
-        ),
-        const SizedBox(width: KolabingSpacing.sm),
-        Expanded(
-          child: _ActionButton(
-            icon: LucideIcons.calendarPlus,
-            label: l10n.communityManageNewEvent,
-            onTap: onNewEvent,
-          ),
-        ),
-      ],
+    return _ActionButton(
+      icon: LucideIcons.link2,
+      label: l10n.communityManageInvite,
+      onTap: () => _copyInvite(context),
     );
   }
 }

@@ -8359,4 +8359,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get communityManageEventsSubtitle => 'Everything you have scheduled';
+
+  @override
+  String get communityManageCoverSheetTitle => 'Change cover photo';
+
+  @override
+  String get communityManageCoverSheetBody =>
+      'Pick the photograph that runs behind your community\'s name.';
+
+  @override
+  String get communityManageCoverAdded => 'Photo added to your community';
+
+  @override
+  String get communityManageCoverFailed => 'Could not add that photo';
+
+  @override
+  String get communityRewardsAdminTitle => 'Reward programme';
+
+  @override
+  String get communityRewardsAdminBlurb =>
+      'Set what members earn points for, and what they can spend them on.';
+
+  @override
+  String communityRewardsGoalTarget(int target) {
+    return 'Target $target';
+  }
+
+  @override
+  String communityRewardsBadgeCriteria(int value) {
+    return 'Unlocks at $value';
+  }
+
+  @override
+  String get communityRewardsPaused => 'Paused';
+
+  @override
+  String get communityRewardsLoadFailed => 'Could not load this list';
+
+  @override
+  String get communityRewardsDeleteFailed =>
+      'Could not delete that. Please try again.';
 }

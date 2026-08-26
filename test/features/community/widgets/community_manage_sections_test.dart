@@ -94,23 +94,19 @@ void main() {
     }
   });
 
-  testWidgets('the two actions sit as equal halves and stay one line', (
-    tester,
-  ) async {
-    await _pump(
-      tester,
-      CommunityActionRow(community: _community(), onNewEvent: () {}),
-    );
+  testWidgets('the action row is one full-width invite button', (tester) async {
+    await _pump(tester, CommunityActionRow(community: _community()));
 
     expect(tester.takeException(), isNull);
-    final invite = tester.getRect(find.text('Invite link'));
-    final event = tester.getRect(find.text('New event'));
-
-    // Same baseline: neither button grew taller than the other, which is what
-    // a wrapping label used to do at a longer locale.
-    expect(invite.top, closeTo(event.top, 1));
-    // And the row reads left-to-right in the declared order.
-    expect(invite.left, lessThan(event.left));
+    expect(find.text('Invite link'), findsOneWidget);
+    // "New event" was here and came out: creating an event is not why a leader
+    // opens this page, and Manage -> Events is one tap away.
+    expect(find.text('New event'), findsNothing);
+    // Full width, not half a row with a gap beside nothing.
+    expect(
+      tester.getSize(find.byType(CommunityActionRow)).width,
+      greaterThan(300),
+    );
   });
 
   testWidgets('identity names the community and its meta line', (tester) async {

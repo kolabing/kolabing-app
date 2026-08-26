@@ -25,10 +25,9 @@ import '../providers/community_providers.dart';
 import '../../rewards/providers/wallet_provider.dart';
 import '../widgets/community_manage_sections.dart';
 import '../widgets/community_page_sections.dart';
-import '../providers/community_media_provider.dart';
-import '../../event/widgets/add_event_modal.dart';
-import 'community_detail_screen.dart';
-import '../models/community_membership.dart';
+import 'community_events_screen.dart';
+import 'community_rewards_admin_screen.dart';
+import '../../auth/providers/auth_provider.dart';
 
 // =============================================================================
 // Spacing scale
@@ -545,12 +544,16 @@ class _CommunityProfileScreenState
                   name: community.name,
                   avatarUrl: community.avatarUrl,
                   showBack: false,
-                  coverUrl: ref.watch(
-                    communityCoverPhotoProvider((
-                      communityId: community.id,
-                      ownerProfileId: community.ownerProfileId,
-                    )),
-                  ),
+                  // The logo IS the profile photo — same `POST /me/profile`
+                  // multipart upload the header used to own, now reachable by
+                  // tapping the thing it changes.
+                  onTapLogo: _handleChangePhoto,
+                  onTapCover: _handleChangeCover,
+                  // The community's OWN cover photograph
+                  // (kolabing-v2#239), not a guess taken from its gallery and
+                  // not a blur of its logo. Null until one is set, and the
+                  // hero then paints the brand band rather than the avatar.
+                  coverUrl: profile.communityProfile?.coverPhoto,
                 ),
               )
             else
@@ -569,15 +572,7 @@ class _CommunityProfileScreenState
                   if (community != null) ...[
                     CommunityIdentity(community: community),
                     const SizedBox(height: _sectionGap),
-                    CommunityActionRow(
-                      community: community,
-                      onNewEvent: () => showModalBottomSheet<void>(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (_) => const AddEventModal(),
-                      ),
-                    ),
+                    CommunityActionRow(community: community),
                     const SizedBox(height: _sectionGap),
                     // Manage is present or absent as one block, instead of
                     // twenty separate gates scattered down the page.
@@ -586,22 +581,27 @@ class _CommunityProfileScreenState
                       // The leader's own community, so managing it is the point
                       // of the page; a member never reaches this branch.
                       canManage: community.myCanManage,
-                      // Pushes the existing rich events surface as a MANAGE
-                      // sub-screen. `CommunityDetailScreen` stops being the
-                      // Community tab but stays exactly as good as it was at
-                      // this one job — retiring it from the tab is not a reason
-                      // to throw the working screen away.
+                      // The events surface itself, not the whole old Community
+                      // page with the events at the bottom of it.
                       onOpenEvents: () => Navigator.of(context).push<void>(
                         MaterialPageRoute<void>(
-                          builder: (_) => CommunityDetailScreen(
-                            membership: CommunityMembership(
-                              community: community,
-                              canManage: true,
-                            ),
+                          builder: (_) => CommunityEventsScreen(
+                            community: community,
+                            canManage: true,
                           ),
                         ),
                       ),
-                      onOpenRewards: () => context.push(KolabingRoutes.rewards),
+                      // NOT `/rewards` — that is `PersonalRewardsScreen`, the
+                      // viewer's own points wallet. A leader opening Manage →
+                      // Rewards wants to set what their members can earn and
+                      // redeem, which is its own screen.
+                      onOpenRewards: () => Navigator.of(context).push<void>(
+                        MaterialPageRoute<void>(
+                          builder: (_) => CommunityRewardsAdminScreen(
+                            communityId: community.id,
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: _sectionGap),
                   ] else
@@ -920,6 +920,100 @@ class _CommunityProfileScreenState
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Sets the community's cover photograph.
+  ///
+  /// This used to add a gallery photo and hope, because the cover was derived
+  /// from whichever community photo happened to sort first and there was no
+  /// column to write. `community_profiles.cover_photo` now exists
+  /// (kolabing-v2#239), so this is the same `PUT /me/profile` multipart upload
+  /// the logo uses — one field, one picture, no guessing.
+  Future<void> _handleChangeCover() async {
+    final l10n = AppLocalizations.of(context);
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: context.colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(KolabingRadius.xl),
+        ),
+      ),
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: KolabingSpacing.sm),
+            Text(
+              l10n.communityManageCoverSheetTitle,
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontWeight: FontWeight.w700,
+                color: context.colors.onSurface,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.lg,
+                vertical: KolabingSpacing.xs,
+              ),
+              child: Text(
+                l10n.communityManageCoverSheetBody,
+                textAlign: TextAlign.center,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(LucideIcons.image),
+              title: Text(l10n.communityProfileChooseFromGallery),
+              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(LucideIcons.camera),
+              title: Text(l10n.communityProfileTakePhoto),
+              onTap: () => Navigator.of(context).pop(ImageSource.camera),
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+          ],
+        ),
+      ),
+    );
+    if (source == null) return;
+
+    final picked = await _imagePicker.pickImage(
+      source: source,
+      // Wider than the logo's 512 square: this is a full-bleed band, and
+      // upscaling a 512px file across the screen looks like a mistake.
+      maxWidth: 1600,
+      maxHeight: 1600,
+      imageQuality: 85,
+    );
+    if (picked == null || !mounted) return;
+
+    var ok = false;
+    try {
+      final updated = await ref
+          .read(profileServiceProvider)
+          .updateProfilePhotoFile(
+            filePath: picked.path,
+            fieldName: 'cover_photo',
+          );
+      await ref.read(authProvider.notifier).syncUser(updated);
+      ref.read(profileProvider.notifier).refresh();
+      ok = true;
+    } on Object catch (e) {
+      debugPrint('cover upload failed: $e');
+    }
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          ok ? l10n.communityManageCoverAdded : l10n.communityManageCoverFailed,
         ),
       ),
     );

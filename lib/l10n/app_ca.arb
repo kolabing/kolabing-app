@@ -2458,5 +2458,16 @@
   "communityManageTiers": "Nivells",
   "communityManageTiersSubtitle": "Nivells de membres i què desbloqueja cadascun",
   "communityManageRewardsSubtitle": "Objectius, recompenses i insígnies",
-  "communityManageEventsSubtitle": "Tot el que tens programat"
+  "communityManageEventsSubtitle": "Tot el que tens programat",
+  "communityManageCoverSheetTitle": "Canviar la foto de portada",
+  "communityManageCoverSheetBody": "Tria la fotografia que va darrere del nom de la teva comunitat.",
+  "communityManageCoverAdded": "Foto afegida a la teva comunitat",
+  "communityManageCoverFailed": "No s'ha pogut afegir la foto",
+  "communityRewardsAdminTitle": "Programa de recompenses",
+  "communityRewardsAdminBlurb": "Defineix amb què guanyen punts els teus membres i en què els poden gastar.",
+  "communityRewardsGoalTarget": "Objectiu {target}",
+  "communityRewardsBadgeCriteria": "Es desbloqueja a {value}",
+  "communityRewardsPaused": "En pausa",
+  "communityRewardsLoadFailed": "No s'ha pogut carregar aquesta llista",
+  "communityRewardsDeleteFailed": "No s'ha pogut eliminar. Torna-ho a provar."
 }

@@ -2458,5 +2458,16 @@
   "communityManageTiers": "Niveles",
   "communityManageTiersSubtitle": "Niveles de membresía y qué desbloquea cada uno",
   "communityManageRewardsSubtitle": "Objetivos, recompensas e insignias",
-  "communityManageEventsSubtitle": "Todo lo que tienes programado"
+  "communityManageEventsSubtitle": "Todo lo que tienes programado",
+  "communityManageCoverSheetTitle": "Cambiar la foto de portada",
+  "communityManageCoverSheetBody": "Elige la fotografía que va detrás del nombre de tu comunidad.",
+  "communityManageCoverAdded": "Foto añadida a tu comunidad",
+  "communityManageCoverFailed": "No se ha podido añadir la foto",
+  "communityRewardsAdminTitle": "Programa de recompensas",
+  "communityRewardsAdminBlurb": "Define con qué ganan puntos tus miembros y en qué pueden gastarlos.",
+  "communityRewardsGoalTarget": "Objetivo {target}",
+  "communityRewardsBadgeCriteria": "Se desbloquea en {value}",
+  "communityRewardsPaused": "En pausa",
+  "communityRewardsLoadFailed": "No se ha podido cargar esta lista",
+  "communityRewardsDeleteFailed": "No se ha podido eliminar. Inténtalo de nuevo."
 }

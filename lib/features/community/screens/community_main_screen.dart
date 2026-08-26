@@ -19,9 +19,7 @@ import '../../kolab/providers/my_kolabs_provider.dart';
 import '../../kolab/screens/my_kolabs_hub_screen.dart';
 import '../../rewards/providers/wallet_provider.dart';
 import '../../rewards/widgets/badge_celebration_overlay.dart';
-import '../models/community_membership.dart';
 import '../providers/community_providers.dart';
-import 'community_detail_screen.dart';
 import 'community_hub_screen.dart';
 import 'community_profile_screen.dart';
 

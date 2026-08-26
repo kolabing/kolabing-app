@@ -14731,6 +14731,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Everything you have scheduled'**
   String get communityManageEventsSubtitle;
+
+  /// Title of the change-cover sheet on the community page.
+  ///
+  /// In en, this message translates to:
+  /// **'Change cover photo'**
+  String get communityManageCoverSheetTitle;
+
+  /// Explains that the cover is drawn from the community's photos.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the photograph that runs behind your community\'s name.'**
+  String get communityManageCoverSheetBody;
+
+  /// Confirmation after adding a community photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo added to your community'**
+  String get communityManageCoverAdded;
+
+  /// Shown when adding a community photo fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not add that photo'**
+  String get communityManageCoverFailed;
+
+  /// App bar title of the leader's rewards management screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward programme'**
+  String get communityRewardsAdminTitle;
+
+  /// One-line explainer at the top of the rewards management screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Set what members earn points for, and what they can spend them on.'**
+  String get communityRewardsAdminBlurb;
+
+  /// The number a member has to reach to complete a goal.
+  ///
+  /// In en, this message translates to:
+  /// **'Target {target}'**
+  String communityRewardsGoalTarget(int target);
+
+  /// The threshold at which a badge is awarded.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocks at {value}'**
+  String communityRewardsBadgeCriteria(int value);
+
+  /// Pill on a goal, reward or badge that members cannot currently see.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get communityRewardsPaused;
+
+  /// Shown in place of a goals, rewards or badges list that failed to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load this list'**
+  String get communityRewardsLoadFailed;
+
+  /// Shown when deleting a goal, reward or badge fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete that. Please try again.'**
+  String get communityRewardsDeleteFailed;
 }
 
 class _AppLocalizationsDelegate

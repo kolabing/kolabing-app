@@ -16,8 +16,6 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/cards/kolabing_cards.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../event/providers/event_provider.dart';
-import '../../event/models/event.dart';
-import '../../event/screens/event_detail_screen.dart';
 import '../../profile/providers/public_profile_provider.dart';
 import '../providers/community_media_provider.dart';
 import '../models/community.dart';
@@ -30,8 +28,8 @@ import '../providers/community_rewards_providers.dart';
 import '../services/community_service.dart';
 import '../../../widgets/hero_circle_action.dart';
 import '../widgets/community_page_sections.dart';
-import '../../event/widgets/event_timeline.dart';
-import '../widgets/community_rewards_editor_sheets.dart';
+import '../widgets/community_events_panel.dart';
+import '../widgets/community_rewards_admin_panel.dart';
 import 'roster_screen.dart';
 import 'tier_editor_screen.dart';
 
@@ -202,7 +200,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                   KolabingSpacing.md,
                   0,
                 ),
-                child: _EventsSection(community: c, canManage: _canManage),
+                child: CommunityEventsPanel(
+                  community: c,
+                  canManage: _canManage,
+                ),
               ),
             ),
 
@@ -216,7 +217,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                   0,
                 ),
                 child: _canManage
-                    ? _RewardsLeaderSection(communityId: c.id)
+                    ? CommunityRewardsAdminPanel(communityId: c.id)
                     : _RewardsMemberSection(communityId: c.id),
               ),
             ),
@@ -669,305 +670,6 @@ class _MemberRewardTileState extends ConsumerState<_MemberRewardTile> {
   }
 }
 
-// -----------------------------------------------------------------------------
-// Rewards — LEADER view
-// -----------------------------------------------------------------------------
-
-class _RewardsLeaderSection extends ConsumerWidget {
-  const _RewardsLeaderSection({required this.communityId});
-
-  final String communityId;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final state = ref.watch(communityRewardsAdminProvider(communityId));
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _AddButton(
-                icon: LucideIcons.target,
-                label: l10n.communityRewardsAddGoal,
-                onTap: () => showGoalEditor(context, communityId: communityId),
-              ),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: _AddButton(
-                icon: LucideIcons.gift,
-                label: l10n.communityRewardsAddReward,
-                onTap: () =>
-                    showRewardEditor(context, communityId: communityId),
-              ),
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: _AddButton(
-                icon: LucideIcons.award,
-                label: l10n.communityRewardsAddBadge,
-                onTap: () => showBadgeEditor(context, communityId: communityId),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: KolabingSpacing.lg),
-
-        // Goals
-        CommunitySectionLabel(l10n.communityRewardsGoalsTitle),
-        state.goals.when(
-          loading: () => const _InlineLoader(),
-          error: (e, _) => _emptyLine(context, e.toString()),
-          data: (goals) => goals.isEmpty
-              ? _emptyLine(context, l10n.communityRewardsGoalsEmpty)
-              : Column(
-                  children: [
-                    for (final g in goals)
-                      _LeaderGoalRow(communityId: communityId, goal: g),
-                  ],
-                ),
-        ),
-        const SizedBox(height: KolabingSpacing.lg),
-
-        // Rewards
-        CommunitySectionLabel(l10n.communityRewardsRewardsTitle),
-        state.rewards.when(
-          loading: () => const _InlineLoader(),
-          error: (e, _) => _emptyLine(context, e.toString()),
-          data: (rewards) => rewards.isEmpty
-              ? _emptyLine(context, l10n.communityRewardsRewardsEmpty)
-              : Column(
-                  children: [
-                    for (final r in rewards)
-                      _LeaderRewardRow(communityId: communityId, reward: r),
-                  ],
-                ),
-        ),
-        const SizedBox(height: KolabingSpacing.lg),
-
-        // Badges
-        CommunitySectionLabel(l10n.communityRewardsBadgesTitle),
-        state.badges.when(
-          loading: () => const _InlineLoader(),
-          error: (e, _) => _emptyLine(context, e.toString()),
-          data: (badges) => badges.isEmpty
-              ? _emptyLine(context, l10n.communityRewardsBadgesEmpty)
-              : Column(
-                  children: [
-                    for (final b in badges)
-                      _LeaderBadgeRow(communityId: communityId, badge: b),
-                  ],
-                ),
-        ),
-      ],
-    );
-  }
-}
-
-class _AddButton extends StatelessWidget {
-  const _AddButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: onTap,
-      style: OutlinedButton.styleFrom(
-        foregroundColor: context.colors.onSurface,
-        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, size: 18),
-          const SizedBox(height: 2),
-          Text(
-            '+ $label',
-            style: KolabingTextStyles.bodySmall.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LeaderRowShell extends StatelessWidget {
-  const _LeaderRowShell({
-    required this.title,
-    required this.subtitle,
-    required this.onEdit,
-    required this.onDelete,
-  });
-
-  final String title;
-  final String subtitle;
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
-      child: CompactListCard(
-        onTap: onEdit,
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: KolabingTextStyles.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                      color: context.colors.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: const Icon(LucideIcons.pencil, size: 16),
-              onPressed: onEdit,
-            ),
-            IconButton(
-              icon: Icon(
-                LucideIcons.trash2,
-                size: 16,
-                color: context.colors.error,
-              ),
-              onPressed: onDelete,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _LeaderGoalRow extends ConsumerWidget {
-  const _LeaderGoalRow({required this.communityId, required this.goal});
-
-  final String communityId;
-  final CommunityGoal goal;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    return _LeaderRowShell(
-      title: goal.title,
-      subtitle:
-          '${l10n.communityRewardsGoalReward(goal.rewardPoints)} · ${l10n.communityRewardsGoalProgress(0, goal.target)}',
-      onEdit: () =>
-          showGoalEditor(context, communityId: communityId, goal: goal),
-      onDelete: () => _confirmDelete(context, l10n, goal.title, () async {
-        await ref.read(communityRewardsServiceProvider).deleteGoal(goal.id);
-        ref
-            .read(communityRewardsAdminProvider(communityId).notifier)
-            .reloadGoals();
-      }),
-    );
-  }
-}
-
-class _LeaderRewardRow extends ConsumerWidget {
-  const _LeaderRewardRow({required this.communityId, required this.reward});
-
-  final String communityId;
-  final CommunityReward reward;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    return _LeaderRowShell(
-      title: reward.title,
-      subtitle: l10n.communityRewardsRewardCost(reward.costPoints),
-      onEdit: () =>
-          showRewardEditor(context, communityId: communityId, reward: reward),
-      onDelete: () => _confirmDelete(context, l10n, reward.title, () async {
-        await ref.read(communityRewardsServiceProvider).deleteReward(reward.id);
-        ref
-            .read(communityRewardsAdminProvider(communityId).notifier)
-            .reloadRewards();
-      }),
-    );
-  }
-}
-
-class _LeaderBadgeRow extends ConsumerWidget {
-  const _LeaderBadgeRow({required this.communityId, required this.badge});
-
-  final String communityId;
-  final CommunityBadge badge;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    return _LeaderRowShell(
-      title: badge.title,
-      subtitle: l10n.communityBadgeValueLabel,
-      onEdit: () =>
-          showBadgeEditor(context, communityId: communityId, badge: badge),
-      onDelete: () => _confirmDelete(context, l10n, badge.title, () async {
-        await ref.read(communityRewardsServiceProvider).deleteBadge(badge.id);
-        ref
-            .read(communityRewardsAdminProvider(communityId).notifier)
-            .reloadBadges();
-      }),
-    );
-  }
-}
-
-Future<void> _confirmDelete(
-  BuildContext context,
-  AppLocalizations l10n,
-  String title,
-  Future<void> Function() onConfirm,
-) async {
-  final confirm = await showDialog<bool>(
-    context: context,
-    builder: (_) => AlertDialog(
-      title: Text(l10n.communityRewardsDeleteTitle),
-      content: Text(l10n.communityRewardsDeleteBody(title)),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: Text(l10n.commonCancel),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(true),
-          child: Text(l10n.rosterRemove),
-        ),
-      ],
-    ),
-  );
-  if (confirm != true) return;
-  try {
-    await onConfirm();
-  } on CommunityException catch (e) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.message)));
-    }
-  }
-}
-
 // =============================================================================
 // Members tab — roster grouped by tier
 // =============================================================================
@@ -1273,111 +975,6 @@ class _MemberRow extends StatelessWidget {
 // =============================================================================
 // Events tab — cards with profile picture + visibility badge + view toggle
 // =============================================================================
-
-class _EventsSection extends ConsumerStatefulWidget {
-  const _EventsSection({required this.community, required this.canManage});
-
-  final Community community;
-
-  /// Whether the viewer manages this community. Decides whether tapping an
-  /// event opens it in leader mode — without it a leader reaching their own
-  /// event from here got the member view, with no way to show its check-in QR.
-  final bool canManage;
-
-  @override
-  ConsumerState<_EventsSection> createState() => _EventsSectionState();
-}
-
-class _EventsSectionState extends ConsumerState<_EventsSection> {
-  CommunityEventFilter _filter = CommunityEventFilter.upcoming;
-
-  static bool _isPublic(Event e) => (e.visibility ?? 'members') == 'public';
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final id = widget.community.id;
-
-    final upcomingAsync = ref.watch(communityUpcomingEventsProvider(id));
-    final upcoming = upcomingAsync.maybeWhen(
-      data: (e) => e,
-      orElse: () => const <Event>[],
-    );
-    // Past events make a community between events look alive rather than
-    // abandoned. The provider has existed since NF-6 and nothing called it.
-    final past = ref
-        .watch(communityPastEventsProvider(id))
-        .maybeWhen(data: (e) => e, orElse: () => const <Event>[]);
-
-    final counts = <CommunityEventFilter, int>{
-      CommunityEventFilter.upcoming: upcoming.length,
-      CommunityEventFilter.past: past.length,
-      CommunityEventFilter.publicOnly: upcoming.where(_isPublic).length,
-      CommunityEventFilter.membersOnly: upcoming
-          .where((e) => !_isPublic(e))
-          .length,
-    };
-
-    final shown = switch (_filter) {
-      CommunityEventFilter.upcoming => upcoming,
-      CommunityEventFilter.past => past,
-      CommunityEventFilter.publicOnly => upcoming.where(_isPublic).toList(),
-      CommunityEventFilter.membersOnly =>
-        upcoming.where((e) => !_isPublic(e)).toList(),
-    };
-
-    if (upcomingAsync.isLoading && upcoming.isEmpty && past.isEmpty) {
-      return const _InlineLoader();
-    }
-    // Nothing at all, ever — the honest empty state.
-    if (upcoming.isEmpty && past.isEmpty) return const _NoEvents();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CommunityFilterChips(
-          counts: counts,
-          selected: _filter,
-          onSelect: (f) => setState(() => _filter = f),
-        ),
-        if (shown.isEmpty)
-          _emptyLine(context, l10n.communityDetailNoEventsBody)
-        else
-          EventTimeline(
-            events: shown,
-            onOpen: (event) => Navigator.of(context).push<void>(
-              MaterialPageRoute<void>(
-                builder: (_) => EventDetailScreen.forEvent(
-                  event,
-                  isLeader: widget.canManage,
-                ),
-              ),
-            ),
-            onLocked: (_) => ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(l10n.communityDetailEventLockedSnack)),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-class _NoEvents extends StatelessWidget {
-  const _NoEvents();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
-      child: EmptyStateCard(
-        icon: LucideIcons.calendar,
-        title: l10n.communityDetailNoEventsTitle,
-        message: l10n.communityDetailNoEventsBody,
-      ),
-    );
-  }
-}
 
 // =============================================================================
 // Small shared widgets
