@@ -220,6 +220,7 @@ class CommunityProfile {
     this.tiktok,
     this.website,
     this.profilePhoto,
+    this.coverPhoto,
     this.communitySize,
   });
 
@@ -236,6 +237,7 @@ class CommunityProfile {
         tiktok: json['tiktok'] as String?,
         website: json['website'] as String?,
         profilePhoto: json['profile_photo'] as String?,
+        coverPhoto: json['cover_photo'] as String?,
         communitySize: json['community_size'] is int
             ? json['community_size'] as int
             : int.tryParse('${json['community_size'] ?? ''}'),
@@ -250,6 +252,12 @@ class CommunityProfile {
   final String? tiktok;
   final String? website;
   final String? profilePhoto;
+
+  /// The community's cover photograph — a separate picture from the logo
+  /// (kolabing-v2#239). Null until the community sets one, and the page must
+  /// NOT substitute the logo: a background that is a blurred copy of the avatar
+  /// is the behaviour this field exists to replace.
+  final String? coverPhoto;
 
   /// Approximate member count (backend column `community_profiles.community_size`).
   final int? communitySize;

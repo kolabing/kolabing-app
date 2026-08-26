@@ -8330,4 +8330,73 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get multiKolabErrorGeneric =>
       'Something went wrong. Please try again.';
+
+  @override
+  String get communityManageSectionTitle => 'Manage';
+
+  @override
+  String get communityManageInvite => 'Invite link';
+
+  @override
+  String get communityManageNewEvent => 'New event';
+
+  @override
+  String get communityManageInviteCopied => 'Invite link copied';
+
+  @override
+  String get communityManageInviteUnavailable =>
+      'This community has no invite link yet.';
+
+  @override
+  String get communityManageTiers => 'Tiers';
+
+  @override
+  String get communityManageTiersSubtitle =>
+      'Membership levels and what each unlocks';
+
+  @override
+  String get communityManageRewardsSubtitle => 'Goals, rewards and badges';
+
+  @override
+  String get communityManageEventsSubtitle => 'Everything you have scheduled';
+
+  @override
+  String get communityManageCoverSheetTitle => 'Change cover photo';
+
+  @override
+  String get communityManageCoverSheetBody =>
+      'Pick the photograph that runs behind your community\'s name.';
+
+  @override
+  String get communityManageCoverAdded => 'Photo added to your community';
+
+  @override
+  String get communityManageCoverFailed => 'Could not add that photo';
+
+  @override
+  String get communityRewardsAdminTitle => 'Reward programme';
+
+  @override
+  String get communityRewardsAdminBlurb =>
+      'Set what members earn points for, and what they can spend them on.';
+
+  @override
+  String communityRewardsGoalTarget(int target) {
+    return 'Target $target';
+  }
+
+  @override
+  String communityRewardsBadgeCriteria(int value) {
+    return 'Unlocks at $value';
+  }
+
+  @override
+  String get communityRewardsPaused => 'Paused';
+
+  @override
+  String get communityRewardsLoadFailed => 'Could not load this list';
+
+  @override
+  String get communityRewardsDeleteFailed =>
+      'Could not delete that. Please try again.';
 }

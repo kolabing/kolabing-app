@@ -105,7 +105,7 @@ class _ScriptedDashboardService extends DashboardService {
   int _index = 0;
 
   @override
-  Future<DashboardResponse> getDashboard() async {
+  Future<DashboardResponse> getDashboard({UserType? userType}) async {
     final response =
         responses[_index < responses.length ? _index++ : responses.length - 1];
     if (response is Completer<DashboardResponse>) {

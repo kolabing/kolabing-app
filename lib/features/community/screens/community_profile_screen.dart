@@ -23,8 +23,43 @@ import '../../business/providers/profile_provider.dart';
 import '../../event/widgets/past_events_section.dart';
 import '../providers/community_providers.dart';
 import '../../rewards/providers/wallet_provider.dart';
+import '../widgets/community_manage_sections.dart';
+import '../widgets/community_page_sections.dart';
+import 'community_events_screen.dart';
+import 'community_rewards_admin_screen.dart';
+import '../../auth/providers/auth_provider.dart';
 
-/// Community profile screen
+// =============================================================================
+// Spacing scale
+// =============================================================================
+//
+// Named once, used everywhere on this page. The old page mixed `md` gaps between
+// sections with ad-hoc padding inside the header, which is what made the rhythm
+// look arbitrary and the action buttons sit unevenly (#174).
+
+/// Between two sections.
+const double _sectionGap = KolabingSpacing.lg;
+
+/// Page side padding for everything except the full-bleed hero.
+const double _sidePad = KolabingSpacing.md;
+
+/// One page for seeing AND running your community (#174).
+///
+/// Before this, a leader had the community spread over two screens that
+/// disagreed about their job: the Community tab showed a Luma-style scroll with
+/// management scattered through it behind twenty separate `canManage` gates,
+/// while this page held About / details / contact / notifications / account and
+/// no management at all. So you edited the community in one place and ran it in
+/// another, and neither page was a complete answer.
+///
+/// The order is what a leader actually needs: identity, the two things they do
+/// most (edit, invite), then **Manage**, and only then the descriptive and
+/// account sections. A leader does not open this page to read their own About
+/// text.
+///
+/// The visitor's view is untouched — [AttendeeCommunityProfileScreen] stays the
+/// Luma-shaped page an outsider meets. Two audiences, two pages; the leader
+/// only ever sees this one.
 class CommunityProfileScreen extends ConsumerStatefulWidget {
   const CommunityProfileScreen({super.key});
 
@@ -482,74 +517,131 @@ class _CommunityProfileScreenState
     final about = profile.communityProfile?.about;
     final hasAbout = about != null && about.isNotEmpty;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _buildProfileScreenHeader(isDark),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: () => ref.read(profileProvider.notifier).refresh(),
-            color: context.colors.primary,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(KolabingSpacing.md),
+    // The leader's own community, when they have one. It carries the cover
+    // photo, the member count and everything Manage routes into. A leader with
+    // no community yet simply gets the profile sections.
+    final community = ref
+        .watch(communityManageProvider)
+        .communities
+        .maybeWhen(
+          data: (list) => list.isEmpty ? null : list.first,
+          orElse: () => null,
+        );
+
+    return RefreshIndicator(
+      onRefresh: () => ref.read(profileProvider.notifier).refresh(),
+      color: context.colors.primary,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Full-bleed: the hero owns the screen edges, so it sits OUTSIDE
+            // the page padding every other section shares.
+            if (community != null)
+              Consumer(
+                builder: (context, ref, _) => CommunityCoverHero(
+                  name: community.name,
+                  avatarUrl: community.avatarUrl,
+                  showBack: false,
+                  // The logo IS the profile photo — same `POST /me/profile`
+                  // multipart upload the header used to own, now reachable by
+                  // tapping the thing it changes.
+                  onTapLogo: _handleChangePhoto,
+                  onTapCover: _handleChangeCover,
+                  // The community's OWN cover photograph
+                  // (kolabing-v2#239), not a guess taken from its gallery and
+                  // not a blur of its logo. Null until one is set, and the
+                  // hero then paints the brand band rather than the avatar.
+                  coverUrl: profile.communityProfile?.coverPhoto,
+                ),
+              )
+            else
+              _buildProfileScreenHeader(isDark),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                _sidePad,
+                KolabingSpacing.sm,
+                _sidePad,
+                KolabingSpacing.xxl,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Profile Header Card
-                  _buildProfileHeader(profile, state.isUpdating, isDark),
+                  if (community != null) ...[
+                    CommunityIdentity(community: community),
+                    const SizedBox(height: _sectionGap),
+                    CommunityActionRow(community: community),
+                    const SizedBox(height: _sectionGap),
+                    // Manage is present or absent as one block, instead of
+                    // twenty separate gates scattered down the page.
+                    CommunityManageSection(
+                      community: community,
+                      // The leader's own community, so managing it is the point
+                      // of the page; a member never reaches this branch.
+                      canManage: community.myCanManage,
+                      // The events surface itself, not the whole old Community
+                      // page with the events at the bottom of it.
+                      onOpenEvents: () => Navigator.of(context).push<void>(
+                        MaterialPageRoute<void>(
+                          builder: (_) => CommunityEventsScreen(
+                            community: community,
+                            canManage: true,
+                          ),
+                        ),
+                      ),
+                      // NOT `/rewards` — that is `PersonalRewardsScreen`, the
+                      // viewer's own points wallet. A leader opening Manage →
+                      // Rewards wants to set what their members can earn and
+                      // redeem, which is its own screen.
+                      onOpenRewards: () => Navigator.of(context).push<void>(
+                        MaterialPageRoute<void>(
+                          builder: (_) => CommunityRewardsAdminScreen(
+                            communityId: community.id,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: _sectionGap),
+                  ] else
+                    _buildProfileHeader(profile, state.isUpdating, isDark),
 
-                  const SizedBox(height: KolabingSpacing.md),
-
-                  // About Section
                   if (hasAbout) ...[
                     _buildAboutSection(about, isDark),
-                    const SizedBox(height: KolabingSpacing.md),
+                    const SizedBox(height: _sectionGap),
                   ],
 
-                  // Community details (editable: community size)
                   _buildCommunityDetailsSection(
                     profile,
                     state.isUpdating,
                     isDark,
                   ),
+                  const SizedBox(height: _sectionGap),
 
-                  const SizedBox(height: KolabingSpacing.md),
-
-                  // Gallery Section
                   const ProfileGallerySection(),
+                  const SizedBox(height: _sectionGap),
 
-                  const SizedBox(height: KolabingSpacing.md),
-
-                  // Past Events Section
                   const PastEventsSection(),
+                  const SizedBox(height: _sectionGap),
 
-                  const SizedBox(height: KolabingSpacing.md),
-
-                  // Contact Info Section
                   _buildContactInfoSection(profile, isDark),
+                  const SizedBox(height: _sectionGap),
 
-                  const SizedBox(height: KolabingSpacing.md),
-
-                  // Notification Preferences Section
                   _buildNotificationPreferencesSection(
                     state.notificationPrefs,
                     state.isUpdating,
                     isDark,
                   ),
+                  const SizedBox(height: _sectionGap),
 
-                  const SizedBox(height: KolabingSpacing.md),
-
-                  // Account Section
                   _buildAccountSection(profile.email, state.isUpdating, isDark),
-
-                  const SizedBox(height: KolabingSpacing.xxl),
                 ],
               ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -828,6 +920,100 @@ class _CommunityProfileScreenState
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Sets the community's cover photograph.
+  ///
+  /// This used to add a gallery photo and hope, because the cover was derived
+  /// from whichever community photo happened to sort first and there was no
+  /// column to write. `community_profiles.cover_photo` now exists
+  /// (kolabing-v2#239), so this is the same `PUT /me/profile` multipart upload
+  /// the logo uses — one field, one picture, no guessing.
+  Future<void> _handleChangeCover() async {
+    final l10n = AppLocalizations.of(context);
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: context.colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(KolabingRadius.xl),
+        ),
+      ),
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: KolabingSpacing.sm),
+            Text(
+              l10n.communityManageCoverSheetTitle,
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontWeight: FontWeight.w700,
+                color: context.colors.onSurface,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.lg,
+                vertical: KolabingSpacing.xs,
+              ),
+              child: Text(
+                l10n.communityManageCoverSheetBody,
+                textAlign: TextAlign.center,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(LucideIcons.image),
+              title: Text(l10n.communityProfileChooseFromGallery),
+              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(LucideIcons.camera),
+              title: Text(l10n.communityProfileTakePhoto),
+              onTap: () => Navigator.of(context).pop(ImageSource.camera),
+            ),
+            const SizedBox(height: KolabingSpacing.sm),
+          ],
+        ),
+      ),
+    );
+    if (source == null) return;
+
+    final picked = await _imagePicker.pickImage(
+      source: source,
+      // Wider than the logo's 512 square: this is a full-bleed band, and
+      // upscaling a 512px file across the screen looks like a mistake.
+      maxWidth: 1600,
+      maxHeight: 1600,
+      imageQuality: 85,
+    );
+    if (picked == null || !mounted) return;
+
+    var ok = false;
+    try {
+      final updated = await ref
+          .read(profileServiceProvider)
+          .updateProfilePhotoFile(
+            filePath: picked.path,
+            fieldName: 'cover_photo',
+          );
+      await ref.read(authProvider.notifier).syncUser(updated);
+      ref.read(profileProvider.notifier).refresh();
+      ok = true;
+    } on Object catch (e) {
+      debugPrint('cover upload failed: $e');
+    }
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          ok ? l10n.communityManageCoverAdded : l10n.communityManageCoverFailed,
         ),
       ),
     );

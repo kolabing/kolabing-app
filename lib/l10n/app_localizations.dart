@@ -14677,6 +14677,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong. Please try again.'**
   String get multiKolabErrorGeneric;
+
+  /// Section heading above the leader's management rows.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get communityManageSectionTitle;
+
+  /// Action: copy the community's invite link.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite link'**
+  String get communityManageInvite;
+
+  /// Action: create a new community event.
+  ///
+  /// In en, this message translates to:
+  /// **'New event'**
+  String get communityManageNewEvent;
+
+  /// Confirmation after copying the invite link.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite link copied'**
+  String get communityManageInviteCopied;
+
+  /// Shown when the community has no invite link.
+  ///
+  /// In en, this message translates to:
+  /// **'This community has no invite link yet.'**
+  String get communityManageInviteUnavailable;
+
+  /// Manage row: membership tiers.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiers'**
+  String get communityManageTiers;
+
+  /// Subtitle for the tiers management row.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership levels and what each unlocks'**
+  String get communityManageTiersSubtitle;
+
+  /// Subtitle for the rewards management row.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals, rewards and badges'**
+  String get communityManageRewardsSubtitle;
+
+  /// Subtitle for the events management row.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you have scheduled'**
+  String get communityManageEventsSubtitle;
+
+  /// Title of the change-cover sheet on the community page.
+  ///
+  /// In en, this message translates to:
+  /// **'Change cover photo'**
+  String get communityManageCoverSheetTitle;
+
+  /// Explains that the cover is drawn from the community's photos.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the photograph that runs behind your community\'s name.'**
+  String get communityManageCoverSheetBody;
+
+  /// Confirmation after adding a community photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo added to your community'**
+  String get communityManageCoverAdded;
+
+  /// Shown when adding a community photo fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not add that photo'**
+  String get communityManageCoverFailed;
+
+  /// App bar title of the leader's rewards management screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward programme'**
+  String get communityRewardsAdminTitle;
+
+  /// One-line explainer at the top of the rewards management screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Set what members earn points for, and what they can spend them on.'**
+  String get communityRewardsAdminBlurb;
+
+  /// The number a member has to reach to complete a goal.
+  ///
+  /// In en, this message translates to:
+  /// **'Target {target}'**
+  String communityRewardsGoalTarget(int target);
+
+  /// The threshold at which a badge is awarded.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocks at {value}'**
+  String communityRewardsBadgeCriteria(int value);
+
+  /// Pill on a goal, reward or badge that members cannot currently see.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get communityRewardsPaused;
+
+  /// Shown in place of a goals, rewards or badges list that failed to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load this list'**
+  String get communityRewardsLoadFailed;
+
+  /// Shown when deleting a goal, reward or badge fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not delete that. Please try again.'**
+  String get communityRewardsDeleteFailed;
 }
 
 class _AppLocalizationsDelegate

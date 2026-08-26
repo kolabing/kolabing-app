@@ -8411,4 +8411,74 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get multiKolabErrorGeneric =>
       'Algo ha salido mal. Intentalo de nuevo.';
+
+  @override
+  String get communityManageSectionTitle => 'Gestionar';
+
+  @override
+  String get communityManageInvite => 'Enlace de invitación';
+
+  @override
+  String get communityManageNewEvent => 'Nuevo evento';
+
+  @override
+  String get communityManageInviteCopied => 'Enlace de invitación copiado';
+
+  @override
+  String get communityManageInviteUnavailable =>
+      'Esta comunidad aún no tiene enlace de invitación.';
+
+  @override
+  String get communityManageTiers => 'Niveles';
+
+  @override
+  String get communityManageTiersSubtitle =>
+      'Niveles de membresía y qué desbloquea cada uno';
+
+  @override
+  String get communityManageRewardsSubtitle =>
+      'Objetivos, recompensas e insignias';
+
+  @override
+  String get communityManageEventsSubtitle => 'Todo lo que tienes programado';
+
+  @override
+  String get communityManageCoverSheetTitle => 'Cambiar la foto de portada';
+
+  @override
+  String get communityManageCoverSheetBody =>
+      'Elige la fotografía que va detrás del nombre de tu comunidad.';
+
+  @override
+  String get communityManageCoverAdded => 'Foto añadida a tu comunidad';
+
+  @override
+  String get communityManageCoverFailed => 'No se ha podido añadir la foto';
+
+  @override
+  String get communityRewardsAdminTitle => 'Programa de recompensas';
+
+  @override
+  String get communityRewardsAdminBlurb =>
+      'Define con qué ganan puntos tus miembros y en qué pueden gastarlos.';
+
+  @override
+  String communityRewardsGoalTarget(int target) {
+    return 'Objetivo $target';
+  }
+
+  @override
+  String communityRewardsBadgeCriteria(int value) {
+    return 'Se desbloquea en $value';
+  }
+
+  @override
+  String get communityRewardsPaused => 'En pausa';
+
+  @override
+  String get communityRewardsLoadFailed => 'No se ha podido cargar esta lista';
+
+  @override
+  String get communityRewardsDeleteFailed =>
+      'No se ha podido eliminar. Inténtalo de nuevo.';
 }
