@@ -21,6 +21,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../discovery/models/discovery_filters.dart';
 import '../../discovery/models/discovery_item.dart';
+import '../../discovery/models/explore_feed_item.dart';
 import '../../discovery/providers/discovery_provider.dart';
 import '../../discovery/widgets/discovery_quick_filters.dart';
 import '../../moderation/providers/blocked_profiles_provider.dart';
@@ -36,17 +37,25 @@ const double _fabClearance = 88;
 
 /// The Explore deck's item filter, extracted so it can be unit-tested.
 ///
-/// Drops, in order: the viewer's own posts (can't collaborate with yourself),
-/// posts by a blocked creator ([blockedProfileIds] — App Review 1.2 instant
-/// client-side hide), and date-exhausted Kolabs (no longer open for applying).
-List<DiscoveryItem> filterExploreDeckItems(
-  List<DiscoveryItem> items, {
+/// Applies to EVERY feed item type. Drops, in order: the viewer's own posts
+/// (can't collaborate with yourself), posts by a blocked creator
+/// ([blockedProfileIds] — App Review 1.2 instant client-side hide), and then
+/// a per-type availability rule:
+///
+///  * ordinary Kolab offer — must still be open for applications by date;
+///  * Multi-Kolab role — must be open, have a remaining position, and match
+///    the viewer's feed (a Community role only reaches Community Explore, a
+///    Business role only Business Explore, an `either` role both). This is
+///    the single place that eligibility routing happens.
+List<ExploreFeedItem> filterExploreDeckItems(
+  List<ExploreFeedItem> items, {
   required Set<String> blockedProfileIds,
   required String? myProfileId,
   required DateTime today,
+  required bool isCommunityViewer,
 }) {
-  return items.where((DiscoveryItem item) {
-    final creatorId = item.creatorProfile.id;
+  return items.where((ExploreFeedItem item) {
+    final creatorId = item.creatorProfileId;
     if (myProfileId != null &&
         myProfileId.isNotEmpty &&
         creatorId.isNotEmpty &&
@@ -56,7 +65,17 @@ List<DiscoveryItem> filterExploreDeckItems(
     if (creatorId.isNotEmpty && blockedProfileIds.contains(creatorId)) {
       return false;
     }
-    return opportunityApplicationsOpen(item.toOpportunity(), today: today);
+
+    return switch (item) {
+      ExploreOfferItem(:final offer) => opportunityApplicationsOpen(
+        offer.toOpportunity(),
+        today: today,
+      ),
+      ExploreMultiKolabRoleItem(:final role) => role.isVisibleInExplore(
+        isCommunityViewer: isCommunityViewer,
+        viewerProfileId: myProfileId,
+      ),
+    };
   }).toList();
 }
 
@@ -112,18 +131,39 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   /// ownership signal the detail screen's preview-mode already trusts. Used to
   /// keep your own kolab out of Explore and block self-application.
   bool _isOwnItem(DiscoveryItem item) {
-    final user = ref.read(authProvider).user;
-    if (user == null) return false;
-    final myProfileId = user.communityProfile?.id ?? user.businessProfile?.id;
+    final myProfileId = _viewerProfileId;
     if (myProfileId == null || myProfileId.isEmpty) return false;
     final creatorId = item.creatorProfile.id;
     return creatorId.isNotEmpty && creatorId == myProfileId;
+  }
+
+  String? get _viewerProfileId {
+    final user = ref.read(authProvider).user;
+    return user?.communityProfile?.id ?? user?.businessProfile?.id;
   }
 
   void _onPageChanged(int index) {
     final listState = ref.read(discoveryListProvider);
     if (index >= listState.items.length - 2) {
       ref.read(discoveryListProvider.notifier).loadMore();
+    }
+  }
+
+  /// Routes a tap to the right destination for the item's type. A
+  /// Multi-Kolab role opens the shared event-detail screen focused on that
+  /// role (parent-event context and the event's other roles stay visible
+  /// below it); an ordinary offer opens the existing detail sheet.
+  void _onFeedItemTap(ExploreFeedItem item, {required bool hasSubscription}) {
+    switch (item) {
+      case ExploreOfferItem(:final offer):
+        _onCardTap(offer, hasSubscription: hasSubscription);
+      case ExploreMultiKolabRoleItem(:final role):
+        context.push(
+          multiKolabRoleDetailLocation(
+            eventId: role.eventId,
+            roleId: role.roleId,
+          ),
+        );
     }
   }
 
@@ -164,11 +204,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           ? null
           : () {
               Navigator.of(context).pop();
-              ProfileLink.open(
-                context,
-                ref,
-                profileId: item.creatorProfile.id,
-              );
+              ProfileLink.open(context, ref, profileId: item.creatorProfile.id);
             },
       // When the business is free, the Apply button becomes an "unlock" CTA that
       // opens the paywall sheet. This is the gate — there is NO discovery-level
@@ -569,6 +605,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     );
   }
 
+  /// The page we have already auto-requested a follow-up for after the whole
+  /// page was filtered out. Stops the empty-deck recovery from looping.
+  int? _autoLoadedPage;
+
   Widget _buildCardPageView(
     DiscoveryListState listState, {
     required bool hasBusinessSubscription,
@@ -585,7 +625,30 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       blockedProfileIds: blocked,
       myProfileId: myProfileId,
       today: today,
+      isCommunityViewer: _isCommunityViewer,
     );
+
+    // A whole page can be filtered away — a Business viewer whose page happens
+    // to be all community-only roles. `listState.isEmpty` in build() only knows
+    // the UNFILTERED list, so without this the deck rendered zero pages, and
+    // because `_onPageChanged` is the only load-more trigger it could never
+    // fire: a permanently dead feed with no empty state. Ask for the next page
+    // instead, and only call it empty when there is nothing left to ask for.
+    if (activeItems.isEmpty && !listState.isLoadingMore) {
+      // Once per page, never once per frame: an unguarded request here rebuilds,
+      // finds the deck still empty and asks again, and the screen never settles.
+      if (listState.hasMore && _autoLoadedPage != listState.currentPage) {
+        _autoLoadedPage = listState.currentPage;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) ref.read(discoveryListProvider.notifier).loadMore();
+        });
+      }
+      // The empty state, not a spinner: right now there genuinely is nothing to
+      // show, and a spinner that may never resolve is a worse answer than an
+      // honest one. The deck replaces this by itself when the page we just
+      // asked for arrives with something eligible on it.
+      return _buildEmptyState(ref.read(discoveryFiltersProvider));
+    }
 
     final itemCount = activeItems.length + (listState.isLoadingMore ? 1 : 0);
 
@@ -594,6 +657,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: _fabClearance),
       child: PageView.builder(
+        key: const Key('explore-deck'),
         controller: _pageController,
         scrollDirection: Axis.vertical,
         onPageChanged: _onPageChanged,
@@ -610,27 +674,56 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
           final item = activeItems[index];
           // Blur the community identity only for a FREE business; subscribing
-          // reveals it (§2.6).
+          // reveals it (§2.6). Only ordinary community offers carry a
+          // creator identity to hide.
+          final isCommunityRequest =
+              item is ExploreOfferItem && item.offer.isCommunityRequest;
+          // A Multi-Kolab role card is blurred for a free business too. The
+          // Explore payload's `creator_profile` carries no profile TYPE, so the
+          // app cannot tell a community organizer from a business one — and the
+          // contract says `image_url` always falls back to the organizer's
+          // avatar (a Multi-Kolab event has no cover-photo column). Left
+          // unblurred, a free business saw a community's logo on every
+          // community-organized role, which is the disclosure §2.6 forbids.
+          // Over-blurring a business-organized role is the safe side of that
+          // trade; the precise fix is a `creator_profile.type` on the role
+          // payload.
+          final isMultiKolabRole = item is ExploreMultiKolabRoleItem;
           final hideCreatorIdentity =
               !_isCommunityViewer &&
-              item.isCommunityRequest &&
+              (isCommunityRequest || isMultiKolabRole) &&
               !hasBusinessSubscription;
+
+          // Saving is backed by `GET/POST /kolabs?saved=1`, which is keyed by
+          // a concrete Kolab id. A Multi-Kolab ROLE has no Kolab id, and
+          // reusing the role id here would silently save the wrong record —
+          // so the bookmark control is offered only where it has a real
+          // target. See the Task 9 follow-up note about a typed save target.
+          final saveableKolabId = switch (item) {
+            ExploreOfferItem(:final offer) =>
+              offer.id.isNotEmpty ? offer.id : null,
+            ExploreMultiKolabRoleItem() => null,
+          };
+
           return Stack(
+            key: Key('explore-feed-item-${item.feedKey}'),
             children: [
               ExploreSwipeCard(
                 item: item,
-                showKolabFirst: !_isCommunityViewer && item.isCommunityRequest,
+                showKolabFirst: !_isCommunityViewer && isCommunityRequest,
                 hideCreatorIdentity: hideCreatorIdentity,
-                onTap: () =>
-                    _onCardTap(item, hasSubscription: hasBusinessSubscription),
+                onTap: () => _onFeedItemTap(
+                  item,
+                  hasSubscription: hasBusinessSubscription,
+                ),
               ),
-              if (item.id.isNotEmpty)
+              if (saveableKolabId != null)
                 Positioned(
                   top: KolabingSpacing.md,
                   right: KolabingSpacing.md,
                   child: _SaveBookmarkButton(
-                    isSaved: savedIds.contains(item.id),
-                    onTap: () => _toggleSaved(item.id),
+                    isSaved: savedIds.contains(saveableKolabId),
+                    onTap: () => _toggleSaved(saveableKolabId),
                   ),
                 ),
             ],

@@ -157,6 +157,10 @@ class GoogleAttributionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     'Powered by Google',
-    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textTertiary),
+    style: KolabingTextStyles.bodySmall.copyWith(
+      fontSize: 12,
+      fontWeight: FontWeight.w600,
+      color: context.colors.textTertiary,
+    ),
   );
 }

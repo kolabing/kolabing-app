@@ -8,7 +8,7 @@ import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../models/discovery_filters.dart';
-import '../models/discovery_item.dart';
+import '../models/explore_feed_item.dart';
 
 const String _baseUrl = ApiConfig.baseUrl;
 
@@ -22,7 +22,7 @@ class DiscoveryService {
 
   AuthService get authService => _authService;
 
-  Future<PaginatedResponse<DiscoveryItem>> getOpportunities({
+  Future<PaginatedResponse<ExploreFeedItem>> getOpportunities({
     DiscoveryFilters filters = const DiscoveryFilters(),
     int page = 1,
     int perPage = 15,
@@ -33,7 +33,7 @@ class DiscoveryService {
     allowRetry: true,
   );
 
-  Future<PaginatedResponse<DiscoveryItem>> _getOpportunities({
+  Future<PaginatedResponse<ExploreFeedItem>> _getOpportunities({
     required DiscoveryFilters filters,
     required int page,
     required int perPage,
@@ -107,17 +107,17 @@ class DiscoveryService {
     };
   }
 
-  PaginatedResponse<DiscoveryItem> _parsePaginatedResponse(String body) {
+  PaginatedResponse<ExploreFeedItem> _parsePaginatedResponse(String body) {
     final json = jsonDecode(body) as Map<String, dynamic>;
     final payload = (json['data'] as Map<String, dynamic>?) ?? json;
     final items = (payload['data'] as List<dynamic>? ?? const <dynamic>[])
         .whereType<Map<String, dynamic>>()
-        .map(DiscoveryItem.fromJson)
+        .map(ExploreFeedItem.fromJson)
         .toList();
 
     final meta = (payload['meta'] as Map<String, dynamic>?) ?? payload;
 
-    return PaginatedResponse<DiscoveryItem>(
+    return PaginatedResponse<ExploreFeedItem>(
       data: items,
       currentPage: _parseInt(meta['current_page']) ?? 1,
       lastPage: _parseInt(meta['last_page']) ?? 1,

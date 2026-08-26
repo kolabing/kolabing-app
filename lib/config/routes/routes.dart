@@ -29,6 +29,13 @@ import '../../features/friends/screens/friends_screen.dart';
 import '../../features/gamification/gamification.dart';
 import '../../features/kolab/models/kolab.dart';
 import '../../features/missions/screens/missions_screen.dart';
+import '../../features/multi_kolab/screens/multi_kolab_event_detail_screen.dart';
+import '../../features/multi_kolab/screens/multi_kolab_applicant_review_screen.dart';
+import '../../features/multi_kolab/screens/multi_kolab_event_editor_screen.dart';
+import '../../features/multi_kolab/screens/multi_kolab_event_management_screen.dart';
+import '../../features/multi_kolab/screens/multi_kolab_organizer_dashboard_screen.dart';
+import '../../features/multi_kolab/screens/multi_kolab_publish_review_screen.dart';
+import '../../features/multi_kolab/screens/multi_kolab_role_editor_screen.dart';
 import '../../features/kolab/screens/intent_selection_screen.dart';
 import '../../features/kolab/screens/kolab_flow_screen.dart';
 import '../../features/notification/screens/notifications_screen.dart';
@@ -241,6 +248,58 @@ abstract final class KolabingRoutes {
 
   /// Opportunity detail screen
   static const String opportunityDetails = '/opportunity/:id';
+
+  /// Multi-Kolab Event MVP — event detail + applicant flow.
+  ///
+  /// There is deliberately NO standalone Multi-Kolab browse route: open
+  /// roles are ordinary cards in the main Explore feed, and this screen is
+  /// reached by tapping one (see [multiKolabRoleDetailLocation]).
+  static const String multiKolabEventDetail = '/multi-kolab-events/:id';
+
+  /// Query parameter naming which role the detail screen should open
+  /// focused on.
+  static const String multiKolabFocusedRoleQueryParam = 'role';
+
+  // --- Multi-Kolab ORGANIZER area (Task 10) --------------------------------
+  //
+  // Deliberately under a distinct `/organizer/...` prefix rather than
+  // `/multi-kolab-events/...`: GoRouter would otherwise match
+  // `/multi-kolab-events/new` against the applicant-facing
+  // [multiKolabEventDetail] route with `id = "new"`.
+
+  /// Organizer's Multi-Kolab events overview.
+  static const String multiKolabOrganizerEvents = '/organizer/multi-kolab-events';
+
+  /// Create a new Multi-Kolab event draft.
+  static const String multiKolabOrganizerEventNew =
+      '/organizer/multi-kolab-events/new';
+
+  /// Manage one Multi-Kolab event (overview / roles / applicants).
+  static const String multiKolabOrganizerEvent =
+      '/organizer/multi-kolab-events/:id';
+
+  /// Edit an existing Multi-Kolab event draft.
+  static const String multiKolabOrganizerEventEdit =
+      '/organizer/multi-kolab-events/:id/edit';
+
+  /// Pre-publish review for one Multi-Kolab event.
+  static const String multiKolabOrganizerEventReview =
+      '/organizer/multi-kolab-events/:id/review';
+
+  /// Add a partner role to one Multi-Kolab event.
+  static const String multiKolabOrganizerRoleNew =
+      '/organizer/multi-kolab-events/:id/roles/new';
+
+  /// Edit one partner role.
+  static const String multiKolabOrganizerRoleEdit =
+      '/organizer/multi-kolab-events/:id/roles/:roleId';
+
+  /// Organizer applicant review for one role.
+  static const String multiKolabOrganizerRoleApplications =
+      '/organizer/multi-kolab-roles/:roleId/applications';
+
+  /// Query parameter selecting which management tab to open.
+  static const String multiKolabOrganizerTabQueryParam = 'tab';
 
   /// Collaboration detail screen
   static const String collaborationDetails = '/collaboration/:id';
@@ -840,6 +899,90 @@ final GoRouter kolabingRouter = GoRouter(
         );
       },
     ),
+    // --- Multi-Kolab ORGANIZER area (Task 10) -----------------------------
+    GoRoute(
+      path: KolabingRoutes.multiKolabOrganizerEvents,
+      name: 'multiKolabOrganizerEvents',
+      builder: (BuildContext context, GoRouterState state) =>
+          const MultiKolabOrganizerDashboardScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.multiKolabOrganizerEventNew,
+      name: 'multiKolabOrganizerEventNew',
+      builder: (BuildContext context, GoRouterState state) =>
+          const MultiKolabEventEditorScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.multiKolabOrganizerEventEdit,
+      name: 'multiKolabOrganizerEventEdit',
+      builder: (BuildContext context, GoRouterState state) =>
+          MultiKolabEventEditorScreen(
+            eventId: state.pathParameters['id'] ?? '',
+          ),
+    ),
+    GoRoute(
+      path: KolabingRoutes.multiKolabOrganizerEventReview,
+      name: 'multiKolabOrganizerEventReview',
+      builder: (BuildContext context, GoRouterState state) =>
+          MultiKolabPublishReviewScreen(
+            eventId: state.pathParameters['id'] ?? '',
+          ),
+    ),
+    GoRoute(
+      path: KolabingRoutes.multiKolabOrganizerRoleNew,
+      name: 'multiKolabOrganizerRoleNew',
+      builder: (BuildContext context, GoRouterState state) =>
+          MultiKolabRoleEditorScreen(
+            eventId: state.pathParameters['id'] ?? '',
+          ),
+    ),
+    GoRoute(
+      path: KolabingRoutes.multiKolabOrganizerRoleEdit,
+      name: 'multiKolabOrganizerRoleEdit',
+      builder: (BuildContext context, GoRouterState state) =>
+          MultiKolabRoleEditorScreen(
+            eventId: state.pathParameters['id'] ?? '',
+            roleId: state.pathParameters['roleId'],
+          ),
+    ),
+    GoRoute(
+      path: KolabingRoutes.multiKolabOrganizerRoleApplications,
+      name: 'multiKolabOrganizerRoleApplications',
+      builder: (BuildContext context, GoRouterState state) =>
+          MultiKolabApplicantReviewScreen(
+            roleId: state.pathParameters['roleId'] ?? '',
+            eventId: state.uri.queryParameters['event'] ?? '',
+          ),
+    ),
+    // Registered LAST of the organizer group so the more specific
+    // `/new`, `/:id/edit`, `/:id/review` and `/:id/roles/...` paths win.
+    GoRoute(
+      path: KolabingRoutes.multiKolabOrganizerEvent,
+      name: 'multiKolabOrganizerEvent',
+      builder: (BuildContext context, GoRouterState state) =>
+          MultiKolabEventManagementScreen(
+            eventId: state.pathParameters['id'] ?? '',
+            initialTab: state
+                .uri
+                .queryParameters[KolabingRoutes.multiKolabOrganizerTabQueryParam],
+          ),
+    ),
+    GoRoute(
+      path: KolabingRoutes.multiKolabEventDetail,
+      name: 'multiKolabEventDetail',
+      builder: (BuildContext context, GoRouterState state) {
+        final id = state.pathParameters['id'] ?? '';
+        final focusedRoleId = state
+            .uri
+            .queryParameters[KolabingRoutes.multiKolabFocusedRoleQueryParam];
+        return MultiKolabEventDetailScreen(
+          eventId: id,
+          focusedRoleId: (focusedRoleId != null && focusedRoleId.isNotEmpty)
+              ? focusedRoleId
+              : null,
+        );
+      },
+    ),
     GoRoute(
       path: '/collaboration/:id',
       name: 'collaborationDetails',
@@ -1091,4 +1234,70 @@ class _RouteNotFoundScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Location of the organizer's management screen for [eventId], optionally
+/// opening a specific [tab] (`overview` | `roles` | `applicants`).
+String multiKolabOrganizerEventLocation(String eventId, {String? tab}) {
+  final path = KolabingRoutes.multiKolabOrganizerEvent.replaceFirst(
+    ':id',
+    Uri.encodeComponent(eventId),
+  );
+  if (tab == null || tab.isEmpty) return path;
+  return '$path?${KolabingRoutes.multiKolabOrganizerTabQueryParam}='
+      '${Uri.encodeQueryComponent(tab)}';
+}
+
+/// Location of the draft editor for [eventId].
+String multiKolabOrganizerEventEditLocation(String eventId) =>
+    KolabingRoutes.multiKolabOrganizerEventEdit.replaceFirst(
+      ':id',
+      Uri.encodeComponent(eventId),
+    );
+
+/// Location of the pre-publish review screen for [eventId].
+String multiKolabOrganizerEventReviewLocation(String eventId) =>
+    KolabingRoutes.multiKolabOrganizerEventReview.replaceFirst(
+      ':id',
+      Uri.encodeComponent(eventId),
+    );
+
+/// Location of the role editor — creating when [roleId] is null.
+String multiKolabOrganizerRoleLocation(String eventId, {String? roleId}) {
+  if (roleId == null || roleId.isEmpty) {
+    return KolabingRoutes.multiKolabOrganizerRoleNew.replaceFirst(
+      ':id',
+      Uri.encodeComponent(eventId),
+    );
+  }
+  return KolabingRoutes.multiKolabOrganizerRoleEdit
+      .replaceFirst(':id', Uri.encodeComponent(eventId))
+      .replaceFirst(':roleId', Uri.encodeComponent(roleId));
+}
+
+/// Location of the organizer's applicant review for one role.
+String multiKolabOrganizerRoleApplicationsLocation({
+  required String eventId,
+  required String roleId,
+}) {
+  final path = KolabingRoutes.multiKolabOrganizerRoleApplications.replaceFirst(
+    ':roleId',
+    Uri.encodeComponent(roleId),
+  );
+  return '$path?event=${Uri.encodeQueryComponent(eventId)}';
+}
+
+/// Builds the location for the Multi-Kolab event detail screen, focused on
+/// [roleId]. Used when a role card is tapped in the Explore feed.
+String multiKolabRoleDetailLocation({
+  required String eventId,
+  required String roleId,
+}) {
+  final path = KolabingRoutes.multiKolabEventDetail.replaceFirst(
+    ':id',
+    Uri.encodeComponent(eventId),
+  );
+  if (roleId.isEmpty) return path;
+  return '$path?${KolabingRoutes.multiKolabFocusedRoleQueryParam}='
+      '${Uri.encodeQueryComponent(roleId)}';
 }

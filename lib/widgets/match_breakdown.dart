@@ -39,11 +39,7 @@ class MatchBreakdown extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (var i = 0; i < signals.length; i++) ...[
-          _SignalRow(
-            signal: signals[i],
-            accent: accent,
-            compact: compact,
-          ),
+          _SignalRow(signal: signals[i], accent: accent, compact: compact),
           if (i < signals.length - 1) SizedBox(height: rowGap),
         ],
       ],
@@ -79,7 +75,11 @@ class _SignalRow extends StatelessWidget {
             signal.label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurfaceVariant, letterSpacing: 0.2),
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontWeight: FontWeight.w600,
+              color: context.colors.onSurfaceVariant,
+              letterSpacing: 0.2,
+            ),
           ),
         ),
         const SizedBox(width: 8),

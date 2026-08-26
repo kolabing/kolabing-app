@@ -139,7 +139,9 @@ class _CardThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).extension<KolabingColorTokens>() ?? KolabingColorTokens.light;
+    final colors =
+        Theme.of(context).extension<KolabingColorTokens>() ??
+        KolabingColorTokens.light;
 
     Widget imageWidget;
     if (imageUrl != null && imageUrl!.isNotEmpty) {
@@ -168,7 +170,10 @@ class _CardThumbnail extends StatelessWidget {
           ),
         ],
       ),
-      child: ClipRRect(borderRadius: KolabingRadius.borderRadiusThumbnail, child: imageWidget),
+      child: ClipRRect(
+        borderRadius: KolabingRadius.borderRadiusThumbnail,
+        child: imageWidget,
+      ),
     );
   }
 

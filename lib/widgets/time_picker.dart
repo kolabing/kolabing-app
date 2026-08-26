@@ -27,13 +27,12 @@ class KolabingTimePicker extends StatefulWidget {
   static Future<TimeOfDay?> show(
     BuildContext context, {
     required TimeOfDay initialTime,
-  }) =>
-      showModalBottomSheet<TimeOfDay>(
-        context: context,
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-        builder: (_) => KolabingTimePicker(initialTime: initialTime),
-      );
+  }) => showModalBottomSheet<TimeOfDay>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    builder: (_) => KolabingTimePicker(initialTime: initialTime),
+  );
 
   @override
   State<KolabingTimePicker> createState() => _KolabingTimePickerState();
@@ -112,7 +111,11 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
               // Title
               Text(
                 'Select Time',
-                style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 17, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.onSurface,
+                ),
               ),
               const SizedBox(height: KolabingSpacing.md),
 
@@ -147,8 +150,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                             controller: _hourController,
                             count: 24,
                             selected: _hour,
-                            onChanged: (i) =>
-                                setState(() => _hour = i % 24),
+                            onChanged: (i) => setState(() => _hour = i % 24),
                           ),
                         ),
 
@@ -157,7 +159,11 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                           padding: const EdgeInsets.symmetric(horizontal: 6),
                           child: Text(
                             ':',
-                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 30, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+                            style: KolabingTextStyles.bodyLarge.copyWith(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w700,
+                              color: context.colors.onSurface,
+                            ),
                           ),
                         ),
 
@@ -169,8 +175,7 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                             controller: _minuteController,
                             count: 60,
                             selected: _minute,
-                            onChanged: (i) =>
-                                setState(() => _minute = i % 60),
+                            onChanged: (i) => setState(() => _minute = i % 60),
                           ),
                         ),
                       ],
@@ -234,37 +239,39 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: context.colors.onSurfaceVariant,
                         side: BorderSide(color: context.colors.darkBorder),
-                        padding:
-                            const EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: Text(
                         'CANCEL',
-                        style: KolabingTextStyles.button.copyWith(letterSpacing: 0.5),
+                        style: KolabingTextStyles.button.copyWith(
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: KolabingSpacing.sm),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(
-                        TimeOfDay(hour: _hour, minute: _minute),
-                      ),
+                      onPressed: () => Navigator.of(
+                        context,
+                      ).pop(TimeOfDay(hour: _hour, minute: _minute)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: context.colors.primary,
                         foregroundColor: context.colors.onPrimary,
                         elevation: 0,
-                        padding:
-                            const EdgeInsets.symmetric(vertical: 14),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: Text(
                         'CONFIRM',
-                        style: KolabingTextStyles.button.copyWith(letterSpacing: 0.5),
+                        style: KolabingTextStyles.button.copyWith(
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
                   ),
@@ -296,9 +303,13 @@ class _KolabingTimePickerState extends State<KolabingTimePicker> {
           return Center(
             child: Text(
               _pad(i),
-              style: KolabingTextStyles.bodyMedium.copyWith(fontSize: isSelected ? 26 : 18, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400, color: isSelected
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                fontSize: isSelected ? 26 : 18,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                color: isSelected
                     ? context.colors.onSurface
-                    : context.colors.onSurfaceVariant.withValues(alpha: 0.45)),
+                    : context.colors.onSurfaceVariant.withValues(alpha: 0.45),
+              ),
             ),
           );
         }),

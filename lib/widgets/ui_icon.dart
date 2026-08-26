@@ -115,11 +115,12 @@ class UiIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SvgPicture.asset(
-        icon.assetPath(variant),
-        width: size,
-        height: size,
-        fit: BoxFit.contain,
-        colorFilter:
-            color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
-      );
+    icon.assetPath(variant),
+    width: size,
+    height: size,
+    fit: BoxFit.contain,
+    colorFilter: color != null
+        ? ColorFilter.mode(color!, BlendMode.srcIn)
+        : null,
+  );
 }

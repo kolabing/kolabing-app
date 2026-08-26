@@ -7,10 +7,16 @@ import '../config/constants/spacing.dart';
 import '../config/theme/colors.dart';
 import '../config/theme/typography.dart';
 import '../features/discovery/models/discovery_item.dart';
+import '../features/discovery/models/explore_feed_item.dart';
 import '../l10n/app_localizations.dart';
 import 'blurred_identity.dart';
 import 'category_chip.dart';
+import 'explore_card_data.dart';
 
+/// The one Explore offer card. Renders every kind of feed item — ordinary
+/// Kolab offers and open Multi-Kolab partner roles alike — from the shared
+/// [ExploreCardData] view model, so a Multi-Kolab role is visually and
+/// interactively an ordinary offer card plus a small badge.
 class ExploreSwipeCard extends StatefulWidget {
   const ExploreSwipeCard({
     required this.item,
@@ -20,9 +26,29 @@ class ExploreSwipeCard extends StatefulWidget {
     super.key,
   });
 
-  final DiscoveryItem item;
+  /// Convenience constructor for the many call sites that still hold a bare
+  /// [DiscoveryItem].
+  ExploreSwipeCard.offer({
+    required DiscoveryItem offer,
+    VoidCallback? onTap,
+    bool showKolabFirst = false,
+    bool hideCreatorIdentity = false,
+    Key? key,
+  }) : this(
+         item: ExploreOfferItem(offer),
+         onTap: onTap,
+         showKolabFirst: showKolabFirst,
+         hideCreatorIdentity: hideCreatorIdentity,
+         key: key,
+       );
+
+  final ExploreFeedItem item;
   final VoidCallback? onTap;
   final bool showKolabFirst;
+
+  /// Blurs the creator identity behind the business paywall. Only ever
+  /// meaningful for ordinary community offers; Multi-Kolab role cards carry
+  /// no creator identity to hide.
   final bool hideCreatorIdentity;
 
   @override
@@ -33,30 +59,23 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   late final PageController _imagePageController;
   int _currentImagePage = 0;
 
-  DiscoveryItem get _item => widget.item;
-  bool get _isBusinessExploreCommunityCard =>
-      widget.showKolabFirst && _item.isCommunityRequest;
-
-  List<String> get _imageUrls {
-    final urls = <String>[];
-    final cover = _item.coverPhotoUrl;
-    if (cover != null && cover.isNotEmpty) urls.add(cover);
-    if (urls.isEmpty) {
-      final avatar = _item.creatorProfile.avatarUrl;
-      if (avatar != null && avatar.isNotEmpty) urls.add(avatar);
-    }
-    return urls;
+  ExploreCardData _data(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return switch (widget.item) {
+      ExploreOfferItem(:final offer) => ExploreCardData.fromOffer(
+        offer,
+        l10n: l10n,
+        showKolabFirst: widget.showKolabFirst,
+        hideCreatorIdentity: widget.hideCreatorIdentity,
+      ),
+      ExploreMultiKolabRoleItem(:final role) =>
+        ExploreCardData.fromMultiKolabRole(role, l10n: l10n),
+    };
   }
 
-  bool _isIdentityLogo(String url) {
-    final avatar = _item.creatorProfile.avatarUrl;
-    final cover = _item.coverPhotoUrl;
-    final usingAvatarFallback = cover == null || cover.isEmpty;
-    return usingAvatarFallback &&
-        avatar != null &&
-        avatar.isNotEmpty &&
-        url == avatar;
-  }
+  /// Identity blurring only ever applies to ordinary offers.
+  bool get _hideCreatorIdentity =>
+      widget.hideCreatorIdentity && widget.item is ExploreOfferItem;
 
   @override
   void initState() {
@@ -71,69 +90,83 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: widget.onTap,
-    child: Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.md,
-        vertical: KolabingSpacing.xs,
-      ),
-      child: Center(
-        child: SingleChildScrollView(
-          child: RepaintBoundary(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(KolabingRadius.lg),
-                border: Border.all(color: KolabingColors.hairline),
-                boxShadow: const [KolabingShadows.card],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(KolabingRadius.lg),
-                clipBehavior: Clip.antiAlias,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [_buildPhotoSection(), _buildContentSection()],
+  Widget build(BuildContext context) {
+    final data = _data(context);
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: KolabingSpacing.md,
+          vertical: KolabingSpacing.xs,
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: RepaintBoundary(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(KolabingRadius.lg),
+                  border: Border.all(color: KolabingColors.hairline),
+                  boxShadow: const [KolabingShadows.card],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(KolabingRadius.lg),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildPhotoSection(data),
+                      _buildContentSection(data),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 
   // ---------------------------------------------------------------------------
   // Photo section
   // ---------------------------------------------------------------------------
 
-  Widget _buildPhotoSection() => AspectRatio(
+  Widget _buildPhotoSection(ExploreCardData data) => AspectRatio(
     aspectRatio: 16 / 10,
     child: Stack(
       fit: StackFit.expand,
       children: [
-        _buildImageArea(),
-        if (_imageUrls.length > 1)
+        _buildImageArea(data),
+        if (data.imageUrls.length > 1)
           Positioned(
             left: 0,
             right: 0,
             bottom: KolabingSpacing.xs,
-            child: Center(child: _buildDotIndicators()),
+            child: Center(child: _buildDotIndicators(data)),
           ),
-        if (_item.match != null)
+        // Secondary to the role title by design: small, low-contrast chip
+        // in the photo corner opposite the match badge.
+        if (data.showMultiKolabBadge)
+          Positioned(
+            top: KolabingSpacing.xs,
+            left: KolabingSpacing.xs,
+            child: _buildMultiKolabBadge(),
+          ),
+        if (data.matchScore case final score?)
           Positioned(
             top: KolabingSpacing.xs,
             right: KolabingSpacing.xs,
-            child: _buildMatchBadge(),
+            child: _buildMatchBadge(score),
           ),
       ],
     ),
   );
 
-  Widget _buildImageArea() {
-    final urls = _imageUrls;
-    if (urls.isEmpty) return _buildGradientFallback();
+  Widget _buildImageArea(ExploreCardData data) {
+    final urls = data.imageUrls;
+    if (urls.isEmpty) return _buildGradientFallback(data);
 
     return PageView.builder(
       controller: _imagePageController,
@@ -147,7 +180,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
           width: double.infinity,
           height: double.infinity,
           errorBuilder: (context, error, stackTrace) =>
-              _buildGradientFallback(),
+              _buildGradientFallback(data),
           loadingBuilder:
               (BuildContext context, Widget child, ImageChunkEvent? progress) {
                 if (progress == null) return child;
@@ -156,7 +189,10 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         );
 
         return BlurredIdentity(
-          enabled: widget.hideCreatorIdentity && _isIdentityLogo(url),
+          enabled:
+              _hideCreatorIdentity &&
+              data.identityLogoUrl != null &&
+              url == data.identityLogoUrl,
           sigma: 18,
           showLockHint: true,
           child: image,
@@ -165,7 +201,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     );
   }
 
-  Widget _buildGradientFallback() => Builder(
+  Widget _buildGradientFallback(ExploreCardData data) => Builder(
     builder: (BuildContext context) {
       final colors = context.colors;
       return DecoratedBox(
@@ -181,10 +217,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
             ),
             alignment: Alignment.center,
             child: Text(
-              !widget.hideCreatorIdentity &&
-                      _item.creatorProfile.displayName.isNotEmpty
-                  ? _item.creatorProfile.displayName[0].toUpperCase()
-                  : '?',
+              _hideCreatorIdentity ? '?' : data.fallbackInitial,
               style: GoogleFonts.inter(
                 fontSize: 26,
                 fontWeight: FontWeight.w600,
@@ -219,28 +252,46 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     );
   }
 
-  Widget _buildMatchBadge() {
-    final match = _item.match!;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: context.colors.ink,
-        borderRadius: BorderRadius.circular(KolabingRadius.round),
+  /// The small "Multi-Kolab" chip. Deliberately understated so it reads as
+  /// secondary to the role title.
+  Widget _buildMultiKolabBadge() => Container(
+    key: const Key('explore-card-multi-kolab-badge'),
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    decoration: BoxDecoration(
+      color: context.colors.primary,
+      borderRadius: BorderRadius.circular(KolabingRadius.round),
+    ),
+    child: Text(
+      AppLocalizations.of(context).multiKolabExploreCardBadge,
+      style: GoogleFonts.inter(
+        fontSize: 11,
+        fontWeight: FontWeight.w700,
+        // Design system: always black text on the yellow primary.
+        color: KolabingColors.onSurface,
+        letterSpacing: 0.1,
       ),
-      child: Text(
-        AppLocalizations.of(context).exploreSwipeCardMatch(match.score),
-        style: GoogleFonts.inter(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-          letterSpacing: 0.1,
-        ),
-      ),
-    );
-  }
+    ),
+  );
 
-  Widget _buildDotIndicators() {
-    final count = _imageUrls.length;
+  Widget _buildMatchBadge(int score) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    decoration: BoxDecoration(
+      color: context.colors.ink,
+      borderRadius: BorderRadius.circular(KolabingRadius.round),
+    ),
+    child: Text(
+      AppLocalizations.of(context).exploreSwipeCardMatch(score),
+      style: GoogleFonts.inter(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        color: Colors.white,
+        letterSpacing: 0.1,
+      ),
+    ),
+  );
+
+  Widget _buildDotIndicators(ExploreCardData data) {
+    final count = data.imageUrls.length;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -272,11 +323,9 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   // Content section
   // ---------------------------------------------------------------------------
 
-  Widget _buildContentSection() {
-    final offerLine = _isBusinessExploreCommunityCard
-        ? _item.communityOfferLine
-        : _item.displayHeadline;
-    final chips = _item.primaryBadges;
+  Widget _buildContentSection(ExploreCardData data) {
+    final offerLine = data.offerLine;
+    final chips = data.chips;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
@@ -284,9 +333,9 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildNameRow(),
+          _buildNameRow(data),
           const SizedBox(height: 3),
-          _buildMetaRow(),
+          _buildMetaRow(data),
           if (offerLine != null && offerLine.isNotEmpty) ...[
             const SizedBox(height: 8),
             _buildOfferRow(offerLine),
@@ -308,10 +357,10 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     );
   }
 
-  Widget _buildNameRow() {
-    final isHidden = widget.hideCreatorIdentity;
+  Widget _buildNameRow(ExploreCardData data) {
+    final isHidden = _hideCreatorIdentity;
     final nameText = Text(
-      _item.creatorProfile.displayName,
+      data.title,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: GoogleFonts.inter(
@@ -326,26 +375,24 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     return BlurredIdentity(enabled: isHidden, sigma: 6, child: nameText);
   }
 
-  Widget _buildMetaRow() {
-    final category = _item.primaryBadges.isNotEmpty
-        ? _item.primaryBadges.first
-        : (_item.isBusinessOffer
-              ? AppLocalizations.of(context).exploreSwipeCardBusinessOffer
-              : AppLocalizations.of(context).exploreSwipeCardCommunityRequest);
-    final city = _item.locationLabel;
+  Widget _buildMetaRow(ExploreCardData data) {
+    final category = data.metaPrimary;
+    final city = data.metaLocation;
 
     return Row(
       children: [
-        Flexible(
-          child: Text(
-            category,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: _secondaryStyle,
+        if (category != null && category.isNotEmpty)
+          Flexible(
+            child: Text(
+              category,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: _secondaryStyle,
+            ),
           ),
-        ),
         if (city.isNotEmpty) ...[
-          Text(' · ', style: _secondaryStyle),
+          if (category != null && category.isNotEmpty)
+            Text(' · ', style: _secondaryStyle),
           const Icon(
             Icons.location_on_outlined,
             size: 12,

@@ -99,7 +99,10 @@ class KolabingInput extends StatelessWidget {
         fillColor: fillColor ?? colors.surface,
         hintStyle: KolabingTextStyles.bodyLg.copyWith(color: colors.muted),
         labelStyle: KolabingTextStyles.bodySm.copyWith(color: colors.muted),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(KolabingRadius.input),
           borderSide: BorderSide(color: colors.hairline),

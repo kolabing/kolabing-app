@@ -13,9 +13,12 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../kolab/models/kolab.dart';
+import '../../kolab/providers/my_kolabs_multi_kolab_provider.dart';
 import '../../kolab/providers/my_kolabs_provider.dart';
 import '../../kolab/widgets/my_kolab_card.dart';
 import '../../kolab/widgets/my_kolabs_sub_tabs.dart';
+import '../../kolab/widgets/my_multi_kolab_card.dart';
+import '../../multi_kolab/models/multi_kolab_event_summary.dart';
 import '../../opportunity/utils/opportunity_share.dart';
 import '../../subscription/widgets/subscription_paywall.dart';
 import '../providers/profile_provider.dart';
@@ -228,6 +231,15 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
     final listState = ref.watch(myKolabsProvider);
     final currentStatus = ref.watch(myKolabsStatusProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Organizer-owned Multi-Kolab events for the SAME status filter, merged
+    // into this one list rather than shown as a separate section.
+    final multiKolabEvents = ref.watch(
+      myKolabsMultiKolabEventsProvider(
+        currentStatus == 'draft'
+            ? MyKolabsSection.drafts
+            : MyKolabsSection.offers,
+      ),
+    );
 
     ref.listen<MyKolabsState>(myKolabsProvider, (previous, next) async {
       if (next.requiresSubscription &&
@@ -262,9 +274,9 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
               ? _buildLoadingState(isDark)
               : listState.error != null
               ? _buildErrorState(listState.error!, isDark)
-              : listState.isEmpty
+              : (listState.isEmpty && multiKolabEvents.isEmpty)
               ? _buildEmptyState(isDark)
-              : _buildList(listState, isDark),
+              : _buildList(listState, multiKolabEvents, isDark),
         ),
       ],
     );
@@ -351,7 +363,11 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
     );
   }
 
-  Widget _buildList(MyKolabsState listState, bool isDark) => RefreshIndicator(
+  Widget _buildList(
+    MyKolabsState listState,
+    List<MultiKolabEventSummary> multiKolabEvents,
+    bool isDark,
+  ) => RefreshIndicator(
     color: context.colors.primary,
     onRefresh: () async {
       await ref.read(myKolabsProvider.notifier).refresh();
@@ -364,10 +380,17 @@ class _MyKollabsScreenState extends ConsumerState<MyKollabsScreen>
         KolabingSpacing.md,
         KolabingSpacing.xxl,
       ),
-      itemCount: listState.kolabs.length + (listState.isLoadingMore ? 1 : 0),
+      itemCount:
+          multiKolabEvents.length +
+          listState.kolabs.length +
+          (listState.isLoadingMore ? 1 : 0),
       separatorBuilder: (context, index) =>
           const SizedBox(height: KolabingSpacing.sm),
-      itemBuilder: (context, index) {
+      itemBuilder: (context, rawIndex) {
+        if (rawIndex < multiKolabEvents.length) {
+          return MyMultiKolabCard(event: multiKolabEvents[rawIndex]);
+        }
+        final index = rawIndex - multiKolabEvents.length;
         if (index >= listState.kolabs.length) {
           return Center(
             child: Padding(
