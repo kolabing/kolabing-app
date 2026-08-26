@@ -110,7 +110,12 @@ class DashboardNotifier extends Notifier<DashboardState>
     state = state.copyWith(isLoading: true, clearError: true);
 
     try {
-      final response = await _dashboardService.getDashboard();
+      // The role must come from auth: the two dashboard payloads are no
+      // longer distinguishable by their keys (kolabing-v2#227 gave
+      // communities an `opportunities` block too).
+      final response = await _dashboardService.getDashboard(
+        userType: ref.read(authProvider).user?.userType,
+      );
       if (isStaleAuthSession(sessionVersion)) {
         return;
       }
