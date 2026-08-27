@@ -8563,4 +8563,101 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get challengeTogetherFriendRequested => 'Sol·licitud enviada';
+
+  @override
+  String get ghostInviteTitle => 'No és a Kolabing?';
+
+  @override
+  String ghostInviteBody(int points) {
+    return 'Afegeix el seu nom i envia-li una invitació. Tots dos aconseguiu $points XP quan s’hi uneixi.';
+  }
+
+  @override
+  String get ghostInviteNameLabel => 'El seu nom';
+
+  @override
+  String get ghostInviteContactLabel => 'Telèfon o @usuari';
+
+  @override
+  String get ghostInviteContactHint =>
+      'Opcional: només per enviar-li la invitació més fàcilment.';
+
+  @override
+  String get ghostInviteCreate => 'Crea la invitació';
+
+  @override
+  String ghostInviteReadyTitle(String name) {
+    return 'Invitació a punt per a $name';
+  }
+
+  @override
+  String ghostInvitePending(String name, int points) {
+    return 'Quan $name s’hi uneixi, tots dos aconseguiu $points XP.';
+  }
+
+  @override
+  String get ghostInviteCodeLabel => 'CODI D\'INVITACIÓ';
+
+  @override
+  String get ghostInviteShare => 'Envia la invitació';
+
+  @override
+  String ghostInviteShareMessage(String name, String code, String url) {
+    return 'Hola $name: uneix-te a Kolabing amb mi i tots dos guanyem punts. Fes servir el codi $code en registrar-te: $url';
+  }
+
+  @override
+  String get ghostInviteNotCheckedIn =>
+      'Registra\'t primer a l\'esdeveniment i després podràs convidar.';
+
+  @override
+  String get ghostInviteLimitReached =>
+      'Ja tens 3 invitacions pendents d\'aquest esdeveniment.';
+
+  @override
+  String get ghostInviteUnavailable =>
+      'Les invitacions encara no estan disponibles.';
+
+  @override
+  String get ghostInviteFailed => 'No ha funcionat. Torna-ho a provar.';
+
+  @override
+  String get ghostInviteOption => 'No és a Kolabing';
+
+  @override
+  String get claimCodeTitle => 'Tens un codi d\'invitació?';
+
+  @override
+  String get claimCodeBody =>
+      'Algú que has conegut et pot donar punts abans i tot de començar.';
+
+  @override
+  String get claimCodeLabel => 'Codi d\'invitació';
+
+  @override
+  String get claimCodeSubmit => 'Bescanvia';
+
+  @override
+  String claimCodeSuccess(String name, int points) {
+    return 'Bescanviat: tu i $name heu aconseguit $points XP.';
+  }
+
+  @override
+  String get claimCodeInvalid => 'No reconeixem aquest codi.';
+
+  @override
+  String get claimCodeExpired => 'Aquesta invitació ha caducat.';
+
+  @override
+  String get claimCodeNotNewAccount =>
+      'Els codis només funcionen en un compte nou.';
+
+  @override
+  String get claimCodeSelf => 'Aquesta és la teva pròpia invitació.';
+
+  @override
+  String get claimCodeFailed => 'No ha funcionat. Torna-ho a provar.';
+
+  @override
+  String get claimCodeClaimed => 'Punts bescanviats';
 }

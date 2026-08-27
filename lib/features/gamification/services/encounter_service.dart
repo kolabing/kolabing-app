@@ -40,6 +40,14 @@ class EncounterException implements Exception {
   /// cannot harvest them.
   bool get claimNotNewAccount => code == 'claim_requires_new_account';
 
+  /// You cannot redeem your own invite.
+  bool get claimSelf => code == 'claim_self';
+
+  /// The inviter is not checked in to the event. Without that rule the whole
+  /// mechanism is a points faucet you can turn on from your sofa, so the
+  /// server refuses it — and this is the most likely refusal in practice.
+  bool get notCheckedIn => code == 'not_checked_in';
+
   @override
   String toString() => 'EncounterException($code: $message)';
 }

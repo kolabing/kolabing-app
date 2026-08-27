@@ -8519,4 +8519,101 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get challengeTogetherFriendRequested => 'Solicitud enviada';
+
+  @override
+  String get ghostInviteTitle => '¿No está en Kolabing?';
+
+  @override
+  String ghostInviteBody(int points) {
+    return 'Añade su nombre y envíale una invitación. Los dos conseguís $points XP cuando se una.';
+  }
+
+  @override
+  String get ghostInviteNameLabel => 'Su nombre';
+
+  @override
+  String get ghostInviteContactLabel => 'Teléfono o @usuario';
+
+  @override
+  String get ghostInviteContactHint =>
+      'Opcional: solo para enviarle la invitación más fácilmente.';
+
+  @override
+  String get ghostInviteCreate => 'Crear invitación';
+
+  @override
+  String ghostInviteReadyTitle(String name) {
+    return 'Invitación lista para $name';
+  }
+
+  @override
+  String ghostInvitePending(String name, int points) {
+    return 'Cuando $name se una, los dos conseguís $points XP.';
+  }
+
+  @override
+  String get ghostInviteCodeLabel => 'CÓDIGO DE INVITACIÓN';
+
+  @override
+  String get ghostInviteShare => 'Enviar la invitación';
+
+  @override
+  String ghostInviteShareMessage(String name, String code, String url) {
+    return 'Hola $name: únete a Kolabing conmigo y los dos ganamos puntos. Usa el código $code al registrarte: $url';
+  }
+
+  @override
+  String get ghostInviteNotCheckedIn =>
+      'Regístrate primero en el evento y luego podrás invitar.';
+
+  @override
+  String get ghostInviteLimitReached =>
+      'Ya tienes 3 invitaciones pendientes de este evento.';
+
+  @override
+  String get ghostInviteUnavailable =>
+      'Las invitaciones aún no están disponibles.';
+
+  @override
+  String get ghostInviteFailed => 'No ha funcionado. Inténtalo de nuevo.';
+
+  @override
+  String get ghostInviteOption => 'No está en Kolabing';
+
+  @override
+  String get claimCodeTitle => '¿Tienes un código de invitación?';
+
+  @override
+  String get claimCodeBody =>
+      'Alguien a quien conociste puede darte puntos antes incluso de empezar.';
+
+  @override
+  String get claimCodeLabel => 'Código de invitación';
+
+  @override
+  String get claimCodeSubmit => 'Canjear';
+
+  @override
+  String claimCodeSuccess(String name, int points) {
+    return 'Canjeado: $name y tú habéis conseguido $points XP.';
+  }
+
+  @override
+  String get claimCodeInvalid => 'No reconocemos ese código.';
+
+  @override
+  String get claimCodeExpired => 'Esa invitación ha caducado.';
+
+  @override
+  String get claimCodeNotNewAccount =>
+      'Los códigos solo funcionan en una cuenta nueva.';
+
+  @override
+  String get claimCodeSelf => 'Esa es tu propia invitación.';
+
+  @override
+  String get claimCodeFailed => 'No ha funcionado. Inténtalo de nuevo.';
+
+  @override
+  String get claimCodeClaimed => 'Puntos canjeados';
 }

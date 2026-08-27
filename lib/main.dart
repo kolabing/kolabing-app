@@ -67,6 +67,7 @@ Future<void> _bootstrapAndRunApp() async {
 
   // Connect FCM notification taps to GoRouter navigation
   connectNotificationRouter();
+  connectDeepLinks();
 
   // Set preferred orientations (portrait only for mobile)
   await SystemChrome.setPreferredOrientations([

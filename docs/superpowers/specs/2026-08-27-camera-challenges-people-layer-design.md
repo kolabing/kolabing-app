@@ -162,6 +162,13 @@ in this section works until:
 - Android App Links (`assetlinks.json`) is served and the intent filter added;
 - the backend resolves `/i/{token}`.
 
+> **Correction (2026-08-27).** All of that already existed on the backend for
+> check-in QRs, published from the **app host** (`app.kolabing.com`), with a
+> configurable path list. So the work was adding `/i/*` to that list, not
+> building the mechanism. The app had registered `kolabing.com` — the marketing
+> domain, which publishes neither association file — and would have verified
+> against nothing; both platforms now register `app.kolabing.com`.
+
 Also: **attendees have no referral code.** `referral_screen.dart` is routed only
 at `/community/referrals` and `/business/referrals`, so the ability to invite is
 switched off in exactly the person who would invite. Attendee referral is part

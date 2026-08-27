@@ -14863,6 +14863,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Request sent'**
   String get challengeTogetherFriendRequested;
+
+  /// Title of the sheet for challenging someone who does not have the app.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'re not on Kolabing?'**
+  String get ghostInviteTitle;
+
+  /// Explains that both people earn once the invited person joins.
+  ///
+  /// In en, this message translates to:
+  /// **'Add their name and send them an invite. You both get {points} XP when they join.'**
+  String ghostInviteBody(int points);
+
+  /// Label of the only required field on the ghost invite form.
+  ///
+  /// In en, this message translates to:
+  /// **'Their first name'**
+  String get ghostInviteNameLabel;
+
+  /// Label of the optional phone/handle field.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone or @handle'**
+  String get ghostInviteContactLabel;
+
+  /// Says out loud that the contact field is optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional — only to make the invite easier to send.'**
+  String get ghostInviteContactHint;
+
+  /// Button that creates the ghost invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Create invite'**
+  String get ghostInviteCreate;
+
+  /// Confirmation once the invite has been written.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite ready for {name}'**
+  String ghostInviteReadyTitle(String name);
+
+  /// Names the reward that is waiting on the invited person joining.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} joins, you both get {points} XP.'**
+  String ghostInvitePending(String name, int points);
+
+  /// Eyebrow above the claim code.
+  ///
+  /// In en, this message translates to:
+  /// **'INVITE CODE'**
+  String get ghostInviteCodeLabel;
+
+  /// Button that opens the share sheet with the invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the invite'**
+  String get ghostInviteShare;
+
+  /// The message body shared to WhatsApp/SMS.
+  ///
+  /// In en, this message translates to:
+  /// **'Hey {name} — join me on Kolabing and we both get points. Use code {code} when you sign up: {url}'**
+  String ghostInviteShareMessage(String name, String code, String url);
+
+  /// Refusal shown when the inviter is not checked in to the event.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in to the event first, then you can invite people.'**
+  String get ghostInviteNotCheckedIn;
+
+  /// Refusal shown at three unclaimed invites for one event.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve got 3 invites waiting from this event already.'**
+  String get ghostInviteLimitReached;
+
+  /// Shown when the invites backend is not deployed yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Invites are not available yet.'**
+  String get ghostInviteUnavailable;
+
+  /// Generic failure creating a ghost invite.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t work. Please try again.'**
+  String get ghostInviteFailed;
+
+  /// The entry point on the challenge list for someone not on Kolabing.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'re not on Kolabing'**
+  String get ghostInviteOption;
+
+  /// Title of the invite-code step during attendee onboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Have an invite code?'**
+  String get claimCodeTitle;
+
+  /// One line explaining what an invite code does.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone you met can hand you points before you even start.'**
+  String get claimCodeBody;
+
+  /// Label of the invite code field.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite code'**
+  String get claimCodeLabel;
+
+  /// Button that redeems the invite code.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim'**
+  String get claimCodeSubmit;
+
+  /// Shown after a code is redeemed, naming who and how much.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed — you and {name} both got {points} XP.'**
+  String claimCodeSuccess(String name, int points);
+
+  /// Refusal for a code the server does not know.
+  ///
+  /// In en, this message translates to:
+  /// **'We don\'t recognise that code.'**
+  String get claimCodeInvalid;
+
+  /// Refusal for a code past its 30-day window.
+  ///
+  /// In en, this message translates to:
+  /// **'That invite has expired.'**
+  String get claimCodeExpired;
+
+  /// Refusal when the account existed before the invite.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite codes only work on a brand new account.'**
+  String get claimCodeNotNewAccount;
+
+  /// Refusal when someone tries to redeem their own invite.
+  ///
+  /// In en, this message translates to:
+  /// **'That is your own invite.'**
+  String get claimCodeSelf;
+
+  /// Generic failure redeeming an invite code.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t work. Please try again.'**
+  String get claimCodeFailed;
+
+  /// Title of the invite-code sheet once the code has been redeemed.
+  ///
+  /// In en, this message translates to:
+  /// **'Points claimed'**
+  String get claimCodeClaimed;
 }
 
 class _AppLocalizationsDelegate

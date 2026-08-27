@@ -135,7 +135,26 @@ moderation there is.
 
 ---
 
-## 4. Ghost invites
+## 4. Ghost invites — ✅ BUILT (kolabing-v2#246, PR kolabing-v2#247)
+
+Built as specified below, with three corrections worth recording:
+
+1. **The invite URL is on the app host** — `https://app.kolabing.com/i/{code}`,
+   from `config('webapp.url')`. The association files are served from
+   `webapp.host` and only paths on that host are handed to an installed app, so
+   a link on the marketing domain would open a browser on every phone. **The
+   mobile entitlement and Android intent filter were registered against
+   `kolabing.com` and have been corrected.**
+2. **`/i/*` joined the existing `webapp.app_links.paths`.** Universal Links and
+   App Links were already published for check-in QRs; this reuses that
+   mechanism rather than starting a second one.
+3. **The "new account" rule is `created_at` strictly before the invite**, not
+   before-or-equal. Timestamps have second resolution, and *created in the same
+   second as the invite* is honestly a new account.
+
+Also built: `claim_self` as a sixth refusal, and `GET /i/{code}` rendering
+claimed / expired / unknown as their own states rather than a 404.
+
 
 ### `POST /encounters/ghost`
 

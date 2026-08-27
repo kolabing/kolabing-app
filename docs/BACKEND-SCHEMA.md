@@ -220,6 +220,7 @@ encounters
   id · profile_id → profiles · other_profile_id → profiles (NULL while a ghost)
   ghost_name · community_id → communities · event_id → events
   met_at · times_met · proof_photo_url · claimed_at
+  challenge_id · ghost_claim_token (UNIQUE) · ghost_contact · pending_points · expires_at
   UNIQUE (profile_id, other_profile_id, event_id) WHERE other_profile_id IS NOT NULL
 ```
 
@@ -243,6 +244,30 @@ decay and there are no streaks.
 (`times_met`, `key`, `next_at`, `just_levelled_up`, `bonus_awarded`) on the
 response that settled a challenge. `key` is a slug, not a display string — the
 app localizes it in three languages.
+
+### Ghost invites (kolabing-v2#246)
+
+A row whose `other_profile_id` is null is a **ghost**: someone met at an event
+who does not have the app. `POST /encounters/ghost` writes one and hands back a
+claim code; `POST /encounters/claim` fills it in, writes the reverse row and
+releases `pending_points` to **both** sides.
+
+- **Nothing is paid at invite time.** `pending_points` is frozen when the invite
+  is written, so the number promised on the inviter's screen survives an admin
+  later retuning what the challenge is worth.
+- **The invite URL is on the app host** (`app.kolabing.com/i/{code}`), not the
+  marketing domain: the association files live there and only paths on that host
+  are handed to an installed app.
+- **The claim code is the half a Universal Link cannot do.** A link carries no
+  state through the App Store, and the whole point of a ghost is someone who has
+  to go through it — so `GET /i/{code}` is a real page that shows the code to
+  retype.
+- Refusals carry a machine-readable `error`: `not_checked_in`,
+  `ghost_limit_reached` (3 unclaimed per attendee per event), `invalid_claim_code`,
+  `claim_expired` (30 days), `claim_requires_new_account`, `claim_self`.
+- A claim **does not** create a `ChallengeCompletion`. Nobody verified anything
+  and the two were never checked in together; a fake completion would put
+  something that did not happen into challenge stats and mission progress.
 
 ---
 
