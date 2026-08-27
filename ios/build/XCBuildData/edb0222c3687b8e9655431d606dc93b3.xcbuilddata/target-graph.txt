@@ -1,0 +1,6 @@
+Target dependency graph (3 targets)
+Target 'PostHog' in project 'Pods'
+➜ Explicit dependency on target 'PostHog-PHPLCrashReporter' in project 'Pods'
+➜ Explicit dependency on target 'PostHog-PostHog' in project 'Pods'
+Target 'PostHog-PostHog' in project 'Pods' (no dependencies)
+Target 'PostHog-PHPLCrashReporter' in project 'Pods' (no dependencies)

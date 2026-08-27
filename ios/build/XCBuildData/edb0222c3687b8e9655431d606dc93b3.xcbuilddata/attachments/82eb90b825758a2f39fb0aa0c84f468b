@@ -1,0 +1,4 @@
+
+module PostHog.__Swift {
+  exclude header "PostHog-Swift.h"
+}

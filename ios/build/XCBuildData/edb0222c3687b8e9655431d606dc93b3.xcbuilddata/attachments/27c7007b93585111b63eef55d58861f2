@@ -1,0 +1,23 @@
+{
+  "version": 0,
+  "use-external-names": false,
+  "case-sensitive": false,
+  "roots": [{
+    "type": "directory",
+    "name": "/Users/volkanoluc/Projects/kolabing-app/ios/build/Release-iphoneos/PostHog/PostHog.framework/Modules",
+    "contents": [{
+      "type": "file",
+      "name": "module.modulemap",
+      "external-contents": "/Users/volkanoluc/Projects/kolabing-app/ios/build/Pods.build/Release-iphoneos/PostHog.build/unextended-module.modulemap",
+    }]
+    },
+    {
+    "type": "directory",
+    "name": "/Users/volkanoluc/Projects/kolabing-app/ios/build/Release-iphoneos/PostHog/PostHog.framework/Headers",
+    "contents": [{
+      "type": "file",
+      "name": "PostHog-Swift.h",
+      "external-contents": "/Users/volkanoluc/Projects/kolabing-app/ios/build/Pods.build/Release-iphoneos/PostHog.build/unextended-interface-header.h",
+    }]
+  }]
+}

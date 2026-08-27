@@ -1,0 +1,37 @@
+dependencies: \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashSignalHandler.mm \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/Target\ Support\ Files/PostHog/PostHog-prefix.pch \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/CrashReporter.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashNamespace.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReporter.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReporterConfig.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashFeatureConfig.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashMacros.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReport.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportApplicationInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportBinaryImageInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportProcessorInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportExceptionInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportThreadInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportStackFrameInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportSymbolInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportRegisterInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportMachineInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportMachExceptionInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportProcessInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportSignalInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportSystemInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportTextFormatter.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportFormatter.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashAsync.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashSignalHandler.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashFrameWalker.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashAsyncThread.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashAsyncThread_x86.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashAsyncThread_arm.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashAsyncImageList.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashAsyncMachOImage.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashAsyncMObject.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashAsyncLinkedList.hpp \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashCompatConstants.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReporterNSError.h

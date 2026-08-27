@@ -1,0 +1,13 @@
+/* Kolabing elevation — generated from KolabingShadows in lib/config/constants/layout.dart.
+   Shadows are deliberately minimal: cards lean on borders, buttons are flat, no glow.
+   Do not edit by hand: run scripts/design_tokens_to_css.py. */
+
+:root {
+  --kolabing-shadow-ambient: 0px 8px 40px rgba(28, 28, 22, 0.0314);
+  --kolabing-shadow-bottom-nav: 0px -2px 12px rgba(0, 0, 0, 0.0392);
+  --kolabing-shadow-button: 0px 12px 26px rgba(20, 18, 16, 0.1216);
+  --kolabing-shadow-button-secondary: 0px 10px 22px rgba(20, 18, 16, 0.102);
+  --kolabing-shadow-card: 0px 4px 24px rgba(28, 28, 22, 0.0392);
+  --kolabing-shadow-card-hover: 0px 3px 10px rgba(0, 0, 0, 0.0706);
+  --kolabing-shadow-focus-ring: none;
+}
