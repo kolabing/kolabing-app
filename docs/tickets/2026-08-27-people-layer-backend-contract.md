@@ -9,7 +9,10 @@ Everything below is additive. No existing endpoint changes shape.
 
 ---
 
-## 1. `encounters`
+## 1. `encounters` — ✅ BUILT (kolabing-v2#244, PR kolabing-v2#245)
+
+Shipped, and the shape changed from what this contract first proposed. The
+as-built version:
 
 ```sql
 CREATE TABLE encounters (
@@ -17,16 +20,12 @@ CREATE TABLE encounters (
   profile_id        uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   other_profile_id  uuid NULL REFERENCES profiles(id) ON DELETE SET NULL,
   ghost_name        text NULL,
-  ghost_claim_token text NULL UNIQUE,
-  ghost_contact     text NULL,
   community_id      uuid NULL REFERENCES communities(id) ON DELETE SET NULL,
   event_id          uuid NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-  first_met_at      timestamptz NOT NULL,
-  last_met_at       timestamptz NOT NULL,
+  met_at            timestamptz NOT NULL,
   times_met         int NOT NULL DEFAULT 1,
-  photo_url         text NULL,
+  proof_photo_url   text NULL,
   claimed_at        timestamptz NULL,
-  expires_at        timestamptz NULL,   -- ghosts only: created_at + 30 days
   created_at        timestamptz NOT NULL,
   updated_at        timestamptz NOT NULL
 );
@@ -35,61 +34,93 @@ CREATE UNIQUE INDEX encounters_unique_per_event
   ON encounters (profile_id, other_profile_id, event_id)
   WHERE other_profile_id IS NOT NULL;
 
-CREATE INDEX encounters_by_viewer ON encounters (profile_id, last_met_at DESC);
+CREATE INDEX encounters_by_viewer ON encounters (profile_id, met_at);
 ```
 
-**The unique index is the anti-farming mechanism and must not be dropped.**
-`times_met` is the count of DISTINCT events, so ten challenges in one night with
-the same person is one meeting. Enforcing it in the schema means nobody has to
-remember the rule later, and it makes the number mean the right thing: *how many
-times were we in the same room*.
+**What changed, and why.** The original proposal had one mutable row per pair
+with `first_met_at` / `last_met_at` and an incrementing `times_met`. The built
+version is **one row per pair per event, frozen**: a row says *at this event
+these two met, and it was their Nth time*, and it keeps saying that. Nothing is
+recounted or denormalised after the fact, so no value can drift. The current
+count for a pair is the `times_met` of its most recent row.
 
-The index is partial because ghosts have no `other_profile_id` — an attendee may
-hold several unclaimed ghosts at one event (capped at three, see §4).
+The cost is a `DISTINCT ON` when `GET /me/encounters` lands. That is the right
+trade: a read query is cheap to write once, and a denormalised counter that goes
+wrong is expensive forever.
+
+**The partial unique index is the anti-farming mechanism and must not be
+dropped.** It makes *a meeting is an EVENT, not a challenge* a guarantee of the
+schema rather than a rule in a service somebody has to remember: ten challenges
+with the same person in one night is one meeting. Partial, because ghosts have
+no `other_profile_id` and one attendee may hold several at a single event
+(capped at three, §4).
+
+`ghost_claim_token`, `ghost_contact` and `expires_at` are **not** in the built
+table — they belong to §4, which is unbuilt, and adding them now would be three
+columns nothing reads.
 
 ---
 
-## 2. Wiring into the existing settlement
+## 2. Wiring into settlement — ✅ BUILT
 
-In `ChallengeCompletionService::verify`, **after** points are settled, in the
-same transaction:
+In `ChallengeCompletionService::verify`, **after the settlement transaction
+commits**, inside a `try`/`catch`:
 
-1. upsert the encounter both directions (`profile_id` ↔ `other_profile_id`),
-   incrementing `times_met` and moving `last_met_at` only when the
-   `(pair, event)` row does not already exist;
-2. set `photo_url` when the challenge carried a capture;
-3. recompute the pair level and, if a threshold was crossed, award the one-time
-   bonus.
+1. `EncounterService::recordChallengeMeeting()` writes both directions and
+   carries `proof_photo_url` across (including from a later challenge that
+   night, if the first produced no photo);
+2. a crossed rung pays its one-time bonus to **both** participants;
+3. the rung is hung on the model as `pairLevel` for the resource to emit.
 
-XP arithmetic stays in one place, on the server. The app computes nothing.
+**Outside the transaction, not inside it.** The original contract said "in the
+same transaction", and that was wrong: in Postgres a failed statement poisons
+the surrounding transaction, so an encounter bug would roll back the points two
+people just earned. The points are the contract between two people standing in a
+room; this ledger is bookkeeping that happens afterwards. `CommunityPointsService`
+was already wired this way and this follows it. There is a test that throws from
+the ledger and asserts the verification and the points both survive.
 
-**The pair ladder is backend-authored** and belongs with NF-5's admin economy —
-the thresholds and their bonuses are configuration, not constants in a mobile
-build. Levels **never decay** and there is **no streak**: a breakable streak
-turns showing up at a run club into an obligation.
+**The pair ladder is config** — `config/gamification.php` → `pair_ladder`, a list
+of `{at, key, bonus}` ascending. No decay, no streaks.
 
-The completion response gains an optional `pair_level` object:
+`ChallengeCompletionResource` carries an additive `pair_level`:
 
 ```json
-{ "times_met": 3, "label": "Regulars", "next_at": 5,
-  "just_levelled_up": true, "bonus_awarded": 20 }
+{ "times_met": 3, "key": "regulars", "next_at": 5,
+  "just_levelled_up": true, "bonus_awarded": 10 }
 ```
+
+`key` is a **slug, not a display string**: the app localizes it in three
+languages, and the API has no business picking English.
 
 ---
 
-## 3. Challenges gain three columns
+## 3. Challenges: most of this already exists
+
+**Do not build `capture_type`.** kolabing-v2#216 already shipped it under a
+different name, and the app has been corrected to match:
+
+| What exists | Where |
+|---|---|
+| `challenges.proof_type` — `text` \| `photo`, default `text` | `ChallengeProofType`, emitted by `ChallengeResource` |
+| `challenge_completions.proof_photo_url` | `ChallengeCompletionResource` |
+| `POST /challenge-completions/{id}/photo` (multipart, field `photo`) | either participant may attach |
+| `DELETE /challenge-completions/{id}/photo` | either participant may remove |
+
+`ChallengeProofType` is documented as an **engine selector, not a gate**: the
+server does not refuse a verification that arrives with no photo. That is
+exactly the behaviour §7 of the design asks for, so nothing needs changing.
+
+What is left to build is one column:
 
 ```
-challenges.capture_type   enum('none','photo')  NOT NULL DEFAULT 'none'
-challenges.participation  enum('pair','solo')   NOT NULL DEFAULT 'pair'
-challenges.capture_hint   text NULL
+challenges.participation  enum('pair','solo')  NOT NULL DEFAULT 'pair'
 ```
 
-Defaults keep every existing challenge behaving exactly as it does today. The
-app parses an **unknown** `capture_type` as `none` and an unknown
-`participation` as `pair`, so a challenge authored against a newer backend still
-works on an older build — it just works without a camera. Never a dead end.
-(Test: `test/features/gamification/camera_challenge_test.dart`.)
+The app parses an unknown `proof_type` as `text`, so a challenge authored
+against a newer backend still works on an older build — it just works without a
+camera. Never a dead end. (Test:
+`test/features/gamification/camera_challenge_test.dart`.)
 
 `participation = 'solo'` is the important one. It lets a challenge be settled
 without a partner, which is what makes the system usable in the first ten

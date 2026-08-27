@@ -8531,9 +8531,6 @@ class AppLocalizationsCa extends AppLocalizations {
       'No s\'ha desat la portada. Torna-ho a provar més tard.';
 
   @override
-  String get challengeCameraSoloTitle => 'Fes la foto';
-
-  @override
   String get challengeCameraPairTitle => 'Feu-la junts';
 
   @override

@@ -5,14 +5,15 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../event/services/event_service.dart';
+import '../../auth/services/auth_service.dart';
+import 'challenge_service.dart';
 
 /// One frame waiting to reach the server.
 @immutable
 class QueuedPhoto {
   const QueuedPhoto({
     required this.id,
-    required this.eventId,
+    required this.completionId,
     required this.filePath,
     required this.createdAt,
     this.attempts = 0,
@@ -20,21 +21,21 @@ class QueuedPhoto {
 
   factory QueuedPhoto.fromJson(Map<String, dynamic> json) => QueuedPhoto(
     id: json['id'] as String,
-    eventId: json['event_id'] as String,
+    completionId: json['completion_id'] as String,
     filePath: json['file_path'] as String,
     createdAt: DateTime.parse(json['created_at'] as String),
     attempts: json['attempts'] as int? ?? 0,
   );
 
   final String id;
-  final String eventId;
+  final String completionId;
   final String filePath;
   final DateTime createdAt;
   final int attempts;
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'event_id': eventId,
+    'completion_id': completionId,
     'file_path': filePath,
     'created_at': createdAt.toIso8601String(),
     'attempts': attempts,
@@ -42,7 +43,7 @@ class QueuedPhoto {
 
   QueuedPhoto withAttempt() => QueuedPhoto(
     id: id,
-    eventId: eventId,
+    completionId: completionId,
     filePath: filePath,
     createdAt: createdAt,
     attempts: attempts + 1,
@@ -66,8 +67,9 @@ class QueuedPhoto {
 /// missing file as done rather than as an error, because by then the user has
 /// long since been paid and there is nothing left to recover.
 class ChallengePhotoQueue {
-  ChallengePhotoQueue({EventService? eventService})
-    : _eventService = eventService ?? EventService();
+  ChallengePhotoQueue({ChallengeService? challengeService})
+    : _challengeService =
+          challengeService ?? ChallengeService(authService: AuthService());
 
   static const String _storageKey = 'challenge_photo_queue_v1';
 
@@ -75,7 +77,7 @@ class ChallengePhotoQueue {
   /// app launches, which is far longer than a bad venue connection lasts.
   static const int _maxAttempts = 5;
 
-  final EventService _eventService;
+  final ChallengeService _challengeService;
 
   /// The drain currently running, so a second caller JOINS it rather than
   /// silently doing nothing. Awaiting [drain] has to mean the work happened.
@@ -86,14 +88,14 @@ class ChallengePhotoQueue {
   /// [filePath] is whatever `image_picker` handed back. Kicks a drain, but does
   /// not wait for it — the caller is mid-reveal.
   Future<void> enqueue({
-    required String eventId,
+    required String completionId,
     required String filePath,
   }) async {
     final entry = QueuedPhoto(
       // The path is unique per capture and we must not call DateTime.now() for
       // an id that has to survive a restart; the path already is the identity.
       id: filePath,
-      eventId: eventId,
+      completionId: completionId,
       filePath: filePath,
       createdAt: DateTime.now(),
     );
@@ -142,7 +144,10 @@ class ChallengePhotoQueue {
       return null;
     }
     try {
-      await _eventService.addEventPhotos(item.eventId, [item.filePath]);
+      await _challengeService.attachProofPhoto(
+        item.completionId,
+        item.filePath,
+      );
       debugPrint('📷 Photo queue: uploaded ${item.id}');
       return null;
     } on FileSystemException catch (e) {

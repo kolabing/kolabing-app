@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:kolabing_app/features/auth/services/auth_service.dart';
-import 'package:kolabing_app/features/event/services/event_service.dart';
+import 'package:kolabing_app/features/gamification/services/challenge_service.dart';
 import 'package:kolabing_app/features/gamification/models/challenge.dart';
 import 'package:kolabing_app/features/gamification/services/challenge_photo_queue.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,48 +27,36 @@ Map<String, dynamic> legacyChallengeJson() => {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('capture type degrades rather than breaking', () {
-    test('a challenge from a backend without #183 needs no camera', () {
+  group('proof_type degrades rather than breaking', () {
+    test('a challenge from a backend without the column needs no camera', () {
       final challenge = Challenge.fromJson(legacyChallengeJson());
 
-      expect(challenge.captureType, ChallengeCaptureType.none);
-      expect(challenge.participation, ChallengeParticipation.pair);
+      expect(challenge.proofType, ChallengeProofType.text);
       expect(challenge.needsCamera, isFalse);
-      expect(challenge.isSolo, isFalse);
     });
 
-    test('a capture_type this build has never heard of falls back to none', () {
+    test('a proof_type this build has never heard of falls back to text', () {
       // The point of the fallback: a challenge authored against a newer backend
       // still WORKS here, it just works without a camera. Never a dead end.
       final challenge = Challenge.fromJson({
         ...legacyChallengeJson(),
-        'capture_type': 'hologram',
-        'participation': 'quartet',
+        'proof_type': 'hologram',
       });
 
-      expect(challenge.captureType, ChallengeCaptureType.none);
+      expect(challenge.proofType, ChallengeProofType.text);
       expect(challenge.needsCamera, isFalse);
-      // An unknown participation reads as a pair, which is how every challenge
-      // behaved before the field existed.
-      expect(challenge.participation, ChallengeParticipation.pair);
     });
 
     test('a photo challenge round-trips through JSON', () {
       final challenge = Challenge.fromJson({
         ...legacyChallengeJson(),
-        'capture_type': 'photo',
-        'participation': 'solo',
-        'capture_hint': 'Find something yellow in the venue.',
+        'proof_type': 'photo',
       });
 
       expect(challenge.needsCamera, isTrue);
-      expect(challenge.isSolo, isTrue);
-      expect(challenge.captureHint, 'Find something yellow in the venue.');
 
       final round = Challenge.fromJson(challenge.toJson());
-      expect(round.captureType, ChallengeCaptureType.photo);
-      expect(round.participation, ChallengeParticipation.solo);
-      expect(round.captureHint, challenge.captureHint);
+      expect(round.proofType, ChallengeProofType.photo);
     });
   });
 
@@ -92,7 +80,7 @@ void main() {
       return f;
     }
 
-    EventService withClient(MockClient client) => EventService(
+    ChallengeService withClient(MockClient client) => ChallengeService(
       authService: AuthService(
         secureStorage: const FlutterSecureStorage(),
         httpClient: client,
@@ -100,36 +88,23 @@ void main() {
       httpClient: client,
     );
 
-    /// An EventService whose uploads always fail, standing in for venue wifi.
-    EventService failingUploads() => withClient(
+    /// Uploads that always fail, standing in for venue wifi.
+    ChallengeService failingUploads() => withClient(
       MockClient((_) async => http.Response('{"message":"gateway"}', 502)),
     );
 
-    /// An EventService whose uploads always succeed.
-    EventService succeedingUploads() => withClient(
+    /// Uploads that always succeed.
+    ChallengeService succeedingUploads() => withClient(
       MockClient(
-        (_) async => http.Response(
-          jsonEncode({
-            // The real endpoint answers with the updated event, and
-            // addEventPhotos parses it — so the fake has to be a parseable
-            // Event or the "success" path throws and looks like a failure.
-            'data': {
-              'id': 'ev-1',
-              'name': 'Sunset Run',
-              'date': '2026-08-27T18:00:00.000Z',
-              'created_at': '2026-08-01T10:00:00.000Z',
-            },
-          }),
-          200,
-        ),
+        (_) async => http.Response(jsonEncode({'success': true}), 200),
       ),
     );
 
     test('a frame whose file has vanished is dropped, not retried', () async {
       final frame = writeFrame('gone.jpg');
-      final queue = ChallengePhotoQueue(eventService: failingUploads());
+      final queue = ChallengePhotoQueue(challengeService: failingUploads());
 
-      await queue.enqueue(eventId: 'ev-1', filePath: frame.path);
+      await queue.enqueue(completionId: 'cc-1', filePath: frame.path);
       frame.deleteSync();
       await queue.drain();
 
@@ -140,22 +115,22 @@ void main() {
 
     test('the same frame cannot be queued twice', () async {
       final frame = writeFrame('once.jpg');
-      final queue = ChallengePhotoQueue(eventService: failingUploads());
+      final queue = ChallengePhotoQueue(challengeService: failingUploads());
 
-      await queue.enqueue(eventId: 'ev-1', filePath: frame.path);
-      await queue.enqueue(eventId: 'ev-1', filePath: frame.path);
+      await queue.enqueue(completionId: 'cc-1', filePath: frame.path);
+      await queue.enqueue(completionId: 'cc-1', filePath: frame.path);
 
       expect(await queue.pendingCount(), 1);
     });
 
     test('a failed upload is kept and retried, then given up on', () async {
       final frame = writeFrame('flaky.jpg');
-      final queue = ChallengePhotoQueue(eventService: failingUploads());
+      final queue = ChallengePhotoQueue(challengeService: failingUploads());
 
       // enqueue kicks a drain of its own, which is attempt 1. Joining it and
       // then draining three more times takes the count to four — one short of
       // the ceiling.
-      await queue.enqueue(eventId: 'ev-1', filePath: frame.path);
+      await queue.enqueue(completionId: 'cc-1', filePath: frame.path);
       for (var i = 0; i < 4; i++) {
         await queue.drain();
       }
@@ -175,9 +150,9 @@ void main() {
 
     test('a successful upload clears the queue', () async {
       final frame = writeFrame('lands.jpg');
-      final queue = ChallengePhotoQueue(eventService: succeedingUploads());
+      final queue = ChallengePhotoQueue(challengeService: succeedingUploads());
 
-      await queue.enqueue(eventId: 'ev-1', filePath: frame.path);
+      await queue.enqueue(completionId: 'cc-1', filePath: frame.path);
       await queue.drain();
 
       expect(await queue.pendingCount(), 0);
@@ -187,7 +162,7 @@ void main() {
       SharedPreferences.setMockInitialValues({
         'challenge_photo_queue_v1': 'not json at all',
       });
-      final queue = ChallengePhotoQueue(eventService: failingUploads());
+      final queue = ChallengePhotoQueue(challengeService: failingUploads());
 
       expect(await queue.pendingCount(), 0);
       await queue.drain();

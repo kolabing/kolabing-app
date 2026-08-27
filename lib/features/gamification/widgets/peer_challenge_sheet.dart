@@ -163,11 +163,13 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
     }
 
     // Fire and forget: the upload must never stand between these two people and
-    // their reveal. A failure here costs the wall a frame, never the XP.
+    // their reveal. The photo hangs off the completion (kolabing-v2#216) and the
+    // server does not gate verification on it, so a failure here costs a
+    // memento and never the XP.
     if (photoPath != null) {
       unawaited(
         ChallengePhotoQueue().enqueue(
-          eventId: session.eventId,
+          completionId: completion.id,
           filePath: photoPath,
         ),
       );

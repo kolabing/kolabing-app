@@ -8487,9 +8487,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se ha guardado la portada. Inténtalo más tarde.';
 
   @override
-  String get challengeCameraSoloTitle => 'Haz la foto';
-
-  @override
   String get challengeCameraPairTitle => 'Hacedla juntos';
 
   @override

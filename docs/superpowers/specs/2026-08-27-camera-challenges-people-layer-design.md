@@ -171,6 +171,21 @@ of this work.
 
 ## 4. Camera challenges — the hook
 
+> **Correction, found while building (2026-08-27).** Most of this section was
+> already built on the backend as **kolabing-v2#216** and this spec did not know
+> it. The wire field is **`proof_type`** with values **`text` | `photo`** — not a
+> new `capture_type` with `none` | `photo` — the photo hangs off the completion
+> as `proof_photo_url`, and `POST /challenge-completions/{id}/photo` already
+> exists to attach it. `capture_hint` was redundant invention: the challenge's
+> own `description` names the task. **`participation` (solo) genuinely does not
+> exist** and stays specified-but-unbuilt in the contract; the app no longer
+> carries a field that could never be true.
+>
+> `ChallengeProofType`'s own docblock in the backend settles §4.5 too: it is an
+> **engine selector, not a gate**, so a verification that arrives without a photo
+> is accepted. That is the same conclusion this spec reached from the other
+> direction in §7, and it means the two agree rather than merely coexist.
+
 ### 4.1 Three shapes
 
 **Co-frame** — two people, one photo. The frame attaches to the encounter row,

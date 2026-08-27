@@ -46,63 +46,41 @@ enum ChallengeDifficulty {
   }
 }
 
-/// What the app has to do while the challenge happens (#183).
+/// How a challenge is played — the backend's `proof_type` (kolabing-v2#216).
 ///
 /// This is what turns the app from a receipt printer into part of the moment:
-/// [photo] opens the camera, and the frame lands on the event wall and on the
-/// encounter, so meeting someone acquires a face.
-enum ChallengeCaptureType {
-  /// Nothing to capture — the challenge happens in the room and the app only
-  /// settles it. Every challenge that shipped before #183 is this.
-  none,
+/// [photo] opens the camera, and the frame lands on the completion and on the
+/// meeting, so meeting someone acquires a face.
+///
+/// It is an **engine selector, not a gate**. The server does not refuse a
+/// verification that arrives without a photo, and neither does this app. A hard
+/// requirement would mean a pair who cannot get a photo up — no signal in a
+/// basement gym, a denied permission, a failed upload — lose what they just did
+/// together. The person confirming is the check on honesty; the photo is a
+/// memento.
+enum ChallengeProofType {
+  /// The instruction is the game. What every challenge that predates the
+  /// column reports, and the default.
+  text,
 
-  /// The camera opens and the challenge produces one photo.
+  /// Open the camera as soon as the pair agrees.
   photo;
 
-  /// Anything this build does not recognise degrades to [none], so a challenge
+  /// Anything this build does not recognise degrades to [text], so a challenge
   /// authored against a newer backend still WORKS here — it just works without
   /// a camera. Never a dead end.
-  static ChallengeCaptureType fromString(String? value) {
+  static ChallengeProofType fromString(String? value) {
     switch (value?.toLowerCase()) {
       case 'photo':
-        return ChallengeCaptureType.photo;
+        return ChallengeProofType.photo;
       default:
-        return ChallengeCaptureType.none;
+        return ChallengeProofType.text;
     }
   }
 
   String toApiValue() => name;
 
-  bool get needsCamera => this == ChallengeCaptureType.photo;
-}
-
-/// Whether a challenge needs a second person at all (#183).
-///
-/// [solo] is the reason this exists: before it, the whole system was dead until
-/// you had *spoken* to someone. A solo camera task works in the first ten
-/// minutes, for the person who came alone, and for the person too shy to open
-/// with a stranger.
-enum ChallengeParticipation {
-  /// Two people, one challenge — the original shape.
-  pair,
-
-  /// One person. Settled without a partner.
-  solo;
-
-  /// Unknown values fall back to [pair], which is how every challenge behaved
-  /// before this field existed.
-  static ChallengeParticipation fromString(String? value) {
-    switch (value?.toLowerCase()) {
-      case 'solo':
-        return ChallengeParticipation.solo;
-      default:
-        return ChallengeParticipation.pair;
-    }
-  }
-
-  String toApiValue() => name;
-
-  bool get isSolo => this == ChallengeParticipation.solo;
+  bool get needsCamera => this == ChallengeProofType.photo;
 }
 
 /// Challenge model
@@ -117,9 +95,7 @@ class Challenge {
     this.eventId,
     required this.createdAt,
     required this.updatedAt,
-    this.captureType = ChallengeCaptureType.none,
-    this.participation = ChallengeParticipation.pair,
-    this.captureHint,
+    this.proofType = ChallengeProofType.text,
   });
 
   factory Challenge.fromJson(Map<String, dynamic> json) {
@@ -133,13 +109,7 @@ class Challenge {
       eventId: json['event_id'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      captureType: ChallengeCaptureType.fromString(
-        json['capture_type'] as String?,
-      ),
-      participation: ChallengeParticipation.fromString(
-        json['participation'] as String?,
-      ),
-      captureHint: json['capture_hint'] as String?,
+      proofType: ChallengeProofType.fromString(json['proof_type'] as String?),
     );
   }
 
@@ -153,26 +123,15 @@ class Challenge {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  /// What the app must capture while this happens. Defaults to
-  /// [ChallengeCaptureType.none] so every pre-#183 challenge is unchanged.
-  final ChallengeCaptureType captureType;
-
-  /// Whether it needs a partner at all.
-  final ChallengeParticipation participation;
-
-  /// Backend-authored line telling the camera step what to shoot ("find
-  /// something yellow in the venue"). Dynamic server copy, so it is passed
-  /// through rather than localized — same rule as backend error text.
-  final String? captureHint;
+  /// How it is played. Defaults to [ChallengeProofType.text] so every
+  /// challenge that predates the column is unchanged.
+  final ChallengeProofType proofType;
 
   /// Check if this is a custom (non-system) challenge
   bool get isCustom => !isSystem;
 
   /// The camera opens for this one.
-  bool get needsCamera => captureType.needsCamera;
-
-  /// No partner needed — playable the moment you walk in.
-  bool get isSolo => participation.isSolo;
+  bool get needsCamera => proofType.needsCamera;
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -184,9 +143,7 @@ class Challenge {
     if (eventId != null) 'event_id': eventId,
     'created_at': createdAt.toIso8601String(),
     'updated_at': updatedAt.toIso8601String(),
-    'capture_type': captureType.toApiValue(),
-    'participation': participation.toApiValue(),
-    if (captureHint != null) 'capture_hint': captureHint,
+    'proof_type': proofType.toApiValue(),
   };
 
   Challenge copyWith({
@@ -199,9 +156,7 @@ class Challenge {
     String? eventId,
     DateTime? createdAt,
     DateTime? updatedAt,
-    ChallengeCaptureType? captureType,
-    ChallengeParticipation? participation,
-    String? captureHint,
+    ChallengeProofType? proofType,
   }) => Challenge(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -212,8 +167,6 @@ class Challenge {
     eventId: eventId ?? this.eventId,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
-    captureType: captureType ?? this.captureType,
-    participation: participation ?? this.participation,
-    captureHint: captureHint ?? this.captureHint,
+    proofType: proofType ?? this.proofType,
   );
 }

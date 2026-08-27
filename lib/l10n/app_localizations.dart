@@ -14804,12 +14804,6 @@ abstract class AppLocalizations {
   /// **'The cover was not saved. Please try again later.'**
   String get communityManageCoverNotSaved;
 
-  /// Title of the camera step for a challenge you do alone.
-  ///
-  /// In en, this message translates to:
-  /// **'Take the photo'**
-  String get challengeCameraSoloTitle;
-
   /// Title of the camera step for a challenge two people do together.
   ///
   /// In en, this message translates to:

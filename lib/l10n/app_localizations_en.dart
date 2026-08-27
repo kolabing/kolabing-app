@@ -8405,9 +8405,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'The cover was not saved. Please try again later.';
 
   @override
-  String get challengeCameraSoloTitle => 'Take the photo';
-
-  @override
   String get challengeCameraPairTitle => 'Take it together';
 
   @override

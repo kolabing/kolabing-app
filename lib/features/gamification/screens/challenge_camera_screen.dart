@@ -168,9 +168,9 @@ class _Prompt extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    // The hint is server copy naming the actual task ("find something yellow").
-    // Without it the screen asks for a photo and never says of what.
-    final hint = challenge.captureHint ?? challenge.description;
+    // The challenge's own description names the actual task. Without it the
+    // screen asks for a photo and never says of what.
+    final hint = challenge.description;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -192,9 +192,7 @@ class _Prompt extends StatelessWidget {
         ),
         const SizedBox(height: KolabingSpacing.lg),
         Text(
-          challenge.isSolo
-              ? l10n.challengeCameraSoloTitle
-              : l10n.challengeCameraPairTitle,
+          l10n.challengeCameraPairTitle,
           textAlign: TextAlign.center,
           style: KolabingTextStyles.displaySmall.copyWith(
             color: context.colors.onSurface,

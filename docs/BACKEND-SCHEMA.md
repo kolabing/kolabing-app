@@ -201,12 +201,48 @@ other rows. Forming a collaboration = manually inserting opportunity → applica
 `cities, city_suggestions, business_types, community_types` (lookups — fetch via
 API, never hardcode); `kolabs`; `events, event_checkins, event_photos,
 event_rewards`; `chat_messages`; `challenges, challenge_completions,
-collaboration_challenges`; `badges, badge_awards, earned_badges`; gamification
+collaboration_challenges, encounters`; `badges, badge_awards, earned_badges`; gamification
 (`point_ledger, wallets, reward_claims, withdrawal_requests, referral_codes,
 referral_redemptions`); `notifications, notification_preferences,
 notification_reminders`; `personal_access_tokens` (Sanctum); Laravel internals
 (`cache, cache_locks, jobs, job_batches, failed_jobs, sessions, migrations,
 password_reset_tokens`).
+
+---
+
+## `encounters` — the People Layer (kolabing-v2#244)
+
+The ledger of **people**, next to `challenge_completions`' ledger of **actions**.
+Written from `ChallengeCompletionService::verify`.
+
+```
+encounters
+  id · profile_id → profiles · other_profile_id → profiles (NULL while a ghost)
+  ghost_name · community_id → communities · event_id → events
+  met_at · times_met · proof_photo_url · claimed_at
+  UNIQUE (profile_id, other_profile_id, event_id) WHERE other_profile_id IS NOT NULL
+```
+
+Three things about it that are easy to get wrong:
+
+1. **One row per pair per EVENT, and each row is frozen.** A row means *at this
+   event these two met, and it was their Nth time*. `times_met` is written once
+   and never updated — the row from the third event says 3 forever. The current
+   count for a pair is the `times_met` of its most recent row.
+2. **A meeting is an event, not a challenge.** Ten challenges with the same
+   person in one night is one row. The partial unique index enforces it, so this
+   is a schema guarantee, not a service rule that can be forgotten.
+3. **An encounter is not a friendship.** Nothing writes `friendships` from here.
+   The app offers "Add friend" on the reveal and the person decides.
+
+The pair ladder lives in backend config (`gamification.pair_ladder`), never in
+the app: crossing a rung pays a one-time bonus to **both** sides. Levels do not
+decay and there are no streaks.
+
+`ChallengeCompletionResource` carries an additive `pair_level`
+(`times_met`, `key`, `next_at`, `just_levelled_up`, `bonus_awarded`) on the
+response that settled a challenge. `key` is a slug, not a display string — the
+app localizes it in three languages.
 
 ---
 

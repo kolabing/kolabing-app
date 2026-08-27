@@ -21,7 +21,7 @@ library;
 class PairLevel {
   const PairLevel({
     required this.timesMet,
-    required this.label,
+    required this.key,
     this.nextAt,
     this.justLevelledUp = false,
     this.bonusAwarded = 0,
@@ -29,7 +29,7 @@ class PairLevel {
 
   factory PairLevel.fromJson(Map<String, dynamic> json) => PairLevel(
     timesMet: json['times_met'] as int? ?? 1,
-    label: json['label'] as String? ?? '',
+    key: json['key'] as String? ?? 'met',
     nextAt: json['next_at'] as int?,
     justLevelledUp: json['just_levelled_up'] as bool? ?? false,
     bonusAwarded: json['bonus_awarded'] as int? ?? 0,
@@ -37,8 +37,10 @@ class PairLevel {
 
   final int timesMet;
 
-  /// The server's name for this rung. Display-only: never branch logic on it.
-  final String label;
+  /// The server's slug for this rung (`met`, `regulars`, …), never a display
+  /// string: the ladder is configured in the backend and localized here, in
+  /// three languages, so the API has no business picking English.
+  final String key;
 
   /// How many meetings the next rung needs, or null at the top.
   final int? nextAt;
