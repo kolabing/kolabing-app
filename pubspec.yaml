@@ -137,10 +137,15 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/brand/kolabing-wordmark-yellow-bg.png"
+  # The logomark, not the wordmark (#178). The wordmark was legible in the repo
+  # and mush at 60px on a home screen; a single letter is what an icon wants.
+  image_path: "assets/brand/kolabing-app-icon-k.png"
   min_sdk_android: 21
+  # Apple rejects an icon with an alpha channel. The source is already opaque,
+  # so this flattens nothing — but the colour behind it must be the mark's own
+  # black, not the old yellow, or the K would sit in a yellow ring.
   remove_alpha_ios: true
-  background_color_ios: "#FFD861"
+  background_color_ios: "#000000"
 
 flutter:
   uses-material-design: true
