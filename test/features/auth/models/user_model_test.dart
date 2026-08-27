@@ -22,4 +22,29 @@ void main() {
 
     expect(profile.communityTypeLabel, 'Run Club');
   });
+
+  // #176: `fromJson` read cover_photo and `toJson` did not write it, so a
+  // community round-tripped through the cached copy came back with no cover —
+  // silently, because every other field survived.
+  test(
+    'CommunityProfile survives a fromJson/toJson round trip with its cover',
+    () {
+      final original = CommunityProfile.fromJson({
+        'id': 'cp-1',
+        'name': 'Morning Crew',
+        'community_type': 'run_club',
+        'profile_photo': 'https://example.test/logo.jpg',
+        'cover_photo': 'https://example.test/cover.jpg',
+        'community_size': 40,
+      });
+
+      expect(original.coverPhoto, 'https://example.test/cover.jpg');
+
+      final round = CommunityProfile.fromJson(original.toJson());
+
+      expect(round.coverPhoto, original.coverPhoto);
+      expect(round.profilePhoto, original.profilePhoto);
+      expect(round.communitySize, original.communitySize);
+    },
+  );
 }

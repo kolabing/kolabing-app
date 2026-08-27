@@ -10047,5 +10047,7 @@
   "communityRewardsLoadFailed": "Could not load this list",
   "@communityRewardsLoadFailed": {"description": "Shown in place of a goals, rewards or badges list that failed to load."},
   "communityRewardsDeleteFailed": "Could not delete that. Please try again.",
-  "@communityRewardsDeleteFailed": {"description": "Shown when deleting a goal, reward or badge fails."}
+  "@communityRewardsDeleteFailed": {"description": "Shown when deleting a goal, reward or badge fails."},
+  "communityManageCoverNotSaved": "The cover was not saved. Please try again later.",
+  "@communityManageCoverNotSaved": {"description": "Shown when the cover upload is accepted but the server stores no cover_photo."}
 }

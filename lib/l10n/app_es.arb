@@ -2469,5 +2469,6 @@
   "communityRewardsBadgeCriteria": "Se desbloquea en {value}",
   "communityRewardsPaused": "En pausa",
   "communityRewardsLoadFailed": "No se ha podido cargar esta lista",
-  "communityRewardsDeleteFailed": "No se ha podido eliminar. Inténtalo de nuevo."
+  "communityRewardsDeleteFailed": "No se ha podido eliminar. Inténtalo de nuevo.",
+  "communityManageCoverNotSaved": "No se ha guardado la portada. Inténtalo más tarde."
 }
