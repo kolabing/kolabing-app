@@ -305,10 +305,10 @@ class OnboardingService {
       final failingKeys = apiError.errors!.keys
           .map((k) => k.split('.').first)
           .toSet();
-      final onlyNewFields = failingKeys.isNotEmpty &&
+      final onlyNewFields =
+          failingKeys.isNotEmpty &&
           failingKeys.every(_onboardingFieldsToStrip.contains);
-      final bodyHasNewFields =
-          body.keys.any(_onboardingFieldsToStrip.contains);
+      final bodyHasNewFields = body.keys.any(_onboardingFieldsToStrip.contains);
 
       if (onlyNewFields && bodyHasNewFields) {
         debugPrint(

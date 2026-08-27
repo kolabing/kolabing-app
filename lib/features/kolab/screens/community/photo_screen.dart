@@ -167,12 +167,18 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
           // Section header
           Text(
             l10n.photoAddHeader,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurfaceVariant,
+              letterSpacing: 1.0,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             l10n.photoAddSubtitle,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
 
           const SizedBox(height: KolabingSpacing.lg),
@@ -228,7 +234,11 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                   Expanded(
                     child: Text(
                       l10n.photoUseProfilePhoto,
-                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: context.colors.onSurface,
+                      ),
                     ),
                   ),
                 ],
@@ -248,7 +258,11 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                 ),
                 child: Text(
                   l10n.photoDividerOr,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textTertiary),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.textTertiary,
+                  ),
                 ),
               ),
               Expanded(child: Divider(color: context.colors.darkBorder)),
@@ -281,7 +295,10 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                 decoration: BoxDecoration(
                   color: context.colors.surface,
                   borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(color: context.colors.darkBorder, width: 1),
+                  border: Border.all(
+                    color: context.colors.darkBorder,
+                    width: 1,
+                  ),
                 ),
                 child: CustomPaint(
                   painter: _DashedBorderPainter(
@@ -306,12 +323,19 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
                       const SizedBox(height: KolabingSpacing.sm),
                       Text(
                         l10n.photoUploadTitle,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.onSurface,
+                        ),
                       ),
                       const SizedBox(height: KolabingSpacing.xxs),
                       Text(
                         l10n.photoUploadMaxSize,
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          fontSize: 12,
+                          color: context.colors.textTertiary,
+                        ),
                       ),
                     ],
                   ),
@@ -353,70 +377,76 @@ class _UploadedPhotoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Container(
-    width: double.infinity,
-    padding: const EdgeInsets.all(KolabingSpacing.sm),
-    decoration: BoxDecoration(
-      color: context.colors.surface,
-      borderRadius: KolabingRadius.borderRadiusMd,
-      border: Border.all(color: context.colors.primary, width: 1.5),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ClipRRect(
-          borderRadius: KolabingRadius.borderRadiusMd,
-          child: AspectRatio(
-            aspectRatio: 16 / 10,
-            child: _isLocalFile
-                ? Image.file(File(photo.url), fit: BoxFit.cover)
-                : Image.network(
-                    photo.url,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: context.colors.surfaceVariant,
-                      alignment: Alignment.center,
-                      child: Icon(
-                        LucideIcons.imageOff,
-                        color: context.colors.textTertiary,
-                        size: 28,
+      width: double.infinity,
+      padding: const EdgeInsets.all(KolabingSpacing.sm),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(color: context.colors.primary, width: 1.5),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: KolabingRadius.borderRadiusMd,
+            child: AspectRatio(
+              aspectRatio: 16 / 10,
+              child: _isLocalFile
+                  ? Image.file(File(photo.url), fit: BoxFit.cover)
+                  : Image.network(
+                      photo.url,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: context.colors.surfaceVariant,
+                        alignment: Alignment.center,
+                        child: Icon(
+                          LucideIcons.imageOff,
+                          color: context.colors.textTertiary,
+                          size: 28,
+                        ),
                       ),
                     ),
-                  ),
+            ),
           ),
-        ),
-        const SizedBox(height: KolabingSpacing.sm),
-        Text(
-          l10n.photoUploadedSelectedTitle,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w700, color: context.colors.onSurface),
-        ),
-        const SizedBox(height: KolabingSpacing.xxs),
-        Text(
-          l10n.photoUploadedSelectedSubtitle,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
-        ),
-        const SizedBox(height: KolabingSpacing.sm),
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton(
-                onPressed: isUploading ? null : onRemove,
-                child: Text(l10n.photoUseProfilePhotoButton),
-              ),
+          const SizedBox(height: KolabingSpacing.sm),
+          Text(
+            l10n.photoUploadedSelectedTitle,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurface,
             ),
-            const SizedBox(width: KolabingSpacing.sm),
-            Expanded(
-              child: KolabingButton(
-                label: l10n.photoReplacePhotoButton,
-                onPressed: isUploading ? null : onReplace,
-                variant: KolabingButtonVariant.primary,
-                size: KolabingButtonSize.compact,
-              ),
+          ),
+          const SizedBox(height: KolabingSpacing.xxs),
+          Text(
+            l10n.photoUploadedSelectedSubtitle,
+            style: KolabingTextStyles.captionSecondary.copyWith(
+              color: context.colors.onSurfaceVariant,
             ),
-          ],
-        ),
-      ],
-    ),
-  );
+          ),
+          const SizedBox(height: KolabingSpacing.sm),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: isUploading ? null : onRemove,
+                  child: Text(l10n.photoUseProfilePhotoButton),
+                ),
+              ),
+              const SizedBox(width: KolabingSpacing.sm),
+              Expanded(
+                child: KolabingButton(
+                  label: l10n.photoReplacePhotoButton,
+                  onPressed: isUploading ? null : onReplace,
+                  variant: KolabingButtonVariant.primary,
+                  size: KolabingButtonSize.compact,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 

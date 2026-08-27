@@ -115,11 +115,11 @@ enum _MissionAccent {
   red;
 
   Color resolve(KolabingColorTokens c) => switch (this) {
-        _MissionAccent.mint => c.categoryMintBg,
-        _MissionAccent.amber => c.amberChipContainer,
-        _MissionAccent.lavender => c.categoryLavenderBg,
-        _MissionAccent.red => c.categoryRedBg,
-      };
+    _MissionAccent.mint => c.categoryMintBg,
+    _MissionAccent.amber => c.amberChipContainer,
+    _MissionAccent.lavender => c.categoryLavenderBg,
+    _MissionAccent.red => c.categoryRedBg,
+  };
 }
 
 class _MissionData {

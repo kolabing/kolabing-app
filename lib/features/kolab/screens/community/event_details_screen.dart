@@ -27,8 +27,7 @@ class EventDetailsScreen extends ConsumerStatefulWidget {
   const EventDetailsScreen({super.key});
 
   @override
-  ConsumerState<EventDetailsScreen> createState() =>
-      _EventDetailsScreenState();
+  ConsumerState<EventDetailsScreen> createState() => _EventDetailsScreenState();
 }
 
 class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
@@ -84,12 +83,18 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
           // Section header
           Text(
             l10n.eventDetailsHeader,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurfaceVariant,
+              letterSpacing: 1.0,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             l10n.eventDetailsSubtitle,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
 
@@ -128,7 +133,11 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
           // "What you offer in return" section header
           Text(
             l10n.eventDetailsOffersHeader,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurfaceVariant,
+              letterSpacing: 1.0,
+            ),
           ),
           if (state.fieldErrors['offers_in_return'] != null) ...[
             const SizedBox(height: KolabingSpacing.sm),
@@ -204,12 +213,19 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
                           children: [
                             Text(
                               label,
-                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                              style: KolabingTextStyles.bodySmall.copyWith(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: context.colors.onSurface,
+                              ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               subtitle,
-                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+                              style: KolabingTextStyles.bodySmall.copyWith(
+                                fontSize: 12,
+                                color: context.colors.onSurfaceVariant,
+                              ),
                             ),
                           ],
                         ),
@@ -232,34 +248,36 @@ class _EventDetailsScreenState extends ConsumerState<EventDetailsScreen> {
   }
 
   Widget _buildLabel(String label) => Text(
-        label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
-      );
+    label,
+    style: KolabingTextStyles.bodySmall.copyWith(
+      fontWeight: FontWeight.w600,
+      color: context.colors.onSurface,
+    ),
+  );
 
   Widget _buildFieldError(String error) => Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xs,
-        ),
-        decoration: BoxDecoration(
-          color: context.colors.errorBg,
-          borderRadius: KolabingRadius.borderRadiusSm,
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 14,
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.sm,
+      vertical: KolabingSpacing.xs,
+    ),
+    decoration: BoxDecoration(
+      color: context.colors.errorBg,
+      borderRadius: KolabingRadius.borderRadiusSm,
+    ),
+    child: Row(
+      children: [
+        Icon(Icons.error_outline, size: 14, color: context.colors.error),
+        const SizedBox(width: KolabingSpacing.xs),
+        Expanded(
+          child: Text(
+            error,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
               color: context.colors.error,
             ),
-            const SizedBox(width: KolabingSpacing.xs),
-            Expanded(
-              child: Text(
-                error,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
-              ),
-            ),
-          ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
 }

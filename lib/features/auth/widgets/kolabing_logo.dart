@@ -43,12 +43,8 @@ class KolabingLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: AppLocalizations.of(context).kolabingLogoSemanticLabel,
-        image: true,
-        child: Image.asset(
-          variant.assetPath,
-          width: width,
-          fit: BoxFit.contain,
-        ),
-      );
+    label: AppLocalizations.of(context).kolabingLogoSemanticLabel,
+    image: true,
+    child: Image.asset(variant.assetPath, width: width, fit: BoxFit.contain),
+  );
 }

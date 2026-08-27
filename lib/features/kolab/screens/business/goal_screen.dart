@@ -37,17 +37,27 @@ class GoalScreen extends ConsumerWidget {
       children: [
         Text(
           'GOAL',
-          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.colors.onSurfaceVariant,
+            letterSpacing: 1.0,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
           'What would make this Kolab a success?',
-          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: context.colors.onSurface,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           'Pick the main goal so communities understand what you’re looking for.',
-          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -56,7 +66,10 @@ class GoalScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(
               errors['goal']!,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 12,
+                color: context.colors.error,
+              ),
             ),
           ),
 
@@ -67,69 +80,90 @@ class GoalScreen extends ConsumerWidget {
               error: (_, _) => const <OfferOption>[],
             )
             .map((option) {
-          final isSelected = selectedGoal == option.slug;
-          return Padding(
-            padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-            child: GestureDetector(
-              onTap: () => notifier.updateGoal(option.slug),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.all(KolabingSpacing.md),
-                decoration: BoxDecoration(
-                  color: isSelected ? context.colors.softYellow : context.colors.surface,
-                  borderRadius: KolabingRadius.borderRadiusMd,
-                  border: Border.all(
-                    color: isSelected ? context.colors.primary : context.colors.darkBorder,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: isSelected ? context.colors.primary : Colors.transparent,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: isSelected ? context.colors.primary : context.colors.darkBorder,
-                          width: 1.5,
-                        ),
+              final isSelected = selectedGoal == option.slug;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+                child: GestureDetector(
+                  onTap: () => notifier.updateGoal(option.slug),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.all(KolabingSpacing.md),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? context.colors.softYellow
+                          : context.colors.surface,
+                      borderRadius: KolabingRadius.borderRadiusMd,
+                      border: Border.all(
+                        color: isSelected
+                            ? context.colors.primary
+                            : context.colors.darkBorder,
                       ),
-                      child: isSelected
-                          ? Icon(LucideIcons.check, size: 14, color: context.colors.onPrimary)
-                          : null,
                     ),
-                    const SizedBox(width: KolabingSpacing.sm),
-                    CategoryIcon(name: option.name, iconUrl: option.iconUrl, size: 24),
-                    const SizedBox(width: KolabingSpacing.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            option.name,
-                            style: KolabingTextStyles.bodySmall.copyWith(
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                              color: context.colors.onSurface,
+                    child: Row(
+                      children: [
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? context.colors.primary
+                                : Colors.transparent,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isSelected
+                                  ? context.colors.primary
+                                  : context.colors.darkBorder,
+                              width: 1.5,
                             ),
                           ),
-                          if (option.description?.isNotEmpty ?? false) ...[
-                            const SizedBox(height: 2),
-                            Text(
-                              option.description!,
-                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
-                            ),
-                          ],
-                        ],
-                      ),
+                          child: isSelected
+                              ? Icon(
+                                  LucideIcons.check,
+                                  size: 14,
+                                  color: context.colors.onPrimary,
+                                )
+                              : null,
+                        ),
+                        const SizedBox(width: KolabingSpacing.sm),
+                        CategoryIcon(
+                          name: option.name,
+                          iconUrl: option.iconUrl,
+                          size: 24,
+                        ),
+                        const SizedBox(width: KolabingSpacing.sm),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                option.name,
+                                style: KolabingTextStyles.bodySmall.copyWith(
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                  color: context.colors.onSurface,
+                                ),
+                              ),
+                              if (option.description?.isNotEmpty ?? false) ...[
+                                const SizedBox(height: 2),
+                                Text(
+                                  option.description!,
+                                  style: KolabingTextStyles.bodySmall.copyWith(
+                                    fontSize: 12,
+                                    color: context.colors.textTertiary,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          );
-        }),
+              );
+            }),
 
         if (goalOptionsAsync.isLoading)
           const Padding(

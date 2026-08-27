@@ -195,7 +195,8 @@ class KolabService {
             AnalyticsEvents.kolabPublished,
             properties: {
               'kolab_id': published.id ?? '',
-              'is_direct': recipientCommunityId != null &&
+              'is_direct':
+                  recipientCommunityId != null &&
                   recipientCommunityId.isNotEmpty,
             },
           ),

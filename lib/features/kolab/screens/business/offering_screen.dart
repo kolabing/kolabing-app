@@ -71,7 +71,11 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         // -- Intro: this is the core of the Kolab
         Text(
           'This is the main reason a community will say yes.',
-          style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 16, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: context.colors.onSurface,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -80,13 +84,19 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         // endpoint isn't deployed)
         Text(
           l10n.offeringTitle,
-          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.colors.onSurfaceVariant,
+            letterSpacing: 1.0,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
 
         Text(
           l10n.offeringSelectAllThatApply,
-          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -96,7 +106,10 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(
               errors['offering']!,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 12,
+                color: context.colors.error,
+              ),
             ),
           ),
 
@@ -110,28 +123,28 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
               error: (_, _) => const <OfferOption>[],
             )
             .map((option) {
-          final isSelected = offerings.contains(option.slug);
-          final isVenueLocked = isVenueFlow && option.slug == 'venue';
+              final isSelected = offerings.contains(option.slug);
+              final isVenueLocked = isVenueFlow && option.slug == 'venue';
 
-          return Padding(
-            padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
-            child: _ToggleCard(
-              title: _offeringTitle(l10n, option.slug, option.name),
-              subtitle: _offeringSubtitle(
-                l10n,
-                option.slug,
-                option.description ?? '',
-              ),
-              iconName: option.name,
-              iconUrl: option.iconUrl,
-              isSelected: isVenueLocked || isSelected,
-              isLocked: isVenueLocked,
-              onTap: isVenueLocked
-                  ? null
-                  : () => notifier.toggleOffering(option.slug),
-            ),
-          );
-        }),
+              return Padding(
+                padding: const EdgeInsets.only(bottom: KolabingSpacing.sm),
+                child: _ToggleCard(
+                  title: _offeringTitle(l10n, option.slug, option.name),
+                  subtitle: _offeringSubtitle(
+                    l10n,
+                    option.slug,
+                    option.description ?? '',
+                  ),
+                  iconName: option.name,
+                  iconUrl: option.iconUrl,
+                  isSelected: isVenueLocked || isSelected,
+                  isLocked: isVenueLocked,
+                  onTap: isVenueLocked
+                      ? null
+                      : () => notifier.toggleOffering(option.slug),
+                ),
+              );
+            }),
 
         if (offeringOptionsAsync.isLoading)
           const Padding(
@@ -146,7 +159,10 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           l10n.offeringBaseOfferHelper,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
+          style: KolabingTextStyles.captionSecondary.copyWith(
+            color: context.colors.onSurfaceVariant,
+            height: 1.4,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         if (errors.containsKey('base_offer'))
@@ -154,7 +170,10 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
             child: Text(
               errors['base_offer']!,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 12,
+                color: context.colors.error,
+              ),
             ),
           ),
         KolabingInput(
@@ -166,11 +185,13 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        const KolabExamplesBox(examples: [
-          'Free coffee tasting for 20 runners in exchange for tagged stories.',
-          '50 product samples for a fitness community in exchange for feedback.',
-          '20% off brunch for community members every Sunday.',
-        ]),
+        const KolabExamplesBox(
+          examples: [
+            'Free coffee tasting for 20 runners in exchange for tagged stories.',
+            '50 product samples for a fitness community in exchange for feedback.',
+            '20% off brunch for community members every Sunday.',
+          ],
+        ),
         const SizedBox(height: KolabingSpacing.md),
         Container(
           padding: const EdgeInsets.all(KolabingSpacing.sm),
@@ -181,7 +202,10 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
           child: Text(
             'Good Kolabs usually include a clear perk: free samples, a discount, '
             'a space, an experience, content, or something members will enjoy.',
-            style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurface, height: 1.4),
+            style: KolabingTextStyles.captionSecondary.copyWith(
+              color: context.colors.onSurface,
+              height: 1.4,
+            ),
           ),
         ),
         const SizedBox(height: KolabingSpacing.lg),
@@ -192,30 +216,39 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         Text(
           'You can choose more than one. This is not a strict contract yet — '
           'it helps communities understand your expectations.',
-          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
+          style: KolabingTextStyles.captionSecondary.copyWith(
+            color: context.colors.onSurfaceVariant,
+            height: 1.4,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
-        Builder(builder: (context) {
-          final deliverableOptions = ref.watch(deliverablesProvider).when(
-                data: (options) => options,
-                loading: () => const <OfferOption>[],
-                error: (_, _) => const <OfferOption>[],
-              );
-          return MultiSelectChips<OfferOption>(
-            items: deliverableOptions,
-            selected: deliverableOptions
-                .where((o) => kolab.expects.contains(o.slug))
-                .toList(),
-            labelBuilder: (o) => o.name,
-            onToggle: (option) => notifier.toggleExpect(option.slug),
-          );
-        }),
+        Builder(
+          builder: (context) {
+            final deliverableOptions = ref
+                .watch(deliverablesProvider)
+                .when(
+                  data: (options) => options,
+                  loading: () => const <OfferOption>[],
+                  error: (_, _) => const <OfferOption>[],
+                );
+            return MultiSelectChips<OfferOption>(
+              items: deliverableOptions,
+              selected: deliverableOptions
+                  .where((o) => kolab.expects.contains(o.slug))
+                  .toList(),
+              labelBuilder: (o) => o.name,
+              onToggle: (option) => notifier.toggleExpect(option.slug),
+            );
+          },
+        ),
         const SizedBox(height: KolabingSpacing.xs),
-        const KolabExamplesBox(examples: [
-          'Tagged stories + honest feedback from members.',
-          'Minimum 15 attendees and community photos.',
-          'Open to ideas — we mainly want to connect with the right community.',
-        ]),
+        const KolabExamplesBox(
+          examples: [
+            'Tagged stories + honest feedback from members.',
+            'Minimum 15 attendees and community photos.',
+            'Open to ideas — we mainly want to connect with the right community.',
+          ],
+        ),
         const SizedBox(height: KolabingSpacing.lg),
 
         // H3: Negotiation triggers — surfaces only after a community applies.
@@ -223,7 +256,10 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           l10n.offeringExtraTermsHelper,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
+          style: KolabingTextStyles.captionSecondary.copyWith(
+            color: context.colors.onSurfaceVariant,
+            height: 1.4,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
 
@@ -279,10 +315,7 @@ class _OfferingScreenState extends ConsumerState<OfferingScreen> {
       builder: (_) => const _TriggerEditorSheet(),
     );
     if (result == null) return;
-    notifier.updateNegotiationTriggers([
-      ...kolab.negotiationTriggers,
-      result,
-    ]);
+    notifier.updateNegotiationTriggers([...kolab.negotiationTriggers, result]);
   }
 }
 
@@ -337,9 +370,14 @@ class _SectionLabel extends StatelessWidget {
   final String label;
   @override
   Widget build(BuildContext context) => Text(
-        label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
-      );
+    label,
+    style: KolabingTextStyles.bodySmall.copyWith(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+      color: context.colors.onSurfaceVariant,
+      letterSpacing: 1.0,
+    ),
+  );
 }
 
 class _TriggerCard extends StatelessWidget {
@@ -357,44 +395,51 @@ class _TriggerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: context.colors.darkBorder),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppLocalizations.of(context).offeringTriggerIfPrefix(condition),
-                    style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.textTertiary, letterSpacing: 0.5),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    additionalOffer,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface, height: 1.4),
-                  ),
-                ],
+    padding: const EdgeInsets.all(KolabingSpacing.md),
+    decoration: BoxDecoration(
+      color: context.colors.surface,
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: context.colors.darkBorder),
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context).offeringTriggerIfPrefix(condition),
+                style: KolabingTextStyles.labelSmall.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.textTertiary,
+                  letterSpacing: 0.5,
+                ),
               ),
-            ),
-            IconButton(
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              onPressed: onRemove,
-              icon: Icon(
-                LucideIcons.x,
-                size: 18,
-                color: context.colors.textTertiary,
+              const SizedBox(height: 4),
+              Text(
+                additionalOffer,
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: context.colors.onSurface,
+                  height: 1.4,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      );
+        IconButton(
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+          onPressed: onRemove,
+          icon: Icon(
+            LucideIcons.x,
+            size: 18,
+            color: context.colors.textTertiary,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 class _TriggerEditorSheet extends StatefulWidget {
@@ -447,12 +492,18 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
           const SizedBox(height: KolabingSpacing.md),
           Text(
             l10n.offeringTriggerSheetTitle,
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurface,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             l10n.offeringTriggerSheetSubtitle,
-            style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.captionSecondary.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.md),
           KolabingInput(
@@ -496,7 +547,6 @@ class _TriggerEditorSheetState extends State<_TriggerEditorSheet> {
   }
 }
 
-
 // =============================================================================
 // Toggle Card
 // =============================================================================
@@ -526,73 +576,75 @@ class _ToggleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: isSelected ? context.colors.softYellow : context.colors.surface,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(
           color: isSelected
-              ? context.colors.softYellow
-              : context.colors.surface,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color: isSelected
-                ? context.colors.primary
-                : context.colors.darkBorder,
-          ),
-        ),
-        child: Row(
-          children: [
-            // Checkbox / Locked indicator
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? context.colors.primary
-                    : Colors.transparent,
-                borderRadius: KolabingRadius.borderRadiusXs,
-                border: Border.all(
-                  color: isSelected
-                      ? context.colors.primary
-                      : context.colors.darkBorder,
-                  width: 1.5,
-                ),
-              ),
-              child: isSelected
-                  ? Icon(
-                      isLocked ? LucideIcons.lock : LucideIcons.check,
-                      size: 14,
-                      color: context.colors.onPrimary,
-                    )
-                  : null,
-            ),
-            const SizedBox(width: KolabingSpacing.sm),
-
-            // Icon (personalised category SVG; admin icon_url overrides)
-            CategoryIcon(name: iconName, iconUrl: iconUrl, size: 24),
-            const SizedBox(width: KolabingSpacing.sm),
-
-            // Title + subtitle
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
-                  ),
-                ],
-              ),
-            ),
-          ],
+              ? context.colors.primary
+              : context.colors.darkBorder,
         ),
       ),
-    );
+      child: Row(
+        children: [
+          // Checkbox / Locked indicator
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: isSelected ? context.colors.primary : Colors.transparent,
+              borderRadius: KolabingRadius.borderRadiusXs,
+              border: Border.all(
+                color: isSelected
+                    ? context.colors.primary
+                    : context.colors.darkBorder,
+                width: 1.5,
+              ),
+            ),
+            child: isSelected
+                ? Icon(
+                    isLocked ? LucideIcons.lock : LucideIcons.check,
+                    size: 14,
+                    color: context.colors.onPrimary,
+                  )
+                : null,
+          ),
+          const SizedBox(width: KolabingSpacing.sm),
+
+          // Icon (personalised category SVG; admin icon_url overrides)
+          CategoryIcon(name: iconName, iconUrl: iconUrl, size: 24),
+          const SizedBox(width: KolabingSpacing.sm),
+
+          // Title + subtitle
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    color: context.colors.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

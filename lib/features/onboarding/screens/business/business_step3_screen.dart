@@ -65,8 +65,8 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);
       final message = switch (e.code) {
-        'photo_access_denied' || 'photo_access_restricted' =>
-          l10n.businessStep3PhotoAccessDenied,
+        'photo_access_denied' ||
+        'photo_access_restricted' => l10n.businessStep3PhotoAccessDenied,
         _ => l10n.businessStep3PhotoLibraryError,
       };
       ScaffoldMessenger.of(context).showSnackBar(
@@ -125,13 +125,19 @@ class _BusinessStep3ScreenState extends ConsumerState<BusinessStep3Screen> {
                     const SizedBox(height: 32),
                     Text(
                       AppLocalizations.of(context).businessStep3Title,
-                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                      style: KolabingTextStyles.bodyLarge.copyWith(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: context.colors.onSurface,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       AppLocalizations.of(context).businessStep3Subtitle,
-                      style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 24),
@@ -197,7 +203,10 @@ class _AddPhotoTile extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             AppLocalizations.of(context).businessStep3AddPhoto,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -214,10 +223,7 @@ class _VenuePhotoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Stack(
     children: [
-      ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: _buildImage(),
-      ),
+      ClipRRect(borderRadius: BorderRadius.circular(16), child: _buildImage()),
       Positioned(
         top: 6,
         right: 6,

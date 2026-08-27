@@ -77,7 +77,11 @@ Future<List<Collaboration>> _fetchCollaborations({
 
   if (response.statusCode == 401 && allowRetry) {
     await authService.refreshSession();
-    return _fetchCollaborations(allowRetry: false, authService: authService, perPage: perPage);
+    return _fetchCollaborations(
+      allowRetry: false,
+      authService: authService,
+      perPage: perPage,
+    );
   }
 
   final body = response.body.isEmpty
@@ -105,28 +109,32 @@ final collaborationsListProvider = FutureProvider<List<Collaboration>>(
 final activeCollaborationsProvider = Provider<AsyncValue<List<Collaboration>>>((
   ref,
 ) {
-  return ref.watch(collaborationsListProvider).whenData(
-    (all) => all
-        .where(
-          (c) =>
-              c.status == CollaborationStatus.scheduled ||
-              c.status == CollaborationStatus.inProgress ||
-              c.status == CollaborationStatus.pendingConfirmation,
-        )
-        .toList(),
-  );
+  return ref
+      .watch(collaborationsListProvider)
+      .whenData(
+        (all) => all
+            .where(
+              (c) =>
+                  c.status == CollaborationStatus.scheduled ||
+                  c.status == CollaborationStatus.inProgress ||
+                  c.status == CollaborationStatus.pendingConfirmation,
+            )
+            .toList(),
+      );
 });
 
 /// Finished = completed or cancelled collaborations.
 final finishedCollaborationsProvider =
     Provider<AsyncValue<List<Collaboration>>>((ref) {
-      return ref.watch(collaborationsListProvider).whenData(
-        (all) => all
-            .where(
-              (c) =>
-                  c.status == CollaborationStatus.completed ||
-                  c.status == CollaborationStatus.cancelled,
-            )
-            .toList(),
-      );
+      return ref
+          .watch(collaborationsListProvider)
+          .whenData(
+            (all) => all
+                .where(
+                  (c) =>
+                      c.status == CollaborationStatus.completed ||
+                      c.status == CollaborationStatus.cancelled,
+                )
+                .toList(),
+          );
     });

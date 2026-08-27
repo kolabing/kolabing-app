@@ -66,8 +66,9 @@ final communityPhotosProvider =
     });
 
 /// The single photo the cover band should paint, if any.
-final communityCoverPhotoProvider =
-    Provider.family<String?, CommunityMediaKey>((ref, key) {
-      final photos = ref.watch(communityPhotosProvider(key));
-      return photos.isEmpty ? null : photos.first.url;
-    });
+final communityCoverPhotoProvider = Provider.family<String?, CommunityMediaKey>(
+  (ref, key) {
+    final photos = ref.watch(communityPhotosProvider(key));
+    return photos.isEmpty ? null : photos.first.url;
+  },
+);

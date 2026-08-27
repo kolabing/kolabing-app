@@ -47,13 +47,13 @@ class _UserTypeToggleState extends State<UserTypeToggle>
       vsync: this,
     );
 
-    _positionAnimation = Tween<double>(
-      begin: widget.selectedType == UserType.business ? 0.0 : 1.0,
-      end: widget.selectedType == UserType.business ? 0.0 : 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _positionAnimation =
+        Tween<double>(
+          begin: widget.selectedType == UserType.business ? 0.0 : 1.0,
+          end: widget.selectedType == UserType.business ? 0.0 : 1.0,
+        ).animate(
+          CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+        );
   }
 
   @override
@@ -74,13 +74,13 @@ class _UserTypeToggleState extends State<UserTypeToggle>
   void _animateToType(UserType type) {
     final targetValue = type == UserType.business ? 0.0 : 1.0;
 
-    _positionAnimation = Tween<double>(
-      begin: _positionAnimation.value,
-      end: targetValue,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _positionAnimation =
+        Tween<double>(
+          begin: _positionAnimation.value,
+          end: targetValue,
+        ).animate(
+          CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+        );
 
     _animationController
       ..reset()
@@ -98,77 +98,69 @@ class _UserTypeToggleState extends State<UserTypeToggle>
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label:
-            'Select account type. Two options: Business or Community. Currently selected: ${widget.selectedType.label}. Double tap to switch.',
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 200),
-          opacity: widget.isEnabled ? 1.0 : 0.6,
-          child: Container(
-            height: 48,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              border: Border.all(
-                color: context.colors.darkBorder,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.all(4),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final segmentWidth = (constraints.maxWidth - 4) / 2;
+    label:
+        'Select account type. Two options: Business or Community. Currently selected: ${widget.selectedType.label}. Double tap to switch.',
+    child: AnimatedOpacity(
+      duration: const Duration(milliseconds: 200),
+      opacity: widget.isEnabled ? 1.0 : 0.6,
+      child: Container(
+        height: 48,
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          border: Border.all(color: context.colors.darkBorder),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(4),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final segmentWidth = (constraints.maxWidth - 4) / 2;
 
-                return Stack(
-                  children: [
-                    // Animated selection pill
-                    AnimatedBuilder(
-                      animation: _positionAnimation,
-                      builder: (context, child) => Positioned(
-                        left: _positionAnimation.value * (segmentWidth + 4),
-                        top: 0,
-                        bottom: 0,
-                        width: segmentWidth,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: context.colors.primary,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 2,
-                                offset: const Offset(0, 1),
-                              ),
-                            ],
+            return Stack(
+              children: [
+                // Animated selection pill
+                AnimatedBuilder(
+                  animation: _positionAnimation,
+                  builder: (context, child) => Positioned(
+                    left: _positionAnimation.value * (segmentWidth + 4),
+                    top: 0,
+                    bottom: 0,
+                    width: segmentWidth,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: context.colors.primary,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.2),
+                            blurRadius: 2,
+                            offset: const Offset(0, 1),
                           ),
-                        ),
+                        ],
                       ),
                     ),
+                  ),
+                ),
 
-                    // Segment buttons
-                    Row(
-                      children: [
-                        _buildSegment(
-                          type: UserType.business,
-                          width: segmentWidth,
-                        ),
-                        const SizedBox(width: 4),
-                        _buildSegment(
-                          type: UserType.community,
-                          width: segmentWidth,
-                        ),
-                      ],
+                // Segment buttons
+                Row(
+                  children: [
+                    _buildSegment(type: UserType.business, width: segmentWidth),
+                    const SizedBox(width: 4),
+                    _buildSegment(
+                      type: UserType.community,
+                      width: segmentWidth,
                     ),
                   ],
-                );
-              },
-            ),
-          ),
+                ),
+              ],
+            );
+          },
         ),
-      );
+      ),
+    ),
+  );
 
-  Widget _buildSegment({
-    required UserType type,
-    required double width,
-  }) {
+  Widget _buildSegment({required UserType type, required double width}) {
     final isSelected = widget.selectedType == type;
 
     return GestureDetector(

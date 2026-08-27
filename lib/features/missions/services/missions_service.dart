@@ -16,11 +16,9 @@ const String _baseUrl = ApiConfig.baseUrl;
 /// returns role-scoped, already-filtered missions, so the app just displays
 /// what it gets.
 class MissionsService {
-  MissionsService({
-    required AuthService authService,
-    http.Client? httpClient,
-  })  : _authService = authService,
-        _httpClient = httpClient ?? http.Client();
+  MissionsService({required AuthService authService, http.Client? httpClient})
+    : _authService = authService,
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;

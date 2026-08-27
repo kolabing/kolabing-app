@@ -76,15 +76,18 @@ void main() {
     expect(withPreview.hasMessages, isTrue);
   });
 
-  test('last_message preview is null when the backend omits it (#8 fallback)', () {
-    final noPreview = ChatThread.fromJson(<String, dynamic>{
-      'id': 't2',
-      'type': 'community_custom',
-      'created_at': '2026-06-01T10:00:00Z',
-      'last_message_at': '2026-06-02T09:00:00Z',
-    });
-    // Older backend: has a timestamp but no preview → list shows "Tap to open".
-    expect(noPreview.lastMessagePreview, isNull);
-    expect(noPreview.hasMessages, isTrue);
-  });
+  test(
+    'last_message preview is null when the backend omits it (#8 fallback)',
+    () {
+      final noPreview = ChatThread.fromJson(<String, dynamic>{
+        'id': 't2',
+        'type': 'community_custom',
+        'created_at': '2026-06-01T10:00:00Z',
+        'last_message_at': '2026-06-02T09:00:00Z',
+      });
+      // Older backend: has a timestamp but no preview → list shows "Tap to open".
+      expect(noPreview.lastMessagePreview, isNull);
+      expect(noPreview.hasMessages, isTrue);
+    },
+  );
 }

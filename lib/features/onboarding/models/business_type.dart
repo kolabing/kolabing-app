@@ -47,13 +47,13 @@ class BusinessType {
   bool get isForProduct => appliesTo == 'product' || appliesTo == 'both';
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'slug': slug,
-        if (icon != null) 'icon': icon,
-        if (iconUrl != null) 'icon_url': iconUrl,
-        'applies_to': appliesTo,
-      };
+    'id': id,
+    'name': name,
+    'slug': slug,
+    if (icon != null) 'icon': icon,
+    if (iconUrl != null) 'icon_url': iconUrl,
+    'applies_to': appliesTo,
+  };
 
   @override
   bool operator ==(Object other) =>

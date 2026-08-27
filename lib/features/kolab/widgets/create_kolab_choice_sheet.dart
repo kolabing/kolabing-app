@@ -35,8 +35,10 @@ class CreateKolabChoiceSheet extends ConsumerWidget {
     // Creator gate (the organizer area's own gate), matching how the create
     // flow already shows-then-gates a non-subscribed business.
     final entitled =
-        ref.watch(multiKolabEntitlementProvider).value?.
-            hasEventCreatorEntitlement ??
+        ref
+            .watch(multiKolabEntitlementProvider)
+            .value
+            ?.hasEventCreatorEntitlement ??
         false;
 
     return SafeArea(

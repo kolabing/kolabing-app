@@ -6,8 +6,9 @@ import 'package:kolabing_app/config/theme/theme.dart';
 import 'package:kolabing_app/features/event/screens/create_event_screen.dart';
 
 void main() {
-  testWidgets('create event lays out without an exception (phone width)',
-      (tester) async {
+  testWidgets('create event lays out without an exception (phone width)', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1179, 2556); // iPhone @3x
     tester.view.devicePixelRatio = 3.0;
     addTearDown(tester.view.resetPhysicalSize);

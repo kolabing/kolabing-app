@@ -442,7 +442,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                           TextButton(
                             onPressed: () =>
                                 ref.invalidate(businessTypesProvider),
-                            child: Text(AppLocalizations.of(context).commonRetry),
+                            child: Text(
+                              AppLocalizations.of(context).commonRetry,
+                            ),
                           ),
                         ],
                       ),

@@ -268,6 +268,7 @@ class ChallengeService {
     String? description,
     required ChallengeDifficulty difficulty,
     int? points,
+    ChallengeProofType proofType = ChallengeProofType.text,
   }) async {
     final token = await _authService.getToken();
     if (token == null) {
@@ -284,6 +285,10 @@ class ChallengeService {
           'description': description,
         'difficulty': difficulty.toApiValue(),
         if (points != null) 'points': points,
+        // Whether the app opens the camera when the pair agrees (#188). Always
+        // sent: the API defaults it to `text`, and being explicit means an edit
+        // that turns the camera OFF actually says so.
+        'proof_type': proofType.toApiValue(),
       };
 
       final response = await _httpClient.post(
@@ -332,6 +337,7 @@ class ChallengeService {
     String? description,
     ChallengeDifficulty? difficulty,
     int? points,
+    ChallengeProofType? proofType,
   }) async {
     final token = await _authService.getToken();
     if (token == null) {
@@ -347,6 +353,9 @@ class ChallengeService {
       if (description != null) body['description'] = description;
       if (difficulty != null) body['difficulty'] = difficulty.toApiValue();
       if (points != null) body['points'] = points;
+      // Null means "leave it as it is"; a value means the author chose, which
+      // includes choosing to turn the camera off again (#188).
+      if (proofType != null) body['proof_type'] = proofType.toApiValue();
 
       final response = await _httpClient.put(
         Uri.parse(url),

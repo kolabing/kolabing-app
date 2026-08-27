@@ -20,7 +20,8 @@ class NotificationSettingsNotifier
   Future<void> reload() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-        () => ref.read(profileServiceProvider).getNotificationPreferences());
+      () => ref.read(profileServiceProvider).getNotificationPreferences(),
+    );
   }
 
   /// Persist one toggle. Optimistically reflects the new value, then writes the
@@ -41,17 +42,19 @@ class NotificationSettingsNotifier
   }
 
   Map<String, bool> _payload(NotificationPreferences p) => {
-        'message_notifications': p.messagesEnabled,
-        'messages_enabled': p.messagesEnabled,
-        'new_application_alerts': p.applicationsEnabled,
-        'applications_enabled': p.applicationsEnabled,
-        'collaboration_updates': p.collaborationsEnabled,
-        'collaborations_enabled': p.collaborationsEnabled,
-        'marketing_tips': p.marketingEnabled,
-        'marketing_enabled': p.marketingEnabled,
-      };
+    'message_notifications': p.messagesEnabled,
+    'messages_enabled': p.messagesEnabled,
+    'new_application_alerts': p.applicationsEnabled,
+    'applications_enabled': p.applicationsEnabled,
+    'collaboration_updates': p.collaborationsEnabled,
+    'collaborations_enabled': p.collaborationsEnabled,
+    'marketing_tips': p.marketingEnabled,
+    'marketing_enabled': p.marketingEnabled,
+  };
 }
 
-final notificationSettingsProvider = NotifierProvider<
-    NotificationSettingsNotifier,
-    AsyncValue<NotificationPreferences>>(NotificationSettingsNotifier.new);
+final notificationSettingsProvider =
+    NotifierProvider<
+      NotificationSettingsNotifier,
+      AsyncValue<NotificationPreferences>
+    >(NotificationSettingsNotifier.new);

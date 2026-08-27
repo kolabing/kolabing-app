@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -174,9 +175,11 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
 
   void _handleChallengeTap(Challenge challenge) {
     if (widget.isOrganizer && challenge.isCustom) {
-      // Organizer can edit custom challenges
+      // Organizer can edit custom challenges. The object rides along in
+      // `extra`: there is no single-challenge endpoint to re-read it from.
       context.push(
-        '/attendee/events/${widget.eventId}/challenges/${challenge.id}/edit',
+        KolabingRoutes.buildEditChallengePath(widget.eventId, challenge.id),
+        extra: challenge,
       );
     } else {
       // Show challenge details / initiate challenge

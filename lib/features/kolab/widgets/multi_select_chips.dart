@@ -42,8 +42,7 @@ class MultiSelectChips<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maxReached =
-        maxSelect != null && selected.length >= maxSelect!;
+    final maxReached = maxSelect != null && selected.length >= maxSelect!;
 
     return Wrap(
       spacing: KolabingSpacing.xs,
@@ -80,16 +79,17 @@ class MultiSelectChips<T> extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (icon != null) ...[
-                    Icon(
-                      icon,
-                      size: 16,
-                      color: context.colors.onSurface,
-                    ),
+                    Icon(icon, size: 16, color: context.colors.onSurface),
                     const SizedBox(width: KolabingSpacing.xxs),
                   ],
                   Text(
                     labelBuilder(item),
-                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: context.colors.onSurface),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                      color: context.colors.onSurface,
+                    ),
                   ),
                 ],
               ),

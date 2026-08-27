@@ -41,20 +41,20 @@ class EventsState {
     int? currentPage,
     bool? hasMore,
     int? totalCount,
-  }) =>
-      EventsState(
-        events: events ?? this.events,
-        isLoading: isLoading ?? this.isLoading,
-        isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-        error: error,
-        currentPage: currentPage ?? this.currentPage,
-        hasMore: hasMore ?? this.hasMore,
-        totalCount: totalCount ?? this.totalCount,
-      );
+  }) => EventsState(
+    events: events ?? this.events,
+    isLoading: isLoading ?? this.isLoading,
+    isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    error: error,
+    currentPage: currentPage ?? this.currentPage,
+    hasMore: hasMore ?? this.hasMore,
+    totalCount: totalCount ?? this.totalCount,
+  );
 }
 
 /// Notifier for managing events state
-class EventsNotifier extends Notifier<EventsState> with AuthScopeGuard<EventsState> {
+class EventsNotifier extends Notifier<EventsState>
+    with AuthScopeGuard<EventsState> {
   late final EventService _service;
   int _activeRequestGeneration = 0;
 
@@ -101,10 +101,7 @@ class EventsNotifier extends Notifier<EventsState> with AuthScopeGuard<EventsSta
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final result = await _service.getEvents(
-        page: 1,
-        profileId: profileId,
-      );
+      final result = await _service.getEvents(page: 1, profileId: profileId);
       if (requestGeneration != _activeRequestGeneration) {
         return;
       }
@@ -119,34 +116,22 @@ class EventsNotifier extends Notifier<EventsState> with AuthScopeGuard<EventsSta
       if (requestGeneration != _activeRequestGeneration) {
         return;
       }
-      state = state.copyWith(
-        isLoading: false,
-        error: e.message,
-      );
+      state = state.copyWith(isLoading: false, error: e.message);
     } on ApiException catch (e) {
       if (requestGeneration != _activeRequestGeneration) {
         return;
       }
-      state = state.copyWith(
-        isLoading: false,
-        error: e.error.message,
-      );
+      state = state.copyWith(isLoading: false, error: e.error.message);
     } on NetworkException catch (e) {
       if (requestGeneration != _activeRequestGeneration) {
         return;
       }
-      state = state.copyWith(
-        isLoading: false,
-        error: e.message,
-      );
+      state = state.copyWith(isLoading: false, error: e.message);
     } catch (e) {
       if (requestGeneration != _activeRequestGeneration) {
         return;
       }
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -184,10 +169,7 @@ class EventsNotifier extends Notifier<EventsState> with AuthScopeGuard<EventsSta
       if (requestGeneration != _activeRequestGeneration) {
         return;
       }
-      state = state.copyWith(
-        isLoadingMore: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoadingMore: false, error: e.toString());
     }
   }
 
@@ -208,10 +190,7 @@ class EventsNotifier extends Notifier<EventsState> with AuthScopeGuard<EventsSta
     );
 
     try {
-      final result = await _service.getEvents(
-        page: 1,
-        profileId: profileId,
-      );
+      final result = await _service.getEvents(page: 1, profileId: profileId);
       if (requestGeneration != _activeRequestGeneration) {
         return;
       }
@@ -226,10 +205,7 @@ class EventsNotifier extends Notifier<EventsState> with AuthScopeGuard<EventsSta
       if (requestGeneration != _activeRequestGeneration) {
         return;
       }
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -238,10 +214,7 @@ class EventsNotifier extends Notifier<EventsState> with AuthScopeGuard<EventsSta
     try {
       final newEvent = await _service.createEvent(request);
       final updated = [newEvent, ...state.events];
-      state = state.copyWith(
-        events: updated,
-        totalCount: updated.length,
-      );
+      state = state.copyWith(events: updated, totalCount: updated.length);
       return true;
     } catch (e) {
       state = state.copyWith(error: e.toString());
@@ -254,10 +227,7 @@ class EventsNotifier extends Notifier<EventsState> with AuthScopeGuard<EventsSta
     try {
       await _service.deleteEvent(eventId);
       final updated = state.events.where((e) => e.id != eventId).toList();
-      state = state.copyWith(
-        events: updated,
-        totalCount: updated.length,
-      );
+      state = state.copyWith(events: updated, totalCount: updated.length);
       return true;
     } catch (e) {
       state = state.copyWith(error: e.toString());
@@ -272,18 +242,23 @@ class EventsNotifier extends Notifier<EventsState> with AuthScopeGuard<EventsSta
 }
 
 /// Provider for events state (current user's events)
-final eventsProvider =
-    NotifierProvider<EventsNotifier, EventsState>(EventsNotifier.new);
+final eventsProvider = NotifierProvider<EventsNotifier, EventsState>(
+  EventsNotifier.new,
+);
 
-final eventDetailProvider =
-    FutureProvider.family<Event, String>((ref, eventId) async {
+final eventDetailProvider = FutureProvider.family<Event, String>((
+  ref,
+  eventId,
+) async {
   final service = ref.watch(eventServiceProvider);
   return service.getEvent(eventId);
 });
 
 /// Provider for loading another user's events by profile ID (read-only)
-final profileEventsProvider =
-    FutureProvider.family<List<Event>, String>((ref, profileId) async {
+final profileEventsProvider = FutureProvider.family<List<Event>, String>((
+  ref,
+  profileId,
+) async {
   final service = ref.watch(eventServiceProvider);
   final result = await service.getEvents(profileId: profileId);
   return result.events;
@@ -311,19 +286,20 @@ class CommunityUpcomingEventsNotifier
   Future<void> reload() async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      final result = await ref.read(eventServiceProvider).getEvents(
-            communityId: communityId,
-            time: 'upcoming',
-          );
+      final result = await ref
+          .read(eventServiceProvider)
+          .getEvents(communityId: communityId, time: 'upcoming');
       return result.events;
     });
   }
 }
 
-final communityUpcomingEventsProvider = NotifierProvider.family<
-    CommunityUpcomingEventsNotifier, AsyncValue<List<Event>>, String>(
-  CommunityUpcomingEventsNotifier.new,
-);
+final communityUpcomingEventsProvider =
+    NotifierProvider.family<
+      CommunityUpcomingEventsNotifier,
+      AsyncValue<List<Event>>,
+      String
+    >(CommunityUpcomingEventsNotifier.new);
 
 /// A community's PAST events (`GET /events?community_id&time=past`), used by the
 /// community Details tab to show the gallery + past-events showcase. Mirrors
@@ -342,19 +318,20 @@ class CommunityPastEventsNotifier extends Notifier<AsyncValue<List<Event>>> {
   Future<void> reload() async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      final result = await ref.read(eventServiceProvider).getEvents(
-            communityId: communityId,
-            time: 'past',
-          );
+      final result = await ref
+          .read(eventServiceProvider)
+          .getEvents(communityId: communityId, time: 'past');
       return result.events;
     });
   }
 }
 
-final communityPastEventsProvider = NotifierProvider.family<
-    CommunityPastEventsNotifier, AsyncValue<List<Event>>, String>(
-  CommunityPastEventsNotifier.new,
-);
+final communityPastEventsProvider =
+    NotifierProvider.family<
+      CommunityPastEventsNotifier,
+      AsyncValue<List<Event>>,
+      String
+    >(CommunityPastEventsNotifier.new);
 
 /// An event's attendee roster (`GET /events/{id}/signups`, leader-scoped).
 ///
@@ -375,9 +352,14 @@ class EventSignupsNotifier extends Notifier<AsyncValue<EventSignups>> {
   Future<void> reload() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-        () => ref.read(eventServiceProvider).getSignups(eventId));
+      () => ref.read(eventServiceProvider).getSignups(eventId),
+    );
   }
 }
 
-final eventSignupsProvider = NotifierProvider.family<EventSignupsNotifier,
-    AsyncValue<EventSignups>, String>(EventSignupsNotifier.new);
+final eventSignupsProvider =
+    NotifierProvider.family<
+      EventSignupsNotifier,
+      AsyncValue<EventSignups>,
+      String
+    >(EventSignupsNotifier.new);

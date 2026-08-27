@@ -54,24 +54,24 @@ class FriendSummary {
   });
 
   factory FriendSummary.fromJson(Map<String, dynamic> json) => FriendSummary(
-        // Tolerate both `profile_id` (contract) and a bare `id` fallback.
-        profileId:
-            (json['profile_id'] ?? json['id'])?.toString() ?? '',
-        name: json['name'] as String? ?? '',
-        avatarUrl: _firstNonEmpty([
-          json['avatar_url'] as String?,
-          json['logo_url'] as String?,
-          json['profile_photo'] as String?,
-        ]),
-        userType: json['user_type'] as String? ?? '',
-      );
+    // Tolerate both `profile_id` (contract) and a bare `id` fallback.
+    profileId: (json['profile_id'] ?? json['id'])?.toString() ?? '',
+    name: json['name'] as String? ?? '',
+    avatarUrl: _firstNonEmpty([
+      json['avatar_url'] as String?,
+      json['logo_url'] as String?,
+      json['profile_photo'] as String?,
+    ]),
+    userType: json['user_type'] as String? ?? '',
+  );
 
   final String profileId;
   final String name;
   final String? avatarUrl;
   final String userType;
 
-  String get initial => name.trim().isNotEmpty ? name.trim()[0].toUpperCase() : '?';
+  String get initial =>
+      name.trim().isNotEmpty ? name.trim()[0].toUpperCase() : '?';
 }
 
 /// Result of `GET /me/friend-requests`: the incoming list plus its count badge.
@@ -79,9 +79,7 @@ class FriendSummary {
 class FriendRequests {
   const FriendRequests({required this.requests, required this.count});
 
-  const FriendRequests.empty()
-      : requests = const [],
-        count = 0;
+  const FriendRequests.empty() : requests = const [], count = 0;
 
   final List<FriendSummary> requests;
   final int count;

@@ -122,19 +122,21 @@ class _ThemeOption extends StatelessWidget {
   Widget build(BuildContext context) {
     final backgroundColor = isSelected
         ? (isDark
-            ? context.colors.primary.withValues(alpha: 0.15)
-            : context.colors.softYellow)
+              ? context.colors.primary.withValues(alpha: 0.15)
+              : context.colors.softYellow)
         : (isDark ? context.colors.surface : context.colors.surfaceVariant);
 
     final borderColor = isSelected
         ? context.colors.primary
         : (isDark ? context.colors.darkBorder : context.colors.darkBorder);
 
-    final textColor =
-        isDark ? context.colors.textOnDark : context.colors.onSurface;
+    final textColor = isDark
+        ? context.colors.textOnDark
+        : context.colors.onSurface;
 
-    final subtitleColor =
-        isDark ? context.colors.textTertiary : context.colors.onSurfaceVariant;
+    final subtitleColor = isDark
+        ? context.colors.textTertiary
+        : context.colors.onSurfaceVariant;
 
     return InkWell(
       onTap: onTap,
@@ -145,10 +147,7 @@ class _ThemeOption extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(
-            color: borderColor,
-            width: isSelected ? 2 : 1,
-          ),
+          border: Border.all(color: borderColor, width: isSelected ? 2 : 1),
         ),
         child: Row(
           children: [
@@ -160,8 +159,8 @@ class _ThemeOption extends StatelessWidget {
                 color: isSelected
                     ? context.colors.primary
                     : (isDark
-                        ? context.colors.darkSurface
-                        : context.colors.surface),
+                          ? context.colors.darkSurface
+                          : context.colors.surface),
                 borderRadius: KolabingRadius.borderRadiusSm,
               ),
               child: Icon(
@@ -170,8 +169,8 @@ class _ThemeOption extends StatelessWidget {
                 color: isSelected
                     ? context.colors.onPrimary
                     : (isDark
-                        ? context.colors.textOnDark
-                        : context.colors.onSurfaceVariant),
+                          ? context.colors.textOnDark
+                          : context.colors.onSurfaceVariant),
               ),
             ),
             const SizedBox(width: KolabingSpacing.sm),
@@ -185,7 +184,9 @@ class _ThemeOption extends StatelessWidget {
                     label,
                     style: KolabingTextStyles.titleSmall.copyWith(
                       color: textColor,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
                     ),
                   ),
                   Text(

@@ -33,12 +33,12 @@ class CommunityType {
   final String? iconUrl;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'slug': slug,
-        if (icon != null) 'icon': icon,
-        if (iconUrl != null) 'icon_url': iconUrl,
-      };
+    'id': id,
+    'name': name,
+    'slug': slug,
+    if (icon != null) 'icon': icon,
+    if (iconUrl != null) 'icon_url': iconUrl,
+  };
 
   @override
   bool operator ==(Object other) =>

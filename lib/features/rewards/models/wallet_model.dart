@@ -15,10 +15,10 @@ class XpModel {
   });
 
   factory XpModel.fromJson(Map<String, dynamic> json) => XpModel(
-        totalXp: _parseInt(json['points']) ?? 0,
-        redeemedPoints: _parseInt(json['redeemed_points']) ?? 0,
-        pendingWithdrawal: json['pending_withdrawal'] == true,
-      );
+    totalXp: _parseInt(json['points']) ?? 0,
+    redeemedPoints: _parseInt(json['redeemed_points']) ?? 0,
+    pendingWithdrawal: json['pending_withdrawal'] == true,
+  );
 
   /// Total XP earned (lifetime).
   final int totalXp;

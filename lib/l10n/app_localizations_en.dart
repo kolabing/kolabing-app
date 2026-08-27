@@ -8533,4 +8533,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get claimCodeClaimed => 'Points claimed';
+
+  @override
+  String get createChallengeEditTitle => 'Edit challenge';
+
+  @override
+  String get createChallengeSaveChanges => 'Save changes';
+
+  @override
+  String get createChallengeUpdated => 'Challenge updated';
+
+  @override
+  String get createChallengeProofTypeLabel => 'When the pair agrees';
+
+  @override
+  String get createChallengeProofTypeText => 'No camera';
+
+  @override
+  String get createChallengeProofTypePhoto => 'Open the camera';
+
+  @override
+  String get createChallengeProofTypeHint =>
+      'Picks the screen the app opens, nothing more. A challenge confirmed without a photo still counts, so a denied camera or bad signal never costs anybody their points.';
 }

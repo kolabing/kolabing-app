@@ -177,9 +177,7 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
   void _showImportFallbackToast() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          AppLocalizations.of(context).businessStep5ImportFallback,
-        ),
+        content: Text(AppLocalizations.of(context).businessStep5ImportFallback),
         backgroundColor: context.colors.error,
       ),
     );
@@ -229,13 +227,19 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                           const SizedBox(height: 32),
                           Text(
                             AppLocalizations.of(context).businessStep5Title,
-                            style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                            style: KolabingTextStyles.bodyLarge.copyWith(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: context.colors.onSurface,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 8),
                           Text(
                             AppLocalizations.of(context).businessStep5Subtitle,
-                            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+                            style: KolabingTextStyles.bodySmall.copyWith(
+                              color: context.colors.onSurfaceVariant,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -250,12 +254,16 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                                 }
                               });
                             },
-                            style: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.onSurface),
+                            style: KolabingTextStyles.bodyMedium.copyWith(
+                              color: context.colors.onSurface,
+                            ),
                             decoration: InputDecoration(
                               hintText: AppLocalizations.of(
                                 context,
                               ).businessStep5SearchHint,
-                              hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
+                              hintStyle: KolabingTextStyles.bodyMedium.copyWith(
+                                color: context.colors.textTertiary,
+                              ),
                               prefixIcon: Icon(
                                 LucideIcons.search,
                                 size: 20,
@@ -309,7 +317,11 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'Powered by Google',
-                              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w500, color: context.colors.textTertiary),
+                              style: KolabingTextStyles.bodySmall.copyWith(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: context.colors.textTertiary,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 12),
@@ -332,11 +344,10 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                                 }
                                 return ListView.separated(
                                   itemCount: items.length,
-                                  separatorBuilder: (context, index) =>
-                                      Divider(
-                                        height: 1,
-                                        color: context.colors.darkBorder,
-                                      ),
+                                  separatorBuilder: (context, index) => Divider(
+                                    height: 1,
+                                    color: context.colors.darkBorder,
+                                  ),
                                   itemBuilder: (context, index) {
                                     final place = items[index];
                                     final isSelected =
@@ -359,11 +370,22 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                                       ),
                                       title: Text(
                                         place.title,
-                                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                                        style: KolabingTextStyles.bodySmall
+                                            .copyWith(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                              color: context.colors.onSurface,
+                                            ),
                                       ),
                                       subtitle: Text(
                                         place.formattedAddress,
-                                        style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
+                                        style: KolabingTextStyles
+                                            .captionSecondary
+                                            .copyWith(
+                                              color: context
+                                                  .colors
+                                                  .onSurfaceVariant,
+                                            ),
                                       ),
                                       onTap: () => _handlePlaceSelected(place),
                                     );
@@ -428,7 +450,11 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                           const SizedBox(height: 18),
                           Text(
                             AppLocalizations.of(context).businessStep5Importing,
-                            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                            style: KolabingTextStyles.bodyMedium.copyWith(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: context.colors.onSurface,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -447,7 +473,9 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
     padding: const EdgeInsets.only(top: 12),
     child: Text(
       message,
-      style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+      style: KolabingTextStyles.bodySmall.copyWith(
+        color: context.colors.onSurfaceVariant,
+      ),
       textAlign: TextAlign.start,
     ),
   );
@@ -493,7 +521,11 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                     Center(
                       child: Text(
                         AppLocalizations.of(context).businessStep5PreviewTitle,
-                        style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                        style: KolabingTextStyles.bodyLarge.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.onSurface,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -503,16 +535,16 @@ class _BusinessStep5ScreenState extends ConsumerState<BusinessStep5Screen> {
                         AppLocalizations.of(
                           context,
                         ).businessStep5PreviewSubtitle,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: context.colors.onSurfaceVariant,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
                     const SizedBox(height: 24),
                     if (gridItems.isEmpty)
                       _buildHint(
-                        AppLocalizations.of(
-                          context,
-                        ).businessStep5NoPhotosLeft,
+                        AppLocalizations.of(context).businessStep5NoPhotosLeft,
                       )
                     else ...[
                       ImportedPhotoGrid(
@@ -570,19 +602,28 @@ class _SelectedAddressCard extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               AppLocalizations.of(context).businessStep5SelectedAddress,
-              style: KolabingTextStyles.captionSecondary.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
+              style: KolabingTextStyles.captionSecondary.copyWith(
+                fontWeight: FontWeight.w700,
+                color: context.colors.onSurface,
+              ),
             ),
           ],
         ),
         const SizedBox(height: 8),
         Text(
           place.title,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: context.colors.onSurface,
+          ),
         ),
         const SizedBox(height: 4),
         Text(
           place.formattedAddress,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
+          style: KolabingTextStyles.captionSecondary.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
       ],
     ),

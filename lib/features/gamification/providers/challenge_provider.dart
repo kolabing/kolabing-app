@@ -271,6 +271,7 @@ Future<Challenge> createChallenge(
   String? description,
   required ChallengeDifficulty difficulty,
   int? points,
+  ChallengeProofType proofType = ChallengeProofType.text,
 }) async {
   final service = ref.read(challengeServiceProvider);
   final challenge = await service.createChallenge(
@@ -279,6 +280,7 @@ Future<Challenge> createChallenge(
     description: description,
     difficulty: difficulty,
     points: points,
+    proofType: proofType,
   );
   // Invalidate the challenges provider to refresh the list
   ref.invalidate(eventChallengesProvider(eventId));
@@ -294,10 +296,12 @@ Future<Challenge> updateChallenge(
   String? description,
   ChallengeDifficulty? difficulty,
   int? points,
+  ChallengeProofType? proofType,
 }) async {
   final service = ref.read(challengeServiceProvider);
   final challenge = await service.updateChallenge(
     challengeId,
+    proofType: proofType,
     name: name,
     description: description,
     difficulty: difficulty,

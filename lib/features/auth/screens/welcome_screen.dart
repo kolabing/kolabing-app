@@ -105,9 +105,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 left: 0,
                 right: 0,
                 height: waveHeight,
-                child: CustomPaint(
-                  painter: _WavePainter(color: _kCream),
-                ),
+                child: CustomPaint(painter: _WavePainter(color: _kCream)),
               ),
 
               // Main layout
@@ -225,10 +223,7 @@ class _WelcomeHeadline extends StatelessWidget {
 
 /// Renders text with a yellow swash underline behind the baseline.
 class _YellowUnderlineText extends StatelessWidget {
-  const _YellowUnderlineText({
-    required this.text,
-    required this.style,
-  });
+  const _YellowUnderlineText({required this.text, required this.style});
 
   final String text;
   final TextStyle style;
@@ -274,17 +269,27 @@ class _TaglineRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(l10n.welcomeTaglineMatch, style: baseStyle.copyWith(color: _kMuted)),
+        Text(
+          l10n.welcomeTaglineMatch,
+          style: baseStyle.copyWith(color: _kMuted),
+        ),
         const SizedBox(width: 6),
-        Text(l10n.welcomeTaglineDot,
-            style: baseStyle.copyWith(color: const Color(0xFFB5914A))),
+        Text(
+          l10n.welcomeTaglineDot,
+          style: baseStyle.copyWith(color: const Color(0xFFB5914A)),
+        ),
         const SizedBox(width: 6),
         Text(l10n.welcomeTaglineKolab, style: baseStyle.copyWith(color: _kInk)),
         const SizedBox(width: 6),
-        Text(l10n.welcomeTaglineDot,
-            style: baseStyle.copyWith(color: const Color(0xFFB5914A))),
+        Text(
+          l10n.welcomeTaglineDot,
+          style: baseStyle.copyWith(color: const Color(0xFFB5914A)),
+        ),
         const SizedBox(width: 6),
-        Text(l10n.welcomeTaglineGrow, style: baseStyle.copyWith(color: _kMuted)),
+        Text(
+          l10n.welcomeTaglineGrow,
+          style: baseStyle.copyWith(color: _kMuted),
+        ),
       ],
     );
   }
@@ -359,16 +364,8 @@ class _WavePainter extends CustomPainter {
     final path = Path()
       ..moveTo(0, 130 * sy)
       ..lineTo(0, 66 * sy)
-      ..cubicTo(
-        72 * sx, 22 * sy,
-        150 * sx, 52 * sy,
-        230 * sx, 60 * sy,
-      )
-      ..cubicTo(
-        300 * sx, 67 * sy,
-        352 * sx, 34 * sy,
-        402 * sx, 50 * sy,
-      )
+      ..cubicTo(72 * sx, 22 * sy, 150 * sx, 52 * sy, 230 * sx, 60 * sy)
+      ..cubicTo(300 * sx, 67 * sy, 352 * sx, 34 * sy, 402 * sx, 50 * sy)
       ..lineTo(402 * sx, 130 * sy)
       ..close();
 

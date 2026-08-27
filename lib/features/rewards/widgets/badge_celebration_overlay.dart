@@ -103,103 +103,110 @@ class _BadgeCelebrationOverlayState extends State<BadgeCelebrationOverlay>
 
   @override
   Widget build(BuildContext context) => Material(
-      color: Colors.transparent,
-      child: Stack(
-        children: [
-          // Black scrim — tap to dismiss
-          GestureDetector(
-            onTap: widget.onDismiss,
-            child: Container(
-              color: Colors.black.withValues(alpha: 0.70),
-            ),
-          ),
+    color: Colors.transparent,
+    child: Stack(
+      children: [
+        // Black scrim — tap to dismiss
+        GestureDetector(
+          onTap: widget.onDismiss,
+          child: Container(color: Colors.black.withValues(alpha: 0.70)),
+        ),
 
-          // Content
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xl),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Animated badge icon
-                  ScaleTransition(
-                    scale: _scaleAnimation,
-                    child: Container(
-                      width: 96,
-                      height: 96,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: context.colors.softYellow,
-                      ),
-                      child: Icon(
-                        widget.badge.slug.icon,
-                        size: 44,
-                        color: context.colors.onSurface,
-                      ),
+        // Content
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xl),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Animated badge icon
+                ScaleTransition(
+                  scale: _scaleAnimation,
+                  child: Container(
+                    width: 96,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: context.colors.softYellow,
+                    ),
+                    child: Icon(
+                      widget.badge.slug.icon,
+                      size: 44,
+                      color: context.colors.onSurface,
                     ),
                   ),
+                ),
 
-                  const SizedBox(height: KolabingSpacing.lg),
+                const SizedBox(height: KolabingSpacing.lg),
 
-                  // "New Badge Unlocked!"
-                  Text(
-                    'New Badge Unlocked!',
-                    style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: Colors.white),
+                // "New Badge Unlocked!"
+                Text(
+                  'New Badge Unlocked!',
+                  style: KolabingTextStyles.bodyLarge.copyWith(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
                   ),
+                ),
 
-                  const SizedBox(height: KolabingSpacing.xs),
+                const SizedBox(height: KolabingSpacing.xs),
 
-                  // Badge display name
-                  Text(
-                    widget.badge.slug.displayName,
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.primary),
+                // Badge display name
+                Text(
+                  widget.badge.slug.displayName,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.primary,
                   ),
+                ),
 
-                  const SizedBox(height: KolabingSpacing.xs),
+                const SizedBox(height: KolabingSpacing.xs),
 
-                  // Badge description
-                  Text(
-                    widget.badge.slug.description,
-                    textAlign: TextAlign.center,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: Colors.white.withValues(alpha: 0.70),
-                    ),
+                // Badge description
+                Text(
+                  widget.badge.slug.description,
+                  textAlign: TextAlign.center,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: Colors.white.withValues(alpha: 0.70),
                   ),
+                ),
 
-                  const SizedBox(height: KolabingSpacing.lg),
+                const SizedBox(height: KolabingSpacing.lg),
 
-                  // CTA button
-                  KolabingButton(
-                    label: 'SEE MY BADGES',
-                    onPressed: widget.onDismiss,
-                    variant: KolabingButtonVariant.primary,
-                    size: KolabingButtonSize.compact,
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Confetti burst from top center
-          Align(
-            alignment: Alignment.topCenter,
-            child: ConfettiWidget(
-              confettiController: _confettiController,
-              blastDirectionality: BlastDirectionality.explosive,
-              maxBlastForce: 15,
-              minBlastForce: 5,
-              numberOfParticles: 25,
-              gravity: 0.15,
-              emissionFrequency: 0.06,
-              colors: [
-                context.colors.primary,
-                context.colors.success,
-                Color(0xFFFF6B6B),
-                Color(0xFF6BC5FF),
-                Color(0xFFFFE082),
+                // CTA button
+                KolabingButton(
+                  label: 'SEE MY BADGES',
+                  onPressed: widget.onDismiss,
+                  variant: KolabingButtonVariant.primary,
+                  size: KolabingButtonSize.compact,
+                ),
               ],
             ),
           ),
-        ],
-      ),
-    );
+        ),
+
+        // Confetti burst from top center
+        Align(
+          alignment: Alignment.topCenter,
+          child: ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            maxBlastForce: 15,
+            minBlastForce: 5,
+            numberOfParticles: 25,
+            gravity: 0.15,
+            emissionFrequency: 0.06,
+            colors: [
+              context.colors.primary,
+              context.colors.success,
+              Color(0xFFFF6B6B),
+              Color(0xFF6BC5FF),
+              Color(0xFFFFE082),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
 }

@@ -5,10 +5,7 @@ import '../services/locale_service.dart';
 
 /// Locale state. A null [locale] means "follow the system language".
 class LocaleState {
-  const LocaleState({
-    this.locale,
-    this.isLoading = true,
-  });
+  const LocaleState({this.locale, this.isLoading = true});
 
   /// The pinned app language, or null to follow the device language.
   final Locale? locale;
@@ -18,11 +15,10 @@ class LocaleState {
     Locale? locale,
     bool clearLocale = false,
     bool? isLoading,
-  }) =>
-      LocaleState(
-        locale: clearLocale ? null : (locale ?? this.locale),
-        isLoading: isLoading ?? this.isLoading,
-      );
+  }) => LocaleState(
+    locale: clearLocale ? null : (locale ?? this.locale),
+    isLoading: isLoading ?? this.isLoading,
+  );
 }
 
 /// Notifier for the app language preference, persisted via [LocaleService].
@@ -53,5 +49,6 @@ class LocaleNotifier extends Notifier<LocaleState> {
 }
 
 /// Provider for the app language preference.
-final localeProvider =
-    NotifierProvider<LocaleNotifier, LocaleState>(LocaleNotifier.new);
+final localeProvider = NotifierProvider<LocaleNotifier, LocaleState>(
+  LocaleNotifier.new,
+);

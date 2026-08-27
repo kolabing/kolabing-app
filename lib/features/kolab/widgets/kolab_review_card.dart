@@ -36,7 +36,9 @@ class KolabReviewCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final deliverableOptions = ref.watch(deliverablesProvider).maybeWhen(
+    final deliverableOptions = ref
+        .watch(deliverablesProvider)
+        .maybeWhen(
           data: (options) => options,
           orElse: () => const <OfferOption>[],
         );
@@ -55,7 +57,10 @@ class KolabReviewCard extends ConsumerWidget {
   // Section dispatcher based on intent type
   // ---------------------------------------------------------------------------
 
-  List<Widget> _buildSections(AppLocalizations l10n, List<OfferOption> deliverableOptions) {
+  List<Widget> _buildSections(
+    AppLocalizations l10n,
+    List<OfferOption> deliverableOptions,
+  ) {
     switch (kolab.intentType) {
       case IntentType.communitySeeking:
         return _buildCommunitySeekingSections(l10n, deliverableOptions);
@@ -70,7 +75,10 @@ class KolabReviewCard extends ConsumerWidget {
   // Community Seeking sections
   // ---------------------------------------------------------------------------
 
-  List<Widget> _buildCommunitySeekingSections(AppLocalizations l10n, List<OfferOption> deliverableOptions) => [
+  List<Widget> _buildCommunitySeekingSections(
+    AppLocalizations l10n,
+    List<OfferOption> deliverableOptions,
+  ) => [
     // Step 0 -- Title & Description
     _ReviewSection(
       icon: LucideIcons.fileText,
@@ -484,7 +492,10 @@ class _ReviewSection extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.onSurface,
+                  ),
                 ),
               ),
               Icon(
@@ -524,12 +535,18 @@ class _ReviewField extends StatelessWidget {
     children: [
       Text(
         label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textTertiary),
+        style: KolabingTextStyles.bodySmall.copyWith(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: context.colors.textTertiary,
+        ),
       ),
       const SizedBox(height: KolabingSpacing.xxxs),
       Text(
         value,
-        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface),
+        style: KolabingTextStyles.bodySmall.copyWith(
+          color: context.colors.onSurface,
+        ),
       ),
     ],
   );
@@ -558,7 +575,11 @@ class _ChipList extends StatelessWidget {
             ),
             child: Text(
               item,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w500, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: context.colors.onSurface,
+              ),
             ),
           ),
         )
@@ -575,6 +596,9 @@ class _EmptyHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     text,
-    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary, fontStyle: FontStyle.italic),
+    style: KolabingTextStyles.captionSecondary.copyWith(
+      color: context.colors.textTertiary,
+      fontStyle: FontStyle.italic,
+    ),
   );
 }

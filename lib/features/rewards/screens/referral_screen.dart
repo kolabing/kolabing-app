@@ -38,7 +38,11 @@ class ReferralScreen extends ConsumerWidget {
         surfaceTintColor: Colors.transparent,
         title: Text(
           AppLocalizations.of(context).referralScreenTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.colors.onSurface,
+            letterSpacing: 1.0,
+          ),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -100,13 +104,23 @@ class ReferralScreen extends ConsumerWidget {
       children: [
         Text(
           AppLocalizations.of(context).referralScreenYourCode,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onPrimary.withValues(alpha: 0.7), letterSpacing: 1.2),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: context.colors.onPrimary.withValues(alpha: 0.7),
+            letterSpacing: 1.2,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.sm),
         Text(
           code,
           textAlign: TextAlign.center,
-          style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 32, fontWeight: FontWeight.w700, color: context.colors.onPrimary, letterSpacing: 3.0),
+          style: KolabingTextStyles.bodyLarge.copyWith(
+            fontSize: 32,
+            fontWeight: FontWeight.w700,
+            color: context.colors.onPrimary,
+            letterSpacing: 3.0,
+          ),
         ),
       ],
     ),
@@ -199,7 +213,11 @@ class ReferralScreen extends ConsumerWidget {
         children: [
           Text(
             l10n.referralScreenHowItWorks,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurfaceVariant,
+              letterSpacing: 1.0,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
 
@@ -252,7 +270,10 @@ class ReferralScreen extends ConsumerWidget {
         child: Center(
           child: Text(
             '$number',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onPrimary),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onPrimary,
+            ),
           ),
         ),
       ),
@@ -305,7 +326,11 @@ class ReferralScreen extends ConsumerWidget {
         children: [
           Text(
             l10n.referralScreenRewardTiers,
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurfaceVariant,
+              letterSpacing: 1.0,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.md),
 

@@ -92,7 +92,9 @@ void main() {
         ..add('${family}_regular')
         ..add('${family}_italic');
       for (final weight in const [100, 200, 300, 500, 600, 700, 800, 900]) {
-        families..add('${family}_$weight')..add('${family}_${weight}italic');
+        families
+          ..add('${family}_$weight')
+          ..add('${family}_${weight}italic');
       }
     }
 
@@ -108,9 +110,7 @@ void main() {
     bool entitled = true,
   }) {
     final router = GoRouter(
-      routes: [
-        GoRoute(path: '/', builder: (_, _) => child),
-      ],
+      routes: [GoRoute(path: '/', builder: (_, _) => child)],
     );
     addTearDown(router.dispose);
 
@@ -120,9 +120,8 @@ void main() {
           MockMultiKolabRepository(),
         ),
         multiKolabEntitlementProvider.overrideWith(
-          (ref) async => EventCreatorEntitlement(
-            hasEventCreatorEntitlement: entitled,
-          ),
+          (ref) async =>
+              EventCreatorEntitlement(hasEventCreatorEntitlement: entitled),
         ),
       ],
       child: MaterialApp.router(

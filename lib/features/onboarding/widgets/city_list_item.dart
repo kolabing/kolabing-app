@@ -40,76 +40,79 @@ class _CityListItemState extends State<CityListItem> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
-        onTapUp: (_) => setState(() => _isPressed = false),
-        onTapCancel: () => setState(() => _isPressed = false),
-        onTap: () {
-          HapticFeedback.mediumImpact();
-          widget.onTap();
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
+    onTapDown: (_) => setState(() => _isPressed = true),
+    onTapUp: (_) => setState(() => _isPressed = false),
+    onTapCancel: () => setState(() => _isPressed = false),
+    onTap: () {
+      HapticFeedback.mediumImpact();
+      widget.onTap();
+    },
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: widget.isSelected
+            ? context.colors.softYellow
+            : (_isPressed
+                  ? context.colors.surfaceVariant
+                  : context.colors.surface),
+        border: Border(
+          left: BorderSide(
             color: widget.isSelected
-                ? context.colors.softYellow
-                : (_isPressed
-                    ? context.colors.surfaceVariant
-                    : context.colors.surface),
-            border: Border(
-              left: BorderSide(
-                color:
-                    widget.isSelected ? context.colors.primary : Colors.transparent,
-                width: 4,
-              ),
-              bottom: BorderSide(
-                color: context.colors.darkBorder,
-                width: 1,
-              ),
+                ? context.colors.primary
+                : Colors.transparent,
+            width: 4,
+          ),
+          bottom: BorderSide(color: context.colors.darkBorder, width: 1),
+        ),
+      ),
+      child: Row(
+        children: [
+          // Location icon
+          Icon(
+            LucideIcons.mapPin,
+            size: 24,
+            color: widget.isSelected
+                ? context.colors.primary
+                : context.colors.textTertiary,
+          ),
+          const SizedBox(width: 12),
+
+          // City info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.name,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.onSurface,
+                  ),
+                ),
+                if (widget.country != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    widget.country!,
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: context.colors.textTertiary,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
-          child: Row(
-            children: [
-              // Location icon
-              Icon(
-                LucideIcons.mapPin,
-                size: 24,
-                color: widget.isSelected
-                    ? context.colors.primary
-                    : context.colors.textTertiary,
-              ),
-              const SizedBox(width: 12),
 
-              // City info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.name,
-                      style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
-                    ),
-                    if (widget.country != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        widget.country!,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-
-              // Checkmark or arrow
-              Icon(
-                widget.isSelected ? LucideIcons.check : LucideIcons.chevronRight,
-                size: 20,
-                color: widget.isSelected
-                    ? context.colors.primary
-                    : context.colors.textTertiary,
-              ),
-            ],
+          // Checkmark or arrow
+          Icon(
+            widget.isSelected ? LucideIcons.check : LucideIcons.chevronRight,
+            size: 20,
+            color: widget.isSelected
+                ? context.colors.primary
+                : context.colors.textTertiary,
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }

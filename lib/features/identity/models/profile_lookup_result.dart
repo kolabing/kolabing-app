@@ -40,7 +40,8 @@ class ProfileLookupResult {
   final String userType;
   final FriendStatus? friendStatus;
 
-  String get initial => name.trim().isNotEmpty ? name.trim()[0].toUpperCase() : '?';
+  String get initial =>
+      name.trim().isNotEmpty ? name.trim()[0].toUpperCase() : '?';
 
   bool get isAttendee => userType == 'attendee';
 }

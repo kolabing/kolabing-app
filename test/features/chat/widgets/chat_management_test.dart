@@ -16,15 +16,14 @@ import 'package:kolabing_app/l10n/app_localizations.dart';
 ChatThread _thread({
   ChatThreadType type = ChatThreadType.communityCustom,
   String name = 'Socials',
-}) =>
-    ChatThread(
-      id: 'thread-1',
-      type: type,
-      name: name,
-      communityId: 'community-1',
-      canManage: true,
-      createdAt: DateTime(2026, 6, 1),
-    );
+}) => ChatThread(
+  id: 'thread-1',
+  type: type,
+  name: name,
+  communityId: 'community-1',
+  canManage: true,
+  createdAt: DateTime(2026, 6, 1),
+);
 
 Future<void> _pump(
   WidgetTester tester, {
@@ -71,8 +70,9 @@ void main() {
     });
   });
 
-  testWidgets('createCustomChat prompts then POSTs the community chat',
-      (tester) async {
+  testWidgets('createCustomChat prompts then POSTs the community chat', (
+    tester,
+  ) async {
     final client = _CaptureClient(
       jsonEncode(<String, dynamic>{'data': _threadJson(name: 'New')}),
     );
@@ -125,9 +125,7 @@ void main() {
   });
 
   testWidgets('deleteChat confirms (recoverable) then DELETEs', (tester) async {
-    final client = _CaptureClient(
-      jsonEncode(<String, dynamic>{'data': null}),
-    );
+    final client = _CaptureClient(jsonEncode(<String, dynamic>{'data': null}));
     await _pump(
       tester,
       client: client,
@@ -155,11 +153,8 @@ void main() {
     await _pump(
       tester,
       client: client,
-      onTap: (context, ref) => ChatManagement.joinChat(
-        context,
-        ref,
-        _thread(name: 'Open'),
-      ),
+      onTap: (context, ref) =>
+          ChatManagement.joinChat(context, ref, _thread(name: 'Open')),
     );
 
     await tester.tap(find.text('go'));
@@ -171,18 +166,18 @@ void main() {
 }
 
 Map<String, dynamic> _threadJson({required String name}) => <String, dynamic>{
-      'id': 'thread-1',
-      'type': 'community_custom',
-      'name': name,
-      'community_id': 'community-1',
-      'is_open': true,
-      'can_manage': true,
-      'is_member': true,
-      'is_participant': false,
-      'unread_count': 0,
-      'participant_summary': const <dynamic>[],
-      'created_at': '2026-06-01T10:00:00Z',
-    };
+  'id': 'thread-1',
+  'type': 'community_custom',
+  'name': name,
+  'community_id': 'community-1',
+  'is_open': true,
+  'can_manage': true,
+  'is_member': true,
+  'is_participant': false,
+  'unread_count': 0,
+  'participant_summary': const <dynamic>[],
+  'created_at': '2026-06-01T10:00:00Z',
+};
 
 /// A single captured request (method, url, optional body).
 class _Call {

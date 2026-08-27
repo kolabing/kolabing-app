@@ -68,7 +68,10 @@ class PastEventCard extends StatelessWidget {
           const SizedBox(height: KolabingSpacing.xs),
           Text(
             'Add a past event',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w500,
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -116,14 +119,20 @@ class PastEventCard extends StatelessWidget {
               children: [
                 Text(
                   e.name,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.onSurface,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: KolabingSpacing.xxxs),
                 Text(
                   formattedDate,
-                  style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
+                  style: KolabingTextStyles.captionSecondary.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
                 if (e.partnerName != null && e.partnerName!.isNotEmpty) ...[
                   const SizedBox(height: KolabingSpacing.xxxs),
@@ -138,7 +147,9 @@ class PastEventCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           e.partnerName!,
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
+                          style: KolabingTextStyles.captionSecondary.copyWith(
+                            color: context.colors.onSurfaceVariant,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -168,7 +179,9 @@ class PastEventCard extends StatelessWidget {
                         const SizedBox(width: KolabingSpacing.xxs),
                         Text(
                           '${e.photos.length} photo${e.photos.length == 1 ? '' : 's'}',
-                          style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.textTertiary),
+                          style: KolabingTextStyles.labelSmall.copyWith(
+                            color: context.colors.textTertiary,
+                          ),
                         ),
                       ],
                     ),
@@ -196,7 +209,9 @@ class PastEventCard extends StatelessWidget {
                         const SizedBox(width: KolabingSpacing.xxs),
                         Text(
                           '${e.videos.length} video${e.videos.length == 1 ? '' : 's'}',
-                          style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.textTertiary),
+                          style: KolabingTextStyles.labelSmall.copyWith(
+                            color: context.colors.textTertiary,
+                          ),
                         ),
                       ],
                     ),

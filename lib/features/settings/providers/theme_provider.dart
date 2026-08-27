@@ -5,22 +5,15 @@ import '../services/theme_service.dart';
 
 /// Theme state
 class ThemeState {
-  const ThemeState({
-    this.themeMode = ThemeMode.light,
-    this.isLoading = true,
-  });
+  const ThemeState({this.themeMode = ThemeMode.light, this.isLoading = true});
 
   final ThemeMode themeMode;
   final bool isLoading;
 
-  ThemeState copyWith({
-    ThemeMode? themeMode,
-    bool? isLoading,
-  }) =>
-      ThemeState(
-        themeMode: themeMode ?? this.themeMode,
-        isLoading: isLoading ?? this.isLoading,
-      );
+  ThemeState copyWith({ThemeMode? themeMode, bool? isLoading}) => ThemeState(
+    themeMode: themeMode ?? this.themeMode,
+    isLoading: isLoading ?? this.isLoading,
+  );
 }
 
 /// Theme notifier for managing app theme
@@ -37,10 +30,7 @@ class ThemeNotifier extends Notifier<ThemeState> {
 
   Future<void> _loadTheme() async {
     // Dark mode is temporarily disabled — always force light mode.
-    state = state.copyWith(
-      themeMode: ThemeMode.light,
-      isLoading: false,
-    );
+    state = state.copyWith(themeMode: ThemeMode.light, isLoading: false);
   }
 
   /// Set theme mode and persist (dark mode temporarily disabled)
@@ -55,5 +45,6 @@ class ThemeNotifier extends Notifier<ThemeState> {
 }
 
 /// Provider for theme state
-final themeProvider =
-    NotifierProvider<ThemeNotifier, ThemeState>(ThemeNotifier.new);
+final themeProvider = NotifierProvider<ThemeNotifier, ThemeState>(
+  ThemeNotifier.new,
+);

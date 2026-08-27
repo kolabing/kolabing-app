@@ -15,8 +15,9 @@ class EventSignup {
 
   factory EventSignup.fromJson(Map<String, dynamic> json) {
     final profile = json['profile'];
-    final profileMap =
-        profile is Map<String, dynamic> ? profile : const <String, dynamic>{};
+    final profileMap = profile is Map<String, dynamic>
+        ? profile
+        : const <String, dynamic>{};
     return EventSignup(
       id: (json['id'] ?? '').toString(),
       profileId: (json['profile_id'] ?? profileMap['id'] ?? '').toString(),
@@ -51,10 +52,7 @@ class EventSignups {
             .whereType<Map<String, dynamic>>()
             .map(EventSignup.fromJson)
             .toList();
-    return EventSignups(
-      going: parse('going'),
-      waitlist: parse('waitlist'),
-    );
+    return EventSignups(going: parse('going'), waitlist: parse('waitlist'));
   }
 
   final List<EventSignup> going;

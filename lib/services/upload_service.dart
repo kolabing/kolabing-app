@@ -40,10 +40,8 @@ class UploadService {
   /// Returns the URL string on success.
   /// Throws [ApiException] on validation error (422).
   /// Throws [NetworkException] on network failure.
-  Future<String> upload({
-    required String filePath,
-    required String folder,
-  }) => _upload(filePath: filePath, folder: folder, allowRetry: true);
+  Future<String> upload({required String filePath, required String folder}) =>
+      _upload(filePath: filePath, folder: folder, allowRetry: true);
 
   Future<String> _upload({
     required String filePath,

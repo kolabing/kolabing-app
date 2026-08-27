@@ -47,7 +47,8 @@ class EventCard extends StatelessWidget {
                     ? Image.network(
                         event.coverPhotoUrl!,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _buildPlaceholder(context),
+                        errorBuilder: (_, __, ___) =>
+                            _buildPlaceholder(context),
                       )
                     : _buildPlaceholder(context),
               ),

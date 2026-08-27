@@ -28,14 +28,13 @@ class ProfileEventPickerSheet extends StatefulWidget {
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => ProfileEventPickerSheet(
-      events: events,
-      maxSelection: maxSelection,
-    ),
+    builder: (_) =>
+        ProfileEventPickerSheet(events: events, maxSelection: maxSelection),
   );
 
   @override
-  State<ProfileEventPickerSheet> createState() => _ProfileEventPickerSheetState();
+  State<ProfileEventPickerSheet> createState() =>
+      _ProfileEventPickerSheetState();
 }
 
 class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
@@ -78,12 +77,18 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                   const SizedBox(height: KolabingSpacing.md),
                   Text(
                     l10n.profileEventPickerTitle,
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: context.colors.onSurface,
+                    ),
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
                     l10n.profileEventPickerSubtitle(widget.maxSelection),
-                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
+                    style: KolabingTextStyles.captionSecondary.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: KolabingSpacing.md),
                   Expanded(
@@ -101,7 +106,9 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                             padding: const EdgeInsets.all(KolabingSpacing.sm),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? context.colors.primary.withValues(alpha: 0.08)
+                                  ? context.colors.primary.withValues(
+                                      alpha: 0.08,
+                                    )
                                   : context.colors.surfaceVariant,
                               borderRadius: KolabingRadius.borderRadiusMd,
                               border: Border.all(
@@ -116,18 +123,31 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                                 const SizedBox(width: KolabingSpacing.sm),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         event.name,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
+                                        style: KolabingTextStyles.bodySmall
+                                            .copyWith(
+                                              fontWeight: FontWeight.w700,
+                                              color: context.colors.onSurface,
+                                            ),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        DateFormat('MMM d, yyyy').format(event.date),
-                                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+                                        DateFormat(
+                                          'MMM d, yyyy',
+                                        ).format(event.date),
+                                        style: KolabingTextStyles.bodySmall
+                                            .copyWith(
+                                              fontSize: 12,
+                                              color: context
+                                                  .colors
+                                                  .onSurfaceVariant,
+                                            ),
                                       ),
                                       if (event.partner.name.isNotEmpty) ...[
                                         const SizedBox(height: 2),
@@ -135,7 +155,13 @@ class _ProfileEventPickerSheetState extends State<ProfileEventPickerSheet> {
                                           event.partner.name,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+                                          style: KolabingTextStyles.bodySmall
+                                              .copyWith(
+                                                fontSize: 12,
+                                                color: context
+                                                    .colors
+                                                    .onSurfaceVariant,
+                                              ),
                                         ),
                                       ],
                                     ],

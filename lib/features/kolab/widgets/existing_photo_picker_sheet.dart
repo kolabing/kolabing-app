@@ -107,12 +107,18 @@ class _ExistingPhotoPickerSheetState
                   const SizedBox(height: KolabingSpacing.md),
                   Text(
                     widget.title,
-                    style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: context.colors.onSurface,
+                    ),
                   ),
                   const SizedBox(height: KolabingSpacing.xxs),
                   Text(
                     l10n.existingPhotoPickerSubtitle(widget.maxSelection),
-                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
+                    style: KolabingTextStyles.captionSecondary.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: KolabingSpacing.md),
                   Expanded(
@@ -168,7 +174,9 @@ class _ExistingPhotoPickerSheetState
       return Center(
         child: Text(
           AppLocalizations.of(context).existingPhotoPickerEmpty,
-          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
       );
     }

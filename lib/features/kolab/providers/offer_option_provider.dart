@@ -48,9 +48,10 @@ final goalsProvider = FutureProvider.autoDispose<List<OfferOption>>(
 
 /// "Product interaction" options — how communities can engage with a product
 /// promotion. From `GET /lookup/product-interactions`.
-final productInteractionsProvider = FutureProvider.autoDispose<List<OfferOption>>(
-  (ref) => ref.watch(offerOptionServiceProvider).getProductInteractions(),
-);
+final productInteractionsProvider =
+    FutureProvider.autoDispose<List<OfferOption>>(
+      (ref) => ref.watch(offerOptionServiceProvider).getProductInteractions(),
+    );
 
 /// "Venue fit" options — the venue-promotion "Best for:" chips. From
 /// `GET /lookup/venue-fits`.

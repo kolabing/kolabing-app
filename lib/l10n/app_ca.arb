@@ -2507,5 +2507,12 @@
   "claimCodeNotNewAccount": "Els codis només funcionen en un compte nou.",
   "claimCodeSelf": "Aquesta és la teva pròpia invitació.",
   "claimCodeFailed": "No ha funcionat. Torna-ho a provar.",
-  "claimCodeClaimed": "Punts bescanviats"
+  "claimCodeClaimed": "Punts bescanviats",
+  "createChallengeEditTitle": "Editar el repte",
+  "createChallengeSaveChanges": "Desar els canvis",
+  "createChallengeUpdated": "Repte actualitzat",
+  "createChallengeProofTypeLabel": "Quan la parella accepta",
+  "createChallengeProofTypeText": "Sense càmera",
+  "createChallengeProofTypePhoto": "Obrir la càmera",
+  "createChallengeProofTypeHint": "Només tria la pantalla que obre l'app. Un repte confirmat sense foto compta igual, així que una càmera denegada o mala cobertura no li costen mai els punts a ningú."
 }

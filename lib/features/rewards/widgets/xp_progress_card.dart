@@ -46,7 +46,11 @@ class XpProgressCard extends ConsumerWidget {
                 _LevelChip(level: level),
                 Text(
                   '${wallet.totalXp} XP',
-                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 22, fontWeight: FontWeight.w800, color: context.colors.onSurface),
+                  style: KolabingTextStyles.bodyLarge.copyWith(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: context.colors.onSurface,
+                  ),
                 ),
               ],
             ),
@@ -63,8 +67,9 @@ class XpProgressCard extends ConsumerWidget {
                 builder: (_, value, _) => LinearProgressIndicator(
                   value: value,
                   minHeight: 8,
-                  backgroundColor:
-                      context.colors.secondary.withValues(alpha: 0.2),
+                  backgroundColor: context.colors.secondary.withValues(
+                    alpha: 0.2,
+                  ),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     context.colors.secondary,
                   ),
@@ -82,14 +87,21 @@ class XpProgressCard extends ConsumerWidget {
                   level.isMaxLevel
                       ? 'Max level reached!'
                       : '$xpToNext XP to ${level.next?.title ?? ''}',
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
                 if (onTap != null && showNavigationCta)
                   Row(
                     children: [
                       Text(
                         'View progress',
-                        style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.onSurface,
+                        ),
                       ),
                       const SizedBox(width: 2),
                       Icon(
@@ -119,28 +131,29 @@ class _LevelChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: KolabingSpacing.sm,
-          vertical: KolabingSpacing.xxs,
+    padding: const EdgeInsets.symmetric(
+      horizontal: KolabingSpacing.sm,
+      vertical: KolabingSpacing.xxs,
+    ),
+    decoration: BoxDecoration(
+      color: context.colors.secondary.withValues(alpha: 0.15),
+      borderRadius: KolabingRadius.borderRadiusRound,
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(LucideIcons.shield, size: 12, color: context.colors.secondary),
+        const SizedBox(width: 4),
+        Text(
+          'LVL ${level.number} · ${level.title}',
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: context.colors.secondary,
+            letterSpacing: 0.3,
+          ),
         ),
-        decoration: BoxDecoration(
-          color: context.colors.secondary.withValues(alpha: 0.15),
-          borderRadius: KolabingRadius.borderRadiusRound,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              LucideIcons.shield,
-              size: 12,
-              color: context.colors.secondary,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              'LVL ${level.number} · ${level.title}',
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 11, fontWeight: FontWeight.w600, color: context.colors.secondary, letterSpacing: 0.3),
-            ),
-          ],
-        ),
-      );
+      ],
+    ),
+  );
 }
