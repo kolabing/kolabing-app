@@ -1,5 +1,0 @@
-
-module PostHog.Swift {
-  header "PostHog-Swift.h"
-  requires objc
-}
