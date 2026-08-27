@@ -19,6 +19,7 @@ import '../../community/models/community_membership.dart';
 import '../../community/providers/community_providers.dart';
 import '../../friends/models/friendship.dart';
 import '../../friends/providers/friends_provider.dart';
+import '../widgets/claim_code_sheet.dart';
 import '../../identity/widgets/handle_field.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/profile_link.dart';
@@ -348,6 +349,15 @@ class _AttendeeProfileScreenState extends ConsumerState<AttendeeProfileScreen> {
                     icon: LucideIcons.target,
                     label: l10n.soloChallengesTitle,
                     onTap: () => context.push(KolabingRoutes.missions),
+                  ),
+                  // The half of an invite a link cannot do (kolabing-v2#246).
+                  // A Universal Link carries no token through the App Store, so
+                  // someone who installed the app *because* of an invite needs
+                  // somewhere to type the code they read off the landing page.
+                  _SettingsRow(
+                    icon: LucideIcons.ticket,
+                    label: l10n.claimCodeTitle,
+                    onTap: () => ClaimCodeSheet.open(context),
                   ),
                   _SettingsRow(
                     icon: LucideIcons.bell,

@@ -128,7 +128,8 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       if (e.capacity != null) _capacity.text = e.capacity.toString();
       // Seed visibility from the existing event (#1). Older events without a
       // value default to members.
-      _visibility = (e.visibility == 'public' ||
+      _visibility =
+          (e.visibility == 'public' ||
               e.visibility == 'members' ||
               e.visibility == 'tier')
           ? e.visibility!
@@ -166,8 +167,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     if (date == null || !mounted) return null;
     final time = await showTimePicker(
       context: context,
-      initialTime:
-          TimeOfDay.fromDateTime(initial ?? now.add(const Duration(hours: 1))),
+      initialTime: TimeOfDay.fromDateTime(
+        initial ?? now.add(const Duration(hours: 1)),
+      ),
     );
     if (time == null) return null;
     return DateTime(date.year, date.month, date.day, time.hour, time.minute);
@@ -220,8 +222,12 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     // Gallery caps: up to [kEventGalleryMaxPerAdd] per add, [kEventGalleryMaxTotal]
     // total across existing + device + community-gallery photos.
     if (_totalPhotoCount >= kEventGalleryMaxTotal) {
-      _snack(_l10n.eventPhotosTotalCapReached(
-          _totalPhotoCount, kEventGalleryMaxTotal));
+      _snack(
+        _l10n.eventPhotosTotalCapReached(
+          _totalPhotoCount,
+          kEventGalleryMaxTotal,
+        ),
+      );
       return;
     }
     final picked = await ImagePicker().pickMultiImage(
@@ -236,7 +242,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     }
     final remaining = kEventGalleryMaxTotal - _totalPhotoCount;
     if (toAdd.length > remaining) {
-      _snack(_l10n.eventPhotosTotalCapPartial(remaining, kEventGalleryMaxTotal));
+      _snack(
+        _l10n.eventPhotosTotalCapPartial(remaining, kEventGalleryMaxTotal),
+      );
       toAdd = toAdd.take(remaining).toList();
     }
     if (toAdd.isEmpty) return;
@@ -249,8 +257,12 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   Future<void> _pickFromCommunityGallery(List<EventPhoto> gallery) async {
     final remaining = kEventGalleryMaxTotal - _totalPhotoCount;
     if (remaining <= 0) {
-      _snack(_l10n.eventPhotosTotalCapReached(
-          _totalPhotoCount, kEventGalleryMaxTotal));
+      _snack(
+        _l10n.eventPhotosTotalCapReached(
+          _totalPhotoCount,
+          kEventGalleryMaxTotal,
+        ),
+      );
       return;
     }
     final selected = await showModalBottomSheet<Map<String, String>>(
@@ -335,8 +347,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         'chat_mode': _chatMode,
         'ends_mode': _endsMode,
         if (_endsMode == 'count') 'ends_count': endsCount,
-        if (_endsMode == 'until')
-          'ends_on': _endsOn!.toUtc().toIso8601String(),
+        if (_endsMode == 'until') 'ends_on': _endsOn!.toUtc().toIso8601String(),
       };
     }
 
@@ -424,7 +435,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     return Scaffold(
       backgroundColor: context.colors.background,
       appBar: AppBar(
-        title: Text(_isEdit ? _l10n.eventFormEditTitle : _l10n.eventFormNewTitle),
+        title: Text(
+          _isEdit ? _l10n.eventFormEditTitle : _l10n.eventFormNewTitle,
+        ),
         actions: [
           TextButton(
             onPressed: _busy ? null : _submit,
@@ -435,9 +448,12 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       body: ListView(
         padding: const EdgeInsets.all(KolabingSpacing.md),
         children: [
-          Text(widget.communityName,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: context.colors.onSurfaceVariant)),
+          Text(
+            widget.communityName,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
           const SizedBox(height: KolabingSpacing.md),
           _label(_l10n.eventFormNameLabel),
           TextField(
@@ -460,8 +476,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           _DateField(
             value: _endsAt,
             hint: _l10n.eventFormPickEnd,
-            onClear:
-                _endsAt == null ? null : () => setState(() => _endsAt = null),
+            onClear: _endsAt == null
+                ? null
+                : () => setState(() => _endsAt = null),
             onTap: () async {
               final picked = await _pickDateTime(_endsAt ?? _startsAt);
               if (picked != null) setState(() => _endsAt = picked);
@@ -488,9 +505,12 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
               decoration: _dec('30'),
             )
           else
-            Text(_l10n.eventHubUnlimited,
-                style: KolabingTextStyles.bodySmall
-                    .copyWith(color: context.colors.onSurfaceVariant)),
+            Text(
+              _l10n.eventHubUnlimited,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
           const SizedBox(height: KolabingSpacing.lg),
           _label(_l10n.eventFormVisibilityLabel),
           _visibilityPicker(tiersAsync),
@@ -521,17 +541,22 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                   ? const SizedBox(
                       width: 18,
                       height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2))
-                  : Icon(_isEdit ? LucideIcons.check : LucideIcons.calendarPlus,
-                      size: 18),
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Icon(
+                      _isEdit ? LucideIcons.check : LucideIcons.calendarPlus,
+                      size: 18,
+                    ),
               label: Text(
-                  _isEdit
-                      ? _l10n.eventFormSave
-                      : (_isRecurring
+                _isEdit
+                    ? _l10n.eventFormSave
+                    : (_isRecurring
                           ? _l10n.eventFormPublishSeries
                           : _l10n.eventFormPublish),
-                  style: KolabingTextStyles.bodyMedium
-                      .copyWith(fontWeight: FontWeight.w700)),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
           ),
         ],
@@ -549,9 +574,12 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           groupValue: _visibility,
           onChanged: (v) => setState(() => _visibility = v ?? 'members'),
           title: Text(_l10n.eventFormVisibilityPublic),
-          subtitle: Text(_l10n.eventFormVisibilityPublicHint,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: KolabingColors.onSurfaceVariant)),
+          subtitle: Text(
+            _l10n.eventFormVisibilityPublicHint,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.onSurfaceVariant,
+            ),
+          ),
         ),
         RadioListTile<String>(
           contentPadding: EdgeInsets.zero,
@@ -559,9 +587,12 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           groupValue: _visibility,
           onChanged: (v) => setState(() => _visibility = v ?? 'members'),
           title: Text(_l10n.eventFormVisibilityMembers),
-          subtitle: Text(_l10n.eventFormVisibilityMembersHint,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: KolabingColors.onSurfaceVariant)),
+          subtitle: Text(
+            _l10n.eventFormVisibilityMembersHint,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.onSurfaceVariant,
+            ),
+          ),
         ),
         RadioListTile<String>(
           contentPadding: EdgeInsets.zero,
@@ -569,9 +600,12 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           groupValue: _visibility,
           onChanged: (v) => setState(() => _visibility = v ?? 'members'),
           title: Text(_l10n.eventFormVisibilityTier),
-          subtitle: Text(_l10n.eventFormVisibilityTierHint,
-              style: KolabingTextStyles.bodySmall
-                  .copyWith(color: KolabingColors.onSurfaceVariant)),
+          subtitle: Text(
+            _l10n.eventFormVisibilityTierHint,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: KolabingColors.onSurfaceVariant,
+            ),
+          ),
         ),
         if (_visibility == 'tier')
           tiersAsync.when(
@@ -699,8 +733,10 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                   ),
                 ),
                 const SizedBox(width: KolabingSpacing.sm),
-                Text(_l10n.eventFormRepeatEvents,
-                    style: KolabingTextStyles.bodyMedium),
+                Text(
+                  _l10n.eventFormRepeatEvents,
+                  style: KolabingTextStyles.bodyMedium,
+                ),
               ],
             ),
           ],
@@ -709,13 +745,15 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
             _DateField(
               value: _endsOn,
               hint: _l10n.eventFormRepeatOnDate,
-              onClear:
-                  _endsOn == null ? null : () => setState(() => _endsOn = null),
+              onClear: _endsOn == null
+                  ? null
+                  : () => setState(() => _endsOn = null),
               onTap: () async {
                 final now = DateTime.now();
                 final picked = await showDatePicker(
                   context: context,
-                  initialDate: _endsOn ??
+                  initialDate:
+                      _endsOn ??
                       (_startsAt ?? now).add(const Duration(days: 28)),
                   firstDate: _startsAt ?? now,
                   lastDate: now.add(const Duration(days: 365 * 2)),
@@ -748,7 +786,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   Widget _photosPicker() {
     // The community's existing gallery = the union of its past events' photos.
     // Self-gated: only offer "Choose from community gallery" when some exist.
-    final pastEvents = ref.watch(communityPastEventsProvider(widget.communityId));
+    final pastEvents = ref.watch(
+      communityPastEventsProvider(widget.communityId),
+    );
     final galleryPhotos = pastEvents.maybeWhen(
       data: (events) {
         final seen = <String>{};
@@ -773,19 +813,24 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         OutlinedButton.icon(
           onPressed: _busy ? null : _pickPhotos,
           icon: const Icon(LucideIcons.imagePlus, size: 18),
-          label: Text(_pickedPhotos.isEmpty
-              ? _l10n.eventFormAddFromGallery
-              : '${_l10n.eventFormAddFromGallery} (${_pickedPhotos.length})'),
+          label: Text(
+            _pickedPhotos.isEmpty
+                ? _l10n.eventFormAddFromGallery
+                : '${_l10n.eventFormAddFromGallery} (${_pickedPhotos.length})',
+          ),
         ),
         if (galleryPhotos.isNotEmpty) ...[
           const SizedBox(height: KolabingSpacing.sm),
           OutlinedButton.icon(
-            onPressed:
-                _busy ? null : () => _pickFromCommunityGallery(galleryPhotos),
+            onPressed: _busy
+                ? null
+                : () => _pickFromCommunityGallery(galleryPhotos),
             icon: const Icon(LucideIcons.image, size: 18),
-            label: Text(_pickedGalleryPhotos.isEmpty
-                ? _l10n.eventFormAddFromCommunity
-                : '${_l10n.eventFormAddFromCommunity} (${_pickedGalleryPhotos.length})'),
+            label: Text(
+              _pickedGalleryPhotos.isEmpty
+                  ? _l10n.eventFormAddFromCommunity
+                  : '${_l10n.eventFormAddFromCommunity} (${_pickedGalleryPhotos.length})',
+            ),
           ),
         ],
         if (_pickedPhotos.isNotEmpty || _pickedGalleryPhotos.isNotEmpty) ...[
@@ -820,8 +865,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => _thumbFallback(),
                       ),
-                      onRemove: () =>
-                          setState(() => _pickedGalleryPhotos.remove(entry.key)),
+                      onRemove: () => setState(
+                        () => _pickedGalleryPhotos.remove(entry.key),
+                      ),
                     ),
                   ),
               ],
@@ -833,25 +879,25 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   }
 
   Widget _photoThumb(Widget image, {required VoidCallback onRemove}) => Stack(
-        children: [
-          ClipRRect(borderRadius: BorderRadius.circular(8), child: image),
-          Positioned(
-            top: -8,
-            right: -8,
-            child: IconButton(
-              icon: const Icon(LucideIcons.x, size: 16),
-              onPressed: onRemove,
-            ),
-          ),
-        ],
-      );
+    children: [
+      ClipRRect(borderRadius: BorderRadius.circular(8), child: image),
+      Positioned(
+        top: -8,
+        right: -8,
+        child: IconButton(
+          icon: const Icon(LucideIcons.x, size: 16),
+          onPressed: onRemove,
+        ),
+      ),
+    ],
+  );
 
   Widget _thumbFallback() => Container(
-        width: 72,
-        height: 72,
-        color: KolabingColors.surfaceVariant,
-        child: const Icon(LucideIcons.image, color: KolabingColors.textTertiary),
-      );
+    width: 72,
+    height: 72,
+    color: KolabingColors.surfaceVariant,
+    child: const Icon(LucideIcons.image, color: KolabingColors.textTertiary),
+  );
 
   /// Google Places autocomplete location field (NF-20). Mirrors the business
   /// onboarding step-5 UX: type → suggestions → tap. On select the city is
@@ -881,17 +927,17 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                     ),
                   )
                 : (_location.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(LucideIcons.x, size: 16),
-                        onPressed: () => setState(() {
-                          _location.clear();
-                          _placeQuery = '';
-                          _placeSelected = false;
-                          _cityId = null;
-                          _cityName = null;
-                        }),
-                      )
-                    : null),
+                      ? IconButton(
+                          icon: const Icon(LucideIcons.x, size: 16),
+                          onPressed: () => setState(() {
+                            _location.clear();
+                            _placeQuery = '';
+                            _placeSelected = false;
+                            _cityId = null;
+                            _cityName = null;
+                          }),
+                        )
+                      : null),
           ),
           onChanged: (v) => setState(() {
             _placeQuery = v;
@@ -938,11 +984,16 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                       ListTile(
                         dense: true,
                         leading: const Icon(LucideIcons.mapPin, size: 18),
-                        title: Text(place.title,
-                            style: KolabingTextStyles.bodyMedium),
-                        subtitle: Text(place.displaySubtitle,
-                            style: KolabingTextStyles.bodySmall.copyWith(
-                                color: KolabingColors.onSurfaceVariant)),
+                        title: Text(
+                          place.title,
+                          style: KolabingTextStyles.bodyMedium,
+                        ),
+                        subtitle: Text(
+                          place.displaySubtitle,
+                          style: KolabingTextStyles.bodySmall.copyWith(
+                            color: KolabingColors.onSurfaceVariant,
+                          ),
+                        ),
                         onTap: () => _handlePlaceSelected(place),
                       ),
                   ],
@@ -961,29 +1012,35 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   }
 
   Widget _placeHint(String message) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
-        child: Text(message,
-            style: KolabingTextStyles.bodySmall
-                .copyWith(color: KolabingColors.onSurfaceVariant)),
-      );
+    padding: const EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
+    child: Text(
+      message,
+      style: KolabingTextStyles.bodySmall.copyWith(
+        color: KolabingColors.onSurfaceVariant,
+      ),
+    ),
+  );
 
   Widget _label(String t) => Padding(
-        padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
-        child: Text(t,
-            style: KolabingTextStyles.bodySmall.copyWith(
-                fontWeight: FontWeight.w700,
-                color: context.colors.onSurfaceVariant)),
-      );
+    padding: const EdgeInsets.only(bottom: KolabingSpacing.xs),
+    child: Text(
+      t,
+      style: KolabingTextStyles.bodySmall.copyWith(
+        fontWeight: FontWeight.w700,
+        color: context.colors.onSurfaceVariant,
+      ),
+    ),
+  );
 
   InputDecoration _dec(String hint) => InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: context.colors.surfaceContainerLow,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide.none,
-        ),
-      );
+    hintText: hint,
+    filled: true,
+    fillColor: context.colors.surfaceContainerLow,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide.none,
+    ),
+  );
 }
 
 class _DateField extends StatelessWidget {
@@ -1014,7 +1071,9 @@ class _DateField extends StatelessWidget {
           ),
           suffixIcon: onClear != null
               ? IconButton(
-                  icon: const Icon(LucideIcons.x, size: 16), onPressed: onClear)
+                  icon: const Icon(LucideIcons.x, size: 16),
+                  onPressed: onClear,
+                )
               : const Icon(LucideIcons.calendar, size: 18),
         ),
         child: Text(
@@ -1031,8 +1090,18 @@ class _DateField extends StatelessWidget {
 
   static String _fmt(DateTime d) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     final h = d.hour.toString().padLeft(2, '0');
     final m = d.minute.toString().padLeft(2, '0');
@@ -1112,10 +1181,10 @@ class _CommunityGalleryPickerState extends State<_CommunityGalleryPicker> {
                       ),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: KolabingSpacing.xs,
-                        mainAxisSpacing: KolabingSpacing.xs,
-                      ),
+                            crossAxisCount: 3,
+                            crossAxisSpacing: KolabingSpacing.xs,
+                            mainAxisSpacing: KolabingSpacing.xs,
+                          ),
                       itemCount: available.length,
                       itemBuilder: (_, i) {
                         final photo = available[i];
@@ -1132,8 +1201,10 @@ class _CommunityGalleryPickerState extends State<_CommunityGalleryPicker> {
                                   fit: BoxFit.cover,
                                   errorBuilder: (_, __, ___) => Container(
                                     color: KolabingColors.surfaceVariant,
-                                    child: const Icon(LucideIcons.image,
-                                        color: KolabingColors.textTertiary),
+                                    child: const Icon(
+                                      LucideIcons.image,
+                                      color: KolabingColors.textTertiary,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1141,8 +1212,9 @@ class _CommunityGalleryPickerState extends State<_CommunityGalleryPicker> {
                                 DecoratedBox(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
-                                    color: KolabingColors.primary
-                                        .withValues(alpha: 0.35),
+                                    color: KolabingColors.primary.withValues(
+                                      alpha: 0.35,
+                                    ),
                                     border: Border.all(
                                       color: KolabingColors.primary,
                                       width: 2,
@@ -1152,9 +1224,11 @@ class _CommunityGalleryPickerState extends State<_CommunityGalleryPicker> {
                                     alignment: Alignment.topRight,
                                     child: Padding(
                                       padding: EdgeInsets.all(4),
-                                      child: Icon(LucideIcons.checkCircle2,
-                                          size: 20,
-                                          color: KolabingColors.primaryDark),
+                                      child: Icon(
+                                        LucideIcons.checkCircle2,
+                                        size: 20,
+                                        color: KolabingColors.primaryDark,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -1188,8 +1262,9 @@ class _CommunityGalleryPickerState extends State<_CommunityGalleryPicker> {
                   ),
                   child: Text(
                     l10n.eventFormCommunityGalleryAdd(_selected.length),
-                    style: KolabingTextStyles.bodyMedium
-                        .copyWith(fontWeight: FontWeight.w700),
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
@@ -1209,8 +1284,12 @@ class _CommunityGalleryPickerState extends State<_CommunityGalleryPicker> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.eventPhotosTotalCapPartial(
-                widget.maxSelectable, kEventGalleryMaxTotal)),
+            content: Text(
+              l10n.eventPhotosTotalCapPartial(
+                widget.maxSelectable,
+                kEventGalleryMaxTotal,
+              ),
+            ),
           ),
         );
       }

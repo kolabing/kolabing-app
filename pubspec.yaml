@@ -38,6 +38,11 @@ dependencies:
   # Image Picker
   image_picker: ^1.0.7
 
+  # Universal Links / App Links, for invite + claim URLs (#183). The custom
+  # `kolabing://` scheme already here is Stripe's and cannot serve an invite:
+  # tapping it on a phone WITHOUT the app does nothing.
+  app_links: ^6.3.2
+
   # Storage
   shared_preferences: ^2.2.2
   flutter_secure_storage: ^10.0.0

@@ -429,10 +429,7 @@ void main() {
       // pushed users into a separate Multi-Kolab Explore screen.
       expect(find.text('Multi-Kolab Events'), findsNothing);
       expect(find.text('Recruit or join multi-partner events'), findsNothing);
-      expect(
-        find.byKey(const Key('multi-kolab-explore-banner')),
-        findsNothing,
-      );
+      expect(find.byKey(const Key('multi-kolab-explore-banner')), findsNothing);
     });
 
     testWidgets('a role card carries the small Multi-Kolab indicator that '

@@ -76,21 +76,28 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
         notifier.removeMedia(0);
       }
 
-      final existingPhotos = (isOnlyDefaultCover ? const <KolabMedia>[] : kolab.media)
-          .where((m) => m.type == 'image');
+      final existingPhotos =
+          (isOnlyDefaultCover ? const <KolabMedia>[] : kolab.media).where(
+            (m) => m.type == 'image',
+          );
       final nextSort = existingPhotos.isEmpty
           ? 0
           : existingPhotos
-                  .map((m) => m.sortOrder)
-                  .reduce((a, b) => a > b ? a : b) +
-              1;
+                    .map((m) => m.sortOrder)
+                    .reduce((a, b) => a > b ? a : b) +
+                1;
       notifier.addMedia(
         KolabMedia(url: url, type: 'image', sortOrder: nextSort),
       );
     } on Exception catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).mediaUploadFailed(e.toString())), backgroundColor: context.colors.error),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).mediaUploadFailed(e.toString()),
+            ),
+            backgroundColor: context.colors.error,
+          ),
         );
       }
     } finally {
@@ -129,7 +136,9 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
         ? 0
         : existing.map((m) => m.sortOrder).reduce((a, b) => a > b ? a : b) + 1;
     final toAdd = selectedPhotos
-        .where((photo) => photo.url.isNotEmpty && !existingUrls.contains(photo.url))
+        .where(
+          (photo) => photo.url.isNotEmpty && !existingUrls.contains(photo.url),
+        )
         .take(maxToAdd)
         .toList(growable: false);
 
@@ -139,7 +148,9 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
           SnackBar(
             content: Text(
               AppLocalizations.of(context).mediaPhotosAlreadyAdded,
-              style: KolabingTextStyles.bodyMedium.copyWith(color: Colors.white),
+              style: KolabingTextStyles.bodyMedium.copyWith(
+                color: Colors.white,
+              ),
             ),
             backgroundColor: context.colors.onSurfaceVariant,
             behavior: SnackBarBehavior.floating,
@@ -184,10 +195,13 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
     final intent = formState.intentType ?? IntentType.productPromotion;
 
     final venuePhotoUrls = ref.watch(
-      profileProvider.select((s) => s.profile?.businessProfile?.primaryVenue?.photos),
+      profileProvider.select(
+        (s) => s.profile?.businessProfile?.primaryVenue?.photos,
+      ),
     );
     final galleryState = ref.watch(galleryProvider);
-    final hasUsableDefault = galleryState.photos.isNotEmpty ||
+    final hasUsableDefault =
+        galleryState.photos.isNotEmpty ||
         (isVenue && (venuePhotoUrls?.isNotEmpty ?? false));
     final showReuseCta =
         kolab.media.length < 5 && (galleryState.isLoading || hasUsableDefault);
@@ -201,12 +215,18 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
       children: [
         Text(
           'ADD PHOTOS',
-          style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w800, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontWeight: FontWeight.w800,
+            color: context.colors.onSurfaceVariant,
+            letterSpacing: 1.0,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         Text(
           'Kolabs need a cover image. You can upload your own or use a Kolabing default.',
-          style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.md),
 
@@ -227,14 +247,16 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
           _ChoiceCard(
             icon: LucideIcons.upload,
             title: 'Upload my photo',
-            helper: 'Best if you have a real product, venue, food, or event image.',
+            helper:
+                'Best if you have a real product, venue, food, or event image.',
             onTap: _isUploading ? null : _pickAndUploadPhoto,
           ),
           const SizedBox(height: KolabingSpacing.sm),
           _ChoiceCard(
             icon: LucideIcons.imagePlus,
             title: 'Use default cover',
-            helper: "We'll use a designed Kolabing cover for this type of Kolab.",
+            helper:
+                "We'll use a designed Kolabing cover for this type of Kolab.",
             previewAssetPath:
                 'assets/images/defaults/${intent == IntentType.venuePromotion ? 'venue_1' : 'product_cover_1'}.png',
             onTap: _isUploading ? null : () => _useDefaultCover(intent),
@@ -253,7 +275,9 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
               child: TextButton(
                 onPressed: _isUploading ? null : _selectExistingPhotos,
                 child: Text(
-                  isVenue ? 'Or use business photo / choose existing' : 'Or choose an existing photo',
+                  isVenue
+                      ? 'Or use business photo / choose existing'
+                      : 'Or choose an existing photo',
                   style: KolabingTextStyles.bodySmall.copyWith(
                     fontWeight: FontWeight.w700,
                     color: context.colors.primary,
@@ -281,7 +305,10 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
                 Expanded(
                   child: Text(
                     'Kolabs with strong visuals usually get more interest.',
-                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurface, height: 1.4),
+                    style: KolabingTextStyles.captionSecondary.copyWith(
+                      color: context.colors.onSurface,
+                      height: 1.4,
+                    ),
                   ),
                 ),
               ],
@@ -293,8 +320,14 @@ class _MediaScreenState extends ConsumerState<MediaScreen> {
               onPressed: _isUploading ? null : _selectExistingPhotos,
               icon: const Icon(LucideIcons.imagePlus, size: 18),
               label: Text(
-                isVenue ? 'Use business photo or choose existing' : 'Choose existing photo',
-                style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w700, letterSpacing: 0.5),
+                isVenue
+                    ? 'Use business photo or choose existing'
+                    : 'Choose existing photo',
+                style: KolabingTextStyles.button.copyWith(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                ),
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: context.colors.primary,
@@ -358,39 +391,28 @@ class _ChoiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: KolabingRadius.borderRadiusOptionCard,
+      child: Container(
+        padding: const EdgeInsets.all(KolabingSpacing.md),
+        decoration: BoxDecoration(
+          color: context.colors.softYellow,
           borderRadius: KolabingRadius.borderRadiusOptionCard,
-          child: Container(
-            padding: const EdgeInsets.all(KolabingSpacing.md),
-            decoration: BoxDecoration(
-              color: context.colors.softYellow,
-              borderRadius: KolabingRadius.borderRadiusOptionCard,
-              border: Border.all(color: context.colors.softYellowBorder),
-            ),
-            child: Row(
-              children: [
-                previewAssetPath != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          previewAssetPath!,
-                          width: 40,
-                          height: 40,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: context.colors.primary,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(icon, size: 20, color: context.colors.ink),
-                          ),
-                        ),
-                      )
-                    : Container(
+          border: Border.all(color: context.colors.softYellowBorder),
+        ),
+        child: Row(
+          children: [
+            previewAssetPath != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      previewAssetPath!,
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
@@ -399,28 +421,43 @@ class _ChoiceCard extends StatelessWidget {
                         ),
                         child: Icon(icon, size: 20, color: context.colors.ink),
                       ),
-                const SizedBox(width: KolabingSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        helper,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
-                      ),
-                    ],
+                    ),
+                  )
+                : Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: context.colors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(icon, size: 20, color: context.colors.ink),
                   ),
-                ),
-              ],
+            const SizedBox(width: KolabingSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: KolabingTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    helper,
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
-      );
+      ),
+    ),
+  );
 }
 
 // =============================================================================
@@ -520,88 +557,94 @@ class _PhotoSlot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Stack(
-      children: [
-        Container(
-          width: 120,
-          height: 120,
-          decoration: BoxDecoration(
-            color: context.colors.softYellow,
-            borderRadius: KolabingRadius.borderRadiusThumbnail,
-            border: Border.all(color: context.colors.softYellowBorder),
-          ),
-          child: ClipRRect(
-            borderRadius: KolabingRadius.borderRadiusThumbnail,
-            child: _isLocalFile
-                ? Image.file(
-                    File(url),
-                    width: 120,
-                    height: 120,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        _buildPlaceholder(context),
-                  )
-                : Image.network(
-                    url,
-                    width: 120,
-                    height: 120,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        _buildPlaceholder(context),
-                  ),
-          ),
+    children: [
+      Container(
+        width: 120,
+        height: 120,
+        decoration: BoxDecoration(
+          color: context.colors.softYellow,
+          borderRadius: KolabingRadius.borderRadiusThumbnail,
+          border: Border.all(color: context.colors.softYellowBorder),
         ),
-        if (isDefaultCover)
-          Positioned(
-            bottom: 4,
-            left: 4,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.6),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Text(
-                'Default',
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
-              ),
-            ),
-          ),
+        child: ClipRRect(
+          borderRadius: KolabingRadius.borderRadiusThumbnail,
+          child: _isLocalFile
+              ? Image.file(
+                  File(url),
+                  width: 120,
+                  height: 120,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _buildPlaceholder(context),
+                )
+              : Image.network(
+                  url,
+                  width: 120,
+                  height: 120,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _buildPlaceholder(context),
+                ),
+        ),
+      ),
+      if (isDefaultCover)
         Positioned(
-          top: 4,
-          right: 4,
-          child: GestureDetector(
-            onTap: onRemove,
-            child: Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                color: context.colors.error,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                LucideIcons.x,
-                size: 12,
+          bottom: 4,
+          left: 4,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.6),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Text(
+              'Default',
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
                 color: Colors.white,
               ),
             ),
           ),
         ),
-      ],
-    );
+      Positioned(
+        top: 4,
+        right: 4,
+        child: GestureDetector(
+          onTap: onRemove,
+          child: Container(
+            width: 22,
+            height: 22,
+            decoration: BoxDecoration(
+              color: context.colors.error,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(LucideIcons.x, size: 12, color: Colors.white),
+          ),
+        ),
+      ),
+    ],
+  );
 
   Widget _buildPlaceholder(BuildContext context) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(LucideIcons.image, size: 24, color: context.colors.onSurfaceVariant),
-            const SizedBox(height: KolabingSpacing.xxs),
-            Text(
-              AppLocalizations.of(context).mediaPhotoSlot(index + 1),
-              style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.onSurfaceVariant),
-            ),
-          ],
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          LucideIcons.image,
+          size: 24,
+          color: context.colors.onSurfaceVariant,
         ),
-      );
+        const SizedBox(height: KolabingSpacing.xxs),
+        Text(
+          AppLocalizations.of(context).mediaPhotoSlot(index + 1),
+          style: KolabingTextStyles.labelSmall.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 /// Paints a dashed rounded-rectangle border for the "Add Photo" tile.

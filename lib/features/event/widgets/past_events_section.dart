@@ -114,10 +114,11 @@ class PastEventsSection extends ConsumerWidget {
   // Shared container
   // ---------------------------------------------------------------------------
 
-  Widget _buildContainer(
-      {required BuildContext context,
-      required bool isDark,
-      required Widget child}) {
+  Widget _buildContainer({
+    required BuildContext context,
+    required bool isDark,
+    required Widget child,
+  }) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.md),
       decoration: BoxDecoration(
@@ -142,20 +143,21 @@ class PastEventsSection extends ConsumerWidget {
   // ---------------------------------------------------------------------------
 
   Widget _buildHeader(
-      BuildContext context, WidgetRef ref, List<Event> events, bool isDark) {
+    BuildContext context,
+    WidgetRef ref,
+    List<Event> events,
+    bool isDark,
+  ) {
     return Row(
       children: [
-        Icon(
-          LucideIcons.calendar,
-          size: 20,
-          color: context.colors.primary,
-        ),
+        Icon(LucideIcons.calendar, size: 20, color: context.colors.primary),
         const SizedBox(width: KolabingSpacing.xs),
         Text(
           AppLocalizations.of(context).pastEventsTitle,
           style: KolabingTextStyles.titleMedium.copyWith(
-            color:
-                isDark ? context.colors.textOnDark : context.colors.onSurface,
+            color: isDark
+                ? context.colors.textOnDark
+                : context.colors.onSurface,
           ),
         ),
         if (events.isNotEmpty) ...[
@@ -204,7 +206,11 @@ class PastEventsSection extends ConsumerWidget {
   // ---------------------------------------------------------------------------
 
   Widget _buildOwnContent(
-      BuildContext context, WidgetRef ref, EventsState state, bool isDark) {
+    BuildContext context,
+    WidgetRef ref,
+    EventsState state,
+    bool isDark,
+  ) {
     if (state.isLoading) {
       return _buildLoadingState(context, isDark);
     }
@@ -235,8 +241,9 @@ class PastEventsSection extends ConsumerWidget {
           baseColor: isDark
               ? context.colors.darkSurface
               : context.colors.surfaceVariant,
-          highlightColor:
-              isDark ? context.colors.darkBorder : context.colors.surface,
+          highlightColor: isDark
+              ? context.colors.darkBorder
+              : context.colors.surface,
           child: Container(
             width: 180,
             decoration: BoxDecoration(
@@ -250,17 +257,17 @@ class PastEventsSection extends ConsumerWidget {
   }
 
   Widget _buildErrorState(
-      BuildContext context, WidgetRef ref, String error, bool isDark) {
+    BuildContext context,
+    WidgetRef ref,
+    String error,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            LucideIcons.alertCircle,
-            size: 32,
-            color: context.colors.error,
-          ),
+          Icon(LucideIcons.alertCircle, size: 32, color: context.colors.error),
           const SizedBox(height: KolabingSpacing.sm),
           Text(
             AppLocalizations.of(context).pastEventsLoadError,
@@ -330,7 +337,9 @@ class PastEventsSection extends ConsumerWidget {
             icon: const Icon(LucideIcons.plus, size: 16),
             label: Text(
               AppLocalizations.of(context).pastEventsEmptyAddButton,
-              style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
             style: TextButton.styleFrom(
               foregroundColor: context.colors.onSurfaceVariant,

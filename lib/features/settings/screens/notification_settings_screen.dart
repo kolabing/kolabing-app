@@ -29,10 +29,13 @@ class NotificationSettingsScreen extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(e.toString().replaceFirst('Exception: ', ''),
-                    textAlign: TextAlign.center,
-                    style: KolabingTextStyles.bodySmall
-                        .copyWith(color: context.colors.onSurfaceVariant)),
+                Text(
+                  e.toString().replaceFirst('Exception: ', ''),
+                  textAlign: TextAlign.center,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
                 const SizedBox(height: KolabingSpacing.lg),
                 OutlinedButton(
                   onPressed: () =>
@@ -66,7 +69,9 @@ class _Toggles extends ConsumerWidget {
     } catch (_) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).notifSettingsSaveError)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).notifSettingsSaveError),
+        ),
       );
     }
   }

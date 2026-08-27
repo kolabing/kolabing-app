@@ -74,12 +74,17 @@ class SummaryCard extends StatelessWidget {
                     children: [
                       Text(
                         data.name ?? 'No name',
-                        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                        style: KolabingTextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.onSurface,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '${data.isBusiness ? data.businessTypesSummary : (data.typeName ?? 'Unknown type')} \u2022 ${data.location?.city ?? data.cityName ?? 'Unknown city'}',
-                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: context.colors.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
@@ -128,7 +133,10 @@ class SummaryCard extends StatelessWidget {
               if (data.about != null && data.about!.isNotEmpty) ...[
                 Text(
                   data.about!,
-                  style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                    height: 1.4,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -192,7 +200,11 @@ class _SummaryDetailItem extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant, height: 1.35),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
+              color: context.colors.onSurfaceVariant,
+              height: 1.35,
+            ),
             softWrap: true,
           ),
         ),
@@ -224,7 +236,10 @@ class _SummaryInlineItem extends StatelessWidget {
             text,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
         ),
       ],

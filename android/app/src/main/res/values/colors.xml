@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Pure black, matching the icon's own ground and ios/.../LaunchScreen
+         .storyboard. Not the warm ink (#19150F) the app's surfaces use: the
+         mark asset sits on this, and a mismatch shows as a seam. -->
+    <color name="launch_background">#FF000000</color>
+</resources>

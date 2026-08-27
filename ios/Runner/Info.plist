@@ -54,7 +54,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Kolabing needs camera access to scan QR codes for event check-in.</string>
+	<string>Kolabing uses the camera to scan QR codes for event check-in, and to take the photos that event challenges ask for — a photo with someone you met, or a shot the challenge asks you to find.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Kolabing needs your location to show nearby collaboration opportunities and connect you with local businesses and communities.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

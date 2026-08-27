@@ -25,13 +25,15 @@ class ChatThreadsNotifier extends Notifier<AsyncValue<List<ChatThread>>> {
   Future<void> reload() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-        () => ref.read(chatServiceProvider).getThreads());
+      () => ref.read(chatServiceProvider).getThreads(),
+    );
   }
 }
 
 final chatThreadsProvider =
     NotifierProvider<ChatThreadsNotifier, AsyncValue<List<ChatThread>>>(
-        ChatThreadsNotifier.new);
+      ChatThreadsNotifier.new,
+    );
 
 /// Total unread message count — feeds the app-bar inbox badge.
 class ChatUnreadNotifier extends Notifier<int> {
@@ -50,5 +52,6 @@ class ChatUnreadNotifier extends Notifier<int> {
   }
 }
 
-final chatUnreadProvider =
-    NotifierProvider<ChatUnreadNotifier, int>(ChatUnreadNotifier.new);
+final chatUnreadProvider = NotifierProvider<ChatUnreadNotifier, int>(
+  ChatUnreadNotifier.new,
+);

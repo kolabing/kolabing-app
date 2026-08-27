@@ -16,7 +16,9 @@ extension _StatCardAccentColors on StatCardAccent {
   Color circleFill(BuildContext context) {
     switch (this) {
       case StatCardAccent.pending:
-        return context.colors.surfaceContainerHigh; // warm neutral (was lavender)
+        return context
+            .colors
+            .surfaceContainerHigh; // warm neutral (was lavender)
       case StatCardAccent.accepted:
         return context.colors.softYellow; // soft yellow (was sage green)
       case StatCardAccent.active:
@@ -74,74 +76,74 @@ class DashboardStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-      padding: const EdgeInsets.all(KolabingSpacing.lg),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: KolabingRadius.borderRadiusXl,
-        border: Border.all(color: context.colors.hairline),
-        boxShadow: const [KolabingShadows.card],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Label
+    padding: const EdgeInsets.all(KolabingSpacing.lg),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: KolabingRadius.borderRadiusXl,
+      border: Border.all(color: context.colors.hairline),
+      boxShadow: const [KolabingShadows.card],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Label
+        Text(
+          title.toUpperCase(),
+          style: KolabingTextStyles.labelSmall.copyWith(
+            color: context.colors.textTertiary,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: KolabingSpacing.sm),
+
+        // Count + icon circle row
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              count.toString(),
+              style: KolabingTextStyles.displaySmall.copyWith(
+                fontSize: 38,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.5,
+                color: context.colors.onSurface,
+              ),
+            ),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: accent.circleFill(context),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: iconSlug != null
+                    ? UiIcon(
+                        icon: iconSlug!,
+                        size: 20,
+                        color: accent.iconColor(context),
+                      )
+                    : Icon(icon, size: 20, color: accent.iconColor(context)),
+              ),
+            ),
+          ],
+        ),
+
+        if (subtitle != null) ...[
+          const SizedBox(height: KolabingSpacing.xxs),
           Text(
-            title.toUpperCase(),
-            style: KolabingTextStyles.labelSmall.copyWith(
-              color: context.colors.textTertiary,
+            subtitle!,
+            style: KolabingTextStyles.captionSecondary.copyWith(
+              color: context.colors.onSurfaceVariant,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: KolabingSpacing.sm),
-
-          // Count + icon circle row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                count.toString(),
-                style: KolabingTextStyles.displaySmall.copyWith(
-                  fontSize: 38,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.5,
-                  color: context.colors.onSurface,
-                ),
-              ),
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: accent.circleFill(context),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: iconSlug != null
-                      ? UiIcon(
-                          icon: iconSlug!,
-                          size: 20,
-                          color: accent.iconColor(context),
-                        )
-                      : Icon(icon, size: 20, color: accent.iconColor(context)),
-                ),
-              ),
-            ],
-          ),
-
-          if (subtitle != null) ...[
-            const SizedBox(height: KolabingSpacing.xxs),
-            Text(
-              subtitle!,
-              style: KolabingTextStyles.captionSecondary.copyWith(
-                color: context.colors.onSurfaceVariant,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
         ],
-      ),
-    );
+      ],
+    ),
+  );
 }

@@ -314,51 +314,55 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
-              children: [
-                const Spacer(flex: 2),
+                  children: [
+                    const Spacer(flex: 2),
 
-                // Logo
-                _AnimatedElement(
-                  animation: _logoAnimation,
-                  child: const KolabingLogo(
-                    width: 220,
-                    variant: KolabingLogoVariant.yellowTransparent,
-                  ),
+                    // Logo
+                    _AnimatedElement(
+                      animation: _logoAnimation,
+                      child: const KolabingLogo(
+                        width: 220,
+                        variant: KolabingLogoVariant.yellowTransparent,
+                      ),
+                    ),
+
+                    const SizedBox(height: 48),
+
+                    // Google Sign In Button
+                    _AnimatedElement(
+                      animation: _buttonAnimation,
+                      slideUp: true,
+                      child: GoogleSignInButton(
+                        onPressed: _handleGoogleSignIn,
+                        buttonText: AppLocalizations.of(
+                          context,
+                        ).signInWithGoogle,
+                        isLoading: _isLoading,
+                        showSuccess: _showSuccess,
+                        isEnabled: !_isLoading && !_showSuccess,
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Sign Up Link
+                    _AnimatedElement(
+                      animation: _linkAnimation,
+                      child: AuthLink(
+                        leadingText: AppLocalizations.of(
+                          context,
+                        ).signInNoAccount,
+                        actionText: AppLocalizations.of(context).signInSignUp,
+                        onTap: _navigateToSignUp,
+                        isEnabled: !_isLoading && !_showSuccess,
+                      ),
+                    ),
+
+                    const Spacer(flex: 3),
+                  ],
                 ),
-
-                const SizedBox(height: 48),
-
-                // Google Sign In Button
-                _AnimatedElement(
-                  animation: _buttonAnimation,
-                  slideUp: true,
-                  child: GoogleSignInButton(
-                    onPressed: _handleGoogleSignIn,
-                    buttonText: AppLocalizations.of(context).signInWithGoogle,
-                    isLoading: _isLoading,
-                    showSuccess: _showSuccess,
-                    isEnabled: !_isLoading && !_showSuccess,
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                // Sign Up Link
-                _AnimatedElement(
-                  animation: _linkAnimation,
-                  child: AuthLink(
-                    leadingText: AppLocalizations.of(context).signInNoAccount,
-                    actionText: AppLocalizations.of(context).signInSignUp,
-                    onTap: _navigateToSignUp,
-                    isEnabled: !_isLoading && !_showSuccess,
-                  ),
-                ),
-
-                const Spacer(flex: 3),
-              ],
+              ),
             ),
-          ),
-        ),
           ],
         ),
       ),

@@ -268,6 +268,7 @@ class ChallengeService {
     String? description,
     required ChallengeDifficulty difficulty,
     int? points,
+    ChallengeProofType proofType = ChallengeProofType.text,
   }) async {
     final token = await _authService.getToken();
     if (token == null) {
@@ -284,6 +285,10 @@ class ChallengeService {
           'description': description,
         'difficulty': difficulty.toApiValue(),
         if (points != null) 'points': points,
+        // Whether the app opens the camera when the pair agrees (#188). Always
+        // sent: the API defaults it to `text`, and being explicit means an edit
+        // that turns the camera OFF actually says so.
+        'proof_type': proofType.toApiValue(),
       };
 
       final response = await _httpClient.post(
@@ -332,6 +337,7 @@ class ChallengeService {
     String? description,
     ChallengeDifficulty? difficulty,
     int? points,
+    ChallengeProofType? proofType,
   }) async {
     final token = await _authService.getToken();
     if (token == null) {
@@ -347,6 +353,9 @@ class ChallengeService {
       if (description != null) body['description'] = description;
       if (difficulty != null) body['difficulty'] = difficulty.toApiValue();
       if (points != null) body['points'] = points;
+      // Null means "leave it as it is"; a value means the author chose, which
+      // includes choosing to turn the camera off again (#188).
+      if (proofType != null) body['proof_type'] = proofType.toApiValue();
 
       final response = await _httpClient.put(
         Uri.parse(url),
@@ -511,6 +520,41 @@ class ChallengeService {
       throw ChallengeException(
         'Failed to connect to server: $e',
         kind: ChallengeFailure.network,
+      );
+    }
+  }
+
+  /// Attach the photo the pair took to a completion (kolabing-v2#216).
+  ///
+  /// POST /api/v1/challenge-completions/{id}/photo — multipart, field `photo`.
+  ///
+  /// Either participant may attach it: the photo belongs to the pair, not to
+  /// whoever pressed the button. It is deliberately NOT a precondition of
+  /// verifying — the server does not gate on it and neither does this app, so a
+  /// failure here costs a memento and never the points.
+  Future<void> attachProofPhoto(String completionId, String filePath) async {
+    final token = await _authService.getToken();
+    if (token == null) {
+      throw const ChallengeException('Not authenticated');
+    }
+
+    final uri = Uri.parse(
+      '$_baseUrl/challenge-completions/$completionId/photo',
+    );
+    final request = http.MultipartRequest('POST', uri)
+      ..headers.addAll({
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      })
+      ..files.add(await http.MultipartFile.fromPath('photo', filePath));
+
+    final streamed = await _httpClient.send(request);
+    final response = await http.Response.fromStream(streamed);
+    debugPrint('Attach challenge proof photo: ${response.statusCode}');
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw ChallengeException(
+        'Could not attach the photo (${response.statusCode})',
       );
     }
   }

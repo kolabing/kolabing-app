@@ -83,28 +83,36 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             const SizedBox(height: KolabingSpacing.lg),
 
             // 2 — Ways to earn
-            _buildSectionHeader(AppLocalizations.of(context).walletScreenWaysToEarn),
+            _buildSectionHeader(
+              AppLocalizations.of(context).walletScreenWaysToEarn,
+            ),
             const SizedBox(height: KolabingSpacing.sm),
             _buildMissionsCard(),
 
             const SizedBox(height: KolabingSpacing.lg),
 
             // 3 — Badges
-            _buildSectionHeader(AppLocalizations.of(context).walletScreenBadges),
+            _buildSectionHeader(
+              AppLocalizations.of(context).walletScreenBadges,
+            ),
             const SizedBox(height: KolabingSpacing.sm),
             _buildBadgesGrid(state),
 
             const SizedBox(height: KolabingSpacing.lg),
 
             // 4 — Cash referral milestone (separate from XP)
-            _buildSectionHeader(AppLocalizations.of(context).walletScreenCashReferral),
+            _buildSectionHeader(
+              AppLocalizations.of(context).walletScreenCashReferral,
+            ),
             const SizedBox(height: KolabingSpacing.sm),
             _buildReferralMilestoneCard(state),
 
             const SizedBox(height: KolabingSpacing.lg),
 
             // 5 — XP History
-            _buildSectionHeader(AppLocalizations.of(context).walletScreenXpHistory),
+            _buildSectionHeader(
+              AppLocalizations.of(context).walletScreenXpHistory,
+            ),
             const SizedBox(height: KolabingSpacing.sm),
             _buildXpHistory(state),
 
@@ -231,9 +239,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             value: level.progress(points),
             minHeight: 6,
             backgroundColor: context.colors.onPrimary.withValues(alpha: 0.15),
-            valueColor: AlwaysStoppedAnimation<Color>(
-              context.colors.onPrimary,
-            ),
+            valueColor: AlwaysStoppedAnimation<Color>(context.colors.onPrimary),
           ),
         ),
         if (!level.isMaxLevel) ...[
@@ -438,11 +444,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
           Text(
             conversions >= goal
                 ? AppLocalizations.of(context).walletScreenMilestoneReached
-                : AppLocalizations.of(context).walletScreenMilestoneProgress(
-                    conversions,
-                    goal,
-                    remaining,
-                  ),
+                : AppLocalizations.of(
+                    context,
+                  ).walletScreenMilestoneProgress(conversions, goal, remaining),
             style: KolabingTextStyles.bodySmall.copyWith(
               color: context.colors.onSurfaceVariant,
             ),
@@ -715,7 +719,9 @@ class _BadgeCard extends StatelessWidget {
         color: context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusLg,
         border: Border.all(
-          color: isUnlocked ? context.colors.primary : context.colors.darkBorder,
+          color: isUnlocked
+              ? context.colors.primary
+              : context.colors.darkBorder,
           width: isUnlocked ? 2 : 1,
         ),
         boxShadow: isUnlocked
@@ -854,12 +860,12 @@ class _LedgerRow extends StatelessWidget {
               ),
               child: Text(
                 isEarned
-                    ? AppLocalizations.of(context).walletScreenXpGain(
-                        entry.points,
-                      )
-                    : AppLocalizations.of(context).walletScreenXpAmount(
-                        entry.points,
-                      ),
+                    ? AppLocalizations.of(
+                        context,
+                      ).walletScreenXpGain(entry.points)
+                    : AppLocalizations.of(
+                        context,
+                      ).walletScreenXpAmount(entry.points),
                 style: KolabingTextStyles.captionSecondary.copyWith(
                   fontWeight: FontWeight.w700,
                   color: isEarned

@@ -116,8 +116,8 @@ class _BusinessProductAboutScreenState
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);
       final message = switch (e.code) {
-        'photo_access_denied' || 'photo_access_restricted' =>
-          l10n.businessStep2PhotoAccessDenied,
+        'photo_access_denied' ||
+        'photo_access_restricted' => l10n.businessStep2PhotoAccessDenied,
         _ => l10n.businessStep2PhotoLibraryError,
       };
       ScaffoldMessenger.of(context).showSnackBar(
@@ -238,7 +238,8 @@ class _BusinessProductAboutScreenState
                       photos: data?.venuePhotos ?? const [],
                       isUploading: _isPickingPhoto,
                       emptyTitle: l10n.businessProductPhotosEmptyTitle,
-                      emptyDescription: l10n.businessProductPhotosEmptyDescription,
+                      emptyDescription:
+                          l10n.businessProductPhotosEmptyDescription,
                       onAddPhoto: _pickPhoto,
                       onRemovePhoto: notifier.removeVenuePhoto,
                       onMovePhoto: notifier.moveVenuePhoto,
@@ -317,9 +318,8 @@ class _BusinessProductAboutScreenState
                     disabledBackgroundColor: context.colors.primary.withValues(
                       alpha: 0.5,
                     ),
-                    disabledForegroundColor: context.colors.onPrimary.withValues(
-                      alpha: 0.5,
-                    ),
+                    disabledForegroundColor: context.colors.onPrimary
+                        .withValues(alpha: 0.5),
                     elevation: 0,
                   ),
                   child: Text(

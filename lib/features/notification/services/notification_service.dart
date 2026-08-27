@@ -140,10 +140,7 @@ class NotificationService {
 
     try {
       final response = await _sendWithRefresh(
-        () async => _httpClient.post(
-          uri,
-          headers: await _getHeaders(),
-        ),
+        () async => _httpClient.post(uri, headers: await _getHeaders()),
         allowRetry: true,
       );
 
@@ -187,10 +184,7 @@ class NotificationService {
 
     try {
       final response = await _sendWithRefresh(
-        () async => _httpClient.post(
-          uri,
-          headers: await _getHeaders(),
-        ),
+        () async => _httpClient.post(uri, headers: await _getHeaders()),
         allowRetry: true,
       );
 

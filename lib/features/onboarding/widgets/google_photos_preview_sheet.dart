@@ -28,8 +28,7 @@ class GooglePhotosPreviewSheet extends StatefulWidget {
       useSafeArea: true,
       builder: (context) => GooglePhotosPreviewSheet(photos: photos),
     );
-    return result ??
-        photos.map((photo) => photo.resourceName).toSet();
+    return result ?? photos.map((photo) => photo.resourceName).toSet();
   }
 
   @override
@@ -95,12 +94,19 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                 children: [
                   Text(
                     'Review photos from Google',
-                    style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                    style: KolabingTextStyles.bodyLarge.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.onSurface,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     'Tap any photo to remove it before we add it to your venue. You can always edit photos later.',
-                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
+                    style: KolabingTextStyles.captionSecondary.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                      height: 1.4,
+                    ),
                   ),
                 ],
               ),
@@ -109,12 +115,11 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
             Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                    ),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                ),
                 itemCount: widget.photos.length,
                 itemBuilder: (context, index) {
                   final photo = widget.photos[index];
@@ -154,7 +159,9 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                       Expanded(
                         child: Text(
                           'Photos from Google. Credits are kept with each photo.',
-                          style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.textTertiary),
+                          style: KolabingTextStyles.labelSmall.copyWith(
+                            color: context.colors.textTertiary,
+                          ),
                         ),
                       ),
                     ],
@@ -172,7 +179,10 @@ class _GooglePhotosPreviewSheetState extends State<GooglePhotosPreviewSheet> {
                       ),
                       child: Text(
                         buttonLabel,
-                        style: KolabingTextStyles.button.copyWith(fontSize: 15, letterSpacing: 1),
+                        style: KolabingTextStyles.button.copyWith(
+                          fontSize: 15,
+                          letterSpacing: 1,
+                        ),
                       ),
                     ),
                   ),
@@ -209,15 +219,28 @@ class _PhotoTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             child: ColorFiltered(
               colorFilter: isKept
-                  ? const ColorFilter.mode(
-                      Colors.transparent,
-                      BlendMode.dst,
-                    )
+                  ? const ColorFilter.mode(Colors.transparent, BlendMode.dst)
                   : const ColorFilter.matrix(<double>[
-                      0.2126, 0.7152, 0.0722, 0, 0,
-                      0.2126, 0.7152, 0.0722, 0, 0,
-                      0.2126, 0.7152, 0.0722, 0, 0,
-                      0, 0, 0, 1, 0,
+                      0.2126,
+                      0.7152,
+                      0.0722,
+                      0,
+                      0,
+                      0.2126,
+                      0.7152,
+                      0.0722,
+                      0,
+                      0,
+                      0.2126,
+                      0.7152,
+                      0.0722,
+                      0,
+                      0,
+                      0,
+                      0,
+                      0,
+                      1,
+                      0,
                     ]),
               child: Image.network(
                 photo.previewUrl,

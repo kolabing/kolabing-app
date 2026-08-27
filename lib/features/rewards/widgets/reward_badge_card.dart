@@ -13,11 +13,7 @@ import '../models/reward_badge.dart';
 /// style border. Unlocked badges have a white background, yellow border, and a
 /// subtle shadow.
 class RewardBadgeCard extends StatelessWidget {
-  const RewardBadgeCard({
-    required this.badge,
-    this.compact = false,
-    super.key,
-  });
+  const RewardBadgeCard({required this.badge, this.compact = false, super.key});
 
   /// The badge to display.
   final RewardBadge badge;
@@ -81,23 +77,30 @@ class RewardBadgeCard extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 13, fontWeight: FontWeight.w600, color: isUnlocked
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isUnlocked
                     ? context.colors.onSurface
-                    : context.colors.textTertiary),
+                    : context.colors.textTertiary,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.xxxs),
             Text(
               isUnlocked
                   ? (badge.earnedAt != null
-                      ? 'Earned ${badge.earnedDateFormatted}'
-                      : badge.slug.description)
+                        ? 'Earned ${badge.earnedDateFormatted}'
+                        : badge.slug.description)
                   : badge.slug.requirement,
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w400, color: isUnlocked
+              style: KolabingTextStyles.labelSmall.copyWith(
+                fontWeight: FontWeight.w400,
+                color: isUnlocked
                     ? context.colors.onSurfaceVariant
-                    : context.colors.textTertiary),
+                    : context.colors.textTertiary,
+              ),
             ),
           ],
         ),
@@ -133,9 +136,13 @@ class RewardBadgeCard extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: isUnlocked
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: isUnlocked
                     ? context.colors.onSurface
-                    : context.colors.textTertiary),
+                    : context.colors.textTertiary,
+              ),
             ),
           ],
         ),
@@ -152,27 +159,26 @@ class RewardBadgeCard extends StatelessWidget {
     required double size,
     required double iconSize,
     required bool isUnlocked,
-  }) =>
-      Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isUnlocked
-              ? context.colors.softYellow
-              : context.colors.surfaceVariant,
-          border: Border.all(
-            color: isUnlocked
-                ? context.colors.softYellowBorder
-                : context.colors.darkBorder,
-          ),
-        ),
-        child: Icon(
-          badge.slug.icon,
-          size: iconSize,
-          color: isUnlocked
-              ? context.colors.onSurface
-              : context.colors.textTertiary,
-        ),
-      );
+  }) => Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: isUnlocked
+          ? context.colors.softYellow
+          : context.colors.surfaceVariant,
+      border: Border.all(
+        color: isUnlocked
+            ? context.colors.softYellowBorder
+            : context.colors.darkBorder,
+      ),
+    ),
+    child: Icon(
+      badge.slug.icon,
+      size: iconSize,
+      color: isUnlocked
+          ? context.colors.onSurface
+          : context.colors.textTertiary,
+    ),
+  );
 }

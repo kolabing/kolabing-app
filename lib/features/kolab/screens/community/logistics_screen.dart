@@ -116,7 +116,9 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             l10n.logisticsAvailabilitySubtitle,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
 
           if (state.fieldErrors['availability_mode'] != null) ...[
@@ -132,26 +134,27 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
             children: AvailabilityMode.values
                 .where((mode) => mode != AvailabilityMode.immediate)
                 .map((mode) {
-              final isSelected = kolab.availabilityMode == mode;
-              return Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    right: mode != AvailabilityMode.recurring
-                        ? KolabingSpacing.xs
-                        : 0,
-                  ),
-                  child: _buildSelectionCard(
-                    icon: _availabilityModeIcon(mode),
-                    title: mode.displayName,
-                    description: mode.description,
-                    isSelected: isSelected,
-                    onTap: () => ref
-                        .read(kolabFormProvider.notifier)
-                        .updateAvailabilityMode(mode),
-                  ),
-                ),
-              );
-            }).toList(),
+                  final isSelected = kolab.availabilityMode == mode;
+                  return Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        right: mode != AvailabilityMode.recurring
+                            ? KolabingSpacing.xs
+                            : 0,
+                      ),
+                      child: _buildSelectionCard(
+                        icon: _availabilityModeIcon(mode),
+                        title: mode.displayName,
+                        description: mode.description,
+                        isSelected: isSelected,
+                        onTap: () => ref
+                            .read(kolabFormProvider.notifier)
+                            .updateAvailabilityMode(mode),
+                      ),
+                    ),
+                  );
+                })
+                .toList(),
           ),
 
           const SizedBox(height: KolabingSpacing.lg),
@@ -288,13 +291,19 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                   ),
                   title: Text(
                     items[i].title,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: context.colors.onSurface,
+                    ),
                   ),
                   subtitle: Text(
                     items[i].formattedAddress,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      fontSize: 12,
+                      color: context.colors.onSurfaceVariant,
+                    ),
                   ),
                   onTap: () => _selectAreaSuggestion(items[i]),
                 ),
@@ -404,9 +413,13 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                 ),
                 child: Text(
                   _dayNames[i].substring(0, 3),
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400, color: isSelected
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                    color: isSelected
                         ? context.colors.onSurface
-                        : context.colors.onSurfaceVariant),
+                        : context.colors.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),
@@ -443,7 +456,9 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         color: isSelected ? context.colors.softYellow : context.colors.surface,
         borderRadius: KolabingRadius.borderRadiusMd,
         border: Border.all(
-          color: isSelected ? context.colors.primary : context.colors.darkBorder,
+          color: isSelected
+              ? context.colors.primary
+              : context.colors.darkBorder,
           width: isSelected ? 2 : 1,
         ),
       ),
@@ -459,13 +474,20 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             title,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: context.colors.onSurface,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 2),
           Text(
             description,
-            style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, color: context.colors.textTertiary),
+            style: KolabingTextStyles.labelSmall.copyWith(
+              fontSize: 10,
+              color: context.colors.textTertiary,
+            ),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -549,9 +571,11 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                     value != null
                         ? dateFormat.format(value)
                         : AppLocalizations.of(context).logisticsSelectDate,
-                    style: KolabingTextStyles.bodySmall.copyWith(color: value != null
+                    style: KolabingTextStyles.bodySmall.copyWith(
+                      color: value != null
                           ? context.colors.onSurface
-                          : context.colors.textTertiary),
+                          : context.colors.textTertiary,
+                    ),
                   ),
                 ),
               ],
@@ -562,7 +586,10 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
           const SizedBox(height: 4),
           Text(
             error,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
+              color: context.colors.error,
+            ),
           ),
         ],
       ],
@@ -615,9 +642,11 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
                 value != null
                     ? value.format(context)
                     : AppLocalizations.of(context).logisticsSelectTime,
-                style: KolabingTextStyles.bodySmall.copyWith(color: value != null
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  color: value != null
                       ? context.colors.onSurface
-                      : context.colors.textTertiary),
+                      : context.colors.textTertiary,
+                ),
               ),
             ],
           ),
@@ -627,7 +656,10 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         const SizedBox(height: 4),
         Text(
           error,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontSize: 12,
+            color: context.colors.error,
+          ),
         ),
       ],
     ],
@@ -635,7 +667,9 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
 
   InputDecoration _inputDecoration({required String hint}) => InputDecoration(
     hintText: hint,
-    hintStyle: KolabingTextStyles.bodyMedium.copyWith(color: context.colors.textTertiary),
+    hintStyle: KolabingTextStyles.bodyMedium.copyWith(
+      color: context.colors.textTertiary,
+    ),
     filled: true,
     fillColor: context.colors.surface,
     border: OutlineInputBorder(
@@ -654,12 +688,19 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
 
   Widget _buildSectionHeader(String title) => Text(
     title,
-    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+    style: KolabingTextStyles.bodySmall.copyWith(
+      fontWeight: FontWeight.w700,
+      color: context.colors.onSurfaceVariant,
+      letterSpacing: 1.0,
+    ),
   );
 
   Widget _buildLabel(String label) => Text(
     label,
-    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+    style: KolabingTextStyles.bodySmall.copyWith(
+      fontWeight: FontWeight.w600,
+      color: context.colors.onSurface,
+    ),
   );
 
   Widget _buildFieldError(String error) => Container(
@@ -678,7 +719,10 @@ class _LogisticsScreenState extends ConsumerState<LogisticsScreen> {
         Expanded(
           child: Text(
             error,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
+              color: context.colors.error,
+            ),
           ),
         ),
       ],

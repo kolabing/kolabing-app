@@ -42,83 +42,90 @@ class IntentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          padding: const EdgeInsets.all(KolabingSpacing.lg - 4), // 20dp
-          decoration: BoxDecoration(
-            color: isSelected ? context.colors.softYellow : Colors.white,
-            borderRadius: KolabingRadius.borderRadiusMd,
-            border: Border.all(
-              color:
-                  isSelected ? context.colors.primary : context.colors.hairline,
-              width: isSelected ? 2 : 1,
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      padding: const EdgeInsets.all(KolabingSpacing.lg - 4), // 20dp
+      decoration: BoxDecoration(
+        color: isSelected ? context.colors.softYellow : Colors.white,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(
+          color: isSelected ? context.colors.primary : context.colors.hairline,
+          width: isSelected ? 2 : 1,
+        ),
+        boxShadow: isSelected ? null : [KolabingShadows.card],
+      ),
+      child: Row(
+        children: [
+          // Icon in circle
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected
+                  ? context.colors.primary.withValues(alpha: 0.2)
+                  : context.colors.background,
             ),
-            boxShadow: isSelected ? null : [KolabingShadows.card],
+            child: Center(
+              child: Icon(
+                icon,
+                size: 22,
+                color: isSelected
+                    ? context.colors.onPrimary
+                    : context.colors.onSurfaceVariant,
+              ),
+            ),
           ),
-          child: Row(
-            children: [
-              // Icon in circle
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isSelected
-                      ? context.colors.primary.withValues(alpha: 0.2)
-                      : context.colors.background,
-                ),
-                child: Center(
-                  child: Icon(
-                    icon,
-                    size: 22,
-                    color: isSelected
-                        ? context.colors.onPrimary
-                        : context.colors.onSurfaceVariant,
+          const SizedBox(width: KolabingSpacing.sm),
+          // Title + subtitle
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: KolabingTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: context.colors.onSurface,
                   ),
                 ),
-              ),
-              const SizedBox(width: KolabingSpacing.sm),
-              // Title + subtitle
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
-                    ),
-                    const SizedBox(height: KolabingSpacing.xxxs),
-                    Text(
-                      subtitle,
-                      style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              // Badge
-              if (badge != null) ...[
-                const SizedBox(width: KolabingSpacing.xs),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: KolabingSpacing.xs,
-                    vertical: KolabingSpacing.xxs,
+                const SizedBox(height: KolabingSpacing.xxxs),
+                Text(
+                  subtitle,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.onSurfaceVariant,
                   ),
-                  decoration: BoxDecoration(
-                    color: context.colors.softYellow,
-                    borderRadius: KolabingRadius.borderRadiusSm,
-                  ),
-                  child: Text(
-                    badge!,
-                    style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
-                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
-            ],
+            ),
           ),
-        ),
-      );
+          // Badge
+          if (badge != null) ...[
+            const SizedBox(width: KolabingSpacing.xs),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: KolabingSpacing.xs,
+                vertical: KolabingSpacing.xxs,
+              ),
+              decoration: BoxDecoration(
+                color: context.colors.softYellow,
+                borderRadius: KolabingRadius.borderRadiusSm,
+              ),
+              child: Text(
+                badge!,
+                style: KolabingTextStyles.labelSmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.onSurface,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    ),
+  );
 }

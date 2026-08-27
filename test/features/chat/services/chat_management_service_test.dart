@@ -17,37 +17,37 @@ void main() {
   });
 
   ChatService serviceWith(http.Client client) => ChatService(
-        authService: AuthService(
-          secureStorage: const FlutterSecureStorage(),
-          httpClient: client,
-        ),
-        httpClient: client,
-      );
+    authService: AuthService(
+      secureStorage: const FlutterSecureStorage(),
+      httpClient: client,
+    ),
+    httpClient: client,
+  );
 
   Map<String, dynamic> threadJson({
     String type = 'community_custom',
     String? name = 'Renamed',
-  }) =>
-      <String, dynamic>{
-        'id': 'thread-1',
-        'type': type,
-        'name': name,
-        'is_open': true,
-        'can_manage': true,
-        'is_member': true,
-        'is_participant': false,
-        'unread_count': 0,
-        'participant_summary': const <dynamic>[],
-        'created_at': '2026-06-01T10:00:00Z',
-      };
+  }) => <String, dynamic>{
+    'id': 'thread-1',
+    'type': type,
+    'name': name,
+    'is_open': true,
+    'can_manage': true,
+    'is_member': true,
+    'is_participant': false,
+    'unread_count': 0,
+    'participant_summary': const <dynamic>[],
+    'created_at': '2026-06-01T10:00:00Z',
+  };
 
   test('renameCommunityChat PATCHes /chats/{id} with the new name', () async {
     final client = _CaptureClient(
       jsonEncode(<String, dynamic>{'data': threadJson()}),
     );
 
-    final thread =
-        await serviceWith(client).renameCommunityChat('thread-1', 'Renamed');
+    final thread = await serviceWith(
+      client,
+    ).renameCommunityChat('thread-1', 'Renamed');
 
     expect(client.lastMethod, 'PATCH');
     expect(client.lastUrl, contains('/chats/thread-1'));
@@ -56,9 +56,7 @@ void main() {
   });
 
   test('deleteCommunityChat DELETEs /chats/{id}', () async {
-    final client = _CaptureClient(
-      jsonEncode(<String, dynamic>{'data': null}),
-    );
+    final client = _CaptureClient(jsonEncode(<String, dynamic>{'data': null}));
 
     await serviceWith(client).deleteCommunityChat('thread-1');
 
@@ -92,8 +90,11 @@ void main() {
     expect(
       () => serviceWith(client).renameCommunityChat('thread-1', 'X'),
       throwsA(
-        isA<ChatException>()
-            .having((e) => e.code, 'code', 'cannot_rename_thread_type'),
+        isA<ChatException>().having(
+          (e) => e.code,
+          'code',
+          'cannot_rename_thread_type',
+        ),
       ),
     );
   });

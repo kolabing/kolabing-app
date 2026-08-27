@@ -21,10 +21,7 @@ import '../../../widgets/profile_link.dart';
 /// availability, and Accept / Decline actions.
 /// After accepting, navigates to the chat screen.
 class ApplicationReviewScreen extends ConsumerStatefulWidget {
-  const ApplicationReviewScreen({
-    super.key,
-    required this.applicationId,
-  });
+  const ApplicationReviewScreen({super.key, required this.applicationId});
 
   final String applicationId;
 
@@ -40,8 +37,9 @@ class _ApplicationReviewScreenState
 
   @override
   Widget build(BuildContext context) {
-    final asyncApplication =
-        ref.watch(applicationDetailProvider(widget.applicationId));
+    final asyncApplication = ref.watch(
+      applicationDetailProvider(widget.applicationId),
+    );
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -50,8 +48,7 @@ class _ApplicationReviewScreenState
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(LucideIcons.arrowLeft,
-              color: context.colors.onSurface),
+          icon: Icon(LucideIcons.arrowLeft, color: context.colors.onSurface),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -73,8 +70,11 @@ class _ApplicationReviewScreenState
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(LucideIcons.alertCircle,
-                    size: 48, color: context.colors.error),
+                Icon(
+                  LucideIcons.alertCircle,
+                  size: 48,
+                  color: context.colors.error,
+                ),
                 const SizedBox(height: KolabingSpacing.md),
                 Text(
                   AppLocalizations.of(context).applicationReviewLoadError,
@@ -87,10 +87,14 @@ class _ApplicationReviewScreenState
                 const SizedBox(height: KolabingSpacing.sm),
                 TextButton(
                   onPressed: () => ref.invalidate(
-                      applicationDetailProvider(widget.applicationId)),
-                  child: Text(AppLocalizations.of(context).commonRetry,
-                      style: KolabingTextStyles.labelLarge.copyWith(
-                          color: context.colors.primary)),
+                    applicationDetailProvider(widget.applicationId),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context).commonRetry,
+                    style: KolabingTextStyles.labelLarge.copyWith(
+                      color: context.colors.primary,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -99,7 +103,10 @@ class _ApplicationReviewScreenState
         data: (application) {
           if (application == null) {
             return Center(
-                child: Text(AppLocalizations.of(context).applicationReviewNotFound));
+              child: Text(
+                AppLocalizations.of(context).applicationReviewNotFound,
+              ),
+            );
           }
           return _buildContent(application);
         },
@@ -130,11 +137,15 @@ class _ApplicationReviewScreenState
                 // Application message
                 _buildSection(
                   icon: LucideIcons.messageSquare,
-                  title: AppLocalizations.of(context).applicationReviewMessageLabel,
+                  title: AppLocalizations.of(
+                    context,
+                  ).applicationReviewMessageLabel,
                   child: Text(
                     application.message.isNotEmpty
                         ? application.message
-                        : AppLocalizations.of(context).applicationReviewNoMessage,
+                        : AppLocalizations.of(
+                            context,
+                          ).applicationReviewNoMessage,
                     style: KolabingTextStyles.bodySmall.copyWith(
                       color: application.message.isNotEmpty
                           ? context.colors.onSurface
@@ -148,11 +159,15 @@ class _ApplicationReviewScreenState
                 // Availability
                 _buildSection(
                   icon: LucideIcons.calendar,
-                  title: AppLocalizations.of(context).applicationReviewAvailabilityLabel,
+                  title: AppLocalizations.of(
+                    context,
+                  ).applicationReviewAvailabilityLabel,
                   child: Text(
                     application.availability.isNotEmpty
                         ? application.availability
-                        : AppLocalizations.of(context).applicationReviewNotSpecified,
+                        : AppLocalizations.of(
+                            context,
+                          ).applicationReviewNotSpecified,
                     style: KolabingTextStyles.bodySmall.copyWith(
                       color: application.availability.isNotEmpty
                           ? context.colors.onSurface
@@ -166,7 +181,9 @@ class _ApplicationReviewScreenState
                 // Applied date
                 _buildSection(
                   icon: LucideIcons.clock,
-                  title: AppLocalizations.of(context).applicationReviewAppliedLabel,
+                  title: AppLocalizations.of(
+                    context,
+                  ).applicationReviewAppliedLabel,
                   child: Text(
                     application.createdAtDisplay,
                     style: KolabingTextStyles.bodySmall.copyWith(
@@ -203,12 +220,18 @@ class _ApplicationReviewScreenState
       ),
       child: Row(
         children: [
-          Icon(LucideIcons.briefcase, size: 18, color: context.colors.onPrimary),
+          Icon(
+            LucideIcons.briefcase,
+            size: 18,
+            color: context.colors.onPrimary,
+          ),
           const SizedBox(width: KolabingSpacing.xs),
           Expanded(
             child: Text(
               opportunity?.title ??
-                  AppLocalizations.of(context).applicationReviewUnknownOpportunity,
+                  AppLocalizations.of(
+                    context,
+                  ).applicationReviewUnknownOpportunity,
               style: KolabingTextStyles.bodySmall.copyWith(
                 fontWeight: FontWeight.w600,
                 color: context.colors.onSurface,
@@ -223,7 +246,9 @@ class _ApplicationReviewScreenState
   }
 
   Widget _buildApplicantCard(
-      ApplicantProfile? profile, Application application) {
+    ApplicantProfile? profile,
+    Application application,
+  ) {
     return Container(
       padding: const EdgeInsets.all(KolabingSpacing.lg),
       decoration: BoxDecoration(
@@ -307,8 +332,11 @@ class _ApplicationReviewScreenState
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(LucideIcons.mapPin,
-                    size: 14, color: context.colors.textTertiary),
+                Icon(
+                  LucideIcons.mapPin,
+                  size: 14,
+                  color: context.colors.textTertiary,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   profile.city!,
@@ -404,31 +432,33 @@ class _ApplicationReviewScreenState
     final l10n = AppLocalizations.of(context);
     final (icon, color, label, description) = switch (application.status) {
       ApplicationStatus.accepted => (
-          LucideIcons.checkCircle,
-          context.colors.success,
-          l10n.applicationReviewStatusAccepted,
-          l10n.applicationReviewStatusAcceptedDesc,
-        ),
+        LucideIcons.checkCircle,
+        context.colors.success,
+        l10n.applicationReviewStatusAccepted,
+        l10n.applicationReviewStatusAcceptedDesc,
+      ),
       ApplicationStatus.declined => (
-          LucideIcons.xCircle,
-          context.colors.error,
-          l10n.applicationReviewStatusDeclined,
-          application.declineReason != null
-              ? l10n.applicationReviewStatusDeclinedReason(application.declineReason!)
-              : l10n.applicationReviewStatusDeclinedDesc,
-        ),
+        LucideIcons.xCircle,
+        context.colors.error,
+        l10n.applicationReviewStatusDeclined,
+        application.declineReason != null
+            ? l10n.applicationReviewStatusDeclinedReason(
+                application.declineReason!,
+              )
+            : l10n.applicationReviewStatusDeclinedDesc,
+      ),
       ApplicationStatus.withdrawn => (
-          LucideIcons.minusCircle,
-          context.colors.textTertiary,
-          l10n.applicationReviewStatusWithdrawn,
-          l10n.applicationReviewStatusWithdrawnDesc,
-        ),
+        LucideIcons.minusCircle,
+        context.colors.textTertiary,
+        l10n.applicationReviewStatusWithdrawn,
+        l10n.applicationReviewStatusWithdrawnDesc,
+      ),
       _ => (
-          LucideIcons.clock,
-          context.colors.pendingText,
-          l10n.applicationReviewStatusPending,
-          '',
-        ),
+        LucideIcons.clock,
+        context.colors.pendingText,
+        l10n.applicationReviewStatusPending,
+        '',
+      ),
     };
 
     return Container(
@@ -498,10 +528,9 @@ class _ApplicationReviewScreenState
             child: SizedBox(
               height: 52,
               child: OutlinedButton.icon(
-                onPressed:
-                    _isDeclining || _isAccepting
-                        ? null
-                        : () => _showDeclineDialog(application),
+                onPressed: _isDeclining || _isAccepting
+                    ? null
+                    : () => _showDeclineDialog(application),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: context.colors.error,
                   side: BorderSide(color: context.colors.error),
@@ -511,7 +540,9 @@ class _ApplicationReviewScreenState
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: context.colors.error),
+                          strokeWidth: 2,
+                          color: context.colors.error,
+                        ),
                       )
                     : const Icon(LucideIcons.x, size: 18),
                 label: FittedBox(
@@ -537,7 +568,9 @@ class _ApplicationReviewScreenState
             flex: 3,
             child: KolabingButton(
               label: AppLocalizations.of(context).applicationReviewAccept,
-              onPressed: _isAccepting || _isDeclining ? null : () => _handleAccept(application),
+              onPressed: _isAccepting || _isDeclining
+                  ? null
+                  : () => _handleAccept(application),
               variant: KolabingButtonVariant.primary,
               size: KolabingButtonSize.compact,
               icon: const Icon(LucideIcons.check),
@@ -609,7 +642,9 @@ class _ApplicationReviewScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              l10n.applicationReviewDeclineDialogBody(application.applicantName),
+              l10n.applicationReviewDeclineDialogBody(
+                application.applicantName,
+              ),
               style: KolabingTextStyles.bodySmall.copyWith(
                 color: context.colors.onSurfaceVariant,
               ),
@@ -633,8 +668,7 @@ class _ApplicationReviewScreenState
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide:
-                      BorderSide(color: context.colors.borderFocus),
+                  borderSide: BorderSide(color: context.colors.borderFocus),
                 ),
               ),
             ),
@@ -645,7 +679,9 @@ class _ApplicationReviewScreenState
             onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
               l10n.commonCancel,
-              style: KolabingTextStyles.labelLarge.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.labelLarge.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ),
           ElevatedButton(
@@ -668,8 +704,9 @@ class _ApplicationReviewScreenState
 
     setState(() => _isDeclining = true);
 
-    final reason =
-        reasonController.text.trim().isNotEmpty ? reasonController.text.trim() : null;
+    final reason = reasonController.text.trim().isNotEmpty
+        ? reasonController.text.trim()
+        : null;
 
     try {
       await ref
@@ -687,7 +724,9 @@ class _ApplicationReviewScreenState
         SnackBar(
           content: Text(
             l10n.applicationReviewDeclinedSnack,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.textOnDark,
+            ),
           ),
           backgroundColor: context.colors.onSurfaceVariant,
           behavior: SnackBarBehavior.floating,
@@ -703,7 +742,9 @@ class _ApplicationReviewScreenState
         SnackBar(
           content: Text(
             _parseError(e),
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.textOnDark,
+            ),
           ),
           backgroundColor: context.colors.error,
           behavior: SnackBarBehavior.floating,
@@ -758,8 +799,9 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
 
     final start = DateUtils.dateOnly(opportunity.availabilityStart);
     final end = DateUtils.dateOnly(opportunity.availabilityEnd);
-    final tomorrow =
-        DateUtils.dateOnly(DateTime.now()).add(const Duration(days: 1));
+    final tomorrow = DateUtils.dateOnly(
+      DateTime.now(),
+    ).add(const Duration(days: 1));
     final effectiveStart = start.isBefore(tomorrow) ? tomorrow : start;
 
     if (effectiveStart.isAfter(end)) return [];
@@ -772,13 +814,14 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
     }
 
     // Recurring: publisher picked specific weekdays. Filter the daily walk.
-    final filterByWeekday = modeName == 'recurring' &&
-        opportunity.recurringDays.isNotEmpty;
+    final filterByWeekday =
+        modeName == 'recurring' && opportunity.recurringDays.isNotEmpty;
 
     final dates = <DateTime>[];
     var current = effectiveStart;
     while (!current.isAfter(end)) {
-      if (!filterByWeekday || opportunity.recurringDays.contains(current.weekday)) {
+      if (!filterByWeekday ||
+          opportunity.recurringDays.contains(current.weekday)) {
         dates.add(current);
       }
       current = current.add(const Duration(days: 1));
@@ -882,7 +925,8 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
                         const SizedBox(width: KolabingSpacing.xs),
                     itemBuilder: (_, index) {
                       final date = dates[index];
-                      final isSelected = _selectedDate != null &&
+                      final isSelected =
+                          _selectedDate != null &&
                           DateUtils.isSameDay(_selectedDate!, date);
                       return _buildDateTile(date, isSelected);
                     },
@@ -930,8 +974,18 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
   Widget _buildDateTile(DateTime date, bool isSelected) {
     const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
 
     return GestureDetector(
@@ -1019,7 +1073,9 @@ class _AcceptFormSheetState extends State<_AcceptFormSheet> {
         SnackBar(
           content: Text(
             l10n.acceptFormAcceptedSnack,
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textOnDark),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.textOnDark,
+            ),
           ),
           backgroundColor: context.colors.success,
           behavior: SnackBarBehavior.floating,

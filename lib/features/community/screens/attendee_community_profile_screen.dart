@@ -149,23 +149,16 @@ class AttendeeCommunityProfileScreen extends ConsumerWidget {
             // is asked by the bottom CTA instead, so no row.
             SliverToBoxAdapter(child: _MembershipRow(community: community)),
 
-            // Its photographs — curated, or drawn from its own events.
+            // Its photographs — curated, or drawn from its own events. The
+            // strip carries its own padding (#185).
             SliverToBoxAdapter(
               child: Consumer(
-                builder: (context, ref, _) => Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    KolabingSpacing.md,
-                    KolabingSpacing.md,
-                    0,
-                    0,
-                  ),
-                  child: CommunityPhotoStrip(
-                    photos: ref.watch(
-                      communityPhotosProvider((
-                        communityId: community.id,
-                        ownerProfileId: community.ownerProfileId,
-                      )),
-                    ),
+                builder: (context, ref, _) => CommunityPhotoStrip(
+                  photos: ref.watch(
+                    communityPhotosProvider((
+                      communityId: community.id,
+                      ownerProfileId: community.ownerProfileId,
+                    )),
                   ),
                 ),
               ),

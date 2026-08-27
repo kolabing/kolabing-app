@@ -43,29 +43,26 @@ void main() {
   group('role update / status', () {
     test('updateRole PATCHes the role endpoint and parses §4 back', () async {
       late http.Request captured;
-      final repo = repoReturning(
-        {
-          'success': true,
-          'data': {
-            'id': 'role-uuid',
-            'multi_kolab_event_id': 'event-uuid',
-            'status': 'open',
-            'title': 'Run Club Partner',
-            'eligible_account_type': 'community',
-            'positions_needed': 2,
-            'positions_filled': 1,
-            'required': true,
-            'need': 'A running route',
-            'receive': 'Free venue',
-            'compensation_type': 'value_exchange',
-            'requirements': null,
-            'details': null,
-            'created_at': '2026-08-12T09:05:00Z',
-            'updated_at': '2026-08-12T09:06:00Z',
-          },
+      final repo = repoReturning({
+        'success': true,
+        'data': {
+          'id': 'role-uuid',
+          'multi_kolab_event_id': 'event-uuid',
+          'status': 'open',
+          'title': 'Run Club Partner',
+          'eligible_account_type': 'community',
+          'positions_needed': 2,
+          'positions_filled': 1,
+          'required': true,
+          'need': 'A running route',
+          'receive': 'Free venue',
+          'compensation_type': 'value_exchange',
+          'requirements': null,
+          'details': null,
+          'created_at': '2026-08-12T09:05:00Z',
+          'updated_at': '2026-08-12T09:06:00Z',
         },
-        onRequest: (r) => captured = r,
-      );
+      }, onRequest: (r) => captured = r);
 
       final role = await repo.updateRole(
         'role-uuid',
@@ -82,22 +79,19 @@ void main() {
 
     test('setRoleStatus sends only the status field', () async {
       late http.Request captured;
-      final repo = repoReturning(
-        {
-          'success': true,
-          'data': {
-            'id': 'role-uuid',
-            'multi_kolab_event_id': 'event-uuid',
-            'status': 'closed',
-            'title': 'Run Club Partner',
-            'eligible_account_type': 'community',
-            'positions_needed': 1,
-            'positions_filled': 0,
-            'required': true,
-          },
+      final repo = repoReturning({
+        'success': true,
+        'data': {
+          'id': 'role-uuid',
+          'multi_kolab_event_id': 'event-uuid',
+          'status': 'closed',
+          'title': 'Run Club Partner',
+          'eligible_account_type': 'community',
+          'positions_needed': 1,
+          'positions_filled': 0,
+          'required': true,
         },
-        onRequest: (r) => captured = r,
-      );
+      }, onRequest: (r) => captured = r);
 
       final role = await repo.setRoleStatus(
         'role-uuid',
@@ -136,42 +130,34 @@ void main() {
   group('role applications (organizer review)', () {
     test('roleApplications parses the §7 list envelope', () async {
       late http.Request captured;
-      final repo = repoReturning(
-        {
-          'success': true,
-          'data': [
-            {
-              'id': 'application-uuid',
-              'multi_kolab_role_id': 'role-uuid',
-              'applicant_profile_id': 'profile-uuid',
-              'applicant_profile_type': 'community',
-              'status': 'pending',
-              'pitch': 'We run a 150-member Saturday run club.',
-              'availability': 'Any Saturday in September',
-              'kolab_id': null,
-              'created_at': '2026-08-12T09:10:00Z',
-            },
-            {
-              'id': 'application-2',
-              'multi_kolab_role_id': 'role-uuid',
-              'applicant_profile_id': 'profile-2',
-              'applicant_profile_type': 'business',
-              'status': 'accepted',
-              'pitch': 'We can host.',
-              'availability': null,
-              'kolab_id': 'kolab-uuid',
-              'created_at': '2026-08-12T09:11:00Z',
-            },
-          ],
-          'meta': {
-            'current_page': 1,
-            'last_page': 1,
-            'per_page': 15,
-            'total': 2,
+      final repo = repoReturning({
+        'success': true,
+        'data': [
+          {
+            'id': 'application-uuid',
+            'multi_kolab_role_id': 'role-uuid',
+            'applicant_profile_id': 'profile-uuid',
+            'applicant_profile_type': 'community',
+            'status': 'pending',
+            'pitch': 'We run a 150-member Saturday run club.',
+            'availability': 'Any Saturday in September',
+            'kolab_id': null,
+            'created_at': '2026-08-12T09:10:00Z',
           },
-        },
-        onRequest: (r) => captured = r,
-      );
+          {
+            'id': 'application-2',
+            'multi_kolab_role_id': 'role-uuid',
+            'applicant_profile_id': 'profile-2',
+            'applicant_profile_type': 'business',
+            'status': 'accepted',
+            'pitch': 'We can host.',
+            'availability': null,
+            'kolab_id': 'kolab-uuid',
+            'created_at': '2026-08-12T09:11:00Z',
+          },
+        ],
+        'meta': {'current_page': 1, 'last_page': 1, 'per_page': 15, 'total': 2},
+      }, onRequest: (r) => captured = r);
 
       final applications = await repo.roleApplications('role-uuid');
 
@@ -181,7 +167,10 @@ void main() {
         endsWith('/multi-kolab-roles/role-uuid/applications'),
       );
       expect(applications, hasLength(2));
-      expect(applications.first.status, MultiKolabRoleApplicationStatus.pending);
+      expect(
+        applications.first.status,
+        MultiKolabRoleApplicationStatus.pending,
+      );
       expect(applications.first.pitch, contains('run club'));
       // The organizer resource never carries withdrawal_reason (contract §12).
       expect(applications.last.kolabId, 'kolab-uuid');
@@ -213,50 +202,50 @@ void main() {
   group('lifecycle', () {
     test('confirmEvent POSTs /confirm and parses the event back', () async {
       late http.Request captured;
-      final repo = repoReturning(
-        {
-          'success': true,
-          'data': {
-            'id': 'event-uuid',
-            'status': 'confirmed',
-            'creator_profile_id': 'profile-uuid',
-            'title': 'Kolabing Launch Weekend',
-            'eligible_account_type': 'either',
-            'roles': [],
-            'role_counts': {'total': 0, 'open': 0, 'filled': 0},
-          },
+      final repo = repoReturning({
+        'success': true,
+        'data': {
+          'id': 'event-uuid',
+          'status': 'confirmed',
+          'creator_profile_id': 'profile-uuid',
+          'title': 'Kolabing Launch Weekend',
+          'eligible_account_type': 'either',
+          'roles': [],
+          'role_counts': {'total': 0, 'open': 0, 'filled': 0},
         },
-        onRequest: (r) => captured = r,
-      );
+      }, onRequest: (r) => captured = r);
 
       final event = await repo.confirmEvent('event-uuid');
 
       expect(captured.method, 'POST');
-      expect(captured.url.path, endsWith('/multi-kolab-events/event-uuid/confirm'));
+      expect(
+        captured.url.path,
+        endsWith('/multi-kolab-events/event-uuid/confirm'),
+      );
       expect(event.status, MultiKolabEventStatus.confirmed);
     });
 
     test('completeEvent POSTs /complete', () async {
       late http.Request captured;
-      final repo = repoReturning(
-        {
-          'success': true,
-          'data': {
-            'id': 'event-uuid',
-            'status': 'completed',
-            'creator_profile_id': 'profile-uuid',
-            'title': 'Kolabing Launch Weekend',
-            'eligible_account_type': 'either',
-            'roles': [],
-            'role_counts': {'total': 0, 'open': 0, 'filled': 0},
-          },
+      final repo = repoReturning({
+        'success': true,
+        'data': {
+          'id': 'event-uuid',
+          'status': 'completed',
+          'creator_profile_id': 'profile-uuid',
+          'title': 'Kolabing Launch Weekend',
+          'eligible_account_type': 'either',
+          'roles': [],
+          'role_counts': {'total': 0, 'open': 0, 'filled': 0},
         },
-        onRequest: (r) => captured = r,
-      );
+      }, onRequest: (r) => captured = r);
 
       final event = await repo.completeEvent('event-uuid');
 
-      expect(captured.url.path, endsWith('/multi-kolab-events/event-uuid/complete'));
+      expect(
+        captured.url.path,
+        endsWith('/multi-kolab-events/event-uuid/complete'),
+      );
       expect(event.status, MultiKolabEventStatus.completed);
     });
 
@@ -284,26 +273,29 @@ void main() {
       },
     );
 
-    test('publish without entitlement surfaces event_creator_required', () async {
-      final repo = repoReturning({
-        'success': false,
-        'message': 'Event Creator access is required to publish.',
-        'errors': {
-          'entitlement': ['event_creator_required'],
-        },
-      }, status: 403);
+    test(
+      'publish without entitlement surfaces event_creator_required',
+      () async {
+        final repo = repoReturning({
+          'success': false,
+          'message': 'Event Creator access is required to publish.',
+          'errors': {
+            'entitlement': ['event_creator_required'],
+          },
+        }, status: 403);
 
-      await expectLater(
-        repo.publish('event-uuid'),
-        throwsA(
-          isA<ApiException>().having(
-            (e) => e.error.stableCode,
-            'stableCode',
-            'event_creator_required',
+        await expectLater(
+          repo.publish('event-uuid'),
+          throwsA(
+            isA<ApiException>().having(
+              (e) => e.error.stableCode,
+              'stableCode',
+              'event_creator_required',
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   });
 
   group('mock repository — deterministic organizer fixtures', () {
@@ -371,22 +363,25 @@ void main() {
       expect(result.collaborationId, isNotNull);
     });
 
-    test('roleApplications returns the applications filed for that role', () async {
-      final repo = MockMultiKolabRepository();
-      await repo.apply(
-        'role-1',
-        const CreateMultiKolabApplicationInput(pitch: 'First'),
-      );
-      await repo.apply(
-        'role-3',
-        const CreateMultiKolabApplicationInput(pitch: 'Other role'),
-      );
+    test(
+      'roleApplications returns the applications filed for that role',
+      () async {
+        final repo = MockMultiKolabRepository();
+        await repo.apply(
+          'role-1',
+          const CreateMultiKolabApplicationInput(pitch: 'First'),
+        );
+        await repo.apply(
+          'role-3',
+          const CreateMultiKolabApplicationInput(pitch: 'Other role'),
+        );
 
-      final applications = await repo.roleApplications('role-1');
+        final applications = await repo.roleApplications('role-1');
 
-      expect(applications, hasLength(1));
-      expect(applications.single.pitch, 'First');
-    });
+        expect(applications, hasLength(1));
+        expect(applications.single.pitch, 'First');
+      },
+    );
   });
 
   group('repository selection', () {

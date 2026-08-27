@@ -69,10 +69,10 @@ class ChatParticipant {
   final String? avatarUrl;
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        if (profileId != null) 'profile_id': profileId,
-        if (avatarUrl != null) 'avatar_url': avatarUrl,
-      };
+    'name': name,
+    if (profileId != null) 'profile_id': profileId,
+    if (avatarUrl != null) 'avatar_url': avatarUrl,
+  };
 }
 
 /// A minimal event summary attached to an [ChatThreadType.event] thread, so the
@@ -94,10 +94,10 @@ class ChatThreadEvent {
   final DateTime? date;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        if (name != null) 'name': name,
-        if (date != null) 'date': date!.toIso8601String(),
-      };
+    'id': id,
+    if (name != null) 'name': name,
+    if (date != null) 'date': date!.toIso8601String(),
+  };
 }
 
 /// A chat thread (conversation). One of [communityId] / [collaborationId] is
@@ -132,7 +132,9 @@ class ChatThread {
     final eventJson = json['event'];
     return ChatThread(
       id: json['id'] as String,
-      type: ChatThreadType.fromString(json['type'] as String? ?? 'community_custom'),
+      type: ChatThreadType.fromString(
+        json['type'] as String? ?? 'community_custom',
+      ),
       name: json['name'] as String?,
       slug: json['slug'] as String?,
       applicationId: json['application_id'] as String?,
@@ -150,7 +152,8 @@ class ChatThread {
           ? DateTime.parse(json['last_message_at'] as String)
           : null,
       lastMessagePreview:
-          (json['last_message'] as Map<String, dynamic>?)?['content'] as String?,
+          (json['last_message'] as Map<String, dynamic>?)?['content']
+              as String?,
       unreadCount: json['unread_count'] as int? ?? 0,
       participants: parts,
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -217,27 +220,27 @@ class ChatThread {
   bool get canJoin => isOpen && !isParticipant;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type.toApiValue(),
-        if (name != null) 'name': name,
-        if (slug != null) 'slug': slug,
-        if (applicationId != null) 'application_id': applicationId,
-        if (communityId != null) 'community_id': communityId,
-        if (collaborationId != null) 'collaboration_id': collaborationId,
-        if (eventId != null) 'event_id': eventId,
-        if (event != null) 'event': event!.toJson(),
-        'is_open': isOpen,
-        'can_manage': canManage,
-        'is_member': isMember,
-        'is_participant': isParticipant,
-        if (lastMessageAt != null)
-          'last_message_at': lastMessageAt!.toIso8601String(),
-        if (lastMessagePreview != null)
-          'last_message': {'content': lastMessagePreview},
-        'unread_count': unreadCount,
-        'participant_summary': participants.map((p) => p.toJson()).toList(),
-        'created_at': createdAt.toIso8601String(),
-      };
+    'id': id,
+    'type': type.toApiValue(),
+    if (name != null) 'name': name,
+    if (slug != null) 'slug': slug,
+    if (applicationId != null) 'application_id': applicationId,
+    if (communityId != null) 'community_id': communityId,
+    if (collaborationId != null) 'collaboration_id': collaborationId,
+    if (eventId != null) 'event_id': eventId,
+    if (event != null) 'event': event!.toJson(),
+    'is_open': isOpen,
+    'can_manage': canManage,
+    'is_member': isMember,
+    'is_participant': isParticipant,
+    if (lastMessageAt != null)
+      'last_message_at': lastMessageAt!.toIso8601String(),
+    if (lastMessagePreview != null)
+      'last_message': {'content': lastMessagePreview},
+    'unread_count': unreadCount,
+    'participant_summary': participants.map((p) => p.toJson()).toList(),
+    'created_at': createdAt.toIso8601String(),
+  };
 
   ChatThread copyWith({
     String? id,
@@ -258,25 +261,24 @@ class ChatThread {
     int? unreadCount,
     List<ChatParticipant>? participants,
     DateTime? createdAt,
-  }) =>
-      ChatThread(
-        id: id ?? this.id,
-        type: type ?? this.type,
-        name: name ?? this.name,
-        slug: slug ?? this.slug,
-        applicationId: applicationId ?? this.applicationId,
-        communityId: communityId ?? this.communityId,
-        collaborationId: collaborationId ?? this.collaborationId,
-        eventId: eventId ?? this.eventId,
-        event: event ?? this.event,
-        isOpen: isOpen ?? this.isOpen,
-        canManage: canManage ?? this.canManage,
-        isMember: isMember ?? this.isMember,
-        isParticipant: isParticipant ?? this.isParticipant,
-        lastMessageAt: lastMessageAt ?? this.lastMessageAt,
-        lastMessagePreview: lastMessagePreview ?? this.lastMessagePreview,
-        unreadCount: unreadCount ?? this.unreadCount,
-        participants: participants ?? this.participants,
-        createdAt: createdAt ?? this.createdAt,
-      );
+  }) => ChatThread(
+    id: id ?? this.id,
+    type: type ?? this.type,
+    name: name ?? this.name,
+    slug: slug ?? this.slug,
+    applicationId: applicationId ?? this.applicationId,
+    communityId: communityId ?? this.communityId,
+    collaborationId: collaborationId ?? this.collaborationId,
+    eventId: eventId ?? this.eventId,
+    event: event ?? this.event,
+    isOpen: isOpen ?? this.isOpen,
+    canManage: canManage ?? this.canManage,
+    isMember: isMember ?? this.isMember,
+    isParticipant: isParticipant ?? this.isParticipant,
+    lastMessageAt: lastMessageAt ?? this.lastMessageAt,
+    lastMessagePreview: lastMessagePreview ?? this.lastMessagePreview,
+    unreadCount: unreadCount ?? this.unreadCount,
+    participants: participants ?? this.participants,
+    createdAt: createdAt ?? this.createdAt,
+  );
 }

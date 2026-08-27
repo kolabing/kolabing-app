@@ -8403,4 +8403,156 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get communityManageCoverNotSaved =>
       'The cover was not saved. Please try again later.';
+
+  @override
+  String get challengeCameraPairTitle => 'Take it together';
+
+  @override
+  String get challengeCameraOpen => 'Open camera';
+
+  @override
+  String get challengeCameraUse => 'Use this photo';
+
+  @override
+  String get challengeCameraRetake => 'Take another';
+
+  @override
+  String get challengeCameraOpenSettings => 'Open settings';
+
+  @override
+  String get challengeCameraPermissionBody =>
+      'Kolabing can\'t reach the camera. Turn it on in settings, or leave this challenge.';
+
+  @override
+  String get challengeCameraFailed =>
+      'The photo didn\'t come through. Try again.';
+
+  @override
+  String challengeTogetherMetPerson(String name) {
+    return 'You met $name';
+  }
+
+  @override
+  String get challengeTogetherAddFriend => 'Add friend';
+
+  @override
+  String get challengeTogetherFriendRequested => 'Request sent';
+
+  @override
+  String get ghostInviteTitle => 'They\'re not on Kolabing?';
+
+  @override
+  String ghostInviteBody(int points) {
+    return 'Add their name and send them an invite. You both get $points XP when they join.';
+  }
+
+  @override
+  String get ghostInviteNameLabel => 'Their first name';
+
+  @override
+  String get ghostInviteContactLabel => 'Phone or @handle';
+
+  @override
+  String get ghostInviteContactHint =>
+      'Optional — only to make the invite easier to send.';
+
+  @override
+  String get ghostInviteCreate => 'Create invite';
+
+  @override
+  String ghostInviteReadyTitle(String name) {
+    return 'Invite ready for $name';
+  }
+
+  @override
+  String ghostInvitePending(String name, int points) {
+    return '$name joins, you both get $points XP.';
+  }
+
+  @override
+  String get ghostInviteCodeLabel => 'INVITE CODE';
+
+  @override
+  String get ghostInviteShare => 'Send the invite';
+
+  @override
+  String ghostInviteShareMessage(String name, String code, String url) {
+    return 'Hey $name — join me on Kolabing and we both get points. Use code $code when you sign up: $url';
+  }
+
+  @override
+  String get ghostInviteNotCheckedIn =>
+      'Check in to the event first, then you can invite people.';
+
+  @override
+  String get ghostInviteLimitReached =>
+      'You\'ve got 3 invites waiting from this event already.';
+
+  @override
+  String get ghostInviteUnavailable => 'Invites are not available yet.';
+
+  @override
+  String get ghostInviteFailed => 'That didn\'t work. Please try again.';
+
+  @override
+  String get ghostInviteOption => 'They\'re not on Kolabing';
+
+  @override
+  String get claimCodeTitle => 'Have an invite code?';
+
+  @override
+  String get claimCodeBody =>
+      'Someone you met can hand you points before you even start.';
+
+  @override
+  String get claimCodeLabel => 'Invite code';
+
+  @override
+  String get claimCodeSubmit => 'Claim';
+
+  @override
+  String claimCodeSuccess(String name, int points) {
+    return 'Claimed — you and $name both got $points XP.';
+  }
+
+  @override
+  String get claimCodeInvalid => 'We don\'t recognise that code.';
+
+  @override
+  String get claimCodeExpired => 'That invite has expired.';
+
+  @override
+  String get claimCodeNotNewAccount =>
+      'Invite codes only work on a brand new account.';
+
+  @override
+  String get claimCodeSelf => 'That is your own invite.';
+
+  @override
+  String get claimCodeFailed => 'That didn\'t work. Please try again.';
+
+  @override
+  String get claimCodeClaimed => 'Points claimed';
+
+  @override
+  String get createChallengeEditTitle => 'Edit challenge';
+
+  @override
+  String get createChallengeSaveChanges => 'Save changes';
+
+  @override
+  String get createChallengeUpdated => 'Challenge updated';
+
+  @override
+  String get createChallengeProofTypeLabel => 'When the pair agrees';
+
+  @override
+  String get createChallengeProofTypeText => 'No camera';
+
+  @override
+  String get createChallengeProofTypePhoto => 'Open the camera';
+
+  @override
+  String get createChallengeProofTypeHint =>
+      'Picks the screen the app opens, nothing more. A challenge confirmed without a photo still counts, so a denied camera or bad signal never costs anybody their points.';
 }

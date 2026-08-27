@@ -8485,4 +8485,157 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get communityManageCoverNotSaved =>
       'No se ha guardado la portada. Inténtalo más tarde.';
+
+  @override
+  String get challengeCameraPairTitle => 'Hacedla juntos';
+
+  @override
+  String get challengeCameraOpen => 'Abrir cámara';
+
+  @override
+  String get challengeCameraUse => 'Usar esta foto';
+
+  @override
+  String get challengeCameraRetake => 'Hacer otra';
+
+  @override
+  String get challengeCameraOpenSettings => 'Abrir ajustes';
+
+  @override
+  String get challengeCameraPermissionBody =>
+      'Kolabing no puede acceder a la cámara. Actívala en ajustes o deja este reto.';
+
+  @override
+  String get challengeCameraFailed =>
+      'La foto no se ha enviado. Inténtalo de nuevo.';
+
+  @override
+  String challengeTogetherMetPerson(String name) {
+    return 'Has conocido a $name';
+  }
+
+  @override
+  String get challengeTogetherAddFriend => 'Añadir a amigos';
+
+  @override
+  String get challengeTogetherFriendRequested => 'Solicitud enviada';
+
+  @override
+  String get ghostInviteTitle => '¿No está en Kolabing?';
+
+  @override
+  String ghostInviteBody(int points) {
+    return 'Añade su nombre y envíale una invitación. Los dos conseguís $points XP cuando se una.';
+  }
+
+  @override
+  String get ghostInviteNameLabel => 'Su nombre';
+
+  @override
+  String get ghostInviteContactLabel => 'Teléfono o @usuario';
+
+  @override
+  String get ghostInviteContactHint =>
+      'Opcional: solo para enviarle la invitación más fácilmente.';
+
+  @override
+  String get ghostInviteCreate => 'Crear invitación';
+
+  @override
+  String ghostInviteReadyTitle(String name) {
+    return 'Invitación lista para $name';
+  }
+
+  @override
+  String ghostInvitePending(String name, int points) {
+    return 'Cuando $name se una, los dos conseguís $points XP.';
+  }
+
+  @override
+  String get ghostInviteCodeLabel => 'CÓDIGO DE INVITACIÓN';
+
+  @override
+  String get ghostInviteShare => 'Enviar la invitación';
+
+  @override
+  String ghostInviteShareMessage(String name, String code, String url) {
+    return 'Hola $name: únete a Kolabing conmigo y los dos ganamos puntos. Usa el código $code al registrarte: $url';
+  }
+
+  @override
+  String get ghostInviteNotCheckedIn =>
+      'Regístrate primero en el evento y luego podrás invitar.';
+
+  @override
+  String get ghostInviteLimitReached =>
+      'Ya tienes 3 invitaciones pendientes de este evento.';
+
+  @override
+  String get ghostInviteUnavailable =>
+      'Las invitaciones aún no están disponibles.';
+
+  @override
+  String get ghostInviteFailed => 'No ha funcionado. Inténtalo de nuevo.';
+
+  @override
+  String get ghostInviteOption => 'No está en Kolabing';
+
+  @override
+  String get claimCodeTitle => '¿Tienes un código de invitación?';
+
+  @override
+  String get claimCodeBody =>
+      'Alguien a quien conociste puede darte puntos antes incluso de empezar.';
+
+  @override
+  String get claimCodeLabel => 'Código de invitación';
+
+  @override
+  String get claimCodeSubmit => 'Canjear';
+
+  @override
+  String claimCodeSuccess(String name, int points) {
+    return 'Canjeado: $name y tú habéis conseguido $points XP.';
+  }
+
+  @override
+  String get claimCodeInvalid => 'No reconocemos ese código.';
+
+  @override
+  String get claimCodeExpired => 'Esa invitación ha caducado.';
+
+  @override
+  String get claimCodeNotNewAccount =>
+      'Los códigos solo funcionan en una cuenta nueva.';
+
+  @override
+  String get claimCodeSelf => 'Esa es tu propia invitación.';
+
+  @override
+  String get claimCodeFailed => 'No ha funcionado. Inténtalo de nuevo.';
+
+  @override
+  String get claimCodeClaimed => 'Puntos canjeados';
+
+  @override
+  String get createChallengeEditTitle => 'Editar reto';
+
+  @override
+  String get createChallengeSaveChanges => 'Guardar cambios';
+
+  @override
+  String get createChallengeUpdated => 'Reto actualizado';
+
+  @override
+  String get createChallengeProofTypeLabel => 'Cuando la pareja acepta';
+
+  @override
+  String get createChallengeProofTypeText => 'Sin cámara';
+
+  @override
+  String get createChallengeProofTypePhoto => 'Abrir la cámara';
+
+  @override
+  String get createChallengeProofTypeHint =>
+      'Solo elige la pantalla que abre la app. Un reto confirmado sin foto cuenta igual, así que una cámara denegada o mala cobertura nunca le cuestan los puntos a nadie.';
 }

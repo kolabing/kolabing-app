@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -11,6 +12,7 @@ import '../../../widgets/kolabing_button.dart';
 import '../models/challenge.dart';
 import '../providers/challenge_provider.dart';
 import '../widgets/challenge_card.dart';
+import '../widgets/ghost_invite_sheet.dart';
 import 'attendee_scanner_screen.dart';
 
 /// Screen showing challenges for a specific event
@@ -173,9 +175,11 @@ class _EventChallengesScreenState extends ConsumerState<EventChallengesScreen>
 
   void _handleChallengeTap(Challenge challenge) {
     if (widget.isOrganizer && challenge.isCustom) {
-      // Organizer can edit custom challenges
+      // Organizer can edit custom challenges. The object rides along in
+      // `extra`: there is no single-challenge endpoint to re-read it from.
       context.push(
-        '/attendee/events/${widget.eventId}/challenges/${challenge.id}/edit',
+        KolabingRoutes.buildEditChallengePath(widget.eventId, challenge.id),
+        extra: challenge,
       );
     } else {
       // Show challenge details / initiate challenge
@@ -459,6 +463,24 @@ class _ChallengeDetailsSheet extends ConsumerWidget {
                   },
                   variant: KolabingButtonVariant.primary,
                   icon: const Icon(LucideIcons.scanLine),
+                ),
+
+                const SizedBox(height: KolabingSpacing.sm),
+
+                // The other half of "choose first, then scan": the person you
+                // chose it for may not have the app at all (kolabing-v2#246).
+                // Until this, that conversation simply ended here.
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    GhostInviteSheet.open(
+                      context,
+                      eventId: eventId,
+                      challenge: challenge,
+                    );
+                  },
+                  icon: const Icon(LucideIcons.userPlus, size: 18),
+                  label: Text(l10n.ghostInviteOption),
                 ),
 
                 const SizedBox(height: KolabingSpacing.md),

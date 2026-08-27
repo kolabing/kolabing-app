@@ -350,9 +350,6 @@ abstract final class KolabingColors {
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [
-      Color(0xFFFFE28C),
-      Color(0xFFFFF4C2),
-    ],
+    colors: [Color(0xFFFFE28C), Color(0xFFFFF4C2)],
   );
 }

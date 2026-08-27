@@ -135,9 +135,7 @@ class _SelectionCardState extends State<SelectionCard> {
           ]
         : [
             BoxShadow(
-              color: Colors.black.withValues(
-                alpha: _isPressed ? 0.08 : 0.06,
-              ),
+              color: Colors.black.withValues(alpha: _isPressed ? 0.08 : 0.06),
               blurRadius: 16,
               offset: const Offset(0, 3),
             ),
@@ -152,10 +150,9 @@ class _SelectionCardState extends State<SelectionCard> {
       button: true,
       enabled: widget.isEnabled,
       selected: widget.isSelected,
-      label: AppLocalizations.of(context).selectionCardSemanticLabel(
-        _title(context),
-        _description(context),
-      ),
+      label: AppLocalizations.of(
+        context,
+      ).selectionCardSemanticLabel(_title(context), _description(context)),
       child: GestureDetector(
         onTapDown: _handleTapDown,
         onTapUp: _handleTapUp,
@@ -237,8 +234,9 @@ class _SelectionCardState extends State<SelectionCard> {
                                   fontSize: 9,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 0.6,
-                                  color: context.colors.onSurface
-                                      .withValues(alpha: 0.7),
+                                  color: context.colors.onSurface.withValues(
+                                    alpha: 0.7,
+                                  ),
                                 ),
                               ),
                             ),
@@ -251,8 +249,9 @@ class _SelectionCardState extends State<SelectionCard> {
                         style: KolabingTextStyles.bodySmall.copyWith(
                           fontSize: 12,
                           color: isDisabled
-                              ? context.colors.onSurfaceVariant
-                                  .withValues(alpha: 0.5)
+                              ? context.colors.onSurfaceVariant.withValues(
+                                  alpha: 0.5,
+                                )
                               : context.colors.onSurfaceVariant,
                           height: 1.35,
                         ),

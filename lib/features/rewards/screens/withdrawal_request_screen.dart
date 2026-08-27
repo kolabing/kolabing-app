@@ -99,7 +99,11 @@ class _WithdrawalRequestScreenState
         surfaceTintColor: Colors.transparent,
         title: Text(
           AppLocalizations.of(context).withdrawalScreenTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface, letterSpacing: 1.0),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w700,
+            color: context.colors.onSurface,
+            letterSpacing: 1.0,
+          ),
         ),
         centerTitle: true,
         leading: IconButton(
@@ -241,7 +245,11 @@ class _WithdrawalRequestScreenState
                     const SizedBox(height: 2),
                     Text(
                       'EUR ${eurValue.toStringAsFixed(2)}',
-                      style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+                      style: KolabingTextStyles.bodyLarge.copyWith(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: context.colors.onSurface,
+                      ),
                     ),
                   ],
                 ),
@@ -292,9 +300,9 @@ class _WithdrawalRequestScreenState
 
         // Submit button
         KolabingButton(
-          label: AppLocalizations.of(context).withdrawalSubmitButton(
-            eurValue.toStringAsFixed(2),
-          ),
+          label: AppLocalizations.of(
+            context,
+          ).withdrawalSubmitButton(eurValue.toStringAsFixed(2)),
           onPressed: _isFormValid && !state.isWithdrawing
               ? _handleSubmit
               : null,

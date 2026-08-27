@@ -73,7 +73,8 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
     _syncControllers();
 
     final l10n = AppLocalizations.of(context);
-    final hasVenueProfile = kolab.venueName != null &&
+    final hasVenueProfile =
+        kolab.venueName != null &&
         kolab.venueName!.isNotEmpty &&
         kolab.venueType != null &&
         kolab.capacity != null &&
@@ -118,18 +119,23 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        const KolabExamplesBox(examples: [
-          'A cozy café for post-run coffee and brunch.',
-          'A wellness studio for yoga, pilates, or community workshops.',
-          'A concept store for creative meetups, try-ons, or content days.',
-        ]),
+        const KolabExamplesBox(
+          examples: [
+            'A cozy café for post-run coffee and brunch.',
+            'A wellness studio for yoga, pilates, or community workshops.',
+            'A concept store for creative meetups, try-ons, or content days.',
+          ],
+        ),
         const SizedBox(height: KolabingSpacing.md),
         // H2: short, one-line offer headline shown on the discovery card.
         _FieldLabel(label: l10n.venueDetailsOfferHeadlineLabel),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           l10n.venueDetailsOfferHeadlineHelper,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontSize: 12,
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         KolabingInput(
@@ -143,29 +149,31 @@ class _VenueDetailsScreenState extends ConsumerState<VenueDetailsScreen> {
         const SizedBox(height: KolabingSpacing.lg),
         const _FieldLabel(label: 'BEST FOR:'),
         const SizedBox(height: KolabingSpacing.xs),
-        Builder(builder: (context) {
-          final venueFitsAsync = ref.watch(venueFitsProvider);
-          final options = venueFitsAsync.when(
-            data: (options) => options,
-            loading: () => const <OfferOption>[],
-            error: (_, _) => const <OfferOption>[],
-          );
-          return MultiSelectChips<OfferOption>(
-            items: options,
-            selected: _selectedVenueFits,
-            labelBuilder: (o) => o.name,
-            onToggle: (option) {
-              setState(() {
-                if (_selectedVenueFits.contains(option)) {
-                  _selectedVenueFits.remove(option);
-                } else {
-                  _selectedVenueFits.add(option);
-                }
-              });
-              _appendVenueFitsToDescription(notifier, kolab);
-            },
-          );
-        }),
+        Builder(
+          builder: (context) {
+            final venueFitsAsync = ref.watch(venueFitsProvider);
+            final options = venueFitsAsync.when(
+              data: (options) => options,
+              loading: () => const <OfferOption>[],
+              error: (_, _) => const <OfferOption>[],
+            );
+            return MultiSelectChips<OfferOption>(
+              items: options,
+              selected: _selectedVenueFits,
+              labelBuilder: (o) => o.name,
+              onToggle: (option) {
+                setState(() {
+                  if (_selectedVenueFits.contains(option)) {
+                    _selectedVenueFits.remove(option);
+                  } else {
+                    _selectedVenueFits.add(option);
+                  }
+                });
+                _appendVenueFitsToDescription(notifier, kolab);
+              },
+            );
+          },
+        ),
       ],
     );
   }
@@ -180,37 +188,42 @@ class _VenueSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Container(
-        padding: const EdgeInsets.all(KolabingSpacing.md),
-        decoration: BoxDecoration(
-          color: context.colors.softYellow,
-          borderRadius: KolabingRadius.borderRadiusMd,
-          border: Border.all(color: context.colors.softYellowBorder),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.venueDetailsPrimaryVenue,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.primaryDark, letterSpacing: 0.8),
+      padding: const EdgeInsets.all(KolabingSpacing.md),
+      decoration: BoxDecoration(
+        color: context.colors.softYellow,
+        borderRadius: KolabingRadius.borderRadiusMd,
+        border: Border.all(color: context.colors.softYellowBorder),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.venueDetailsPrimaryVenue,
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: context.colors.primaryDark,
+              letterSpacing: 0.8,
             ),
-            const SizedBox(height: KolabingSpacing.sm),
-            _SummaryRow(
-              icon: LucideIcons.building2,
-              title: kolab.venueName ?? '--',
-              subtitle: l10n.venueDetailsTypeCapacity(
-                kolab.venueType?.displayName ?? l10n.venueDetailsVenueFallback,
-                (kolab.capacity ?? '--').toString(),
-              ),
+          ),
+          const SizedBox(height: KolabingSpacing.sm),
+          _SummaryRow(
+            icon: LucideIcons.building2,
+            title: kolab.venueName ?? '--',
+            subtitle: l10n.venueDetailsTypeCapacity(
+              kolab.venueType?.displayName ?? l10n.venueDetailsVenueFallback,
+              (kolab.capacity ?? '--').toString(),
             ),
-            const SizedBox(height: KolabingSpacing.xs),
-            _SummaryRow(
-              icon: LucideIcons.mapPin,
-              title: kolab.venueAddress ?? '--',
-              subtitle: kolab.preferredCity,
-            ),
-          ],
-        ),
-      );
+          ),
+          const SizedBox(height: KolabingSpacing.xs),
+          _SummaryRow(
+            icon: LucideIcons.mapPin,
+            title: kolab.venueAddress ?? '--',
+            subtitle: kolab.preferredCity,
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -227,28 +240,33 @@ class _SummaryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 18, color: context.colors.primaryDark),
-          const SizedBox(width: KolabingSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
-                ),
-              ],
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Icon(icon, size: 18, color: context.colors.primaryDark),
+      const SizedBox(width: KolabingSpacing.sm),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w700,
+                color: context.colors.onSurface,
+              ),
             ),
-          ),
-        ],
-      );
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: KolabingTextStyles.captionSecondary.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
 }
 
 class _SectionHeader extends StatelessWidget {
@@ -258,9 +276,13 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-        label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1),
-      );
+    label,
+    style: KolabingTextStyles.bodySmall.copyWith(
+      fontWeight: FontWeight.w700,
+      color: context.colors.onSurfaceVariant,
+      letterSpacing: 1,
+    ),
+  );
 }
 
 class _FieldLabel extends StatelessWidget {
@@ -270,7 +292,10 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-        label,
-        style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
-      );
+    label,
+    style: KolabingTextStyles.bodySmall.copyWith(
+      fontWeight: FontWeight.w700,
+      color: context.colors.onSurface,
+    ),
+  );
 }

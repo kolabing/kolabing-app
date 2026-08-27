@@ -166,7 +166,10 @@ class DiscoveryQuickFilters extends StatelessWidget {
     final chips = isCommunityViewer
         ? <_QuickChipData>[
             _QuickChipData(
-              label: _singleValue(filters.city, fallback: l10n.discoveryQuickFilterCity),
+              label: _singleValue(
+                filters.city,
+                fallback: l10n.discoveryQuickFilterCity,
+              ),
               isActive: filters.city != null,
             ),
             _QuickChipData(
@@ -186,13 +189,19 @@ class DiscoveryQuickFilters extends StatelessWidget {
               isActive: filters.offerTypes.isNotEmpty,
             ),
             _QuickChipData(
-              label: _availabilityLabel(filters.availabilityMode, l10n.discoveryQuickFilterAvailability),
+              label: _availabilityLabel(
+                filters.availabilityMode,
+                l10n.discoveryQuickFilterAvailability,
+              ),
               isActive: filters.availabilityMode != null,
             ),
           ]
         : <_QuickChipData>[
             _QuickChipData(
-              label: _singleValue(filters.city, fallback: l10n.discoveryQuickFilterCity),
+              label: _singleValue(
+                filters.city,
+                fallback: l10n.discoveryQuickFilterCity,
+              ),
               isActive: filters.city != null,
             ),
             _QuickChipData(
@@ -275,17 +284,14 @@ class _QuickChip extends StatelessWidget {
     onTap: onTap,
     child: AnimatedContainer(
       duration: const Duration(milliseconds: 180),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: data.isActive
-            ? context.colors.softYellow
-            : Colors.white,
+        color: data.isActive ? context.colors.softYellow : Colors.white,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
         border: Border.all(
-          color: data.isActive ? context.colors.softYellowBorder : context.colors.hairline,
+          color: data.isActive
+              ? context.colors.softYellowBorder
+              : context.colors.hairline,
         ),
       ),
       child: Row(
@@ -293,7 +299,11 @@ class _QuickChip extends StatelessWidget {
         children: [
           Text(
             data.label,
-            style: KolabingTextStyles.button.copyWith(fontSize: 13, fontWeight: FontWeight.w500, color: context.colors.onSurface),
+            style: KolabingTextStyles.button.copyWith(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: context.colors.onSurface,
+            ),
           ),
           const SizedBox(width: 6),
           Icon(

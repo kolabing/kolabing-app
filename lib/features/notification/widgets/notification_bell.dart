@@ -13,11 +13,7 @@ import '../providers/notification_provider.dart';
 /// Place this in an AppBar's actions or as a standalone widget.
 /// Tapping navigates to the notifications screen.
 class NotificationBell extends ConsumerWidget {
-  const NotificationBell({
-    super.key,
-    this.color,
-    this.size = 24,
-  });
+  const NotificationBell({super.key, this.color, this.size = 24});
 
   /// Icon color override
   final Color? color;
@@ -48,10 +44,7 @@ class NotificationBell extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: context.colors.error,
                   borderRadius: BorderRadius.circular(9),
-                  border: Border.all(
-                    color: context.colors.surface,
-                    width: 1.5,
-                  ),
+                  border: Border.all(color: context.colors.surface, width: 1.5),
                 ),
                 child: Text(
                   unreadCount > 99 ? '99+' : unreadCount.toString(),

@@ -201,12 +201,73 @@ other rows. Forming a collaboration = manually inserting opportunity → applica
 `cities, city_suggestions, business_types, community_types` (lookups — fetch via
 API, never hardcode); `kolabs`; `events, event_checkins, event_photos,
 event_rewards`; `chat_messages`; `challenges, challenge_completions,
-collaboration_challenges`; `badges, badge_awards, earned_badges`; gamification
+collaboration_challenges, encounters`; `badges, badge_awards, earned_badges`; gamification
 (`point_ledger, wallets, reward_claims, withdrawal_requests, referral_codes,
 referral_redemptions`); `notifications, notification_preferences,
 notification_reminders`; `personal_access_tokens` (Sanctum); Laravel internals
 (`cache, cache_locks, jobs, job_batches, failed_jobs, sessions, migrations,
 password_reset_tokens`).
+
+---
+
+## `encounters` — the People Layer (kolabing-v2#244)
+
+The ledger of **people**, next to `challenge_completions`' ledger of **actions**.
+Written from `ChallengeCompletionService::verify`.
+
+```
+encounters
+  id · profile_id → profiles · other_profile_id → profiles (NULL while a ghost)
+  ghost_name · community_id → communities · event_id → events
+  met_at · times_met · proof_photo_url · claimed_at
+  challenge_id · ghost_claim_token (UNIQUE) · ghost_contact · pending_points · expires_at
+  UNIQUE (profile_id, other_profile_id, event_id) WHERE other_profile_id IS NOT NULL
+```
+
+Three things about it that are easy to get wrong:
+
+1. **One row per pair per EVENT, and each row is frozen.** A row means *at this
+   event these two met, and it was their Nth time*. `times_met` is written once
+   and never updated — the row from the third event says 3 forever. The current
+   count for a pair is the `times_met` of its most recent row.
+2. **A meeting is an event, not a challenge.** Ten challenges with the same
+   person in one night is one row. The partial unique index enforces it, so this
+   is a schema guarantee, not a service rule that can be forgotten.
+3. **An encounter is not a friendship.** Nothing writes `friendships` from here.
+   The app offers "Add friend" on the reveal and the person decides.
+
+The pair ladder lives in backend config (`gamification.pair_ladder`), never in
+the app: crossing a rung pays a one-time bonus to **both** sides. Levels do not
+decay and there are no streaks.
+
+`ChallengeCompletionResource` carries an additive `pair_level`
+(`times_met`, `key`, `next_at`, `just_levelled_up`, `bonus_awarded`) on the
+response that settled a challenge. `key` is a slug, not a display string — the
+app localizes it in three languages.
+
+### Ghost invites (kolabing-v2#246)
+
+A row whose `other_profile_id` is null is a **ghost**: someone met at an event
+who does not have the app. `POST /encounters/ghost` writes one and hands back a
+claim code; `POST /encounters/claim` fills it in, writes the reverse row and
+releases `pending_points` to **both** sides.
+
+- **Nothing is paid at invite time.** `pending_points` is frozen when the invite
+  is written, so the number promised on the inviter's screen survives an admin
+  later retuning what the challenge is worth.
+- **The invite URL is on the app host** (`app.kolabing.com/i/{code}`), not the
+  marketing domain: the association files live there and only paths on that host
+  are handed to an installed app.
+- **The claim code is the half a Universal Link cannot do.** A link carries no
+  state through the App Store, and the whole point of a ghost is someone who has
+  to go through it — so `GET /i/{code}` is a real page that shows the code to
+  retype.
+- Refusals carry a machine-readable `error`: `not_checked_in`,
+  `ghost_limit_reached` (3 unclaimed per attendee per event), `invalid_claim_code`,
+  `claim_expired` (30 days), `claim_requires_new_account`, `claim_self`.
+- A claim **does not** create a `ChallengeCompletion`. Nobody verified anything
+  and the two were never checked in together; a fake completion would put
+  something that did not happen into challenge stats and mission progress.
 
 ---
 

@@ -69,13 +69,15 @@ abstract final class KolabingRadius {
   static BorderRadius get borderRadiusCard => BorderRadius.circular(card);
 
   /// Option card BorderRadius - 20px all corners
-  static BorderRadius get borderRadiusOptionCard => BorderRadius.circular(optionCard);
+  static BorderRadius get borderRadiusOptionCard =>
+      BorderRadius.circular(optionCard);
 
   /// Input BorderRadius - 16px all corners
   static BorderRadius get borderRadiusInput => BorderRadius.circular(input);
 
   /// Thumbnail BorderRadius - 18px all corners
-  static BorderRadius get borderRadiusThumbnail => BorderRadius.circular(thumbnail);
+  static BorderRadius get borderRadiusThumbnail =>
+      BorderRadius.circular(thumbnail);
 
   /// Pill BorderRadius - fully rounded
   static BorderRadius get borderRadiusPill => BorderRadius.circular(pill);

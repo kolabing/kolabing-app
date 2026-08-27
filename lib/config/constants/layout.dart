@@ -16,9 +16,7 @@ abstract final class KolabingLayout {
   );
 
   /// Screen padding with vertical spacing
-  static const EdgeInsets screenPaddingAll = EdgeInsets.all(
-    KolabingSpacing.md,
-  );
+  static const EdgeInsets screenPaddingAll = EdgeInsets.all(KolabingSpacing.md);
 
   // ---------------------------------------------------------------------------
   // Navigation
@@ -35,14 +33,10 @@ abstract final class KolabingLayout {
   // ---------------------------------------------------------------------------
 
   /// Standard card internal padding
-  static const EdgeInsets cardPadding = EdgeInsets.all(
-    KolabingSpacing.md,
-  );
+  static const EdgeInsets cardPadding = EdgeInsets.all(KolabingSpacing.md);
 
   /// Large card internal padding
-  static const EdgeInsets cardPaddingLarge = EdgeInsets.all(
-    KolabingSpacing.lg,
-  );
+  static const EdgeInsets cardPaddingLarge = EdgeInsets.all(KolabingSpacing.lg);
 
   // ---------------------------------------------------------------------------
   // List & Grid Spacing
@@ -150,55 +144,43 @@ abstract final class KolabingShadows {
   /// FAB shadow — soft drop shadow beneath the floating action button.
   /// Matches inline definition in kolabing_fab.dart.
   static List<BoxShadow> get fab => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.12),
-          blurRadius: 20,
-          spreadRadius: 0,
-          offset: const Offset(0, 4),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.12),
+      blurRadius: 20,
+      spreadRadius: 0,
+      offset: const Offset(0, 4),
+    ),
+  ];
 
   /// Overlay card shadow — depth behind glass/dark overlay cards on images.
   /// Matches inline definition in explore_swipe_card.dart.
   static List<BoxShadow> get overlayCard => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.12),
-          blurRadius: 18,
-          offset: const Offset(0, 10),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.12),
+      blurRadius: 18,
+      offset: const Offset(0, 10),
+    ),
+  ];
 
   /// Modal top shadow — upward shadow on sticky bottom action bars in sheets.
   /// Matches inline definition in explore_detail_sheet.dart.
   static List<BoxShadow> get modalTop => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.05),
-          blurRadius: 8,
-          offset: const Offset(0, -2),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.05),
+      blurRadius: 8,
+      offset: const Offset(0, -2),
+    ),
+  ];
 
   /// Design handoff card shadow — multi-layer ambient + elevated effect
   static const List<BoxShadow> designCardShadow = [
-    BoxShadow(
-      color: Color(0x0A19150F),
-      blurRadius: 8,
-      offset: Offset(0, 2),
-    ),
-    BoxShadow(
-      color: Color(0x0619150F),
-      blurRadius: 24,
-      offset: Offset(0, 8),
-    ),
+    BoxShadow(color: Color(0x0A19150F), blurRadius: 8, offset: Offset(0, 2)),
+    BoxShadow(color: Color(0x0619150F), blurRadius: 24, offset: Offset(0, 8)),
   ];
 
   /// Design handoff button shadow — warm dark drop shadow beneath yellow buttons
   static const List<BoxShadow> designButtonShadow = [
-    BoxShadow(
-      color: Color(0x1F141210),
-      blurRadius: 26,
-      offset: Offset(0, 12),
-    ),
+    BoxShadow(color: Color(0x1F141210), blurRadius: 26, offset: Offset(0, 12)),
   ];
 
   // ---------------------------------------------------------------------------

@@ -17,5 +17,9 @@
 		<string>group.com.kolabing.kolabingapp.lpfnq76gb6.onesignal</string>
 		<string>group.com.kolabing.kolabingApp.richpushserviceext</string>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:app.kolabing.com</string>
+	</array>
 </dict>
 </plist>

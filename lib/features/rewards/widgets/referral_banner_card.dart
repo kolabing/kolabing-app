@@ -123,8 +123,9 @@ class ReferralBannerCard extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          AppLocalizations.of(context)
-                              .referralBannerStepReferLabel,
+                          AppLocalizations.of(
+                            context,
+                          ).referralBannerStepReferLabel,
                           style: KolabingTextStyles.bodyMedium.copyWith(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -133,8 +134,9 @@ class ReferralBannerCard extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          AppLocalizations.of(context)
-                              .referralBannerStepReferValue,
+                          AppLocalizations.of(
+                            context,
+                          ).referralBannerStepReferValue,
                           style: KolabingTextStyles.bodyMedium.copyWith(
                             fontSize: 15,
                             fontWeight: FontWeight.w800,
@@ -183,8 +185,9 @@ class ReferralBannerCard extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          AppLocalizations.of(context)
-                              .referralBannerStepEarnLabel,
+                          AppLocalizations.of(
+                            context,
+                          ).referralBannerStepEarnLabel,
                           style: KolabingTextStyles.bodyMedium.copyWith(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -193,8 +196,9 @@ class ReferralBannerCard extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          AppLocalizations.of(context)
-                              .referralBannerStepEarnAmount,
+                          AppLocalizations.of(
+                            context,
+                          ).referralBannerStepEarnAmount,
                           style: KolabingTextStyles.displaySmall.copyWith(
                             fontSize: 32,
                             color: inkColor,
@@ -202,8 +206,9 @@ class ReferralBannerCard extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          AppLocalizations.of(context)
-                              .referralBannerStepEarnSuffix,
+                          AppLocalizations.of(
+                            context,
+                          ).referralBannerStepEarnSuffix,
                           style: KolabingTextStyles.bodyMedium.copyWith(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -297,10 +302,7 @@ class _StepBox extends StatelessWidget {
               decoration: BoxDecoration(
                 color: badgeFill,
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: KolabingColors.primary,
-                  width: 1.5,
-                ),
+                border: Border.all(color: KolabingColors.primary, width: 1.5),
               ),
               child: Center(
                 child: Text(
@@ -355,7 +357,12 @@ class _ReferralCodeSheet extends StatelessWidget {
           const SizedBox(height: KolabingSpacing.lg),
           Text(
             AppLocalizations.of(context).referralSheetYourCode,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.textTertiary, letterSpacing: 1.2),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: context.colors.textTertiary,
+              letterSpacing: 1.2,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
           Container(
@@ -372,7 +379,12 @@ class _ReferralCodeSheet extends StatelessWidget {
             child: Text(
               code,
               textAlign: TextAlign.center,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 28, fontWeight: FontWeight.w700, color: context.colors.onSurface, letterSpacing: 2.5),
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: context.colors.onSurface,
+                letterSpacing: 2.5,
+              ),
             ),
           ),
           const SizedBox(height: KolabingSpacing.sm),
@@ -488,7 +500,11 @@ class _CompactReferralCard extends StatelessWidget {
               color: context.colors.softYellow,
               shape: BoxShape.circle,
             ),
-            child: const Icon(LucideIcons.gift, size: 18, color: Color(0xFF19150F)),
+            child: const Icon(
+              LucideIcons.gift,
+              size: 18,
+              color: Color(0xFF19150F),
+            ),
           ),
           const SizedBox(width: KolabingSpacing.sm),
           Expanded(

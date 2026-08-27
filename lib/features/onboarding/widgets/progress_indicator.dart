@@ -21,24 +21,21 @@ class OnboardingProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: 24,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            totalSteps * 2 - 1,
-            (index) {
-              // Even indices are circles, odd indices are lines
-              if (index.isEven) {
-                final stepNumber = (index ~/ 2) + 1;
-                return _buildCircle(context, stepNumber);
-              } else {
-                final stepNumber = (index ~/ 2) + 1;
-                return _buildLine(context, stepNumber);
-              }
-            },
-          ),
-        ),
-      );
+    height: 24,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(totalSteps * 2 - 1, (index) {
+        // Even indices are circles, odd indices are lines
+        if (index.isEven) {
+          final stepNumber = (index ~/ 2) + 1;
+          return _buildCircle(context, stepNumber);
+        } else {
+          final stepNumber = (index ~/ 2) + 1;
+          return _buildLine(context, stepNumber);
+        }
+      }),
+    ),
+  );
 
   Widget _buildCircle(BuildContext context, int stepNumber) {
     final isActive = stepNumber <= currentStep;
@@ -50,18 +47,18 @@ class OnboardingProgressIndicator extends StatelessWidget {
       height: 12,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isActive ? context.colors.primary : context.colors.surfaceVariant,
+        color: isActive
+            ? context.colors.primary
+            : context.colors.surfaceVariant,
         border: Border.all(
-          color: isActive ? context.colors.primary : context.colors.outlineVariant,
+          color: isActive
+              ? context.colors.primary
+              : context.colors.outlineVariant,
           width: 2,
         ),
       ),
       child: isCompleted
-          ? Icon(
-              Icons.check,
-              size: 8,
-              color: context.colors.onSurface,
-            )
+          ? Icon(Icons.check, size: 8, color: context.colors.onSurface)
           : null,
     );
   }
@@ -75,7 +72,9 @@ class OnboardingProgressIndicator extends StatelessWidget {
       height: 2,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: isActive ? context.colors.primary : context.colors.outlineVariant,
+        color: isActive
+            ? context.colors.primary
+            : context.colors.outlineVariant,
         borderRadius: BorderRadius.circular(1),
       ),
     );

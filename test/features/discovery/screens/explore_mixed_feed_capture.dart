@@ -176,7 +176,10 @@ void main() {
       tester,
       'explore_community_offer',
       viewerType: UserType.community,
-      feedItems: [offer(), role(id: 'role-1')],
+      feedItems: [
+        offer(),
+        role(id: 'role-1'),
+      ],
     );
   });
 

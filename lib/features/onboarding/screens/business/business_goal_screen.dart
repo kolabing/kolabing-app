@@ -59,7 +59,9 @@ class _BusinessGoalScreenState extends ConsumerState<BusinessGoalScreen> {
   void _handleContinue() {
     final hasVenue = _hasVenue;
     if (hasVenue == null) return;
-    ref.read(onboardingProvider.notifier).selectBusinessGoal(hasVenue: hasVenue);
+    ref
+        .read(onboardingProvider.notifier)
+        .selectBusinessGoal(hasVenue: hasVenue);
     if (hasVenue) {
       context.push(KolabingRoutes.businessOnboardingStep5);
     } else {
@@ -140,9 +142,8 @@ class _BusinessGoalScreenState extends ConsumerState<BusinessGoalScreen> {
                     disabledBackgroundColor: context.colors.primary.withValues(
                       alpha: 0.5,
                     ),
-                    disabledForegroundColor: context.colors.onPrimary.withValues(
-                      alpha: 0.5,
-                    ),
+                    disabledForegroundColor: context.colors.onPrimary
+                        .withValues(alpha: 0.5),
                     elevation: 0,
                   ),
                   child: Text(
@@ -190,7 +191,9 @@ class _GoalCard extends StatelessWidget {
         color: isSelected ? context.colors.softYellow : context.colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? context.colors.primary : context.colors.darkBorder,
+          color: isSelected
+              ? context.colors.primary
+              : context.colors.darkBorder,
           width: isSelected ? 2.5 : 1.5,
         ),
       ),

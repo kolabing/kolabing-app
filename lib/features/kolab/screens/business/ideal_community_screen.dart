@@ -75,54 +75,72 @@ class _IdealCommunityScreenState extends ConsumerState<IdealCommunityScreen> {
           // -- Section header
           Text(
             'BEST-FIT COMMUNITIES',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurfaceVariant,
+              letterSpacing: 1.0,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
 
           Text(
             'Who would this Kolab be perfect for?',
-            style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+            style: KolabingTextStyles.bodyMedium.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurface,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             'Choose a few. This helps the right communities understand the opportunity faster.',
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.md),
 
           // -- Community type chips (dynamic, via the existing shared
           // /lookup/community-types endpoint)
-          Builder(builder: (context) {
-            final communityTypesAsync = ref.watch(communityTypesProvider);
-            final types = communityTypesAsync.when(
-              data: (options) => options.map((o) => o.name).toList(),
-              loading: () => const <String>[],
-              error: (_, _) => const <String>[],
-            );
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MultiSelectChips<String>(
-                  items: types,
-                  selected: kolab.seekingCommunities,
-                  labelBuilder: (t) => t,
-                  onToggle: notifier.toggleSeekingCommunity,
-                  maxSelect: 5,
-                ),
-                if (communityTypesAsync.isLoading)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: KolabingSpacing.sm),
-                    child: Center(child: CircularProgressIndicator()),
+          Builder(
+            builder: (context) {
+              final communityTypesAsync = ref.watch(communityTypesProvider);
+              final types = communityTypesAsync.when(
+                data: (options) => options.map((o) => o.name).toList(),
+                loading: () => const <String>[],
+                error: (_, _) => const <String>[],
+              );
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MultiSelectChips<String>(
+                    items: types,
+                    selected: kolab.seekingCommunities,
+                    labelBuilder: (t) => t,
+                    onToggle: notifier.toggleSeekingCommunity,
+                    maxSelect: 5,
                   ),
-              ],
-            );
-          }),
+                  if (communityTypesAsync.isLoading)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: KolabingSpacing.sm,
+                      ),
+                      child: Center(child: CircularProgressIndicator()),
+                    ),
+                ],
+              );
+            },
+          ),
           const SizedBox(height: KolabingSpacing.lg),
 
           // -- Minimum Community Size
           Text(
             'MINIMUM COMMUNITY SIZE (OPTIONAL)',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurfaceVariant,
+              letterSpacing: 1.0,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xs),
 

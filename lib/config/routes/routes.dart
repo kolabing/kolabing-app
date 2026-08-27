@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -61,6 +63,8 @@ import '../../features/opportunity/providers/opportunity_provider.dart';
 import '../../features/permission/screens/permission_screen.dart';
 import '../../features/profile/screens/profile_reviews_screen.dart';
 import '../../features/profile/screens/public_profile_screen.dart';
+import '../../features/gamification/widgets/claim_code_sheet.dart';
+import '../../services/deep_link_service.dart';
 import '../../features/rewards/screens/referral_screen.dart';
 import '../../features/rewards/screens/wallet_screen.dart';
 import '../../features/rewards/screens/withdrawal_request_screen.dart';
@@ -268,7 +272,8 @@ abstract final class KolabingRoutes {
   // [multiKolabEventDetail] route with `id = "new"`.
 
   /// Organizer's Multi-Kolab events overview.
-  static const String multiKolabOrganizerEvents = '/organizer/multi-kolab-events';
+  static const String multiKolabOrganizerEvents =
+      '/organizer/multi-kolab-events';
 
   /// Create a new Multi-Kolab event draft.
   static const String multiKolabOrganizerEventNew =
@@ -402,6 +407,16 @@ abstract final class KolabingRoutes {
   static const String createChallenge =
       '/attendee/events/:eventId/challenges/create';
 
+  /// Edit a custom challenge (for organizers). `EventChallengesScreen` has
+  /// pushed this path since it shipped and nothing was registered for it, so the
+  /// tap landed on the not-found page (#188).
+  static const String editChallenge =
+      '/attendee/events/:eventId/challenges/:challengeId/edit';
+
+  /// Path to [editChallenge].
+  static String buildEditChallengePath(String eventId, String challengeId) =>
+      '/attendee/events/$eventId/challenges/$challengeId/edit';
+
   // ---------------------------------------------------------------------------
   /// Permission request screen
   static const String permissions = '/permissions';
@@ -426,6 +441,32 @@ final NotificationNavGate _notificationNavGate = NotificationNavGate(
 /// destination — so a killed-app notification tap opens its target screen
 /// instead of being wiped by splash's `context.go`.
 void markAppReadyForNotificationNav() => _notificationNavGate.markReady();
+
+/// Universal / App Links, live for the whole session (kolabing-v2#246).
+///
+/// Kept at module scope for the same reason the notification router is: the
+/// subscription has to outlive any one screen, and there is exactly one of it.
+final DeepLinkService _deepLinkService = DeepLinkService();
+
+/// Start listening for `https://app.kolabing.com/i/{code}` invites.
+///
+/// The sheet is opened on the root navigator rather than routed to, because an
+/// invite is something that happens *on top of* wherever the person already is
+/// — it is not a destination, and pushing it as one would strand them there.
+void connectDeepLinks() {
+  unawaited(
+    _deepLinkService.start(
+      onInviteCode: (code) {
+        final context = kolabingNavigatorKey.currentContext;
+        // No navigator yet means the app is still starting. The landing page
+        // shows the same code in a size someone can read, so this is a missed
+        // convenience rather than a lost invite.
+        if (context == null) return;
+        unawaited(ClaimCodeSheet.open(context, initialCode: code));
+      },
+    ),
+  );
+}
 
 void connectNotificationRouter() {
   void navigateFromPush(String? type, String? id, String? deeplink) {
@@ -932,9 +973,7 @@ final GoRouter kolabingRouter = GoRouter(
       path: KolabingRoutes.multiKolabOrganizerRoleNew,
       name: 'multiKolabOrganizerRoleNew',
       builder: (BuildContext context, GoRouterState state) =>
-          MultiKolabRoleEditorScreen(
-            eventId: state.pathParameters['id'] ?? '',
-          ),
+          MultiKolabRoleEditorScreen(eventId: state.pathParameters['id'] ?? ''),
     ),
     GoRoute(
       path: KolabingRoutes.multiKolabOrganizerRoleEdit,
@@ -962,9 +1001,9 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) =>
           MultiKolabEventManagementScreen(
             eventId: state.pathParameters['id'] ?? '',
-            initialTab: state
-                .uri
-                .queryParameters[KolabingRoutes.multiKolabOrganizerTabQueryParam],
+            initialTab:
+                state.uri.queryParameters[KolabingRoutes
+                    .multiKolabOrganizerTabQueryParam],
           ),
     ),
     GoRoute(
@@ -1152,6 +1191,25 @@ final GoRouter kolabingRouter = GoRouter(
         return CreateChallengeScreen(eventId: eventId);
       },
     ),
+    GoRoute(
+      path: KolabingRoutes.editChallenge,
+      name: 'editChallenge',
+      // The challenge travels in `extra`: the list already holds the object and
+      // there is no single-challenge endpoint to hydrate one from. A cold deep
+      // link therefore has nothing to edit — send it to the list rather than
+      // open an empty form that would create a SECOND challenge on save.
+      redirect: (BuildContext context, GoRouterState state) =>
+          state.extra is Challenge
+          ? null
+          : KolabingRoutes.buildEventChallengesPath(
+              state.pathParameters['eventId'] ?? '',
+            ),
+      builder: (BuildContext context, GoRouterState state) =>
+          CreateChallengeScreen(
+            eventId: state.pathParameters['eventId'] ?? '',
+            challenge: state.extra as Challenge,
+          ),
+    ),
   ],
 
   // Error page — auth-aware, gives the user a recovery action so a failed
@@ -1249,18 +1307,14 @@ String multiKolabOrganizerEventLocation(String eventId, {String? tab}) {
 }
 
 /// Location of the draft editor for [eventId].
-String multiKolabOrganizerEventEditLocation(String eventId) =>
-    KolabingRoutes.multiKolabOrganizerEventEdit.replaceFirst(
-      ':id',
-      Uri.encodeComponent(eventId),
-    );
+String multiKolabOrganizerEventEditLocation(String eventId) => KolabingRoutes
+    .multiKolabOrganizerEventEdit
+    .replaceFirst(':id', Uri.encodeComponent(eventId));
 
 /// Location of the pre-publish review screen for [eventId].
-String multiKolabOrganizerEventReviewLocation(String eventId) =>
-    KolabingRoutes.multiKolabOrganizerEventReview.replaceFirst(
-      ':id',
-      Uri.encodeComponent(eventId),
-    );
+String multiKolabOrganizerEventReviewLocation(String eventId) => KolabingRoutes
+    .multiKolabOrganizerEventReview
+    .replaceFirst(':id', Uri.encodeComponent(eventId));
 
 /// Location of the role editor — creating when [roleId] is null.
 String multiKolabOrganizerRoleLocation(String eventId, {String? roleId}) {

@@ -53,8 +53,10 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
   void _syncNotesController(Kolab kolab) {
     if (_didInitNotes) return;
     _didInitNotes = true;
-    final match = RegExp(r'\n\nNote: (.*)$', dotAll: true)
-        .firstMatch(kolab.description);
+    final match = RegExp(
+      r'\n\nNote: (.*)$',
+      dotAll: true,
+    ).firstMatch(kolab.description);
     _extraNotesController.text = match?.group(1) ?? '';
   }
 
@@ -101,31 +103,38 @@ class _PastEventsScreenState extends ConsumerState<PastEventsScreen> {
         const SizedBox(height: KolabingSpacing.md),
 
         // -- Highlight chips
-        Builder(builder: (context) {
-          final highlightsAsync = ref.watch(kolabHighlightsProvider);
-          final options = highlightsAsync.when(
-            data: (options) => options,
-            loading: () => const <OfferOption>[],
-            error: (_, _) => const <OfferOption>[],
-          );
-          return MultiSelectChips<OfferOption>(
-            items: options,
-            selected: kolab.highlights
-                .map((slug) => options.firstWhere(
+        Builder(
+          builder: (context) {
+            final highlightsAsync = ref.watch(kolabHighlightsProvider);
+            final options = highlightsAsync.when(
+              data: (options) => options,
+              loading: () => const <OfferOption>[],
+              error: (_, _) => const <OfferOption>[],
+            );
+            return MultiSelectChips<OfferOption>(
+              items: options,
+              selected: kolab.highlights
+                  .map(
+                    (slug) => options.firstWhere(
                       (o) => o.slug == slug,
-                      orElse: () => OfferOption(id: slug, slug: slug, name: slug),
-                    ))
-                .toList(),
-            labelBuilder: (o) => o.name,
-            onToggle: (option) => notifier.toggleHighlight(option.slug),
-          );
-        }),
+                      orElse: () =>
+                          OfferOption(id: slug, slug: slug, name: slug),
+                    ),
+                  )
+                  .toList(),
+              labelBuilder: (o) => o.name,
+              onToggle: (option) => notifier.toggleHighlight(option.slug),
+            );
+          },
+        ),
         const SizedBox(height: KolabingSpacing.xs),
-        const KolabExamplesBox(examples: [
-          'Central location and space for groups.',
-          'Free samples members can actually use.',
-          'A unique experience that creates good content.',
-        ]),
+        const KolabExamplesBox(
+          examples: [
+            'Central location and space for groups.',
+            'Free samples members can actually use.',
+            'A unique experience that creates good content.',
+          ],
+        ),
         const SizedBox(height: KolabingSpacing.lg),
 
         // -- Anything else communities should know (optional free text)

@@ -22,7 +22,8 @@ class AuthFadeSlide extends StatelessWidget {
     opacity: opacity,
     child: AnimatedBuilder(
       animation: offset,
-      builder: (context, c) => Transform.translate(offset: offset.value, child: c),
+      builder: (context, c) =>
+          Transform.translate(offset: offset.value, child: c),
       child: child,
     ),
   );
@@ -30,15 +31,12 @@ class AuthFadeSlide extends StatelessWidget {
 
 /// Simplified variant — opacity fade only, no translation.
 class AuthFadeOnly extends StatelessWidget {
-  const AuthFadeOnly({
-    required this.opacity,
-    required this.child,
-    super.key,
-  });
+  const AuthFadeOnly({required this.opacity, required this.child, super.key});
 
   final Animation<double> opacity;
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => FadeTransition(opacity: opacity, child: child);
+  Widget build(BuildContext context) =>
+      FadeTransition(opacity: opacity, child: child);
 }

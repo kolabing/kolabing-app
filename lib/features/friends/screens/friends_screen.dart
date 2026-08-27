@@ -90,9 +90,8 @@ class FriendsScreen extends ConsumerWidget {
                 padding: EdgeInsets.symmetric(vertical: KolabingSpacing.xl),
                 child: Center(child: CircularProgressIndicator()),
               ),
-              error: (error, _) => _FriendsError(
-                onRetry: () => ref.invalidate(friendsProvider),
-              ),
+              error: (error, _) =>
+                  _FriendsError(onRetry: () => ref.invalidate(friendsProvider)),
               data: (friends) {
                 if (friends.isEmpty) return const _FriendsEmpty();
                 return Column(
@@ -274,11 +273,7 @@ class _FriendTile extends StatelessWidget {
 }
 
 class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({
-    required this.icon,
-    required this.title,
-    this.count,
-  });
+  const _SectionTitle({required this.icon, required this.title, this.count});
 
   final IconData icon;
   final String title;
@@ -286,35 +281,35 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        children: [
-          Icon(icon, size: 20, color: KolabingColors.primary),
-          const SizedBox(width: KolabingSpacing.xs),
-          Text(
-            title,
-            style: KolabingTextStyles.titleMedium.copyWith(
+    children: [
+      Icon(icon, size: 20, color: KolabingColors.primary),
+      const SizedBox(width: KolabingSpacing.xs),
+      Text(
+        title,
+        style: KolabingTextStyles.titleMedium.copyWith(
+          color: KolabingColors.onSurface,
+        ),
+      ),
+      if (count != null && count! > 0) ...[
+        const SizedBox(width: KolabingSpacing.xs),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: KolabingColors.primary.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            '$count',
+            style: KolabingTextStyles.labelSmall.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
               color: KolabingColors.onSurface,
             ),
           ),
-          if (count != null && count! > 0) ...[
-            const SizedBox(width: KolabingSpacing.xs),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: KolabingColors.primary.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '$count',
-                style: KolabingTextStyles.labelSmall.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: KolabingColors.onSurface,
-                ),
-              ),
-            ),
-          ],
-        ],
-      );
+        ),
+      ],
+    ],
+  );
 }
 
 class _FriendsEmpty extends StatelessWidget {
@@ -387,11 +382,7 @@ class _FriendsError extends StatelessWidget {
 }
 
 class _Avatar extends StatelessWidget {
-  const _Avatar({
-    required this.initial,
-    required this.size,
-    this.avatarUrl,
-  });
+  const _Avatar({required this.initial, required this.size, this.avatarUrl});
 
   final String? avatarUrl;
   final String initial;
@@ -414,20 +405,20 @@ class _Avatar extends StatelessWidget {
   }
 
   Widget _initialCircle() => Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: KolabingColors.primary.withValues(alpha: 0.2),
-          shape: BoxShape.circle,
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      color: KolabingColors.primary.withValues(alpha: 0.2),
+      shape: BoxShape.circle,
+    ),
+    child: Center(
+      child: Text(
+        initial,
+        style: KolabingTextStyles.bodyMedium.copyWith(
+          fontWeight: FontWeight.w700,
+          color: KolabingColors.onSurface,
         ),
-        child: Center(
-          child: Text(
-            initial,
-            style: KolabingTextStyles.bodyMedium.copyWith(
-              fontWeight: FontWeight.w700,
-              color: KolabingColors.onSurface,
-            ),
-          ),
-        ),
-      );
+      ),
+    ),
+  );
 }

@@ -50,22 +50,20 @@ class KolabActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: EdgeInsets.only(
-          left: KolabingSpacing.md,
-          right: KolabingSpacing.md,
-          top: KolabingSpacing.sm,
-          bottom: MediaQuery.of(context).padding.bottom + KolabingSpacing.sm,
-        ),
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          border: Border(
-            top: BorderSide(color: context.colors.darkBorder),
-          ),
-        ),
-        child: isLastStep
-            ? _buildLastStepRow(context)
-            : _buildNavigationRow(context),
-      );
+    padding: EdgeInsets.only(
+      left: KolabingSpacing.md,
+      right: KolabingSpacing.md,
+      top: KolabingSpacing.sm,
+      bottom: MediaQuery.of(context).padding.bottom + KolabingSpacing.sm,
+    ),
+    decoration: BoxDecoration(
+      color: context.colors.surface,
+      border: Border(top: BorderSide(color: context.colors.darkBorder)),
+    ),
+    child: isLastStep
+        ? _buildLastStepRow(context)
+        : _buildNavigationRow(context),
+  );
 
   Widget _buildNavigationRow(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -131,13 +129,13 @@ class _PrimaryActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => KolabingButton(
-        label: label,
-        onPressed: onPressed,
-        variant: KolabingButtonVariant.primary,
-        size: KolabingButtonSize.compact,
-        isLoading: isLoading,
-        isDisabled: onPressed == null && !isLoading,
-      );
+    label: label,
+    onPressed: onPressed,
+    variant: KolabingButtonVariant.primary,
+    size: KolabingButtonSize.compact,
+    isLoading: isLoading,
+    isDisabled: onPressed == null && !isLoading,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -157,11 +155,11 @@ class _OutlinedActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => KolabingButton(
-        label: label,
-        onPressed: isLoading ? null : onPressed,
-        variant: KolabingButtonVariant.secondary,
-        size: KolabingButtonSize.compact,
-        isLoading: isLoading,
-        isDisabled: !isLoading && onPressed == null,
-      );
+    label: label,
+    onPressed: isLoading ? null : onPressed,
+    variant: KolabingButtonVariant.secondary,
+    size: KolabingButtonSize.compact,
+    isLoading: isLoading,
+    isDisabled: !isLoading && onPressed == null,
+  );
 }

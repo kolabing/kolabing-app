@@ -85,7 +85,11 @@ class VenuePhotoManager extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             AppLocalizations.of(context).venuePhotoPoweredByGoogle,
-            style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textTertiary),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: context.colors.textTertiary,
+            ),
           ),
         ],
       ],
@@ -123,12 +127,19 @@ class _EmptyPhotoState extends StatelessWidget {
         const SizedBox(height: 12),
         Text(
           title ?? AppLocalizations.of(context).venuePhotoEmptyTitle,
-          style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+          style: KolabingTextStyles.bodyMedium.copyWith(
+            fontWeight: FontWeight.w600,
+            color: context.colors.onSurface,
+          ),
         ),
         const SizedBox(height: 6),
         Text(
-          description ?? AppLocalizations.of(context).venuePhotoEmptyDescription,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.4),
+          description ??
+              AppLocalizations.of(context).venuePhotoEmptyDescription,
+          style: KolabingTextStyles.captionSecondary.copyWith(
+            color: context.colors.onSurfaceVariant,
+            height: 1.4,
+          ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 14),
@@ -194,11 +205,13 @@ class _VenuePhotoCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      AppLocalizations.of(context).venuePhotoPositionLabel(
-                        index + 1,
-                        total,
+                      AppLocalizations.of(
+                        context,
+                      ).venuePhotoPositionLabel(index + 1, total),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: context.colors.onSurface,
                       ),
-                      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
                     ),
                     const SizedBox(width: 8),
                     Container(
@@ -214,7 +227,10 @@ class _VenuePhotoCard extends StatelessWidget {
                       ),
                       child: Text(
                         _sourceLabel(context),
-                        style: KolabingTextStyles.labelSmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
+                        style: KolabingTextStyles.labelSmall.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: context.colors.onSurface,
+                        ),
                       ),
                     ),
                   ],
@@ -228,7 +244,9 @@ class _VenuePhotoCard extends StatelessWidget {
                       color: onMoveLeft == null
                           ? context.colors.textTertiary
                           : context.colors.onSurface,
-                      tooltip: AppLocalizations.of(context).venuePhotoMoveEarlier,
+                      tooltip: AppLocalizations.of(
+                        context,
+                      ).venuePhotoMoveEarlier,
                     ),
                     IconButton(
                       onPressed: onMoveRight,
@@ -243,7 +261,9 @@ class _VenuePhotoCard extends StatelessWidget {
                       onPressed: onRemove,
                       icon: const Icon(LucideIcons.trash2, size: 18),
                       color: context.colors.error,
-                      tooltip: AppLocalizations.of(context).venuePhotoRemovePhoto,
+                      tooltip: AppLocalizations.of(
+                        context,
+                      ).venuePhotoRemovePhoto,
                     ),
                   ],
                 ),
@@ -257,7 +277,11 @@ class _VenuePhotoCard extends StatelessWidget {
                     ),
                     label: Text(
                       AppLocalizations.of(context).venuePhotoCredits,
-                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.primary),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: context.colors.primary,
+                      ),
                     ),
                   ),
               ],
@@ -297,20 +321,30 @@ class _VenuePhotoCard extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 AppLocalizations.of(context).venuePhotoCreditsSheetTitle,
-                style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.onSurface,
+                ),
               ),
               const SizedBox(height: 8),
               for (final item in photo.authorAttributions) ...[
                 Text(
                   item.displayName,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.onSurface,
+                  ),
                 ),
                 if (item.uri != null && item.uri!.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
                     child: SelectableText(
                       item.uri!,
-                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        fontSize: 12,
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 if (item.photoUri != null && item.photoUri!.isNotEmpty)
@@ -318,14 +352,21 @@ class _VenuePhotoCard extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 2),
                     child: SelectableText(
                       item.photoUri!,
-                      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        fontSize: 12,
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 const SizedBox(height: 12),
               ],
               Text(
                 AppLocalizations.of(context).venuePhotoPoweredByGoogle,
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textTertiary),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.textTertiary,
+                ),
               ),
             ],
           ),

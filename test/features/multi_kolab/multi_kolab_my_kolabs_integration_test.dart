@@ -136,7 +136,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('multiKolabOrganizerEntryRow')), findsNothing);
+      expect(
+        find.byKey(const Key('multiKolabOrganizerEntryRow')),
+        findsNothing,
+      );
       expect(find.text('Multi-Kolab events'), findsNothing);
       expect(find.text('One event, several partners'), findsNothing);
     });
@@ -232,12 +235,12 @@ void main() {
         host(
           home: const MyKollabsScreen(embedded: true),
           events: [
-              event('event-1'),
-              event(
-                'event-2',
-                status: MultiKolabEventStatus.draft,
-                title: 'Winter Market',
-              ),
+            event('event-1'),
+            event(
+              'event-2',
+              status: MultiKolabEventStatus.draft,
+              title: 'Winter Market',
+            ),
           ],
         ),
       );
@@ -371,9 +374,7 @@ void main() {
     testWidgets('empty state survives when there is nothing at all', (
       tester,
     ) async {
-      await tester.pumpWidget(
-        bucketHost(CollaborationBucket.active, const []),
-      );
+      await tester.pumpWidget(bucketHost(CollaborationBucket.active, const []));
       await tester.pumpAndSettle();
 
       expect(find.text('Nothing here'), findsOneWidget);
