@@ -575,45 +575,64 @@ class CommunityPhotoStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     if (photos.isEmpty) return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CommunitySectionLabel(l10n.communityPagePhotosTitle),
-        SizedBox(
-          height: 104,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: photos.length,
-            separatorBuilder: (_, _) =>
-                const SizedBox(width: KolabingSpacing.xs),
-            itemBuilder: (_, i) => GestureDetector(
-              onTap: () => PhotoViewerDialog.show(
-                context,
-                photos: photos,
-                initialIndex: i,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(KolabingRadius.md),
-                child: Image.network(
-                  photos[i].url,
-                  width: 104,
-                  height: 104,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => Container(
+    // The section owns its padding, and it sits INSIDE the empty check: both
+    // call sites used to wrap it, so a community with no photos still paid for
+    // padding around a zero-height child (#185).
+    //
+    // TOP only, on purpose. If this owned a bottom gap it would take it away
+    // with it when there are no photos, and whatever follows would cram against
+    // the block above — the same bug moved one section down. Everything on this
+    // page owns its own top gap for that reason.
+    //
+    // The right edge is deliberately 0: the strip scrolls, and stopping it at
+    // the page margin makes it look like it ends there.
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        KolabingSpacing.md,
+        KolabingSpacing.md,
+        0,
+        0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CommunitySectionLabel(l10n.communityPagePhotosTitle),
+          SizedBox(
+            height: 104,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: photos.length,
+              separatorBuilder: (_, _) =>
+                  const SizedBox(width: KolabingSpacing.xs),
+              itemBuilder: (_, i) => GestureDetector(
+                onTap: () => PhotoViewerDialog.show(
+                  context,
+                  photos: photos,
+                  initialIndex: i,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(KolabingRadius.md),
+                  child: Image.network(
+                    photos[i].url,
                     width: 104,
                     height: 104,
-                    color: context.colors.surfaceContainerHigh,
-                    child: Icon(
-                      LucideIcons.image,
-                      color: context.colors.onSurfaceVariant,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => Container(
+                      width: 104,
+                      height: 104,
+                      color: context.colors.surfaceContainerHigh,
+                      child: Icon(
+                        LucideIcons.image,
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

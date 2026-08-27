@@ -169,27 +169,34 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
             SliverToBoxAdapter(child: _Identity(community: c)),
 
             // The community's photographs: curated when the leader curated
-            // some, its own event photos when not.
+            // some, its own event photos when not. The strip carries its own
+            // padding (#185).
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  KolabingSpacing.md,
-                  KolabingSpacing.md,
-                  0,
-                  0,
-                ),
-                child: CommunityPhotoStrip(
-                  photos: ref.watch(communityPhotosProvider(_mediaKey)),
-                ),
+              child: CommunityPhotoStrip(
+                photos: ref.watch(communityPhotosProvider(_mediaKey)),
               ),
             ),
 
             // Where the viewer stands in this community: a member sees points +
             // tier, a manager gets into the roster.
+            //
+            // Both are full-bleed bands with a hairline at the top, and the
+            // photo strip above them ends at its last photo — so without a gap
+            // of their own the photos sat directly on that hairline (#185).
             if (!_canManage)
-              SliverToBoxAdapter(child: _StandingNavRow(community: c)),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: KolabingSpacing.lg),
+                  child: _StandingNavRow(community: c),
+                ),
+              ),
             if (_showMembers)
-              SliverToBoxAdapter(child: _RosterNavRow(community: c)),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: KolabingSpacing.lg),
+                  child: _RosterNavRow(community: c),
+                ),
+              ),
 
             // Events, grouped by day.
             SliverToBoxAdapter(

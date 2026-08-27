@@ -333,6 +333,50 @@ void main() {
     },
   );
 
+  // #185: on the member's community page the photos sat directly on the
+  // hairline of the "0 pts / Member" band below them. Both call sites wrapped
+  // the strip in `fromLTRB(md, md, 0, 0)` — no bottom gap — and the full-bleed
+  // band that followed had none of its own either.
+  //
+  // The fix put the padding inside the widget, TOP ONLY, and gave the band its
+  // own top gap. These two tests hold both halves of that: the strip must own a
+  // top gap, and it must NOT own a bottom one, because a strip that renders
+  // nothing would take a bottom gap away with it and the same crush would
+  // reappear one section further down.
+  testWidgets('the photo strip owns a top gap and no bottom gap', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      const CommunityPhotoStrip(
+        photos: [GalleryPhoto(id: '1', url: 'https://example.test/1.jpg')],
+      ),
+    );
+
+    final strip = tester.getRect(find.byType(CommunityPhotoStrip));
+    final label = tester.getRect(find.text('PHOTOS'));
+    expect(
+      label.top - strip.top,
+      greaterThanOrEqualTo(12),
+      reason: 'the section needs air above its label',
+    );
+
+    final photos = tester.getRect(find.byType(ListView));
+    expect(
+      strip.bottom - photos.bottom,
+      lessThan(1),
+      reason: 'the strip must end with its photos, owning no bottom gap',
+    );
+  });
+
+  testWidgets('an empty photo strip takes no vertical space', (tester) async {
+    await _pump(tester, const CommunityPhotoStrip(photos: []));
+
+    // The padding used to live at the call site, outside the empty check, so a
+    // community with no photos still paid 16dp for a zero-height child.
+    expect(tester.getSize(find.byType(CommunityPhotoStrip)).height, 0);
+  });
+
   testWidgets('the hero back button actually goes back', (tester) async {
     // It did not. `Navigator.maybePop()` on a page entered cold from a deep
     // link has nothing to pop, so the button was silently dead.
