@@ -275,6 +275,9 @@ class CommunityProfile {
     if (tiktok != null) 'tiktok': tiktok,
     if (website != null) 'website': website,
     if (profilePhoto != null) 'profile_photo': profilePhoto,
+    // `fromJson` has read this since #174; leaving it out here meant a user
+    // round-tripped through the cached copy came back without a cover.
+    if (coverPhoto != null) 'cover_photo': coverPhoto,
     if (communitySize != null) 'community_size': communitySize,
   };
 }

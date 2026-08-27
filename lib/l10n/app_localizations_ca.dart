@@ -8525,4 +8525,8 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get communityRewardsDeleteFailed =>
       'No s\'ha pogut eliminar. Torna-ho a provar.';
+
+  @override
+  String get communityManageCoverNotSaved =>
+      'No s\'ha desat la portada. Torna-ho a provar més tard.';
 }

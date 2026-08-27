@@ -2469,5 +2469,6 @@
   "communityRewardsBadgeCriteria": "Es desbloqueja a {value}",
   "communityRewardsPaused": "En pausa",
   "communityRewardsLoadFailed": "No s'ha pogut carregar aquesta llista",
-  "communityRewardsDeleteFailed": "No s'ha pogut eliminar. Torna-ho a provar."
+  "communityRewardsDeleteFailed": "No s'ha pogut eliminar. Torna-ho a provar.",
+  "communityManageCoverNotSaved": "No s'ha desat la portada. Torna-ho a provar més tard."
 }
