@@ -64,54 +64,49 @@ class _AuthLinkState extends State<AuthLink> {
 
   @override
   Widget build(BuildContext context) => Semantics(
-        button: true,
-        enabled: widget.isEnabled,
-        label: AppLocalizations.of(context).authLinkSemanticLabel(
-          widget.leadingText,
-          widget.actionText,
-        ),
-        child: GestureDetector(
-          onTapDown: _handleTapDown,
-          onTapUp: _handleTapUp,
-          onTapCancel: _handleTapCancel,
-          onTap: _handleTap,
-          behavior: HitTestBehavior.opaque,
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 100),
-            opacity: widget.isEnabled ? 1.0 : 0.5,
-            child: AnimatedScale(
-              duration: const Duration(milliseconds: 100),
-              scale: _isPressed ? 0.98 : 1.0,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
+    button: true,
+    enabled: widget.isEnabled,
+    label: AppLocalizations.of(
+      context,
+    ).authLinkSemanticLabel(widget.leadingText, widget.actionText),
+    child: GestureDetector(
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      onTap: _handleTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 100),
+        opacity: widget.isEnabled ? 1.0 : 0.5,
+        child: AnimatedScale(
+          duration: const Duration(milliseconds: 100),
+          scale: _isPressed ? 0.98 : 1.0,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            constraints: const BoxConstraints(minHeight: 48),
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                style: KolabingTextStyles.bodyMedium.copyWith(
+                  color: context.colors.textOnDark,
                 ),
-                constraints: const BoxConstraints(minHeight: 48),
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
+                children: [
+                  TextSpan(text: '${widget.leadingText} '),
+                  TextSpan(
+                    text: widget.actionText,
                     style: KolabingTextStyles.bodyMedium.copyWith(
-                      color: context.colors.textOnDark,
+                      color: context.colors.primary,
+                      fontWeight: FontWeight.w600,
+                      decoration: _isPressed ? TextDecoration.underline : null,
+                      decorationColor: context.colors.primary,
                     ),
-                    children: [
-                      TextSpan(text: '${widget.leadingText} '),
-                      TextSpan(
-                        text: widget.actionText,
-                        style: KolabingTextStyles.bodyMedium.copyWith(
-                          color: context.colors.primary,
-                          fontWeight: FontWeight.w600,
-                          decoration:
-                              _isPressed ? TextDecoration.underline : null,
-                          decorationColor: context.colors.primary,
-                        ),
-                      ),
-                    ],
                   ),
-                ),
+                ],
               ),
             ),
           ),
         ),
-      );
+      ),
+    ),
+  );
 }

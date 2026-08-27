@@ -139,7 +139,10 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
             padding: const EdgeInsets.only(bottom: KolabingSpacing.xxs),
             child: Text(
               errors['product_type']!,
-              style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.error),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontSize: 12,
+                color: context.colors.error,
+              ),
             ),
           ),
         Wrap(
@@ -186,9 +189,14 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
                     const SizedBox(width: KolabingSpacing.xxs),
                     Text(
                       label,
-                      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                        color: isSelected
                             ? context.colors.onPrimary
-                            : context.colors.onSurface),
+                            : context.colors.onSurface,
+                      ),
                     ),
                   ],
                 ),
@@ -216,11 +224,13 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           onTapOutside: (_) => FocusScope.of(context).unfocus(),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        const KolabExamplesBox(examples: [
-          'Protein bars for runners to try after training.',
-          'Skincare samples for a wellness or self-care community.',
-          'A local clothing brand looking for try-ons, feedback, and content.',
-        ]),
+        const KolabExamplesBox(
+          examples: [
+            'Protein bars for runners to try after training.',
+            'Skincare samples for a wellness or self-care community.',
+            'A local clothing brand looking for try-ons, feedback, and content.',
+          ],
+        ),
         const SizedBox(height: KolabingSpacing.md),
 
         // -- Product interaction chips
@@ -230,46 +240,59 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           'Choose how communities could experience your product.',
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontSize: 12,
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
-        Builder(builder: (context) {
-          final productInteractionsAsync = ref.watch(productInteractionsProvider);
-          final options = productInteractionsAsync.when(
-            data: (options) => options,
-            loading: () => const <OfferOption>[],
-            error: (_, _) => const <OfferOption>[],
-          );
-          return MultiSelectChips<OfferOption>(
-            items: options,
-            selected: _selectedProductInteractions,
-            labelBuilder: (o) => o.name,
-            onToggle: (option) {
-              setState(() {
-                if (_selectedProductInteractions.contains(option)) {
-                  _selectedProductInteractions.remove(option);
-                } else {
-                  _selectedProductInteractions.add(option);
-                }
-              });
-              _appendInteractionsToDescription(notifier, kolab);
-            },
-          );
-        }),
+        Builder(
+          builder: (context) {
+            final productInteractionsAsync = ref.watch(
+              productInteractionsProvider,
+            );
+            final options = productInteractionsAsync.when(
+              data: (options) => options,
+              loading: () => const <OfferOption>[],
+              error: (_, _) => const <OfferOption>[],
+            );
+            return MultiSelectChips<OfferOption>(
+              items: options,
+              selected: _selectedProductInteractions,
+              labelBuilder: (o) => o.name,
+              onToggle: (option) {
+                setState(() {
+                  if (_selectedProductInteractions.contains(option)) {
+                    _selectedProductInteractions.remove(option);
+                  } else {
+                    _selectedProductInteractions.add(option);
+                  }
+                });
+                _appendInteractionsToDescription(notifier, kolab);
+              },
+            );
+          },
+        ),
         const SizedBox(height: KolabingSpacing.xs),
-        const KolabExamplesBox(label: 'EXAMPLES', examples: [
-          'Samples after a run',
-          'Giveaway for members',
-          'Content day with the product',
-          'Feedback from real users',
-        ]),
+        const KolabExamplesBox(
+          label: 'EXAMPLES',
+          examples: [
+            'Samples after a run',
+            'Giveaway for members',
+            'Content day with the product',
+            'Feedback from real users',
+          ],
+        ),
         const SizedBox(height: KolabingSpacing.md),
         // H2: short, one-line offer headline shown on the discovery card.
         _FieldLabel(label: l10n.productDetailsOfferHeadlineLabel),
         const SizedBox(height: KolabingSpacing.xxs),
         Text(
           l10n.productDetailsOfferHeadlineHelper,
-          style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.onSurfaceVariant),
+          style: KolabingTextStyles.bodySmall.copyWith(
+            fontSize: 12,
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
         KolabingInput(
@@ -287,32 +310,32 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
         const SizedBox(height: KolabingSpacing.xs),
         citiesAsync.when(
           data: (cities) => DropdownButtonFormField<String>(
-              initialValue: kolab.preferredCity.isNotEmpty
-                  ? kolab.preferredCity
-                  : null,
-              decoration: _inputDecoration(
-                context,
-                hint: l10n.productDetailsSelectCityHint,
-                error: errors['preferred_city'],
-              ),
-              style: _inputTextStyle(context),
-              icon: Icon(
-                LucideIcons.chevronDown,
-                size: 20,
-                color: context.colors.onSurfaceVariant,
-              ),
-              items: cities
-                  .map(
-                    (c) => DropdownMenuItem(
-                      value: c.name,
-                      child: Text(c.name, style: _inputTextStyle(context)),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (v) {
-                if (v != null) notifier.updatePreferredCity(v);
-              },
+            initialValue: kolab.preferredCity.isNotEmpty
+                ? kolab.preferredCity
+                : null,
+            decoration: _inputDecoration(
+              context,
+              hint: l10n.productDetailsSelectCityHint,
+              error: errors['preferred_city'],
             ),
+            style: _inputTextStyle(context),
+            icon: Icon(
+              LucideIcons.chevronDown,
+              size: 20,
+              color: context.colors.onSurfaceVariant,
+            ),
+            items: cities
+                .map(
+                  (c) => DropdownMenuItem(
+                    value: c.name,
+                    child: Text(c.name, style: _inputTextStyle(context)),
+                  ),
+                )
+                .toList(),
+            onChanged: (v) {
+              if (v != null) notifier.updatePreferredCity(v);
+            },
+          ),
           loading: () => LinearProgressIndicator(
             color: context.colors.primary,
             backgroundColor: context.colors.darkBorder,
@@ -349,39 +372,40 @@ InputDecoration _inputDecoration(
   BuildContext context, {
   required String hint,
   String? error,
-}) =>
-    InputDecoration(
-      hintText: hint,
-      hintStyle: KolabingTextStyles.bodySmall.copyWith(color: context.colors.textTertiary),
-      errorText: error,
-      errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
-      filled: true,
-      fillColor: context.colors.surface,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: KolabingSpacing.md,
-        vertical: 14,
-      ),
-      border: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.darkBorder),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.darkBorder),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.borderFocus, width: 1.5),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.borderError),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        borderSide: BorderSide(color: context.colors.borderError, width: 1.5),
-      ),
-    );
+}) => InputDecoration(
+  hintText: hint,
+  hintStyle: KolabingTextStyles.bodySmall.copyWith(
+    color: context.colors.textTertiary,
+  ),
+  errorText: error,
+  errorStyle: KolabingTextStyles.bodySmall.copyWith(fontSize: 12),
+  filled: true,
+  fillColor: context.colors.surface,
+  contentPadding: const EdgeInsets.symmetric(
+    horizontal: KolabingSpacing.md,
+    vertical: 14,
+  ),
+  border: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: BorderSide(color: context.colors.darkBorder),
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: BorderSide(color: context.colors.darkBorder),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: BorderSide(color: context.colors.borderFocus, width: 1.5),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: BorderSide(color: context.colors.borderError),
+  ),
+  focusedErrorBorder: OutlineInputBorder(
+    borderRadius: KolabingRadius.borderRadiusSm,
+    borderSide: BorderSide(color: context.colors.borderError, width: 1.5),
+  ),
+);
 
 TextStyle _inputTextStyle(BuildContext context) =>
     KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurface);
@@ -396,9 +420,13 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-      label,
-      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
-    );
+    label,
+    style: KolabingTextStyles.bodySmall.copyWith(
+      fontWeight: FontWeight.w700,
+      color: context.colors.onSurfaceVariant,
+      letterSpacing: 1.0,
+    ),
+  );
 }
 
 class _FieldLabel extends StatelessWidget {
@@ -407,7 +435,10 @@ class _FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-      label,
-      style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500, color: context.colors.onSurface),
-    );
+    label,
+    style: KolabingTextStyles.bodySmall.copyWith(
+      fontWeight: FontWeight.w500,
+      color: context.colors.onSurface,
+    ),
+  );
 }

@@ -38,11 +38,9 @@ class FriendshipException implements Exception {
 /// [FriendshipException] with [FriendshipException.isFeatureOff] so callers can
 /// silently degrade rather than crash.
 class FriendshipService {
-  FriendshipService({
-    AuthService? authService,
-    http.Client? httpClient,
-  })  : _authService = authService ?? AuthService(),
-        _httpClient = httpClient ?? http.Client();
+  FriendshipService({AuthService? authService, http.Client? httpClient})
+    : _authService = authService ?? AuthService(),
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -102,40 +100,40 @@ class FriendshipService {
   /// `POST /friends/{profile}` — send a friend request (requester = me). If a
   /// reverse pending exists the backend auto-accepts (mutual).
   Future<void> sendRequest(String profileId) => _guard(() async {
-        final res = await _httpClient.post(
-          Uri.parse('$_baseUrl/friends/$profileId'),
-          headers: await _headers(),
-        );
-        _unwrap(res);
-      }, 'sendRequest');
+    final res = await _httpClient.post(
+      Uri.parse('$_baseUrl/friends/$profileId'),
+      headers: await _headers(),
+    );
+    _unwrap(res);
+  }, 'sendRequest');
 
   /// `POST /friends/{profile}/accept` — accept an incoming pending request.
   Future<void> accept(String profileId) => _guard(() async {
-        final res = await _httpClient.post(
-          Uri.parse('$_baseUrl/friends/$profileId/accept'),
-          headers: await _headers(),
-        );
-        _unwrap(res);
-      }, 'accept');
+    final res = await _httpClient.post(
+      Uri.parse('$_baseUrl/friends/$profileId/accept'),
+      headers: await _headers(),
+    );
+    _unwrap(res);
+  }, 'accept');
 
   /// `POST /friends/{profile}/decline` — decline an incoming pending request.
   Future<void> decline(String profileId) => _guard(() async {
-        final res = await _httpClient.post(
-          Uri.parse('$_baseUrl/friends/$profileId/decline'),
-          headers: await _headers(),
-        );
-        _unwrap(res);
-      }, 'decline');
+    final res = await _httpClient.post(
+      Uri.parse('$_baseUrl/friends/$profileId/decline'),
+      headers: await _headers(),
+    );
+    _unwrap(res);
+  }, 'decline');
 
   /// `DELETE /friends/{profile}` — remove a friend OR cancel my outgoing
   /// request (deletes the row either way).
   Future<void> remove(String profileId) => _guard(() async {
-        final res = await _httpClient.delete(
-          Uri.parse('$_baseUrl/friends/$profileId'),
-          headers: await _headers(),
-        );
-        _unwrap(res);
-      }, 'remove');
+    final res = await _httpClient.delete(
+      Uri.parse('$_baseUrl/friends/$profileId'),
+      headers: await _headers(),
+    );
+    _unwrap(res);
+  }, 'remove');
 
   // ---------------------------------------------------------------------------
   // Reads
@@ -143,29 +141,27 @@ class FriendshipService {
 
   /// `GET /me/friends` — accepted friends (first page).
   Future<List<FriendSummary>> getFriends({int page = 1}) => _guard(() async {
-        final res = await _httpClient.get(
-          Uri.parse('$_baseUrl/me/friends?page=$page'),
-          headers: await _headers(),
-        );
-        return _list(_unwrap(res), 'friends')
-            .map(FriendSummary.fromJson)
-            .toList();
-      }, 'getFriends');
+    final res = await _httpClient.get(
+      Uri.parse('$_baseUrl/me/friends?page=$page'),
+      headers: await _headers(),
+    );
+    return _list(_unwrap(res), 'friends').map(FriendSummary.fromJson).toList();
+  }, 'getFriends');
 
   /// `GET /me/friend-requests` — incoming pending requests + count badge.
   Future<FriendRequests> getFriendRequests() => _guard(() async {
-        final res = await _httpClient.get(
-          Uri.parse('$_baseUrl/me/friend-requests'),
-          headers: await _headers(),
-        );
-        final data = _unwrap(res);
-        final list = _list(data, 'requests').isNotEmpty
-            ? _list(data, 'requests')
-            : _list(data, 'data');
-        final requests = list.map(FriendSummary.fromJson).toList();
-        final count = data is Map
-            ? ((data['count'] as num?)?.toInt() ?? requests.length)
-            : requests.length;
-        return FriendRequests(requests: requests, count: count);
-      }, 'getFriendRequests');
+    final res = await _httpClient.get(
+      Uri.parse('$_baseUrl/me/friend-requests'),
+      headers: await _headers(),
+    );
+    final data = _unwrap(res);
+    final list = _list(data, 'requests').isNotEmpty
+        ? _list(data, 'requests')
+        : _list(data, 'data');
+    final requests = list.map(FriendSummary.fromJson).toList();
+    final count = data is Map
+        ? ((data['count'] as num?)?.toInt() ?? requests.length)
+        : requests.length;
+    return FriendRequests(requests: requests, count: count);
+  }, 'getFriendRequests');
 }

@@ -185,30 +185,31 @@ class _BusinessProductIdentityScreenState
                       // non-venue business sees only product/both categories
                       // (admin-controlled via business_types.applies_to).
                       data: (allTypes) {
-                        final types =
-                            allTypes.where((t) => t.isForProduct).toList();
+                        final types = allTypes
+                            .where((t) => t.isForProduct)
+                            .toList();
                         return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              childAspectRatio: 0.9,
-                            ),
-                        itemCount: types.length,
-                        itemBuilder: (context, index) {
-                          final type = types[index];
-                          return TypeSelectionCard(
-                            id: type.id,
-                            name: type.name,
-                            icon: type.icon,
-                            iconUrl: type.iconUrl,
-                            isSelected: selectedTypeIds.contains(type.id),
-                            onTap: () => notifier.toggleBusinessType(type),
-                          );
-                        },
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                childAspectRatio: 0.9,
+                              ),
+                          itemCount: types.length,
+                          itemBuilder: (context, index) {
+                            final type = types[index];
+                            return TypeSelectionCard(
+                              id: type.id,
+                              name: type.name,
+                              icon: type.icon,
+                              iconUrl: type.iconUrl,
+                              isSelected: selectedTypeIds.contains(type.id),
+                              onTap: () => notifier.toggleBusinessType(type),
+                            );
+                          },
                         );
                       },
                       loading: () => Center(
@@ -329,9 +330,8 @@ class _BusinessProductIdentityScreenState
                     disabledBackgroundColor: context.colors.primary.withValues(
                       alpha: 0.5,
                     ),
-                    disabledForegroundColor: context.colors.onPrimary.withValues(
-                      alpha: 0.5,
-                    ),
+                    disabledForegroundColor: context.colors.onPrimary
+                        .withValues(alpha: 0.5),
                     elevation: 0,
                   ),
                   child: Text(
@@ -366,24 +366,26 @@ class _FieldLabel extends StatelessWidget {
   );
 }
 
-InputDecoration _inputDecoration(BuildContext context, {required String hint}) =>
-    InputDecoration(
-      hintText: hint,
-      hintStyle: KolabingTextStyles.bodyMedium.copyWith(
-        color: context.colors.textTertiary,
-      ),
-      filled: true,
-      fillColor: context.colors.surfaceContainerLow,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: context.colors.outlineVariant),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: context.colors.outlineVariant),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: context.colors.primary, width: 1.5),
-      ),
-    );
+InputDecoration _inputDecoration(
+  BuildContext context, {
+  required String hint,
+}) => InputDecoration(
+  hintText: hint,
+  hintStyle: KolabingTextStyles.bodyMedium.copyWith(
+    color: context.colors.textTertiary,
+  ),
+  filled: true,
+  fillColor: context.colors.surfaceContainerLow,
+  border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: BorderSide(color: context.colors.outlineVariant),
+  ),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: BorderSide(color: context.colors.outlineVariant),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: BorderSide(color: context.colors.primary, width: 1.5),
+  ),
+);

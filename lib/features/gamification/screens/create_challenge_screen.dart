@@ -15,9 +15,20 @@ import '../providers/challenge_provider.dart';
 
 /// Screen for organizers to create a custom challenge
 class CreateChallengeScreen extends ConsumerStatefulWidget {
-  const CreateChallengeScreen({super.key, required this.eventId});
+  const CreateChallengeScreen({
+    super.key,
+    required this.eventId,
+    this.challenge,
+  });
 
   final String eventId;
+
+  /// When present the screen edits that challenge instead of creating one.
+  /// `EventChallengesScreen` has pushed
+  /// `/events/{id}/challenges/{challengeId}/edit` since it shipped, and that
+  /// route was never registered — tapping a custom challenge as the organizer
+  /// landed on the not-found page (#188).
+  final Challenge? challenge;
 
   @override
   ConsumerState<CreateChallengeScreen> createState() =>
@@ -31,11 +42,26 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
   final _pointsController = TextEditingController();
 
   ChallengeDifficulty _selectedDifficulty = ChallengeDifficulty.medium;
+
+  /// Whether the app opens the camera when the pair agrees.
+  ChallengeProofType _proofType = ChallengeProofType.text;
+
   bool _isLoading = false;
+
+  bool get _isEditing => widget.challenge != null;
 
   @override
   void initState() {
     super.initState();
+    final existing = widget.challenge;
+    if (existing != null) {
+      _nameController.text = existing.name;
+      _descriptionController.text = existing.description ?? '';
+      _selectedDifficulty = existing.difficulty;
+      _proofType = existing.proofType;
+      _pointsController.text = existing.points.toString();
+      return;
+    }
     // Set default points based on difficulty
     _pointsController.text = _selectedDifficulty.defaultPoints.toString();
   }
@@ -57,28 +83,49 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
     });
   }
 
-  Future<void> _handleCreate() async {
+  Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      await createChallenge(
-        ref,
-        widget.eventId,
-        name: _nameController.text.trim(),
-        description: _descriptionController.text.trim().isEmpty
-            ? null
-            : _descriptionController.text.trim(),
-        difficulty: _selectedDifficulty,
-        points: int.tryParse(_pointsController.text),
-      );
+      final existing = widget.challenge;
+      final description = _descriptionController.text.trim().isEmpty
+          ? null
+          : _descriptionController.text.trim();
+
+      if (existing == null) {
+        await createChallenge(
+          ref,
+          widget.eventId,
+          name: _nameController.text.trim(),
+          description: description,
+          difficulty: _selectedDifficulty,
+          points: int.tryParse(_pointsController.text),
+          proofType: _proofType,
+        );
+      } else {
+        await updateChallenge(
+          ref,
+          widget.eventId,
+          existing.id,
+          name: _nameController.text.trim(),
+          description: description,
+          difficulty: _selectedDifficulty,
+          points: int.tryParse(_pointsController.text),
+          proofType: _proofType,
+        );
+      }
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context).createChallengeSuccess),
+          content: Text(
+            _isEditing
+                ? AppLocalizations.of(context).createChallengeUpdated
+                : AppLocalizations.of(context).createChallengeSuccess,
+          ),
           backgroundColor: context.colors.success,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -129,7 +176,9 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          l10n.createChallengeTitle,
+          _isEditing
+              ? l10n.createChallengeEditTitle
+              : l10n.createChallengeTitle,
           style: KolabingTextStyles.bodyMedium.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -208,6 +257,28 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
 
                 const SizedBox(height: KolabingSpacing.lg),
 
+                // Camera or not — the backend's proof_type (#188).
+                _FieldLabel(
+                  label: l10n.createChallengeProofTypeLabel,
+                  required: false,
+                ),
+                const SizedBox(height: KolabingSpacing.xs),
+                _ProofTypeSelector(
+                  selected: _proofType,
+                  onChanged: (value) => setState(() => _proofType = value),
+                  enabled: !_isLoading,
+                ),
+                const SizedBox(height: KolabingSpacing.xs),
+                Text(
+                  l10n.createChallengeProofTypeHint,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    color: context.colors.textTertiary,
+                  ),
+                ),
+
+                const SizedBox(height: KolabingSpacing.lg),
+
                 // Points field
                 _FieldLabel(
                   label: l10n.createChallengePointsLabel,
@@ -268,8 +339,10 @@ class _CreateChallengeScreenState extends ConsumerState<CreateChallengeScreen> {
 
                 // Create button
                 KolabingButton(
-                  label: l10n.createChallengeSubmit,
-                  onPressed: _isLoading ? null : _handleCreate,
+                  label: _isEditing
+                      ? l10n.createChallengeSaveChanges
+                      : l10n.createChallengeSubmit,
+                  onPressed: _isLoading ? null : _handleSubmit,
                   variant: KolabingButtonVariant.primary,
                   isLoading: _isLoading,
                 ),
@@ -352,6 +425,111 @@ class _FieldLabel extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// Camera, or no camera — the backend's `proof_type` (#188, kolabing-v2#216).
+///
+/// Two options rather than a switch, because "off" is a real choice with its own
+/// meaning ("the instruction is the game") and a switch labelled *Camera* leaves
+/// the reader guessing what happens when it is off.
+class _ProofTypeSelector extends StatelessWidget {
+  const _ProofTypeSelector({
+    required this.selected,
+    required this.onChanged,
+    required this.enabled,
+  });
+
+  final ChallengeProofType selected;
+  final ValueChanged<ChallengeProofType> onChanged;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return Row(
+      children: [
+        Expanded(
+          child: _ProofTypeOption(
+            icon: LucideIcons.fileText,
+            label: l10n.createChallengeProofTypeText,
+            isSelected: selected == ChallengeProofType.text,
+            onTap: enabled ? () => onChanged(ChallengeProofType.text) : null,
+          ),
+        ),
+        const SizedBox(width: KolabingSpacing.xs),
+        Expanded(
+          child: _ProofTypeOption(
+            icon: LucideIcons.camera,
+            label: l10n.createChallengeProofTypePhoto,
+            isSelected: selected == ChallengeProofType.photo,
+            onTap: enabled ? () => onChanged(ChallengeProofType.photo) : null,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ProofTypeOption extends StatelessWidget {
+  const _ProofTypeOption({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedFg = context.colors.onSurface;
+
+    return Material(
+      color: isSelected ? context.colors.primaryTint : Colors.transparent,
+      borderRadius: BorderRadius.circular(KolabingRadius.md),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(KolabingRadius.md),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: KolabingSpacing.sm,
+            vertical: KolabingSpacing.sm,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(KolabingRadius.md),
+            border: Border.all(
+              color: isSelected
+                  ? context.colors.primaryDark
+                  : context.colors.outlineVariant,
+              width: isSelected ? 2 : 1,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 16, color: selectedFg),
+              const SizedBox(width: KolabingSpacing.xs),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: selectedFg,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

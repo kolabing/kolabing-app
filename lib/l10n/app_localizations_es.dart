@@ -8616,4 +8616,26 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get claimCodeClaimed => 'Puntos canjeados';
+
+  @override
+  String get createChallengeEditTitle => 'Editar reto';
+
+  @override
+  String get createChallengeSaveChanges => 'Guardar cambios';
+
+  @override
+  String get createChallengeUpdated => 'Reto actualizado';
+
+  @override
+  String get createChallengeProofTypeLabel => 'Cuando la pareja acepta';
+
+  @override
+  String get createChallengeProofTypeText => 'Sin cámara';
+
+  @override
+  String get createChallengeProofTypePhoto => 'Abrir la cámara';
+
+  @override
+  String get createChallengeProofTypeHint =>
+      'Solo elige la pantalla que abre la app. Un reto confirmado sin foto cuenta igual, así que una cámara denegada o mala cobertura nunca le cuestan los puntos a nadie.';
 }

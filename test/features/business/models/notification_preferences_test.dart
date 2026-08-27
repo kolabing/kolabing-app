@@ -29,14 +29,17 @@ void main() {
     expect(prefs.timezone, 'Europe/Istanbul');
   });
 
-  test('fromJson prefers message_notifications over messages_enabled (NF-16)', () {
-    final prefs = NotificationPreferences.fromJson(<String, dynamic>{
-      'message_notifications': false,
-      'messages_enabled': true,
-    });
-    expect(prefs.messagesEnabled, isFalse);
-    expect(prefs.messageNotifications, isFalse);
-  });
+  test(
+    'fromJson prefers message_notifications over messages_enabled (NF-16)',
+    () {
+      final prefs = NotificationPreferences.fromJson(<String, dynamic>{
+        'message_notifications': false,
+        'messages_enabled': true,
+      });
+      expect(prefs.messagesEnabled, isFalse);
+      expect(prefs.messageNotifications, isFalse);
+    },
+  );
 
   test('message_notifications defaults on when both keys absent', () {
     final prefs = NotificationPreferences.fromJson(<String, dynamic>{});

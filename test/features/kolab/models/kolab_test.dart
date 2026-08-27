@@ -19,14 +19,17 @@ void main() {
       expect(parsed.highlights, ['good_location', 'free_samples']);
     });
 
-    test('goal and highlights default to null/empty and are omitted from toJson', () {
-      final kolab = Kolab.empty(IntentType.venuePromotion);
+    test(
+      'goal and highlights default to null/empty and are omitted from toJson',
+      () {
+        final kolab = Kolab.empty(IntentType.venuePromotion);
 
-      expect(kolab.goal, isNull);
-      expect(kolab.highlights, isEmpty);
-      expect(kolab.toJson().containsKey('goal'), isFalse);
-      expect(kolab.toJson().containsKey('highlights'), isFalse);
-    });
+        expect(kolab.goal, isNull);
+        expect(kolab.highlights, isEmpty);
+        expect(kolab.toJson().containsKey('goal'), isFalse);
+        expect(kolab.toJson().containsKey('highlights'), isFalse);
+      },
+    );
   });
 
   group('Kolab expects/offersInReturn (dynamic deliverable slugs)', () {
@@ -45,29 +48,36 @@ void main() {
       expect(parsed.offersInReturn, ['social_media']);
     });
 
-    test('an unrecognized deliverable slug round-trips unchanged, never miscoded', () {
-      // A slug the app has never seen (e.g. a brand-new admin-added option)
-      // must survive parsing untouched -- not silently collapse to some
-      // other option's slug.
-      final kolab = Kolab.fromJson(const {
-        'expects': ['brand_new_admin_option'],
-        'offers_in_return': ['another_unknown_option'],
-      });
+    test(
+      'an unrecognized deliverable slug round-trips unchanged, never miscoded',
+      () {
+        // A slug the app has never seen (e.g. a brand-new admin-added option)
+        // must survive parsing untouched -- not silently collapse to some
+        // other option's slug.
+        final kolab = Kolab.fromJson(const {
+          'expects': ['brand_new_admin_option'],
+          'offers_in_return': ['another_unknown_option'],
+        });
 
-      expect(kolab.expects, ['brand_new_admin_option']);
-      expect(kolab.offersInReturn, ['another_unknown_option']);
-    });
+        expect(kolab.expects, ['brand_new_admin_option']);
+        expect(kolab.offersInReturn, ['another_unknown_option']);
+      },
+    );
   });
 
   group('KolabMedia.isDefaultCover', () {
     test('defaults to false for a regular constructed instance', () {
-      const media = KolabMedia(url: 'https://example.com/real-photo.jpg', type: 'image');
+      const media = KolabMedia(
+        url: 'https://example.com/real-photo.jpg',
+        type: 'image',
+      );
       expect(media.isDefaultCover, isFalse);
     });
 
     test('fromJson detects a default cover URL', () {
       final media = KolabMedia.fromJson({
-        'url': 'https://api.kolabing.com/storage/default-kolab-covers/venue_1.png',
+        'url':
+            'https://api.kolabing.com/storage/default-kolab-covers/venue_1.png',
         'type': 'image',
         'sort_order': 0,
       });
@@ -85,7 +95,8 @@ void main() {
 
     test('toJson omits isDefaultCover (client-only flag)', () {
       const media = KolabMedia(
-        url: 'https://api.kolabing.com/storage/default-kolab-covers/venue_1.png',
+        url:
+            'https://api.kolabing.com/storage/default-kolab-covers/venue_1.png',
         type: 'image',
         isDefaultCover: true,
       );
@@ -94,7 +105,11 @@ void main() {
     });
 
     test('copyWith preserves isDefaultCover when not overridden', () {
-      const media = KolabMedia(url: 'https://example.com/a.jpg', type: 'image', isDefaultCover: true);
+      const media = KolabMedia(
+        url: 'https://example.com/a.jpg',
+        type: 'image',
+        isDefaultCover: true,
+      );
       final copy = media.copyWith(sortOrder: 5);
       expect(copy.isDefaultCover, isTrue);
       expect(copy.sortOrder, 5);

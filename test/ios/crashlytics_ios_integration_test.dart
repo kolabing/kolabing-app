@@ -12,18 +12,9 @@ void main() {
       projectContents,
       contains('[firebase_crashlytics] Crashlytics Upload Symbols'),
     );
-    expect(
-      projectContents,
-      contains('FirebaseCrashlytics/upload-symbols'),
-    );
-    expect(
-      projectContents,
-      contains('--flutter-project'),
-    );
-    expect(
-      projectContents,
-      contains('firebase_app_id_file.json'),
-    );
+    expect(projectContents, contains('FirebaseCrashlytics/upload-symbols'));
+    expect(projectContents, contains('--flutter-project'));
+    expect(projectContents, contains('firebase_app_id_file.json'));
     expect(
       projectContents,
       contains(r'$(PROJECT_DIR)/firebase_app_id_file.json'),
@@ -41,8 +32,9 @@ void main() {
 
     final appIdJson =
         json.decode(appIdFile.readAsStringSync()) as Map<String, dynamic>;
-    final googleServiceInfo =
-        File('ios/Runner/GoogleService-Info.plist').readAsStringSync();
+    final googleServiceInfo = File(
+      'ios/Runner/GoogleService-Info.plist',
+    ).readAsStringSync();
 
     expect(
       appIdJson['GOOGLE_APP_ID'],

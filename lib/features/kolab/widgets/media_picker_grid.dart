@@ -35,7 +35,8 @@ class MediaPickerGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final totalSlots = media.length < maxItems
-        ? media.length + 1 // existing + add button
+        ? media.length +
+              1 // existing + add button
         : media.length;
 
     return GridView.builder(
@@ -50,17 +51,11 @@ class MediaPickerGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         // Add button slot
         if (index == media.length && media.length < maxItems) {
-          return _AddSlot(
-            onTap: onAdd,
-            remaining: maxItems - media.length,
-          );
+          return _AddSlot(onTap: onAdd, remaining: maxItems - media.length);
         }
 
         // Existing media slot
-        return _MediaSlot(
-          media: media[index],
-          onRemove: () => onRemove(index),
-        );
+        return _MediaSlot(media: media[index], onRemove: () => onRemove(index));
       },
     );
   }
@@ -71,81 +66,74 @@ class MediaPickerGrid extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class _MediaSlot extends StatelessWidget {
-  const _MediaSlot({
-    required this.media,
-    required this.onRemove,
-  });
+  const _MediaSlot({required this.media, required this.onRemove});
 
   final KolabMedia media;
   final VoidCallback onRemove;
 
   @override
   Widget build(BuildContext context) => ClipRRect(
-        borderRadius: KolabingRadius.borderRadiusSm,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // Placeholder or network image
-            if (media.url.isNotEmpty)
-              Image.network(
-                media.url,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => _buildPlaceholder(context),
-              )
-            else
-              _buildPlaceholder(context),
-            // Video overlay icon
-            if (media.type == 'video')
-              Center(
-                child: Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    LucideIcons.play,
-                    size: 14,
-                    color: Colors.white,
-                  ),
-                ),
+    borderRadius: KolabingRadius.borderRadiusSm,
+    child: Stack(
+      fit: StackFit.expand,
+      children: [
+        // Placeholder or network image
+        if (media.url.isNotEmpty)
+          Image.network(
+            media.url,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => _buildPlaceholder(context),
+          )
+        else
+          _buildPlaceholder(context),
+        // Video overlay icon
+        if (media.type == 'video')
+          Center(
+            child: Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.5),
+                shape: BoxShape.circle,
               ),
-            // Remove button
-            Positioned(
-              top: 4,
-              right: 4,
-              child: GestureDetector(
-                onTap: onRemove,
-                child: Container(
-                  width: 22,
-                  height: 22,
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.6),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    LucideIcons.x,
-                    size: 12,
-                    color: Colors.white,
-                  ),
-                ),
+              child: const Icon(
+                LucideIcons.play,
+                size: 14,
+                color: Colors.white,
               ),
             ),
-          ],
-        ),
-      );
-
-  Widget _buildPlaceholder(BuildContext context) => ColoredBox(
-        color: context.colors.surfaceVariant,
-        child: Center(
-          child: Icon(
-            LucideIcons.image,
-            size: 24,
-            color: context.colors.textTertiary,
+          ),
+        // Remove button
+        Positioned(
+          top: 4,
+          right: 4,
+          child: GestureDetector(
+            onTap: onRemove,
+            child: Container(
+              width: 22,
+              height: 22,
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.6),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(LucideIcons.x, size: 12, color: Colors.white),
+            ),
           ),
         ),
-      );
+      ],
+    ),
+  );
+
+  Widget _buildPlaceholder(BuildContext context) => ColoredBox(
+    color: context.colors.surfaceVariant,
+    child: Center(
+      child: Icon(
+        LucideIcons.image,
+        size: 24,
+        color: context.colors.textTertiary,
+      ),
+    ),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -153,38 +141,38 @@ class _MediaSlot extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class _AddSlot extends StatelessWidget {
-  const _AddSlot({
-    required this.onTap,
-    required this.remaining,
-  });
+  const _AddSlot({required this.onTap, required this.remaining});
 
   final VoidCallback onTap;
   final int remaining;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: context.colors.background,
-            borderRadius: KolabingRadius.borderRadiusSm,
-            border: Border.all(color: context.colors.darkBorder),
+    onTap: onTap,
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        color: context.colors.background,
+        borderRadius: KolabingRadius.borderRadiusSm,
+        border: Border.all(color: context.colors.darkBorder),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            LucideIcons.camera,
+            size: 22,
+            color: context.colors.textTertiary,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                LucideIcons.camera,
-                size: 22,
-                color: context.colors.textTertiary,
-              ),
-              const SizedBox(height: KolabingSpacing.xxs),
-              Text(
-                '$remaining left',
-                style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, color: context.colors.textTertiary),
-              ),
-            ],
+          const SizedBox(height: KolabingSpacing.xxs),
+          Text(
+            '$remaining left',
+            style: KolabingTextStyles.labelSmall.copyWith(
+              fontSize: 10,
+              color: context.colors.textTertiary,
+            ),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }

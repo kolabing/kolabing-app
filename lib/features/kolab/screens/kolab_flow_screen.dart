@@ -164,7 +164,9 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
                       Expanded(
                         child: Text(
                           formState.error!,
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.error),
+                          style: KolabingTextStyles.captionSecondary.copyWith(
+                            color: context.colors.error,
+                          ),
                         ),
                       ),
                     ],
@@ -305,14 +307,20 @@ class _KolabFlowScreenState extends ConsumerState<KolabFlowScreen> {
               wasPublished
                   ? l10n.kolabFlowPublishedTitle
                   : l10n.kolabFlowDraftSavedTitle,
-              style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 20, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+              style: KolabingTextStyles.bodyLarge.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: context.colors.onSurface,
+              ),
             ),
             const SizedBox(height: KolabingSpacing.xs),
             Text(
               wasPublished
                   ? l10n.kolabFlowPublishedMessage
                   : l10n.kolabFlowDraftSavedMessage,
-              style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+              style: KolabingTextStyles.bodySmall.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ],

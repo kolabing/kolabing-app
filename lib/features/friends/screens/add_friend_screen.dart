@@ -144,10 +144,7 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
       );
     }
     if (_result != null) {
-      return _ResultCard(
-        result: _result!,
-        onChanged: () => setState(() {}),
-      );
+      return _ResultCard(result: _result!, onChanged: () => setState(() {}));
     }
     if (!_searched) {
       return const SizedBox.shrink();
@@ -192,8 +189,7 @@ class _ResultCard extends ConsumerStatefulWidget {
 
 class _ResultCardState extends ConsumerState<_ResultCard> {
   bool _busy = false;
-  late FriendStatus _status =
-      widget.result.friendStatus ?? FriendStatus.none;
+  late FriendStatus _status = widget.result.friendStatus ?? FriendStatus.none;
 
   Future<void> _add() async {
     final l10n = AppLocalizations.of(context);
@@ -212,11 +208,15 @@ class _ResultCardState extends ConsumerState<_ResultCard> {
       } else if (e.requestExists) {
         if (mounted) setState(() => _status = FriendStatus.pendingOutgoing);
       } else if (!e.isFeatureOff && mounted) {
-        messenger.showSnackBar(SnackBar(content: Text(l10n.friendActionFailed)));
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.friendActionFailed)),
+        );
       }
     } catch (_) {
       if (mounted) {
-        messenger.showSnackBar(SnackBar(content: Text(l10n.friendActionFailed)));
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.friendActionFailed)),
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -275,10 +275,7 @@ class _ResultCardState extends ConsumerState<_ResultCard> {
   Widget _buildCta(AppLocalizations l10n) {
     switch (_status) {
       case FriendStatus.self:
-        return OutlinedButton(
-          onPressed: null,
-          child: Text(l10n.addFriendSelf),
-        );
+        return OutlinedButton(onPressed: null, child: Text(l10n.addFriendSelf));
       case FriendStatus.friends:
         return OutlinedButton.icon(
           onPressed: null,

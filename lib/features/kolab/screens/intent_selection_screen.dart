@@ -167,7 +167,8 @@ class _IntentSelectionScreenState extends ConsumerState<IntentSelectionScreen> {
                       ),
                       const SizedBox(height: KolabingSpacing.md),
                       Text(
-                        profileState.error ?? l10n.intentSelectionProfileLoadError,
+                        profileState.error ??
+                            l10n.intentSelectionProfileLoadError,
                         textAlign: TextAlign.center,
                         style: KolabingTextStyles.titleMedium.copyWith(
                           color: context.colors.onSurface,
@@ -218,11 +219,7 @@ class _LockedBusinessCreateState extends StatelessWidget {
               color: context.colors.primaryTint,
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              LucideIcons.crown,
-              size: 34,
-              color: context.colors.ink,
-            ),
+            child: Icon(LucideIcons.crown, size: 34, color: context.colors.ink),
           ),
           const SizedBox(height: KolabingSpacing.lg),
           Text(
@@ -322,7 +319,9 @@ class _IntentOption extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: c.primaryTint,
-                        borderRadius: BorderRadius.circular(KolabingRadius.pill),
+                        borderRadius: BorderRadius.circular(
+                          KolabingRadius.pill,
+                        ),
                       ),
                       child: Text(
                         badge!,

@@ -35,7 +35,9 @@ class ReviewScreen extends ConsumerWidget {
     final state = ref.watch(kolabFormProvider);
     final kolab = state.kolab;
     final dateFormat = DateFormat('MMM d, yyyy');
-    final deliverableOptions = ref.watch(deliverablesProvider).maybeWhen(
+    final deliverableOptions = ref
+        .watch(deliverablesProvider)
+        .maybeWhen(
           data: (options) => options,
           orElse: () => const <OfferOption>[],
         );
@@ -48,12 +50,18 @@ class ReviewScreen extends ConsumerWidget {
           // Section header
           Text(
             'REVIEW & PUBLISH',
-            style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurfaceVariant, letterSpacing: 1.0),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              fontWeight: FontWeight.w700,
+              color: context.colors.onSurfaceVariant,
+              letterSpacing: 1.0,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.xxs),
           Text(
             'Make sure everything looks correct before publishing',
-            style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant),
+            style: KolabingTextStyles.bodySmall.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: KolabingSpacing.lg),
 
@@ -81,14 +89,21 @@ class ReviewScreen extends ConsumerWidget {
                     children: [
                       Text(
                         kolab.title.isEmpty ? 'Untitled Kolab' : kolab.title,
-                        style: KolabingTextStyles.bodyMedium.copyWith(fontSize: 18, fontWeight: FontWeight.w700, color: context.colors.onSurface),
+                        style: KolabingTextStyles.bodyMedium.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: context.colors.onSurface,
+                        ),
                       ),
                       const SizedBox(height: KolabingSpacing.xs),
                       Text(
                         kolab.description.isEmpty
                             ? 'No description provided'
                             : kolab.description,
-                        style: KolabingTextStyles.bodySmall.copyWith(color: context.colors.onSurfaceVariant, height: 1.5),
+                        style: KolabingTextStyles.bodySmall.copyWith(
+                          color: context.colors.onSurfaceVariant,
+                          height: 1.5,
+                        ),
                         maxLines: 4,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -112,14 +127,18 @@ class ReviewScreen extends ConsumerWidget {
                       if (kolab.needs.isEmpty)
                         Text(
                           'No needs selected',
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary),
+                          style: KolabingTextStyles.captionSecondary.copyWith(
+                            color: context.colors.textTertiary,
+                          ),
                         )
                       else
                         Wrap(
                           spacing: KolabingSpacing.xs,
                           runSpacing: KolabingSpacing.xs,
                           children: kolab.needs
-                              .map((need) => _buildChip(context, need.displayName))
+                              .map(
+                                (need) => _buildChip(context, need.displayName),
+                              )
                               .toList(),
                         ),
                     ],
@@ -142,17 +161,21 @@ class ReviewScreen extends ConsumerWidget {
                       if (kolab.offersInReturn.isEmpty)
                         Text(
                           'No deliverables selected',
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary),
+                          style: KolabingTextStyles.captionSecondary.copyWith(
+                            color: context.colors.textTertiary,
+                          ),
                         )
                       else
                         Wrap(
                           spacing: KolabingSpacing.xs,
                           runSpacing: KolabingSpacing.xs,
                           children: kolab.offersInReturn
-                              .map((slug) => _buildChip(
-                                    context,
-                                    deliverableLabel(slug, deliverableOptions),
-                                  ))
+                              .map(
+                                (slug) => _buildChip(
+                                  context,
+                                  deliverableLabel(slug, deliverableOptions),
+                                ),
+                              )
                               .toList(),
                         ),
                     ],
@@ -220,7 +243,7 @@ class ReviewScreen extends ConsumerWidget {
                       if (kolab.area != null && kolab.area!.isNotEmpty) ...[
                         const SizedBox(height: KolabingSpacing.xxs),
                         _buildReviewInfoRow(
-                        context,
+                          context,
                           LucideIcons.navigation,
                           kolab.area!,
                         ),
@@ -244,7 +267,7 @@ class ReviewScreen extends ConsumerWidget {
                       const SizedBox(height: KolabingSpacing.xs),
                       if (kolab.availabilityMode != null) ...[
                         _buildReviewInfoRow(
-                        context,
+                          context,
                           _availabilityModeIcon(kolab.availabilityMode!),
                           kolab.availabilityMode!.displayName,
                         ),
@@ -252,14 +275,14 @@ class ReviewScreen extends ConsumerWidget {
                         if (kolab.availabilityMode ==
                             AvailabilityMode.recurring) ...[
                           _buildReviewInfoRow(
-                        context,
+                            context,
                             LucideIcons.calendar,
                             'Every ${kolab.recurringDays.isNotEmpty ? kolab.recurringDays.map((d) => _dayNames[d - 1]).join(', ') : '--'}'
                             '${kolab.selectedTime != null ? ' at ${kolab.selectedTime!.format(context)}' : ''}',
                           ),
                         ] else ...[
                           _buildReviewInfoRow(
-                        context,
+                            context,
                             LucideIcons.calendar,
                             '${kolab.availabilityStart != null ? dateFormat.format(kolab.availabilityStart!) : '--'}'
                             ' -- '
@@ -270,7 +293,9 @@ class ReviewScreen extends ConsumerWidget {
                       ] else
                         Text(
                           'Not set',
-                          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary),
+                          style: KolabingTextStyles.captionSecondary.copyWith(
+                            color: context.colors.textTertiary,
+                          ),
                         ),
                     ],
                   ),
@@ -285,7 +310,10 @@ class ReviewScreen extends ConsumerWidget {
           Center(
             child: Text(
               'Tap any section above to edit',
-              style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.textTertiary, fontStyle: FontStyle.italic),
+              style: KolabingTextStyles.captionSecondary.copyWith(
+                color: context.colors.textTertiary,
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ),
         ],
@@ -327,17 +355,28 @@ class ReviewScreen extends ConsumerWidget {
 
   Widget _buildReviewLabel(BuildContext context, String label) => Text(
     label.toUpperCase(),
-    style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w700, color: context.colors.textTertiary, letterSpacing: 0.8),
+    style: KolabingTextStyles.bodySmall.copyWith(
+      fontSize: 12,
+      fontWeight: FontWeight.w700,
+      color: context.colors.textTertiary,
+      letterSpacing: 0.8,
+    ),
   );
 
-  Widget _buildReviewInfoRow(BuildContext context, IconData icon, String label) => Row(
+  Widget _buildReviewInfoRow(
+    BuildContext context,
+    IconData icon,
+    String label,
+  ) => Row(
     children: [
       Icon(icon, size: 16, color: context.colors.onSurfaceVariant),
       const SizedBox(width: KolabingSpacing.xs),
       Expanded(
         child: Text(
           label,
-          style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
+          style: KolabingTextStyles.captionSecondary.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
       ),
     ],
@@ -355,7 +394,11 @@ class ReviewScreen extends ConsumerWidget {
     ),
     child: Text(
       label,
-      style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.onSurface),
+      style: KolabingTextStyles.bodySmall.copyWith(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: context.colors.onSurface,
+      ),
     ),
   );
 

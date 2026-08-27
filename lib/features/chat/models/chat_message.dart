@@ -7,23 +7,23 @@ class ChatSender {
   });
 
   factory ChatSender.fromJson(Map<String, dynamic> json) => ChatSender(
-        // Tolerate ProfileSummaryResource (`id`) and a flat `profile_id`.
-        profileId: (json['profile_id'] ?? json['id']) as String? ?? '',
-        // ProfileSummaryResource exposes the name as `display_name`; tolerate a
-        // flat `name` too. Reading only `name` left the sender label blank.
-        name: (json['display_name'] ?? json['name'])?.toString() ?? '',
-        avatarUrl: (json['avatar_url'] ?? json['profile_photo'])?.toString(),
-      );
+    // Tolerate ProfileSummaryResource (`id`) and a flat `profile_id`.
+    profileId: (json['profile_id'] ?? json['id']) as String? ?? '',
+    // ProfileSummaryResource exposes the name as `display_name`; tolerate a
+    // flat `name` too. Reading only `name` left the sender label blank.
+    name: (json['display_name'] ?? json['name'])?.toString() ?? '',
+    avatarUrl: (json['avatar_url'] ?? json['profile_photo'])?.toString(),
+  );
 
   final String profileId;
   final String name;
   final String? avatarUrl;
 
   Map<String, dynamic> toJson() => {
-        'profile_id': profileId,
-        'name': name,
-        if (avatarUrl != null) 'avatar_url': avatarUrl,
-      };
+    'profile_id': profileId,
+    'name': name,
+    if (avatarUrl != null) 'avatar_url': avatarUrl,
+  };
 }
 
 /// A single message in a chat thread.
@@ -38,19 +38,20 @@ class ChatMessage {
   });
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
-        id: json['id'] as String,
-        // thread_id (generic) or application_id (existing collaboration resource).
-        threadId: (json['thread_id'] ?? json['application_id']) as String? ?? '',
-        // sender_profile (ChatMessageResource) or a flat sender.
-        sender: ChatSender.fromJson(
-            (json['sender_profile'] ?? json['sender'] ?? const <String, dynamic>{})
-                as Map<String, dynamic>),
-        // content (ChatMessageResource) or body.
-        body: (json['content'] ?? json['body']) as String? ?? '',
-        createdAt: DateTime.parse(json['created_at'] as String),
-        // is_own (ChatMessageResource) or is_mine.
-        isMine: (json['is_own'] ?? json['is_mine']) as bool? ?? false,
-      );
+    id: json['id'] as String,
+    // thread_id (generic) or application_id (existing collaboration resource).
+    threadId: (json['thread_id'] ?? json['application_id']) as String? ?? '',
+    // sender_profile (ChatMessageResource) or a flat sender.
+    sender: ChatSender.fromJson(
+      (json['sender_profile'] ?? json['sender'] ?? const <String, dynamic>{})
+          as Map<String, dynamic>,
+    ),
+    // content (ChatMessageResource) or body.
+    body: (json['content'] ?? json['body']) as String? ?? '',
+    createdAt: DateTime.parse(json['created_at'] as String),
+    // is_own (ChatMessageResource) or is_mine.
+    isMine: (json['is_own'] ?? json['is_mine']) as bool? ?? false,
+  );
 
   final String id;
   final String threadId;
@@ -62,13 +63,13 @@ class ChatMessage {
   final bool isMine;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'thread_id': threadId,
-        'sender': sender.toJson(),
-        'body': body,
-        'created_at': createdAt.toIso8601String(),
-        'is_mine': isMine,
-      };
+    'id': id,
+    'thread_id': threadId,
+    'sender': sender.toJson(),
+    'body': body,
+    'created_at': createdAt.toIso8601String(),
+    'is_mine': isMine,
+  };
 
   ChatMessage copyWith({
     String? id,
@@ -77,13 +78,12 @@ class ChatMessage {
     String? body,
     DateTime? createdAt,
     bool? isMine,
-  }) =>
-      ChatMessage(
-        id: id ?? this.id,
-        threadId: threadId ?? this.threadId,
-        sender: sender ?? this.sender,
-        body: body ?? this.body,
-        createdAt: createdAt ?? this.createdAt,
-        isMine: isMine ?? this.isMine,
-      );
+  }) => ChatMessage(
+    id: id ?? this.id,
+    threadId: threadId ?? this.threadId,
+    sender: sender ?? this.sender,
+    body: body ?? this.body,
+    createdAt: createdAt ?? this.createdAt,
+    isMine: isMine ?? this.isMine,
+  );
 }

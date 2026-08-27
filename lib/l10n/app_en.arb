@@ -10123,5 +10123,19 @@
   "claimCodeFailed": "That didn't work. Please try again.",
   "@claimCodeFailed": {"description": "Generic failure redeeming an invite code."},
   "claimCodeClaimed": "Points claimed",
-  "@claimCodeClaimed": {"description": "Title of the invite-code sheet once the code has been redeemed."}
+  "@claimCodeClaimed": {"description": "Title of the invite-code sheet once the code has been redeemed."},
+  "createChallengeEditTitle": "Edit challenge",
+  "@createChallengeEditTitle": {"description": "App bar title when editing an existing custom challenge."},
+  "createChallengeSaveChanges": "Save changes",
+  "@createChallengeSaveChanges": {"description": "Submit label in edit mode."},
+  "createChallengeUpdated": "Challenge updated",
+  "@createChallengeUpdated": {"description": "Snackbar after an edit saves."},
+  "createChallengeProofTypeLabel": "When the pair agrees",
+  "@createChallengeProofTypeLabel": {"description": "Label for the camera choice on a challenge."},
+  "createChallengeProofTypeText": "No camera",
+  "@createChallengeProofTypeText": {"description": "Option: the app opens no camera (proof_type text)."},
+  "createChallengeProofTypePhoto": "Open the camera",
+  "@createChallengeProofTypePhoto": {"description": "Option: the app opens the camera (proof_type photo)."},
+  "createChallengeProofTypeHint": "Picks the screen the app opens, nothing more. A challenge confirmed without a photo still counts, so a denied camera or bad signal never costs anybody their points.",
+  "@createChallengeProofTypeHint": {"description": "Explains that the camera choice is not a requirement."}
 }

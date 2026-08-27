@@ -15,37 +15,46 @@ void main() {
     });
   });
 
-  test('throws MissionException when data.missions is missing on a 200', () async {
-    final client = MockClient((request) async {
-      return http.Response('{"success": true, "data": {"oops": []}}', 200);
-    });
+  test(
+    'throws MissionException when data.missions is missing on a 200',
+    () async {
+      final client = MockClient((request) async {
+        return http.Response('{"success": true, "data": {"oops": []}}', 200);
+      });
 
-    final service = MissionsService(
-      authService: AuthService(
-        secureStorage: const FlutterSecureStorage(),
+      final service = MissionsService(
+        authService: AuthService(
+          secureStorage: const FlutterSecureStorage(),
+          httpClient: client,
+        ),
         httpClient: client,
-      ),
-      httpClient: client,
-    );
+      );
 
-    expect(() => service.getMyMissions(), throwsA(isA<MissionException>()));
-  });
+      expect(() => service.getMyMissions(), throwsA(isA<MissionException>()));
+    },
+  );
 
-  test('returns an empty list when data.missions is genuinely empty on a 200', () async {
-    final client = MockClient((request) async {
-      return http.Response('{"success": true, "data": {"missions": []}}', 200);
-    });
+  test(
+    'returns an empty list when data.missions is genuinely empty on a 200',
+    () async {
+      final client = MockClient((request) async {
+        return http.Response(
+          '{"success": true, "data": {"missions": []}}',
+          200,
+        );
+      });
 
-    final service = MissionsService(
-      authService: AuthService(
-        secureStorage: const FlutterSecureStorage(),
+      final service = MissionsService(
+        authService: AuthService(
+          secureStorage: const FlutterSecureStorage(),
+          httpClient: client,
+        ),
         httpClient: client,
-      ),
-      httpClient: client,
-    );
+      );
 
-    final missions = await service.getMyMissions();
+      final missions = await service.getMyMissions();
 
-    expect(missions, isEmpty);
-  });
+      expect(missions, isEmpty);
+    },
+  );
 }

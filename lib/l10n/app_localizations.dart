@@ -15025,6 +15025,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Points claimed'**
   String get claimCodeClaimed;
+
+  /// App bar title when editing an existing custom challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit challenge'**
+  String get createChallengeEditTitle;
+
+  /// Submit label in edit mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get createChallengeSaveChanges;
+
+  /// Snackbar after an edit saves.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenge updated'**
+  String get createChallengeUpdated;
+
+  /// Label for the camera choice on a challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'When the pair agrees'**
+  String get createChallengeProofTypeLabel;
+
+  /// Option: the app opens no camera (proof_type text).
+  ///
+  /// In en, this message translates to:
+  /// **'No camera'**
+  String get createChallengeProofTypeText;
+
+  /// Option: the app opens the camera (proof_type photo).
+  ///
+  /// In en, this message translates to:
+  /// **'Open the camera'**
+  String get createChallengeProofTypePhoto;
+
+  /// Explains that the camera choice is not a requirement.
+  ///
+  /// In en, this message translates to:
+  /// **'Picks the screen the app opens, nothing more. A challenge confirmed without a photo still counts, so a denied camera or bad signal never costs anybody their points.'**
+  String get createChallengeProofTypeHint;
 }
 
 class _AppLocalizationsDelegate

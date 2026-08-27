@@ -45,7 +45,8 @@ void main() {
       ),
       if (entitlement != null)
         multiKolabEntitlementProvider.overrideWith((ref) async => entitlement),
-      if (user != null) authProvider.overrideWith(() => _TestAuthNotifier(user)),
+      if (user != null)
+        authProvider.overrideWith(() => _TestAuthNotifier(user)),
     ],
     child: MaterialApp(
       locale: locale,

@@ -8660,4 +8660,26 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get claimCodeClaimed => 'Punts bescanviats';
+
+  @override
+  String get createChallengeEditTitle => 'Editar el repte';
+
+  @override
+  String get createChallengeSaveChanges => 'Desar els canvis';
+
+  @override
+  String get createChallengeUpdated => 'Repte actualitzat';
+
+  @override
+  String get createChallengeProofTypeLabel => 'Quan la parella accepta';
+
+  @override
+  String get createChallengeProofTypeText => 'Sense càmera';
+
+  @override
+  String get createChallengeProofTypePhoto => 'Obrir la càmera';
+
+  @override
+  String get createChallengeProofTypeHint =>
+      'Només tria la pantalla que obre l\'app. Un repte confirmat sense foto compta igual, així que una càmera denegada o mala cobertura no li costen mai els punts a ningú.';
 }

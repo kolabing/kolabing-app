@@ -23,7 +23,8 @@ class AttendeeStep4Screen extends ConsumerStatefulWidget {
   const AttendeeStep4Screen({super.key});
 
   @override
-  ConsumerState<AttendeeStep4Screen> createState() => _AttendeeStep4ScreenState();
+  ConsumerState<AttendeeStep4Screen> createState() =>
+      _AttendeeStep4ScreenState();
 }
 
 class _AttendeeStep4ScreenState extends ConsumerState<AttendeeStep4Screen> {
@@ -121,13 +122,14 @@ class _AttendeeStep4ScreenState extends ConsumerState<AttendeeStep4Screen> {
                 _JoinCard(
                   community: c,
                   selected: data.communityIds.contains(c.id),
-                  highlighted: c.matched ||
+                  highlighted:
+                      c.matched ||
                       (c.typeSlug != null &&
                           interests.contains(c.typeSlug!.toLowerCase())),
                   onToggle: c.joinPolicy.allowsSelfJoin
                       ? () => ref
-                          .read(attendeeOnboardingProvider.notifier)
-                          .toggleCommunity(c.id)
+                            .read(attendeeOnboardingProvider.notifier)
+                            .toggleCommunity(c.id)
                       : null,
                 ),
                 const SizedBox(height: KolabingSpacing.sm),
@@ -181,7 +183,10 @@ class _JoinCard extends StatelessWidget {
                   ? NetworkImage(community.avatarUrl!)
                   : null,
               child: community.avatarUrl == null
-                  ? const Icon(LucideIcons.users, color: KolabingColors.onSurface)
+                  ? const Icon(
+                      LucideIcons.users,
+                      color: KolabingColors.onSurface,
+                    )
                   : null,
             ),
             const SizedBox(width: KolabingSpacing.md),

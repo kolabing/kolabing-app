@@ -18,12 +18,12 @@ void main() {
   });
 
   EventService serviceWith(http.Client client) => EventService(
-        authService: AuthService(
-          secureStorage: const FlutterSecureStorage(),
-          httpClient: client,
-        ),
-        httpClient: client,
-      );
+    authService: AuthService(
+      secureStorage: const FlutterSecureStorage(),
+      httpClient: client,
+    ),
+    httpClient: client,
+  );
 
   test('getSignups parses the going + waitlist roster', () async {
     final client = _JsonClient(
@@ -57,35 +57,38 @@ void main() {
     expect(signups.waitlist.single.waitlistPosition, 1);
   });
 
-  test('addEventPhotos posts multipart photos[] and returns the event',
-      () async {
-    final photoPath = await _createTempFile('poster.jpg');
-    addTearDown(() async {
-      final f = File(photoPath);
-      if (await f.exists()) await f.delete();
-    });
+  test(
+    'addEventPhotos posts multipart photos[] and returns the event',
+    () async {
+      final photoPath = await _createTempFile('poster.jpg');
+      addTearDown(() async {
+        final f = File(photoPath);
+        if (await f.exists()) await f.delete();
+      });
 
-    final client = _MultipartCaptureClient(
-      responseBody: jsonEncode(<String, dynamic>{
-        'data': <String, dynamic>{
-          'id': 'event-1',
-          'name': 'Sat Long Run',
-          'partner_name': 'Run Club',
-          'partner_type': 'community',
-          'date': '2026-06-14',
-          'attendee_count': 0,
-          'photos': const <Map<String, dynamic>>[],
-          'created_at': '2026-06-01T10:00:00Z',
-        },
-      }),
-    );
+      final client = _MultipartCaptureClient(
+        responseBody: jsonEncode(<String, dynamic>{
+          'data': <String, dynamic>{
+            'id': 'event-1',
+            'name': 'Sat Long Run',
+            'partner_name': 'Run Club',
+            'partner_type': 'community',
+            'date': '2026-06-14',
+            'attendee_count': 0,
+            'photos': const <Map<String, dynamic>>[],
+            'created_at': '2026-06-01T10:00:00Z',
+          },
+        }),
+      );
 
-    final event =
-        await serviceWith(client).addEventPhotos('event-1', [photoPath]);
+      final event = await serviceWith(
+        client,
+      ).addEventPhotos('event-1', [photoPath]);
 
-    expect(client.multipartFieldNames, contains('photos[]'));
-    expect(event.id, 'event-1');
-  });
+      expect(client.multipartFieldNames, contains('photos[]'));
+      expect(event.id, 'event-1');
+    },
+  );
 }
 
 Future<String> _createTempFile(String fileName) async {

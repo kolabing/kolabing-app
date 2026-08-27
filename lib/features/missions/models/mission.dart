@@ -40,7 +40,8 @@ class Mission {
       targetValue: _asInt(json['target_value']) ?? 0,
       repeatInterval: _asString(json['repeat_interval']),
       progressCount: _asInt(json['progress_count']) ?? 0,
-      completed: _asBool(json['completed']) || _asDate(json['completed_at']) != null,
+      completed:
+          _asBool(json['completed']) || _asDate(json['completed_at']) != null,
       completedAt: _asDate(json['completed_at']),
       periodKey: _asString(json['period_key']),
     );

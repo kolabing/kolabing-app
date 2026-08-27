@@ -189,7 +189,10 @@ class _HandleFieldState extends ConsumerState<HandleField> {
                     padding: const EdgeInsets.only(right: KolabingSpacing.sm),
                     child: suffix,
                   ),
-            suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+            suffixIconConstraints: const BoxConstraints(
+              minWidth: 0,
+              minHeight: 0,
+            ),
             filled: true,
             fillColor: KolabingColors.surfaceVariant,
             border: OutlineInputBorder(

@@ -48,50 +48,52 @@ class UpcomingCollaborationCard extends StatelessWidget {
 
   Widget _content(BuildContext context, bool isDark) {
     return Row(
-          children: [
-            // Partner avatar
-            _PartnerAvatar(partner: collaboration.partner),
-            const SizedBox(width: KolabingSpacing.sm),
+      children: [
+        // Partner avatar
+        _PartnerAvatar(partner: collaboration.partner),
+        const SizedBox(width: KolabingSpacing.sm),
 
-            // Details column
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Partner name
-                  Text(
-                    collaboration.partner.name ?? 'Unknown Partner',
-                    style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600, color: isDark
-                          ? context.colors.textOnDark
-                          : context.colors.onSurface),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: KolabingSpacing.xxxs),
-
-                  // Opportunity title
-                  Text(
-                    collaboration.opportunity.title,
-                    style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: KolabingSpacing.xs),
-
-                  // Date chip
-                  _DateChip(
-                    dateText: collaboration.dateDisplay,
-                    isDark: isDark,
-                  ),
-                ],
+        // Details column
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Partner name
+              Text(
+                collaboration.partner.name ?? 'Unknown Partner',
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? context.colors.textOnDark
+                      : context.colors.onSurface,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            const SizedBox(width: KolabingSpacing.xs),
+              const SizedBox(height: KolabingSpacing.xxxs),
 
-            // Status badge
-            _StatusBadge(status: collaboration.status),
-          ],
-        );
+              // Opportunity title
+              Text(
+                collaboration.opportunity.title,
+                style: KolabingTextStyles.captionSecondary.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: KolabingSpacing.xs),
+
+              // Date chip
+              _DateChip(dateText: collaboration.dateDisplay, isDark: isDark),
+            ],
+          ),
+        ),
+        const SizedBox(width: KolabingSpacing.xs),
+
+        // Status badge
+        _StatusBadge(status: collaboration.status),
+      ],
+    );
   }
 }
 
@@ -113,7 +115,10 @@ class _PartnerAvatar extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         partner.initial,
-        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onPrimary),
+        style: KolabingTextStyles.bodyMedium.copyWith(
+          fontWeight: FontWeight.w600,
+          color: context.colors.onPrimary,
+        ),
       ),
     );
   }
@@ -141,7 +146,9 @@ class _DateChip extends StatelessWidget {
       ),
       child: Text(
         dateText,
-        style: KolabingTextStyles.labelSmall.copyWith(color: context.colors.onSurfaceVariant),
+        style: KolabingTextStyles.labelSmall.copyWith(
+          color: context.colors.onSurfaceVariant,
+        ),
       ),
     );
   }
@@ -173,7 +180,9 @@ class _StatusBadge extends StatelessWidget {
         style: KolabingTextStyles.labelSmall.copyWith(
           fontSize: 10,
           fontWeight: FontWeight.w700,
-          color: isActive ? context.colors.charcoal : context.colors.categoryOrangeText,
+          color: isActive
+              ? context.colors.charcoal
+              : context.colors.categoryOrangeText,
           letterSpacing: 0.5,
         ),
       ),

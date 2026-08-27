@@ -85,11 +85,11 @@ class _CommunityInfoScreenState extends ConsumerState<CommunityInfoScreen> {
   }
 
   Widget _buildLabel(String label) => Text(
-        label,
-        style: KolabingTextStyles.bodySmall.copyWith(
-          fontWeight: FontWeight.w700,
-          color: context.colors.onSurfaceVariant,
-          letterSpacing: 1.0,
-        ),
-      );
+    label,
+    style: KolabingTextStyles.bodySmall.copyWith(
+      fontWeight: FontWeight.w700,
+      color: context.colors.onSurfaceVariant,
+      letterSpacing: 1.0,
+    ),
+  );
 }

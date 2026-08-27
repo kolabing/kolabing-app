@@ -26,30 +26,39 @@ void main() {
       );
     });
 
-    test('returns a product cover path for communitySeeking (default fallback)', () {
-      final path = pickDefaultCoverPathFor(IntentType.communitySeeking);
-      expect(path, contains('product_cover_'));
-    });
+    test(
+      'returns a product cover path for communitySeeking (default fallback)',
+      () {
+        final path = pickDefaultCoverPathFor(IntentType.communitySeeking);
+        expect(path, contains('product_cover_'));
+      },
+    );
   });
 
   group('isDefaultCoverUrl', () {
     test('matches a normalized absolute product cover URL', () {
       expect(
-        isDefaultCoverUrl('https://api.kolabing.com/storage/default-kolab-covers/product_cover_1.png'),
+        isDefaultCoverUrl(
+          'https://api.kolabing.com/storage/default-kolab-covers/product_cover_1.png',
+        ),
         isTrue,
       );
     });
 
     test('matches a normalized absolute venue cover URL', () {
       expect(
-        isDefaultCoverUrl('https://api.kolabing.com/storage/default-kolab-covers/venue_2.png'),
+        isDefaultCoverUrl(
+          'https://api.kolabing.com/storage/default-kolab-covers/venue_2.png',
+        ),
         isTrue,
       );
     });
 
     test('does not match a real uploaded photo URL', () {
       expect(
-        isDefaultCoverUrl('https://api.kolabing.com/storage/kolabs/some-upload.jpg'),
+        isDefaultCoverUrl(
+          'https://api.kolabing.com/storage/kolabs/some-upload.jpg',
+        ),
         isFalse,
       );
     });

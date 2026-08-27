@@ -59,23 +59,22 @@ class OpportunityFilters {
     bool clearVenueMode = false,
     bool clearAvailabilityMode = false,
     bool clearDateRange = false,
-  }) =>
-      OpportunityFilters(
-        searchQuery: searchQuery ?? this.searchQuery,
-        creatorType:
-            clearCreatorType ? null : (creatorType ?? this.creatorType),
-        selectedCategories: selectedCategories ?? this.selectedCategories,
-        selectedCity: clearCity ? null : (selectedCity ?? this.selectedCity),
-        venueMode: clearVenueMode ? null : (venueMode ?? this.venueMode),
-        availabilityMode: clearAvailabilityMode
-            ? null
-            : (availabilityMode ?? this.availabilityMode),
-        availabilityFrom: clearDateRange
-            ? null
-            : (availabilityFrom ?? this.availabilityFrom),
-        availabilityTo:
-            clearDateRange ? null : (availabilityTo ?? this.availabilityTo),
-      );
+  }) => OpportunityFilters(
+    searchQuery: searchQuery ?? this.searchQuery,
+    creatorType: clearCreatorType ? null : (creatorType ?? this.creatorType),
+    selectedCategories: selectedCategories ?? this.selectedCategories,
+    selectedCity: clearCity ? null : (selectedCity ?? this.selectedCity),
+    venueMode: clearVenueMode ? null : (venueMode ?? this.venueMode),
+    availabilityMode: clearAvailabilityMode
+        ? null
+        : (availabilityMode ?? this.availabilityMode),
+    availabilityFrom: clearDateRange
+        ? null
+        : (availabilityFrom ?? this.availabilityFrom),
+    availabilityTo: clearDateRange
+        ? null
+        : (availabilityTo ?? this.availabilityTo),
+  );
 
   /// Reset all filters
   static const OpportunityFilters empty = OpportunityFilters();
@@ -91,19 +90,21 @@ class OpportunityFilters {
       params['availability_mode'] = availabilityMode!;
     }
     if (availabilityFrom != null) {
-      params['availability_from'] =
-          availabilityFrom!.toIso8601String().split('T').first;
+      params['availability_from'] = availabilityFrom!
+          .toIso8601String()
+          .split('T')
+          .first;
     }
     if (availabilityTo != null) {
-      params['availability_to'] =
-          availabilityTo!.toIso8601String().split('T').first;
+      params['availability_to'] = availabilityTo!
+          .toIso8601String()
+          .split('T')
+          .first;
     }
     return params;
   }
 
   /// Category query parameters need special handling (array)
   List<MapEntry<String, String>> toCategoryParams() =>
-      selectedCategories
-          .map((c) => MapEntry('categories[]', c))
-          .toList();
+      selectedCategories.map((c) => MapEntry('categories[]', c)).toList();
 }

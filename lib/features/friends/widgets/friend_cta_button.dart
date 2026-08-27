@@ -195,14 +195,14 @@ class _PrimaryPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _Pill(
-        icon: icon,
-        label: label,
-        busy: busy,
-        onTap: onTap,
-        background: KolabingColors.onSurface,
-        foreground: KolabingColors.primary,
-        border: null,
-      );
+    icon: icon,
+    label: label,
+    busy: busy,
+    onTap: onTap,
+    background: KolabingColors.onSurface,
+    foreground: KolabingColors.primary,
+    border: null,
+  );
 }
 
 class _SecondaryPill extends StatelessWidget {
@@ -220,14 +220,14 @@ class _SecondaryPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _Pill(
-        icon: icon,
-        label: label,
-        busy: busy,
-        onTap: onTap,
-        background: Colors.white.withValues(alpha: 0.9),
-        foreground: KolabingColors.onSurface,
-        border: KolabingColors.onSurface.withValues(alpha: 0.2),
-      );
+    icon: icon,
+    label: label,
+    busy: busy,
+    onTap: onTap,
+    background: Colors.white.withValues(alpha: 0.9),
+    foreground: KolabingColors.onSurface,
+    border: KolabingColors.onSurface.withValues(alpha: 0.2),
+  );
 }
 
 class _Pill extends StatelessWidget {
@@ -251,45 +251,45 @@ class _Pill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: KolabingRadius.borderRadiusRound,
-          onTap: busy ? null : onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.md,
-              vertical: KolabingSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              color: background,
-              borderRadius: KolabingRadius.borderRadiusRound,
-              border: border != null ? Border.all(color: border!) : null,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (busy)
-                  SizedBox(
-                    width: 14,
-                    height: 14,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: foreground,
-                    ),
-                  )
-                else
-                  Icon(icon, size: 16, color: foreground),
-                const SizedBox(width: 6),
-                Text(
-                  label,
-                  style: KolabingTextStyles.bodySmall.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: foreground,
-                  ),
-                ),
-              ],
-            ),
-          ),
+    color: Colors.transparent,
+    child: InkWell(
+      borderRadius: KolabingRadius.borderRadiusRound,
+      onTap: busy ? null : onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: KolabingSpacing.md,
+          vertical: KolabingSpacing.xs,
         ),
-      );
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: KolabingRadius.borderRadiusRound,
+          border: border != null ? Border.all(color: border!) : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (busy)
+              SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: foreground,
+                ),
+              )
+            else
+              Icon(icon, size: 16, color: foreground),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w700,
+                color: foreground,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }

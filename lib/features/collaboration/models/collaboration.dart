@@ -279,7 +279,8 @@ class Collaboration {
           : true,
       ownFeedbackSubmitted: json['own_feedback'] != null,
       partnerFeedbackSubmitted: json['partner_feedback'] != null,
-      pendingFeedbackFrom: (json['pending_feedback_from'] as List<dynamic>?)
+      pendingFeedbackFrom:
+          (json['pending_feedback_from'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           const [],
@@ -289,17 +290,17 @@ class Collaboration {
       // owes a confirmation, so the Confirm CTA never disappears.
       viewerMustConfirmCompletion:
           json.containsKey('viewer_must_confirm_completion')
-              ? _parseBool(json['viewer_must_confirm_completion'])
-              : true,
+          ? _parseBool(json['viewer_must_confirm_completion'])
+          : true,
       ownCompletionStatus:
           (json['own_completion'] as Map<String, dynamic>?)?['status']
               as String?,
       partnerCompletionStatus: json['partner_completion_status'] as String?,
       pendingCompletionFrom:
           (json['pending_completion_from'] as List<dynamic>?)
-                  ?.map((e) => e.toString())
-                  .toList() ??
-              const [],
+              ?.map((e) => e.toString())
+              .toList() ??
+          const [],
     );
   }
 

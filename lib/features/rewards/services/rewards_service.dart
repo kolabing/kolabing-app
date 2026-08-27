@@ -171,7 +171,8 @@ class RewardsService {
 
   /// GET /api/v1/gamification/referral-code
   /// Returns code, referral link, and total qualified conversions.
-  Future<({String code, String link, int totalConversions})> getReferralCode() async {
+  Future<({String code, String link, int totalConversions})>
+  getReferralCode() async {
     final uri = Uri.parse('$_baseUrl/gamification/referral-code');
     debugPrint('RewardsService: GET $uri');
 

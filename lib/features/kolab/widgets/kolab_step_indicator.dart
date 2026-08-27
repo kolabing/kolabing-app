@@ -27,39 +27,37 @@ class KolabStepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(totalSteps, (index) {
-          final isActive = index == currentStep;
-          final isCompleted = index < currentStep;
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: List.generate(totalSteps, (index) {
+      final isActive = index == currentStep;
+      final isCompleted = index < currentStep;
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: KolabingSpacing.xxs,
-            ),
-            child: GestureDetector(
-              onTap: isCompleted && onStepTap != null
-                  ? () => onStepTap!(index)
-                  : null,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                width: isActive ? 10 : 8,
-                height: isActive ? 10 : 8,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isActive || isCompleted
-                      ? context.colors.ink
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: isActive || isCompleted
-                        ? context.colors.ink
-                        : context.colors.hairline,
-                    width: 1.5,
-                  ),
-                ),
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: KolabingSpacing.xxs),
+        child: GestureDetector(
+          onTap: isCompleted && onStepTap != null
+              ? () => onStepTap!(index)
+              : null,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            width: isActive ? 10 : 8,
+            height: isActive ? 10 : 8,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isActive || isCompleted
+                  ? context.colors.ink
+                  : Colors.transparent,
+              border: Border.all(
+                color: isActive || isCompleted
+                    ? context.colors.ink
+                    : context.colors.hairline,
+                width: 1.5,
               ),
             ),
-          );
-        }),
+          ),
+        ),
       );
+    }),
+  );
 }

@@ -29,7 +29,8 @@ class OfferOptionService {
   Future<List<OfferOption>> getDeliverables() =>
       _fetch('lookup/deliverables', _fallbackDeliverables);
 
-  Future<List<OfferOption>> getNeeds() => _fetch('lookup/needs', _fallbackNeeds);
+  Future<List<OfferOption>> getNeeds() =>
+      _fetch('lookup/needs', _fallbackNeeds);
 
   Future<List<OfferOption>> getProductTypes() =>
       _fetch('lookup/product-types', _fallbackProductTypes);
@@ -244,13 +245,21 @@ class OfferOptionService {
   static const List<OfferOption> _fallbackProductInteractions = [
     OfferOption(id: 'try_samples', slug: 'try_samples', name: 'Try Samples'),
     OfferOption(id: 'review_it', slug: 'review_it', name: 'Review It'),
-    OfferOption(id: 'create_content', slug: 'create_content', name: 'Create Content'),
+    OfferOption(
+      id: 'create_content',
+      slug: 'create_content',
+      name: 'Create Content',
+    ),
     OfferOption(
       id: 'use_during_event',
       slug: 'use_during_event',
       name: 'Use During an Event',
     ),
-    OfferOption(id: 'give_feedback', slug: 'give_feedback', name: 'Give Feedback'),
+    OfferOption(
+      id: 'give_feedback',
+      slug: 'give_feedback',
+      name: 'Give Feedback',
+    ),
     OfferOption(id: 'giveaway', slug: 'giveaway', name: 'Offer as a Giveaway'),
     OfferOption(
       id: 'discount_code',
@@ -262,7 +271,11 @@ class OfferOptionService {
       slug: 'sell_during_event',
       name: 'Sell During an Event',
     ),
-    OfferOption(id: 'open_to_ideas', slug: 'open_to_ideas', name: 'Open to Ideas'),
+    OfferOption(
+      id: 'open_to_ideas',
+      slug: 'open_to_ideas',
+      name: 'Open to Ideas',
+    ),
   ];
 
   static const List<OfferOption> _fallbackVenueFits = [
@@ -278,11 +291,19 @@ class OfferOptionService {
     OfferOption(id: 'after_work', slug: 'after_work', name: 'After-Work'),
     OfferOption(id: 'networking', slug: 'networking', name: 'Networking'),
     OfferOption(id: 'pop_ups', slug: 'pop_ups', name: 'Pop-Ups'),
-    OfferOption(id: 'recurring_plans', slug: 'recurring_plans', name: 'Recurring Plans'),
+    OfferOption(
+      id: 'recurring_plans',
+      slug: 'recurring_plans',
+      name: 'Recurring Plans',
+    ),
   ];
 
   static const List<OfferOption> _fallbackKolabHighlights = [
-    OfferOption(id: 'good_location', slug: 'good_location', name: 'Good Location'),
+    OfferOption(
+      id: 'good_location',
+      slug: 'good_location',
+      name: 'Good Location',
+    ),
     OfferOption(
       id: 'nice_space_for_groups',
       slug: 'nice_space_for_groups',
@@ -349,6 +370,10 @@ class OfferOptionService {
       slug: 'cozy_indoor_space',
       name: 'Cozy Indoor Space',
     ),
-    OfferOption(id: 'good_for_content', slug: 'good_for_content', name: 'Good for Content'),
+    OfferOption(
+      id: 'good_for_content',
+      slug: 'good_for_content',
+      name: 'Good for Content',
+    ),
   ];
 }

@@ -61,14 +61,13 @@ class RealtimeChatService {
       final channel = client.privateChannel(
         channelName,
         authorizationDelegate:
-            EndpointAuthorizableChannelTokenAuthorizationDelegate
-                .forPrivateChannel(
-          authorizationEndpoint: Uri.parse(RealtimeConfig.authEndpoint),
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
-          },
-        ),
+            EndpointAuthorizableChannelTokenAuthorizationDelegate.forPrivateChannel(
+              authorizationEndpoint: Uri.parse(RealtimeConfig.authEndpoint),
+              headers: {
+                'Authorization': 'Bearer $token',
+                'Accept': 'application/json',
+              },
+            ),
       );
 
       final eventSubs = <StreamSubscription<ChannelReadEvent>>[
@@ -90,7 +89,9 @@ class RealtimeChatService {
         }
         try {
           channel.unsubscribe();
-        } on Object catch (_) {/* best-effort */}
+        } on Object catch (_) {
+          /* best-effort */
+        }
         _channels.remove(channelName);
         if (_channels.isEmpty) {
           await _teardownClient();
@@ -136,7 +137,9 @@ class RealtimeChatService {
     _connectionSub = null;
     try {
       _client?.dispose();
-    } on Object catch (_) {/* best-effort */}
+    } on Object catch (_) {
+      /* best-effort */
+    }
     _client = null;
   }
 

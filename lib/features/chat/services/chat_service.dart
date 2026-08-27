@@ -33,11 +33,9 @@ class ChatException implements Exception {
 /// docs/tickets/2026-06-04-chat-feature-spec.md. Built tolerant since the
 /// backend is still forming; envelopes/nesting are handled defensively.
 class ChatService {
-  ChatService({
-    required AuthService authService,
-    http.Client? httpClient,
-  })  : _authService = authService,
-        _httpClient = httpClient ?? http.Client();
+  ChatService({required AuthService authService, http.Client? httpClient})
+    : _authService = authService,
+      _httpClient = httpClient ?? http.Client();
 
   final AuthService _authService;
   final http.Client _httpClient;
@@ -91,42 +89,41 @@ class ChatService {
   /// `GET /chats` — threads visible to the viewer (backend role-scopes them;
   /// business is pre-filtered to active threads).
   Future<List<ChatThread>> getThreads() => _guard(() async {
-        final res = await _httpClient.get(
-          Uri.parse('$_baseUrl/chats'),
-          headers: await _headers(),
-        );
-        return _list(_unwrap(res), 'threads').map(ChatThread.fromJson).toList();
-      }, 'getThreads');
+    final res = await _httpClient.get(
+      Uri.parse('$_baseUrl/chats'),
+      headers: await _headers(),
+    );
+    return _list(_unwrap(res), 'threads').map(ChatThread.fromJson).toList();
+  }, 'getThreads');
 
   /// `GET /chats/unread-count` — total unread across visible threads.
   Future<int> getUnreadCount() => _guard(() async {
-        final res = await _httpClient.get(
-          Uri.parse('$_baseUrl/chats/unread-count'),
-          headers: await _headers(),
-        );
-        final data = _unwrap(res);
-        if (data is int) return data;
-        // Backend returns { total: N }; keep count/unread as tolerant fallbacks.
-        if (data is Map) {
-          return (data['total'] ?? data['count'] ?? data['unread'] ?? 0) as int;
-        }
-        return 0;
-      }, 'getUnreadCount');
+    final res = await _httpClient.get(
+      Uri.parse('$_baseUrl/chats/unread-count'),
+      headers: await _headers(),
+    );
+    final data = _unwrap(res);
+    if (data is int) return data;
+    // Backend returns { total: N }; keep count/unread as tolerant fallbacks.
+    if (data is Map) {
+      return (data['total'] ?? data['count'] ?? data['unread'] ?? 0) as int;
+    }
+    return 0;
+  }, 'getUnreadCount');
 
   /// `POST /communities/{community}/chats` — create a custom community chat
   /// (≤5 cap → `chat_limit_reached`).
   Future<ChatThread> createCommunityChat(
     String communityId, {
     required String name,
-  }) =>
-      _guard(() async {
-        final res = await _httpClient.post(
-          Uri.parse('$_baseUrl/communities/$communityId/chats'),
-          headers: await _headers(),
-          body: jsonEncode({'name': name}),
-        );
-        return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
-      }, 'createCommunityChat');
+  }) => _guard(() async {
+    final res = await _httpClient.post(
+      Uri.parse('$_baseUrl/communities/$communityId/chats'),
+      headers: await _headers(),
+      body: jsonEncode({'name': name}),
+    );
+    return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
+  }, 'createCommunityChat');
 
   /// `PATCH /chats/{thread}` — rename a custom community chat (manager only).
   /// Slug is preserved server-side so tier grants stay valid.
@@ -142,21 +139,21 @@ class ChatService {
 
   /// `DELETE /chats/{thread}` — delete a custom community chat (manager only).
   Future<void> deleteCommunityChat(String threadId) => _guard(() async {
-        final res = await _httpClient.delete(
-          Uri.parse('$_baseUrl/chats/$threadId'),
-          headers: await _headers(),
-        );
-        _unwrap(res);
-      }, 'deleteCommunityChat');
+    final res = await _httpClient.delete(
+      Uri.parse('$_baseUrl/chats/$threadId'),
+      headers: await _headers(),
+    );
+    _unwrap(res);
+  }, 'deleteCommunityChat');
 
   /// `GET /chats/{thread}/bans` — profile ids blocked from this chat (manager).
   Future<List<String>> getChatBans(String threadId) => _guard(() async {
-        final res = await _httpClient.get(
-          Uri.parse('$_baseUrl/chats/$threadId/bans'),
-          headers: await _headers(),
-        );
-        return _bannedIds(_unwrap(res));
-      }, 'getChatBans');
+    final res = await _httpClient.get(
+      Uri.parse('$_baseUrl/chats/$threadId/bans'),
+      headers: await _headers(),
+    );
+    return _bannedIds(_unwrap(res));
+  }, 'getChatBans');
 
   /// `POST /chats/{thread}/bans` — block a member (manager). Returns banned ids.
   Future<List<String>> blockChatMember(String threadId, String profileId) =>
@@ -199,21 +196,21 @@ class ChatService {
   /// `POST /chats/{thread}/join` — self-join an open chat (active member, not
   /// banned). Returns the refreshed thread.
   Future<ChatThread> joinThread(String threadId) => _guard(() async {
-        final res = await _httpClient.post(
-          Uri.parse('$_baseUrl/chats/$threadId/join'),
-          headers: await _headers(),
-        );
-        return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
-      }, 'joinThread');
+    final res = await _httpClient.post(
+      Uri.parse('$_baseUrl/chats/$threadId/join'),
+      headers: await _headers(),
+    );
+    return ChatThread.fromJson(_unwrap(res) as Map<String, dynamic>);
+  }, 'joinThread');
 
   /// `POST /chats/{thread}/read` — mark the viewer's read pointer.
   Future<void> markRead(String threadId) => _guard(() async {
-        final res = await _httpClient.post(
-          Uri.parse('$_baseUrl/chats/$threadId/read'),
-          headers: await _headers(),
-        );
-        _unwrap(res);
-      }, 'markRead');
+    final res = await _httpClient.post(
+      Uri.parse('$_baseUrl/chats/$threadId/read'),
+      headers: await _headers(),
+    );
+    _unwrap(res);
+  }, 'markRead');
 
   // ---------------------------------------------------------------------------
   // Messages
@@ -226,9 +223,10 @@ class ChatService {
           Uri.parse('$_baseUrl/chats/$threadId/messages?page=$page'),
           headers: await _headers(),
         );
-        return _list(_unwrap(res), 'messages')
-            .map(ChatMessage.fromJson)
-            .toList();
+        return _list(
+          _unwrap(res),
+          'messages',
+        ).map(ChatMessage.fromJson).toList();
       }, 'getMessages');
 
   /// `POST /chats/{thread}/messages` — send a message. The backend field is

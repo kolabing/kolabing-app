@@ -528,8 +528,7 @@ class Kolab {
     if (communityTypes.isNotEmpty) 'community_types': communityTypes,
     if (communitySize != null) 'community_size': communitySize,
     if (typicalAttendance != null) 'typical_attendance': typicalAttendance,
-    if (offersInReturn.isNotEmpty)
-      'offers_in_return': offersInReturn,
+    if (offersInReturn.isNotEmpty) 'offers_in_return': offersInReturn,
     if (venuePreference != null)
       'venue_preference': venuePreference!.toApiValue(),
     if (venueName != null && venueName!.isNotEmpty) 'venue_name': venueName,
@@ -544,8 +543,7 @@ class Kolab {
     if (seekingCommunities.isNotEmpty)
       'seeking_communities': seekingCommunities,
     if (minCommunitySize != null) 'min_community_size': minCommunitySize,
-    if (expects.isNotEmpty)
-      'expects': expects,
+    if (expects.isNotEmpty) 'expects': expects,
     if (pastEvents.isNotEmpty)
       'past_events': pastEvents.map((e) => e.toJson()).toList(),
     if (publishedAt != null) 'published_at': publishedAt!.toIso8601String(),

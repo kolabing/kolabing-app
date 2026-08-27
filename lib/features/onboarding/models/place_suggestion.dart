@@ -17,12 +17,15 @@ class PlaceSuggestion {
   factory PlaceSuggestion.fromJson(Map<String, dynamic> json) =>
       PlaceSuggestion(
         placeId: json['place_id']?.toString() ?? '',
-        title: json['title']?.toString() ??
+        title:
+            json['title']?.toString() ??
             json['main_text']?.toString() ??
             json['formatted_address']?.toString() ??
             '',
-        subtitle: json['subtitle']?.toString() ?? json['secondary_text']?.toString(),
-        formattedAddress: json['formatted_address']?.toString() ??
+        subtitle:
+            json['subtitle']?.toString() ?? json['secondary_text']?.toString(),
+        formattedAddress:
+            json['formatted_address']?.toString() ??
             json['description']?.toString() ??
             '',
         city: json['city']?.toString() ?? '',
@@ -33,14 +36,16 @@ class PlaceSuggestion {
       );
 
   factory PlaceSuggestion.fromCity(OnboardingCity city) => PlaceSuggestion(
-        placeId: 'city:${city.id}',
-        title: city.name,
-        subtitle: city.country,
-        formattedAddress: city.country == null ? city.name : '${city.name}, ${city.country}',
-        city: city.name,
-        country: city.country,
-        cityId: city.id,
-      );
+    placeId: 'city:${city.id}',
+    title: city.name,
+    subtitle: city.country,
+    formattedAddress: city.country == null
+        ? city.name
+        : '${city.name}, ${city.country}',
+    city: city.name,
+    country: city.country,
+    cityId: city.id,
+  );
 
   final String placeId;
   final String title;
@@ -63,16 +68,16 @@ class PlaceSuggestion {
   }
 
   Map<String, dynamic> toJson() => {
-        'place_id': placeId,
-        'title': title,
-        if (subtitle != null) 'subtitle': subtitle,
-        'formatted_address': formattedAddress,
-        'city': city,
-        if (country != null) 'country': country,
-        if (latitude != null) 'latitude': latitude,
-        if (longitude != null) 'longitude': longitude,
-        if (cityId != null) 'city_id': cityId,
-      };
+    'place_id': placeId,
+    'title': title,
+    if (subtitle != null) 'subtitle': subtitle,
+    'formatted_address': formattedAddress,
+    'city': city,
+    if (country != null) 'country': country,
+    if (latitude != null) 'latitude': latitude,
+    if (longitude != null) 'longitude': longitude,
+    if (cityId != null) 'city_id': cityId,
+  };
 
   static double? _parseDouble(Object? value) => tryParseDouble(value);
 

@@ -78,7 +78,10 @@ class PastCollaborationCard extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 DateFormat('MMM yyyy').format(collaboration.completedAt),
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 12, color: context.colors.textTertiary),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 12,
+                  color: context.colors.textTertiary,
+                ),
               ),
               const Spacer(),
               Container(
@@ -98,7 +101,11 @@ class PastCollaborationCard extends StatelessWidget {
                     const SizedBox(width: 3),
                     Text(
                       'Completed',
-                      style: KolabingTextStyles.labelSmall.copyWith(fontSize: 10, fontWeight: FontWeight.w600, color: context.colors.success),
+                      style: KolabingTextStyles.labelSmall.copyWith(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: context.colors.success,
+                      ),
                     ),
                   ],
                 ),
@@ -159,7 +166,10 @@ class _InitialCircle extends StatelessWidget {
     child: Center(
       child: Text(
         initial,
-        style: KolabingTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600, color: context.colors.onSurface),
+        style: KolabingTextStyles.bodyMedium.copyWith(
+          fontWeight: FontWeight.w600,
+          color: context.colors.onSurface,
+        ),
       ),
     ),
   );

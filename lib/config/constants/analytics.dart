@@ -13,7 +13,8 @@ class AnalyticsConfig {
   const AnalyticsConfig._();
 
   /// PostHog project API key (EU cloud, project "Default project" / 195047).
-  static const String apiKey = 'phc_zAYyMCY78gWCrTFepwk2fXXhpXBYmjV2w67hV54u67wK';
+  static const String apiKey =
+      'phc_zAYyMCY78gWCrTFepwk2fXXhpXBYmjV2w67hV54u67wK';
 
   /// EU ingestion host. PostHog cloud region is `eu.posthog.com`; the SDK
   /// ingestion endpoint for that region is `https://eu.i.posthog.com`.

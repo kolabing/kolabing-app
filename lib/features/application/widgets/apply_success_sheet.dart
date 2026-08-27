@@ -26,18 +26,17 @@ class ApplySuccessSheet extends StatefulWidget {
     BuildContext context, {
     required Opportunity opportunity,
     required VoidCallback onViewApplications,
-  }) =>
-      showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        isDismissible: true,
-        enableDrag: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => ApplySuccessSheet(
-          opportunity: opportunity,
-          onViewApplications: onViewApplications,
-        ),
-      );
+  }) => showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    isDismissible: true,
+    enableDrag: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) => ApplySuccessSheet(
+      opportunity: opportunity,
+      onViewApplications: onViewApplications,
+    ),
+  );
 
   @override
   State<ApplySuccessSheet> createState() => _ApplySuccessSheetState();
@@ -130,13 +129,22 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
                 Text(
                   'Application sent!',
                   textAlign: TextAlign.center,
-                  style: KolabingTextStyles.bodyLarge.copyWith(fontSize: 24, fontWeight: FontWeight.w700, color: context.colors.onSurface, height: 1.2),
+                  style: KolabingTextStyles.bodyLarge.copyWith(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.onSurface,
+                    height: 1.2,
+                  ),
                 ),
                 const SizedBox(height: KolabingSpacing.xs),
                 Text(
                   'Your application is on its way to $creatorName.',
                   textAlign: TextAlign.center,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, color: context.colors.onSurfaceVariant, height: 1.5),
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    fontSize: 15,
+                    color: context.colors.onSurfaceVariant,
+                    height: 1.5,
+                  ),
                 ),
               ],
             ),
@@ -194,11 +202,13 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
               icon: const Icon(LucideIcons.fileText, size: 18),
               label: Text(
                 'VIEW MY APPLICATIONS',
-                style: KolabingTextStyles.bodySmall.copyWith(fontSize: 15, fontWeight: FontWeight.w600, letterSpacing: 1.0),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.0,
+                ),
               ),
-              style: ElevatedButton.styleFrom(
-                elevation: 0,
-              ),
+              style: ElevatedButton.styleFrom(elevation: 0),
             ),
           ),
 
@@ -214,7 +224,9 @@ class _ApplySuccessSheetState extends State<ApplySuccessSheet>
               ),
               child: Text(
                 'Keep exploring',
-                style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
+                style: KolabingTextStyles.bodySmall.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -272,11 +284,7 @@ class _Hero extends StatelessWidget {
           // Animated check mark
           ScaleTransition(
             scale: check,
-            child: const Icon(
-              LucideIcons.check,
-              size: 38,
-              color: Colors.white,
-            ),
+            child: const Icon(LucideIcons.check, size: 38, color: Colors.white),
           ),
         ],
       ),
@@ -285,11 +293,7 @@ class _Hero extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.icon,
-    required this.title,
-    required this.body,
-  });
+  const _InfoRow({required this.icon, required this.title, required this.body});
 
   final IconData icon;
   final String title;
@@ -297,38 +301,45 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: context.colors.primary.withValues(alpha: 0.25),
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: context.colors.surface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: context.colors.primary.withValues(alpha: 0.25),
+          ),
+        ),
+        alignment: Alignment.center,
+        child: Icon(icon, size: 18, color: context.colors.onSurface),
+      ),
+      const SizedBox(width: KolabingSpacing.sm),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: KolabingTextStyles.bodySmall.copyWith(
+                fontWeight: FontWeight.w700,
+                color: context.colors.onSurface,
+                height: 1.3,
               ),
             ),
-            alignment: Alignment.center,
-            child: Icon(icon, size: 18, color: context.colors.onSurface),
-          ),
-          const SizedBox(width: KolabingSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: KolabingTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w700, color: context.colors.onSurface, height: 1.3),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  body,
-                  style: KolabingTextStyles.captionSecondary.copyWith(color: context.colors.onSurfaceVariant, height: 1.5),
-                ),
-              ],
+            const SizedBox(height: 2),
+            Text(
+              body,
+              style: KolabingTextStyles.captionSecondary.copyWith(
+                color: context.colors.onSurfaceVariant,
+                height: 1.5,
+              ),
             ),
-          ),
-        ],
-      );
+          ],
+        ),
+      ),
+    ],
+  );
 }

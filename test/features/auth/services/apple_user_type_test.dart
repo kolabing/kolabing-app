@@ -11,20 +11,20 @@ void main() {
   setUp(() => FlutterSecureStorage.setMockInitialValues(<String, String>{}));
 
   http.Response ok() => http.Response(
-        jsonEncode(<String, dynamic>{
-          'data': <String, dynamic>{
-            'token': 't-1',
-            'token_type': 'Bearer',
-            'is_new_user': true,
-            'user': <String, dynamic>{
-              'id': 'a-1',
-              'email': 'a@example.com',
-              'user_type': 'attendee',
-            },
-          },
-        }),
-        200,
-      );
+    jsonEncode(<String, dynamic>{
+      'data': <String, dynamic>{
+        'token': 't-1',
+        'token_type': 'Bearer',
+        'is_new_user': true,
+        'user': <String, dynamic>{
+          'id': 'a-1',
+          'email': 'a@example.com',
+          'user_type': 'attendee',
+        },
+      },
+    }),
+    200,
+  );
 
   test('authenticateWithApple includes user_type when provided', () async {
     Map<String, dynamic>? sentBody;
