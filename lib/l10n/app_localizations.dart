@@ -14797,6 +14797,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not delete that. Please try again.'**
   String get communityRewardsDeleteFailed;
+
+  /// Shown when the cover upload is accepted but the server stores no cover_photo.
+  ///
+  /// In en, this message translates to:
+  /// **'The cover was not saved. Please try again later.'**
+  String get communityManageCoverNotSaved;
 }
 
 class _AppLocalizationsDelegate

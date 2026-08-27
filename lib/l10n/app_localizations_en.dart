@@ -8399,4 +8399,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get communityRewardsDeleteFailed =>
       'Could not delete that. Please try again.';
+
+  @override
+  String get communityManageCoverNotSaved =>
+      'The cover was not saved. Please try again later.';
 }

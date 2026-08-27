@@ -1,0 +1,20 @@
+/* Kolabing motion — generated from KolabingTransitions in lib/config/constants/layout.dart.
+   Curves map Flutter's Curves.easeInOut / easeOut onto their CSS equivalents.
+   Do not edit by hand: run scripts/design_tokens_to_css.py. */
+
+:root {
+  --kolabing-duration-default: 300ms;
+  --kolabing-duration-modal: 250ms;
+  --kolabing-duration-quick: 100ms;
+  --kolabing-duration-shimmer: 1500ms;
+  --kolabing-duration-tab: 200ms;
+  --kolabing-ease-default: cubic-bezier(0.42, 0, 0.58, 1);
+  --kolabing-ease-modal: cubic-bezier(0, 0, 0.58, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

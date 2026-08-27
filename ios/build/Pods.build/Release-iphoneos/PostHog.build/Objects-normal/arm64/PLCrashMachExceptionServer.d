@@ -1,0 +1,41 @@
+dependencies: \
+  /Users/volkanoluc/Projects/kolabing-app/ios/build/Pods.build/Release-iphoneos/PostHog.build/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/Darwin.modulemap \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashMachExceptionServer.m \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/Target\ Support\ Files/PostHog/PostHog-prefix.pch \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/UIKit.framework/Modules/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/Foundation.framework/Modules/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/DarwinFoundation1.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/DarwinFoundation2.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/DarwinFoundation3.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/include/os.modulemap \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashCompatConstants.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashNamespace.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashMacros.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashFeatureConfig.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashMachExceptionPort.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashMachExceptionPortSet.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashMachExceptionServer.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReporterNSError.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/CrashReporter.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReporter.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReporterConfig.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReport.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportApplicationInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportBinaryImageInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportProcessorInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportExceptionInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportThreadInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportStackFrameInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportSymbolInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportRegisterInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportMachineInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportMachExceptionInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportProcessInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportSignalInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportSystemInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportTextFormatter.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashReportFormatter.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashHostInfo.h \
+  /Users/volkanoluc/Projects/kolabing-app/ios/Pods/PostHog/vendor/PHPLCrashReporter/Source/PLCrashAsync.h

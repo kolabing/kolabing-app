@@ -994,7 +994,12 @@ class _CommunityProfileScreenState
     );
     if (picked == null || !mounted) return;
 
-    var ok = false;
+    // Three outcomes, not two: stored, refused, or **accepted and dropped**.
+    // A backend without `cover_photo` (kolabing-v2#239 not deployed) answers
+    // `PUT /me/profile` with a clean 200 and no such field, so "did it throw?"
+    // reported success while nothing changed on screen — issue #176. Trust the
+    // response body, not the status code.
+    String message;
     try {
       final updated = await ref
           .read(profileServiceProvider)
@@ -1004,19 +1009,18 @@ class _CommunityProfileScreenState
           );
       await ref.read(authProvider.notifier).syncUser(updated);
       ref.read(profileProvider.notifier).refresh();
-      ok = true;
+      message = updated.communityProfile?.coverPhoto == null
+          ? l10n.communityManageCoverNotSaved
+          : l10n.communityManageCoverAdded;
     } on Object catch (e) {
       debugPrint('cover upload failed: $e');
+      message = l10n.communityManageCoverFailed;
     }
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          ok ? l10n.communityManageCoverAdded : l10n.communityManageCoverFailed,
-        ),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _handleEditCommunitySize(int? current) async {
