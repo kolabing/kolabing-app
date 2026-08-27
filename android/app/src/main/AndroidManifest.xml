@@ -50,6 +50,17 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- App Links for invite / check-in URLs (#183, kolabing-v2#246).
+                 The host is the APP host: assetlinks.json and the Apple
+                 association file are served from app.kolabing.com, and the
+                 marketing domain deliberately publishes neither. Registering
+                 kolabing.com here would verify against nothing. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="app.kolabing.com" />
+            </intent-filter>
             <!-- Deep links for Stripe payment redirects -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

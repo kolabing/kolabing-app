@@ -46,6 +46,43 @@ enum ChallengeDifficulty {
   }
 }
 
+/// How a challenge is played — the backend's `proof_type` (kolabing-v2#216).
+///
+/// This is what turns the app from a receipt printer into part of the moment:
+/// [photo] opens the camera, and the frame lands on the completion and on the
+/// meeting, so meeting someone acquires a face.
+///
+/// It is an **engine selector, not a gate**. The server does not refuse a
+/// verification that arrives without a photo, and neither does this app. A hard
+/// requirement would mean a pair who cannot get a photo up — no signal in a
+/// basement gym, a denied permission, a failed upload — lose what they just did
+/// together. The person confirming is the check on honesty; the photo is a
+/// memento.
+enum ChallengeProofType {
+  /// The instruction is the game. What every challenge that predates the
+  /// column reports, and the default.
+  text,
+
+  /// Open the camera as soon as the pair agrees.
+  photo;
+
+  /// Anything this build does not recognise degrades to [text], so a challenge
+  /// authored against a newer backend still WORKS here — it just works without
+  /// a camera. Never a dead end.
+  static ChallengeProofType fromString(String? value) {
+    switch (value?.toLowerCase()) {
+      case 'photo':
+        return ChallengeProofType.photo;
+      default:
+        return ChallengeProofType.text;
+    }
+  }
+
+  String toApiValue() => name;
+
+  bool get needsCamera => this == ChallengeProofType.photo;
+}
+
 /// Challenge model
 class Challenge {
   const Challenge({
@@ -58,6 +95,7 @@ class Challenge {
     this.eventId,
     required this.createdAt,
     required this.updatedAt,
+    this.proofType = ChallengeProofType.text,
   });
 
   factory Challenge.fromJson(Map<String, dynamic> json) {
@@ -71,6 +109,7 @@ class Challenge {
       eventId: json['event_id'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      proofType: ChallengeProofType.fromString(json['proof_type'] as String?),
     );
   }
 
@@ -84,8 +123,15 @@ class Challenge {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  /// How it is played. Defaults to [ChallengeProofType.text] so every
+  /// challenge that predates the column is unchanged.
+  final ChallengeProofType proofType;
+
   /// Check if this is a custom (non-system) challenge
   bool get isCustom => !isSystem;
+
+  /// The camera opens for this one.
+  bool get needsCamera => proofType.needsCamera;
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -97,6 +143,7 @@ class Challenge {
     if (eventId != null) 'event_id': eventId,
     'created_at': createdAt.toIso8601String(),
     'updated_at': updatedAt.toIso8601String(),
+    'proof_type': proofType.toApiValue(),
   };
 
   Challenge copyWith({
@@ -109,6 +156,7 @@ class Challenge {
     String? eventId,
     DateTime? createdAt,
     DateTime? updatedAt,
+    ChallengeProofType? proofType,
   }) => Challenge(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -119,5 +167,6 @@ class Challenge {
     eventId: eventId ?? this.eventId,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+    proofType: proofType ?? this.proofType,
   );
 }

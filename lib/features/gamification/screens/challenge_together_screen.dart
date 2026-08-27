@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -7,6 +9,8 @@ import '../../../config/theme/color_tokens.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolabing_button.dart';
+import '../../friends/providers/friends_provider.dart';
+import '../../friends/services/friendship_service.dart';
 import '../models/challenge_completion.dart';
 import '../providers/challenge_provider.dart';
 import '../providers/completion_watch_provider.dart';
@@ -43,6 +47,8 @@ class ChallengeTogetherScreen extends ConsumerStatefulWidget {
     this.challengeDescription,
     this.otherName,
     this.points,
+    this.photoPath,
+    this.otherProfileId,
   });
 
   final String completionId;
@@ -57,6 +63,14 @@ class ChallengeTogetherScreen extends ConsumerStatefulWidget {
   /// What each side stands to earn. Server truth; never computed here.
   final int? points;
 
+  /// The frame this challenge produced, if it asked for one (#183). A local
+  /// path — it is drawn immediately while the upload happens in the background.
+  final String? photoPath;
+
+  /// The other person, so the reveal can offer to connect. An encounter is a
+  /// fact; a friendship is a choice, and this is where the choice is offered.
+  final String? otherProfileId;
+
   static Future<void> open(
     BuildContext context, {
     required String completionId,
@@ -65,6 +79,8 @@ class ChallengeTogetherScreen extends ConsumerStatefulWidget {
     String? challengeDescription,
     String? otherName,
     int? points,
+    String? photoPath,
+    String? otherProfileId,
   }) {
     return Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
@@ -75,6 +91,8 @@ class ChallengeTogetherScreen extends ConsumerStatefulWidget {
           challengeDescription: challengeDescription,
           otherName: otherName,
           points: points,
+          photoPath: photoPath,
+          otherProfileId: otherProfileId,
         ),
       ),
     );
@@ -94,6 +112,7 @@ class ChallengeTogetherScreen extends ConsumerStatefulWidget {
       challengeDescription: completion.challenge?.description,
       otherName: completion.challengerName,
       points: completion.challenge?.points,
+      otherProfileId: completion.challengerProfileId,
     );
   }
 
@@ -226,7 +245,12 @@ class _ChallengeTogetherScreenState
         child: Padding(
           padding: const EdgeInsets.all(KolabingSpacing.lg),
           child: settledVerified
-              ? _Reveal(points: points, otherName: otherName)
+              ? _Reveal(
+                  points: points,
+                  otherName: otherName,
+                  photoPath: widget.photoPath,
+                  otherProfileId: widget.otherProfileId,
+                )
               : settledRejected
               ? _Rejected(onDone: _dismiss)
               : settledDead
@@ -415,33 +439,87 @@ class _Agreed extends StatelessWidget {
   }
 }
 
-/// The same reveal on both devices.
-class _Reveal extends StatelessWidget {
-  const _Reveal({required this.points, required this.otherName});
+/// The same reveal on both devices — and it ends on the **person**, not the
+/// number (#183).
+///
+/// This used to close on "+15 XP each" and a Done button, which is the whole
+/// reason a completed challenge left two ledger rows and no relationship. The
+/// points are still here; they are just no longer the last thing you read.
+///
+/// The frame, when the challenge produced one, is the hero: it is drawn from
+/// the local file so it appears instantly, while the upload happens somewhere
+/// else entirely.
+class _Reveal extends ConsumerStatefulWidget {
+  const _Reveal({
+    required this.points,
+    required this.otherName,
+    this.photoPath,
+    this.otherProfileId,
+  });
 
   final int points;
   final String otherName;
+  final String? photoPath;
+  final String? otherProfileId;
+
+  @override
+  ConsumerState<_Reveal> createState() => _RevealState();
+}
+
+class _RevealState extends ConsumerState<_Reveal> {
+  /// null = not asked yet, true = sent, false = the graph is not available.
+  bool? _friendRequested;
+  bool _sendingFriendRequest = false;
+
+  /// An encounter is a fact; a friendship is a choice. This is where the choice
+  /// is offered — once, quietly, and never imposed.
+  Future<void> _addFriend() async {
+    final id = widget.otherProfileId;
+    if (id == null || _sendingFriendRequest) return;
+    setState(() => _sendingFriendRequest = true);
+    try {
+      await ref.read(friendshipServiceProvider).sendRequest(id);
+      if (!mounted) return;
+      setState(() {
+        _sendingFriendRequest = false;
+        _friendRequested = true;
+      });
+    } on FriendshipException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _sendingFriendRequest = false;
+        // Already friends, or a request already open, both read as "done" to
+        // the person tapping. Only a genuinely absent backend hides the row.
+        _friendRequested = e.isFeatureOff ? false : true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final photoPath = widget.photoPath;
+    final canOfferFriend =
+        widget.otherProfileId != null && _friendRequested != false;
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          width: 96,
-          height: 96,
-          decoration: BoxDecoration(
-            color: context.colors.xpGreenContainer,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            LucideIcons.check,
-            size: 48,
-            color: context.colors.xpGreen,
-          ),
-        ),
+        const Spacer(),
+        if (photoPath != null)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.file(
+              File(photoPath),
+              width: 220,
+              height: 220,
+              fit: BoxFit.cover,
+              // The file can be gone by the time this rebuilds. That costs the
+              // wall a frame; it must never cost anyone a red screen.
+              errorBuilder: (context, error, stack) => _RevealMark(),
+            ),
+          )
+        else
+          _RevealMark(),
         const SizedBox(height: KolabingSpacing.lg),
         Text(
           l10n.challengeTogetherRevealTitle,
@@ -451,8 +529,10 @@ class _Reveal extends StatelessWidget {
           ),
         ),
         const SizedBox(height: KolabingSpacing.xs),
+        // The line that changed: you met a person, and that is the fact worth
+        // remembering. The XP is the receipt for it.
         Text(
-          l10n.challengeTogetherRevealBody(otherName),
+          l10n.challengeTogetherMetPerson(widget.otherName),
           textAlign: TextAlign.center,
           style: KolabingTextStyles.bodyMedium.copyWith(
             color: context.colors.onSurfaceVariant,
@@ -469,13 +549,27 @@ class _Reveal extends StatelessWidget {
             borderRadius: BorderRadius.circular(999),
           ),
           child: Text(
-            l10n.challengeTogetherEachEarns(points),
+            l10n.challengeTogetherEachEarns(widget.points),
             style: KolabingTextStyles.statNumber.copyWith(
               color: context.colors.xpGreenOnContainer,
             ),
           ),
         ),
         const Spacer(),
+        if (canOfferFriend) ...[
+          SizedBox(
+            width: double.infinity,
+            child: KolabingButton(
+              label: _friendRequested == true
+                  ? l10n.challengeTogetherFriendRequested
+                  : l10n.challengeTogetherAddFriend,
+              onPressed: _friendRequested == true ? null : _addFriend,
+              isLoading: _sendingFriendRequest,
+              variant: KolabingButtonVariant.secondary,
+            ),
+          ),
+          const SizedBox(height: KolabingSpacing.sm),
+        ],
         SizedBox(
           width: double.infinity,
           child: KolabingButton(
@@ -485,6 +579,22 @@ class _Reveal extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// The green tick, for a challenge that produced no frame.
+class _RevealMark extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 96,
+      height: 96,
+      decoration: BoxDecoration(
+        color: context.colors.xpGreenContainer,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(LucideIcons.check, size: 48, color: context.colors.xpGreen),
     );
   }
 }
