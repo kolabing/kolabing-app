@@ -227,7 +227,14 @@ Also required, and small: `.well-known/apple-app-site-association` and
 
 ## 5. Reads
 
-### `GET /me/encounters?page&limit`
+### `GET /me/encounters?page&limit` — ⏸️ DEFERRED
+
+> **Volkan, 2026-08-27: not needed for now.** The "People you've met" screen is
+> parked, so this endpoint is not worth building yet. The app-side client
+> (`EncounterService.getMyEncounters`, `myEncountersProvider`) is already
+> written and self-gates on 404, so this stays a one-endpoint job whenever the
+> screen comes back.
+
 
 The people you have met, `last_met_at` descending.
 
