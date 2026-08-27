@@ -50,3 +50,12 @@ app.*.map.json
 .env.release
 *.p8
 **/private_keys/
+
+# Xcode's per-project build directory. `flutter build ios` writes ~170 MB of
+# XCBuildData/ manifests here; a `git add -A` swept 1361 of them into the repo
+# once (commit 4d43119), so this is not hypothetical. The root `/build/` rule
+# below is anchored and does not cover it.
+ios/build/
+
+# Design-system bundle output.
+ds-bundle/
