@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,21 +14,36 @@ import '../providers/auth_state_provider.dart';
 /// Entry fade + scale.
 const Duration _fadeInDuration = Duration(milliseconds: 240);
 
-/// The floor on how long the mark stays up — one full sweep of the bar. The
-/// screen leaves as soon as initialisation finishes past this point.
-const Duration _minHold = Duration(milliseconds: 1100);
+/// One fill of the mark, bottom to top.
+const Duration _fillDuration = Duration(milliseconds: 1200);
+
+/// How long the waterline takes to travel one wavelength. Deliberately not a
+/// multiple of [_fillDuration]: if the two lined up, the wave would freeze at
+/// the same shape every time the fill turned around.
+const Duration _waveDuration = Duration(milliseconds: 2300);
+
+/// Topping the mark up to full before leaving, so the last thing on screen is a
+/// finished K rather than a half-drained one.
+const Duration _topUpDuration = Duration(milliseconds: 260);
+
+/// The floor on how long the mark stays up — one full fill. The screen leaves as
+/// soon as initialisation finishes past this point.
+const Duration _minHold = _fillDuration;
 
 /// Exit fade.
 const Duration _fadeOutDuration = Duration(milliseconds: 300);
 
-/// The mark's rendered width. Roughly a third of a 393pt phone: big enough to
-/// be the subject, small enough that the bar reads as attached to it.
+/// The mark's rendered width. Roughly a third of a 393pt phone.
 const double _markWidth = 132;
 
 /// Pure black, deliberately not `KolabingColors.ink` (#19150F). It has to match
 /// the icon asset's own ground and the native launch screen exactly, or the
 /// hand-off shows a seam.
 const Color _splashBlack = Color(0xFF000000);
+
+/// The unfilled part of the mark. Present enough to read as the letter, dim
+/// enough that the fill line is the thing you watch.
+const double _emptyOpacity = 0.22;
 
 /// Splash screen states
 enum _SplashPhase {
@@ -40,8 +57,7 @@ enum _SplashPhase {
   exiting,
 }
 
-/// The opening screen: the K mark on black, and a bar that says work is
-/// happening (#181).
+/// The opening screen: the K fills up while the app starts (#181).
 ///
 /// It used to show the cloud lockup on yellow and hold for a flat **2000 ms**
 /// whatever the app was doing — so a fast start waited for nothing, a slow one
@@ -51,10 +67,12 @@ enum _SplashPhase {
 /// * the ground is the icon's own **pure black**, continuing the tile straight
 ///   into the app — the native launch screen paints the same black, so there is
 ///   no white flash and no colour jump on the way in;
-/// * the mark is the new K;
-/// * a slim indeterminate bar sweeps underneath, which is the "loading" part;
+/// * the mark is the new K, and it **fills from the bottom** on a loop while the
+///   work runs. The fill IS the loading indicator: a sweeping bar underneath did
+///   the same job with less of the brand in it;
 /// * the hold ends when initialisation ends, floored at [_minHold] so a fast
-///   start does not flash the brand and vanish.
+///   start does not flash the brand and vanish. On the way out the mark tops up
+///   to full first, so it never leaves mid-drain.
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
@@ -70,6 +88,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   /// Animation controller for exit fade
   late final AnimationController _exitController;
 
+  /// The fill level, looping up and down until the app is ready.
+  late final AnimationController _fillController;
+
+  /// The waterline's travel, independent of the fill.
+  late final AnimationController _waveController;
+
   /// Opacity animation for entry
   late final Animation<double> _opacityAnimation;
 
@@ -78,6 +102,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
   /// Exit opacity animation
   late final Animation<double> _exitOpacityAnimation;
+
+  /// Eased fill, so the level slows at the top and bottom of its travel.
+  late final Animation<double> _fill;
 
   /// Current splash phase
   _SplashPhase _phase = _SplashPhase.entering;
@@ -116,6 +143,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       vsync: this,
     );
 
+    _fillController = AnimationController(duration: _fillDuration, vsync: this);
+
+    _waveController = AnimationController(duration: _waveDuration, vsync: this);
+
     _opacityAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -130,6 +161,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       begin: 1.0,
       end: 0.0,
     ).animate(CurvedAnimation(parent: _exitController, curve: Curves.easeIn));
+
+    _fill = CurvedAnimation(parent: _fillController, curve: Curves.easeInOut);
+
+    // Reversing rather than restarting: a fill that snapped back to empty would
+    // pop once per cycle, and the drain reads as one breath of the mark.
+    _fillController.repeat(reverse: true);
+    _waveController.repeat();
   }
 
   Future<void> _startSplashSequence() async {
@@ -154,6 +192,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     if (!mounted) return;
     setState(() => _phase = _SplashPhase.exiting);
 
+    // Finish the letter before fading it: whatever the loop happened to be
+    // doing, the mark ends full.
+    _fillController.stop();
+    await _fillController.animateTo(
+      1,
+      duration: _topUpDuration,
+      curve: Curves.easeOut,
+    );
+
+    if (!mounted) return;
     await _exitController.forward();
 
     if (!mounted) return;
@@ -170,6 +218,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   void dispose() {
     _entryController.dispose();
     _exitController.dispose();
+    _fillController.dispose();
+    _waveController.dispose();
     super.dispose();
   }
 
@@ -197,13 +247,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  'assets/brand/kolabing-k-mark.png',
+                _FillingMark(
                   width: _markWidth,
-                  fit: BoxFit.contain,
-                  // The mark carries the brand; the label above says what this
-                  // screen is, so the image itself is decoration to a reader.
-                  excludeFromSemantics: true,
+                  fill: _fill,
+                  wave: _waveController,
                 ),
                 const SizedBox(height: 28),
                 // Brand name — exempt from i18n, like "Kolabing" everywhere.
@@ -215,8 +262,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     letterSpacing: 6,
                   ),
                 ),
-                const SizedBox(height: 40),
-                const _LoadingSweep(width: _markWidth),
               ],
             ),
           ),
@@ -226,86 +271,101 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   );
 }
 
-/// A slim bar with a segment sweeping back and forth.
+/// The K, drawn twice: dim for the part still empty, full-strength for the part
+/// the fill has reached.
 ///
-/// The point of it is honesty: the screen is waiting on real work (token read,
-/// profile fetch, route decision), and a still logo cannot say that. It sweeps
-/// rather than wrapping around, so there is no seam where the segment jumps.
-class _LoadingSweep extends StatefulWidget {
-  const _LoadingSweep({required this.width});
+/// Both layers are the same PNG, so the fill can never disagree with the mark's
+/// shape. The bright copy is clipped to a wavy waterline that rises with [fill],
+/// which is what makes it read as filling rather than as a wipe.
+class _FillingMark extends StatelessWidget {
+  const _FillingMark({
+    required this.width,
+    required this.fill,
+    required this.wave,
+  });
 
   final double width;
 
-  @override
-  State<_LoadingSweep> createState() => _LoadingSweepState();
-}
+  /// 0 = empty, 1 = full.
+  final Animation<double> fill;
 
-class _LoadingSweepState extends State<_LoadingSweep>
-    with SingleTickerProviderStateMixin {
-  static const Duration _sweep = Duration(milliseconds: 1100);
-  static const double _height = 3;
-  static const double _segmentFraction = 0.4;
+  /// Drives the waterline's travel; only its value is used.
+  final Animation<double> wave;
 
-  late final AnimationController _controller = AnimationController(
-    duration: _sweep,
-    vsync: this,
-  );
-
-  late final Animation<double> _position = CurvedAnimation(
-    parent: _controller,
-    curve: Curves.easeInOut,
-  );
+  static const String _asset = 'assets/brand/kolabing-k-mark.png';
 
   @override
-  void initState() {
-    super.initState();
-    _controller.repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(_height);
-
-    return SizedBox(
-      width: widget.width,
-      height: _height,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          // A track, so the bar reads as a bar even at the ends of the sweep.
-          color: KolabingColors.primary.withValues(alpha: 0.18),
-          borderRadius: radius,
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: Listenable.merge([fill, wave]),
+    builder: (context, _) => Stack(
+      alignment: Alignment.center,
+      children: [
+        // The empty vessel.
+        Image.asset(
+          _asset,
+          width: width,
+          fit: BoxFit.contain,
+          color: KolabingColors.primary.withValues(alpha: _emptyOpacity),
+          // srcIn, so the tint replaces the mark's own yellow inside its alpha
+          // rather than painting a rectangle over it.
+          colorBlendMode: BlendMode.srcIn,
+          excludeFromSemantics: true,
         ),
-        child: ClipRRect(
-          borderRadius: radius,
-          child: AnimatedBuilder(
-            animation: _position,
-            builder: (context, _) => Align(
-              // -1 = hard left, 1 = hard right.
-              alignment: Alignment(_position.value * 2 - 1, 0),
-              child: FractionallySizedBox(
-                widthFactor: _segmentFraction,
-                // heightFactor matters: without it the height constraint
-                // arrives loose, a childless DecoratedBox takes the smallest
-                // size it can, and the segment renders 0px tall — the track
-                // showed and nothing moved along it.
-                heightFactor: 1,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: KolabingColors.primary,
-                    borderRadius: radius,
-                  ),
-                ),
-              ),
-            ),
+        // The filled part.
+        ClipPath(
+          clipper: _WaterlineClipper(fill: fill.value, phase: wave.value),
+          child: Image.asset(
+            _asset,
+            width: width,
+            fit: BoxFit.contain,
+            excludeFromSemantics: true,
           ),
         ),
-      ),
-    );
+      ],
+    ),
+  );
+}
+
+/// Everything below a gently moving waterline.
+class _WaterlineClipper extends CustomClipper<Path> {
+  const _WaterlineClipper({required this.fill, required this.phase});
+
+  /// 0 = clip everything away, 1 = keep all of it.
+  final double fill;
+
+  /// 0..1, one full wavelength of travel.
+  final double phase;
+
+  /// Peak-to-trough is twice this. Small on purpose: the mark is 132pt wide and
+  /// a tall wave would read as a wobble in the letter itself.
+  static const double _amplitude = 3.5;
+
+  /// Waves across the mark's width.
+  static const double _cycles = 1.5;
+
+  @override
+  Path getClip(Size size) {
+    // Overshoot top and bottom so a full or empty mark has no hairline of the
+    // wrong layer showing at the extremes.
+    final level = size.height * (1 - fill);
+    // Flatten the wave as the level reaches either end, where a wave would
+    // otherwise cut a notch out of the finished letter.
+    final ends = math.sin(fill.clamp(0.0, 1.0) * math.pi);
+    final amplitude = _amplitude * ends;
+
+    final path = Path()..moveTo(0, level);
+    for (double x = 0; x <= size.width; x += 2) {
+      final t = x / size.width * _cycles * 2 * math.pi;
+      path.lineTo(x, level + amplitude * math.sin(t + phase * 2 * math.pi));
+    }
+    path
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    return path;
   }
+
+  @override
+  bool shouldReclip(_WaterlineClipper oldClipper) =>
+      oldClipper.fill != fill || oldClipper.phase != phase;
 }
