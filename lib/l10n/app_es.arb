@@ -2470,5 +2470,16 @@
   "communityRewardsPaused": "En pausa",
   "communityRewardsLoadFailed": "No se ha podido cargar esta lista",
   "communityRewardsDeleteFailed": "No se ha podido eliminar. Inténtalo de nuevo.",
-  "communityManageCoverNotSaved": "No se ha guardado la portada. Inténtalo más tarde."
+  "communityManageCoverNotSaved": "No se ha guardado la portada. Inténtalo más tarde.",
+  "challengeCameraSoloTitle": "Haz la foto",
+  "challengeCameraPairTitle": "Hacedla juntos",
+  "challengeCameraOpen": "Abrir cámara",
+  "challengeCameraUse": "Usar esta foto",
+  "challengeCameraRetake": "Hacer otra",
+  "challengeCameraOpenSettings": "Abrir ajustes",
+  "challengeCameraPermissionBody": "Kolabing no puede acceder a la cámara. Actívala en ajustes o deja este reto.",
+  "challengeCameraFailed": "La foto no se ha enviado. Inténtalo de nuevo.",
+  "challengeTogetherMetPerson": "Has conocido a {name}",
+  "challengeTogetherAddFriend": "Añadir a amigos",
+  "challengeTogetherFriendRequested": "Solicitud enviada"
 }

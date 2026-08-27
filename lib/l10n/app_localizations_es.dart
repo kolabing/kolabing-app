@@ -8485,4 +8485,41 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get communityManageCoverNotSaved =>
       'No se ha guardado la portada. Inténtalo más tarde.';
+
+  @override
+  String get challengeCameraSoloTitle => 'Haz la foto';
+
+  @override
+  String get challengeCameraPairTitle => 'Hacedla juntos';
+
+  @override
+  String get challengeCameraOpen => 'Abrir cámara';
+
+  @override
+  String get challengeCameraUse => 'Usar esta foto';
+
+  @override
+  String get challengeCameraRetake => 'Hacer otra';
+
+  @override
+  String get challengeCameraOpenSettings => 'Abrir ajustes';
+
+  @override
+  String get challengeCameraPermissionBody =>
+      'Kolabing no puede acceder a la cámara. Actívala en ajustes o deja este reto.';
+
+  @override
+  String get challengeCameraFailed =>
+      'La foto no se ha enviado. Inténtalo de nuevo.';
+
+  @override
+  String challengeTogetherMetPerson(String name) {
+    return 'Has conocido a $name';
+  }
+
+  @override
+  String get challengeTogetherAddFriend => 'Añadir a amigos';
+
+  @override
+  String get challengeTogetherFriendRequested => 'Solicitud enviada';
 }

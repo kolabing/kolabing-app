@@ -14803,6 +14803,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The cover was not saved. Please try again later.'**
   String get communityManageCoverNotSaved;
+
+  /// Title of the camera step for a challenge you do alone.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the photo'**
+  String get challengeCameraSoloTitle;
+
+  /// Title of the camera step for a challenge two people do together.
+  ///
+  /// In en, this message translates to:
+  /// **'Take it together'**
+  String get challengeCameraPairTitle;
+
+  /// Button that opens the camera for a challenge photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Open camera'**
+  String get challengeCameraOpen;
+
+  /// Button that keeps the photo just taken.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this photo'**
+  String get challengeCameraUse;
+
+  /// Button that discards the photo and reopens the camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Take another'**
+  String get challengeCameraRetake;
+
+  /// Button shown when camera permission was refused.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get challengeCameraOpenSettings;
+
+  /// Shown when the OS refuses camera access during a challenge.
+  ///
+  /// In en, this message translates to:
+  /// **'Kolabing can\'t reach the camera. Turn it on in settings, or leave this challenge.'**
+  String get challengeCameraPermissionBody;
+
+  /// Shown when taking the photo failed for a reason other than permission.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo didn\'t come through. Try again.'**
+  String get challengeCameraFailed;
+
+  /// The reveal line naming the person you just met, shown instead of leading with the points.
+  ///
+  /// In en, this message translates to:
+  /// **'You met {name}'**
+  String challengeTogetherMetPerson(String name);
+
+  /// Optional action on the reveal that sends a friend request to the person you met.
+  ///
+  /// In en, this message translates to:
+  /// **'Add friend'**
+  String get challengeTogetherAddFriend;
+
+  /// Disabled state of the add-friend action once the request has gone out.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent'**
+  String get challengeTogetherFriendRequested;
 }
 
 class _AppLocalizationsDelegate

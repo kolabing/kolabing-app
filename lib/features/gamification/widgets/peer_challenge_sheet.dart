@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -15,6 +17,8 @@ import '../providers/checkin_provider.dart';
 import '../providers/peer_profile_provider.dart';
 import '../providers/todays_events_provider.dart';
 import '../services/checkin_service.dart';
+import '../screens/challenge_camera_screen.dart';
+import '../services/challenge_photo_queue.dart';
 import 'challenge_card.dart';
 import 'challenge_failure_message.dart';
 
@@ -41,6 +45,7 @@ class PeerSheetResult {
     this.challengeName,
     this.challengeDescription,
     this.points,
+    this.photoPath,
   });
 
   final PeerSheetOutcome outcome;
@@ -57,6 +62,12 @@ class PeerSheetResult {
   final String? challengeDescription;
 
   final int? points;
+
+  /// The frame this challenge produced, when it asked for one (#183). Local
+  /// path, not a URL: it is shown on the shared screen straight away and
+  /// uploaded in the background, because the moment must not wait on venue
+  /// wifi.
+  final String? photoPath;
 }
 
 /// Step 2 of the loop: paired with another member, pick one of **this event's**
@@ -109,11 +120,26 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
       return;
     }
 
+    final l10n = AppLocalizations.of(context);
+
+    // The camera comes BEFORE the request, for the same reason the flow was
+    // reversed in #152: nothing is sent to the other person until this side has
+    // actually gone through with it. Backing out of the camera backs out of the
+    // whole challenge, and nobody's phone lights up.
+    String? photoPath;
+    if (challenge.needsCamera) {
+      photoPath = await ChallengeCameraScreen.open(context, challenge);
+      if (!mounted) return;
+      if (photoPath == null) {
+        setState(() => _startingChallengeId = null);
+        return;
+      }
+    }
+
     setState(() {
       _startingChallengeId = challenge.id;
       _error = null;
     });
-    final l10n = AppLocalizations.of(context);
 
     final completion = await ref
         .read(initiateChallengeProvider.notifier)
@@ -136,6 +162,17 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
       return;
     }
 
+    // Fire and forget: the upload must never stand between these two people and
+    // their reveal. A failure here costs the wall a frame, never the XP.
+    if (photoPath != null) {
+      unawaited(
+        ChallengePhotoQueue().enqueue(
+          eventId: session.eventId,
+          filePath: photoPath,
+        ),
+      );
+    }
+
     Navigator.of(context).pop(
       PeerSheetResult(
         PeerSheetOutcome.challengeStarted,
@@ -144,6 +181,7 @@ class _PeerChallengeSheetState extends ConsumerState<PeerChallengeSheet> {
         challengeName: challenge.name,
         challengeDescription: challenge.description,
         points: challenge.points,
+        photoPath: photoPath,
       ),
     );
   }

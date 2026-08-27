@@ -8403,4 +8403,41 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get communityManageCoverNotSaved =>
       'The cover was not saved. Please try again later.';
+
+  @override
+  String get challengeCameraSoloTitle => 'Take the photo';
+
+  @override
+  String get challengeCameraPairTitle => 'Take it together';
+
+  @override
+  String get challengeCameraOpen => 'Open camera';
+
+  @override
+  String get challengeCameraUse => 'Use this photo';
+
+  @override
+  String get challengeCameraRetake => 'Take another';
+
+  @override
+  String get challengeCameraOpenSettings => 'Open settings';
+
+  @override
+  String get challengeCameraPermissionBody =>
+      'Kolabing can\'t reach the camera. Turn it on in settings, or leave this challenge.';
+
+  @override
+  String get challengeCameraFailed =>
+      'The photo didn\'t come through. Try again.';
+
+  @override
+  String challengeTogetherMetPerson(String name) {
+    return 'You met $name';
+  }
+
+  @override
+  String get challengeTogetherAddFriend => 'Add friend';
+
+  @override
+  String get challengeTogetherFriendRequested => 'Request sent';
 }

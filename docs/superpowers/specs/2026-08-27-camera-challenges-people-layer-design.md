@@ -111,8 +111,8 @@ A picks a challenge → "This person isn't on Kolabing"
   → A shares an invite in one tap (share_plus → WhatsApp / SMS)
   → XP IS NOT PAID YET, but it is named on screen:
       "Ana gets 15 XP for both of you when she joins"
-  → Ana installs, the deep link opens, she creates an attendee account
-    and checks in to that community
+  → Ana installs, gets in via the link OR the claim code (below),
+    creates an attendee account and checks in to that community
   → the token claims the row → the reverse row is created
   → BOTH are paid retroactively + push to A: "Ana joined — 15 XP landed"
 ```
@@ -129,7 +129,28 @@ aversion does the work.
 - **max 3 unclaimed ghosts per attendee per event**;
 - unclaimed rows expire silently: no notification, no penalty, no shaming.
 
-### 3.3 Hard prerequisite
+### 3.3 A Universal Link alone cannot do this job
+
+Found while building, and it corrects the flow above: **a Universal Link does
+not survive an install.** Tapping `https://kolabing.com/i/<token>` on a phone
+that has the app opens the app with the token; on a phone that does *not*, it
+opens a web page, and the token is lost on the trip through the App Store.
+Firebase Dynamic Links, which used to solve exactly this, shut down in 2025.
+
+Since the entire point of a ghost invite is a person **without** the app, the
+token needs a second door. One token, two ways in:
+
+| Situation | Path |
+|---|---|
+| Ana already has the app | the Universal Link opens it directly |
+| Ana does not | the landing page shows a short **claim code**; she types it during onboarding |
+
+So the landing page is a real page (who invited her, to what, the code, the
+store buttons), and attendee onboarding gains an "I have an invite code" field —
+the same shape as the referral code UI already in the app. No third-party
+attribution vendor.
+
+### 3.4 Hard prerequisite
 
 There is **no deep-link package in the project today** — `app_links`,
 `uni_links`, `firebase_dynamic_links` are all absent from `pubspec.yaml`. Nothing
