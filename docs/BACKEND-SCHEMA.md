@@ -204,7 +204,22 @@ event_rewards`; `chat_messages`; `challenges, challenge_completions,
 collaboration_challenges, encounters`; `badges, badge_awards, earned_badges`; gamification
 (`point_ledger, wallets, reward_claims, withdrawal_requests, referral_codes,
 referral_redemptions`); `notifications, notification_preferences,
-notification_reminders`; `personal_access_tokens` (Sanctum); Laravel internals
+notification_reminders`;
+
+> **2026-08-28 (kolabing-v2#252)** — two columns added for event reminders:
+> `notification_preferences.events_enabled` (boolean, DEFAULT **true** — opt-out, so
+> the app's "Event reminders" toggle does not ship already off) and
+> `events.ics_sequence` (unsigned int, DEFAULT 0 — the ICS `SEQUENCE`, bumped only
+> when an event's time or place changes so a calendar updates the entry someone
+> already has instead of adding a second one).
+>
+> `notification_reminders` is a **generic reminder chain**, not a per-feature table:
+> `profile_id, type, entity_id, entity_type, anchor_at, next_sequence,
+> last_sent_sequence, scheduled_for, sent_at, cancelled_at, meta`, unique on
+> `(profile_id, type, entity_id, entity_type)`. `scheduled_for` is
+> `anchor_at + cadence[i]` hours, so a **negative** cadence means "before the
+> anchor" — how the 24h/1h event reminders work with no new machinery.
+> `personal_access_tokens` (Sanctum); Laravel internals
 (`cache, cache_locks, jobs, job_batches, failed_jobs, sessions, migrations,
 password_reset_tokens`).
 

@@ -94,4 +94,28 @@ void main() {
     expect(notification.deeplink, '/collaboration/col-1');
     expect(notification.priority, NotificationPriority.normal);
   });
+
+  test('fromJson parses the event reminder types and round-trips them', () {
+    const cases = <String, NotificationType>{
+      'event_reminder_24h': NotificationType.eventReminder24h,
+      'event_reminder_1h': NotificationType.eventReminder1h,
+    };
+
+    cases.forEach((rawType, expectedType) {
+      final notification = AppNotification.fromJson(<String, dynamic>{
+        'id': 'notif-$rawType',
+        'type': rawType,
+        'title': 'Reminder',
+        'body': 'Your event is coming up',
+        'is_read': false,
+        'created_at': '2026-08-28T10:20:30Z',
+        'target_id': 'event-1',
+        'target_type': 'event',
+      });
+
+      expect(notification.type, expectedType);
+      expect(notification.rawType, rawType);
+      expect(expectedType.toJson(), rawType);
+    });
+  });
 }

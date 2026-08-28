@@ -71,4 +71,29 @@ void main() {
       expect(route, KolabingRoutes.notifications);
     },
   );
+
+  test('resolveNotificationRoute routes event reminders to event detail', () {
+    for (final type in const ['event_reminder_24h', 'event_reminder_1h']) {
+      expect(
+        resolveNotificationRoute(type: type, id: 'event-1'),
+        '/event/event-1',
+        reason: '$type should open the event, not the notifications list',
+      );
+    }
+  });
+
+  test('resolveNotificationRoute keeps an event deeplink over the type branch', () {
+    // A path-form deeplink wins over the type-derived route when they disagree.
+    // NB: a custom-scheme deeplink (`kolabing://event/event-2`) does NOT work
+    // here — Uri parsing eats `event` as the host, leaving an unsupported
+    // `/event-2` path. Logged as FX in BACKLOG; the type branch masks it today.
+    expect(
+      resolveNotificationRoute(
+        type: 'event_reminder_1h',
+        id: 'event-1',
+        deeplink: '/event/event-2',
+      ),
+      '/event/event-2',
+    );
+  });
 }
