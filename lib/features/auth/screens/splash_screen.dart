@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +7,7 @@ import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../widgets/brand/kolabing_k_mark.dart';
 import '../providers/auth_state_provider.dart';
 
 /// Entry fade + scale.
@@ -40,10 +39,6 @@ const double _markWidth = 132;
 /// the icon asset's own ground and the native launch screen exactly, or the
 /// hand-off shows a seam.
 const Color _splashBlack = Color(0xFF000000);
-
-/// The unfilled part of the mark. Present enough to read as the letter, dim
-/// enough that the fill line is the thing you watch.
-const double _emptyOpacity = 0.22;
 
 /// Splash screen states
 enum _SplashPhase {
@@ -247,10 +242,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _FillingMark(
-                  width: _markWidth,
-                  fill: _fill,
-                  wave: _waveController,
+                AnimatedBuilder(
+                  animation: Listenable.merge([_fill, _waveController]),
+                  builder: (context, _) => KolabingKMark(
+                    width: _markWidth,
+                    fill: _fill.value,
+                    phase: _waveController.value,
+                  ),
                 ),
                 const SizedBox(height: 28),
                 // Brand name — exempt from i18n, like "Kolabing" everywhere.
@@ -269,103 +267,4 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       ),
     ),
   );
-}
-
-/// The K, drawn twice: dim for the part still empty, full-strength for the part
-/// the fill has reached.
-///
-/// Both layers are the same PNG, so the fill can never disagree with the mark's
-/// shape. The bright copy is clipped to a wavy waterline that rises with [fill],
-/// which is what makes it read as filling rather than as a wipe.
-class _FillingMark extends StatelessWidget {
-  const _FillingMark({
-    required this.width,
-    required this.fill,
-    required this.wave,
-  });
-
-  final double width;
-
-  /// 0 = empty, 1 = full.
-  final Animation<double> fill;
-
-  /// Drives the waterline's travel; only its value is used.
-  final Animation<double> wave;
-
-  static const String _asset = 'assets/brand/kolabing-k-mark.png';
-
-  @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: Listenable.merge([fill, wave]),
-    builder: (context, _) => Stack(
-      alignment: Alignment.center,
-      children: [
-        // The empty vessel.
-        Image.asset(
-          _asset,
-          width: width,
-          fit: BoxFit.contain,
-          color: KolabingColors.primary.withValues(alpha: _emptyOpacity),
-          // srcIn, so the tint replaces the mark's own yellow inside its alpha
-          // rather than painting a rectangle over it.
-          colorBlendMode: BlendMode.srcIn,
-          excludeFromSemantics: true,
-        ),
-        // The filled part.
-        ClipPath(
-          clipper: _WaterlineClipper(fill: fill.value, phase: wave.value),
-          child: Image.asset(
-            _asset,
-            width: width,
-            fit: BoxFit.contain,
-            excludeFromSemantics: true,
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-/// Everything below a gently moving waterline.
-class _WaterlineClipper extends CustomClipper<Path> {
-  const _WaterlineClipper({required this.fill, required this.phase});
-
-  /// 0 = clip everything away, 1 = keep all of it.
-  final double fill;
-
-  /// 0..1, one full wavelength of travel.
-  final double phase;
-
-  /// Peak-to-trough is twice this. Small on purpose: the mark is 132pt wide and
-  /// a tall wave would read as a wobble in the letter itself.
-  static const double _amplitude = 3.5;
-
-  /// Waves across the mark's width.
-  static const double _cycles = 1.5;
-
-  @override
-  Path getClip(Size size) {
-    // Overshoot top and bottom so a full or empty mark has no hairline of the
-    // wrong layer showing at the extremes.
-    final level = size.height * (1 - fill);
-    // Flatten the wave as the level reaches either end, where a wave would
-    // otherwise cut a notch out of the finished letter.
-    final ends = math.sin(fill.clamp(0.0, 1.0) * math.pi);
-    final amplitude = _amplitude * ends;
-
-    final path = Path()..moveTo(0, level);
-    for (double x = 0; x <= size.width; x += 2) {
-      final t = x / size.width * _cycles * 2 * math.pi;
-      path.lineTo(x, level + amplitude * math.sin(t + phase * 2 * math.pi));
-    }
-    path
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(_WaterlineClipper oldClipper) =>
-      oldClipper.fill != fill || oldClipper.phase != phase;
 }

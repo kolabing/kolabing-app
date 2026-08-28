@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../config/theme/colors.dart';
+import '../brand/kolabing_k_mark.dart';
 import 'profile_avatar_button.dart';
 
 /// Kolabing standard app bar — yellow background, charcoal text/icons.
@@ -27,11 +28,10 @@ class KolabingAppBar extends StatelessWidget implements PreferredSizeWidget {
               onPressed: () => Navigator.of(context).pop(),
             )
           : null,
-      title: Image.asset(
-        'assets/brand/kolabing-wordmark-dark.png',
-        height: 34,
-        fit: BoxFit.contain,
-      ),
+      // The K, dark on the yellow bar, filling itself once as the screen
+      // arrives. It replaces the flat wordmark PNG: same mark as the app icon
+      // and the splash, so the brand is one shape everywhere.
+      title: AnimatedKolabingKMark(width: 34, color: context.colors.charcoal),
       centerTitle: true,
       // Chat moved to the bottom-nav (NF-12); the avatar opens the now-hidden
       // profile (community/attendee have no Profile tab anymore).
