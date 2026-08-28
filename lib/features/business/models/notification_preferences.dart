@@ -7,6 +7,7 @@ class NotificationPreferences {
     this.applicationsEnabled = true,
     this.collaborationsEnabled = true,
     this.rewardsEnabled = true,
+    this.eventsEnabled = true,
     this.marketingEnabled = false,
     this.quietHoursStart,
     this.quietHoursEnd,
@@ -32,6 +33,9 @@ class NotificationPreferences {
             json['collaboration_updates'] as bool? ??
             true,
         rewardsEnabled: json['rewards_enabled'] as bool? ?? true,
+        // #191: defaults ON. Opt-out, not opt-in — a missing key must never
+        // silence event reminders for a user who never opened Settings.
+        eventsEnabled: json['events_enabled'] as bool? ?? true,
         marketingEnabled:
             json['marketing_enabled'] as bool? ??
             json['marketing_tips'] as bool? ??
@@ -47,6 +51,7 @@ class NotificationPreferences {
   final bool applicationsEnabled;
   final bool collaborationsEnabled;
   final bool rewardsEnabled;
+  final bool eventsEnabled;
   final bool marketingEnabled;
   final String? quietHoursStart;
   final String? quietHoursEnd;
@@ -69,6 +74,7 @@ class NotificationPreferences {
     'applications_enabled': applicationsEnabled,
     'collaborations_enabled': collaborationsEnabled,
     'rewards_enabled': rewardsEnabled,
+    'events_enabled': eventsEnabled,
     'marketing_enabled': marketingEnabled,
     'quiet_hours_start': quietHoursStart,
     'quiet_hours_end': quietHoursEnd,
@@ -82,6 +88,7 @@ class NotificationPreferences {
     bool? applicationsEnabled,
     bool? collaborationsEnabled,
     bool? rewardsEnabled,
+    bool? eventsEnabled,
     bool? marketingEnabled,
     String? quietHoursStart,
     String? quietHoursEnd,
@@ -93,6 +100,7 @@ class NotificationPreferences {
     applicationsEnabled: applicationsEnabled ?? this.applicationsEnabled,
     collaborationsEnabled: collaborationsEnabled ?? this.collaborationsEnabled,
     rewardsEnabled: rewardsEnabled ?? this.rewardsEnabled,
+    eventsEnabled: eventsEnabled ?? this.eventsEnabled,
     marketingEnabled: marketingEnabled ?? this.marketingEnabled,
     quietHoursStart: quietHoursStart ?? this.quietHoursStart,
     quietHoursEnd: quietHoursEnd ?? this.quietHoursEnd,
