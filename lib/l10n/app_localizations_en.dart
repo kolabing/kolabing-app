@@ -5600,6 +5600,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Status changes on your Kolabs';
 
   @override
+  String get notifSettingsEvents => 'Event reminders';
+
+  @override
+  String get notifSettingsEventsSubtitle =>
+      'A day before and an hour before events you\'re going to';
+
+  @override
   String get notifSettingsMarketing => 'Tips & updates';
 
   @override

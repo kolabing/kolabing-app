@@ -7021,6 +7021,14 @@
   "@notifSettingsCollaborationsSubtitle": {
     "description": "Notification settings: collaboration updates subtitle"
   },
+  "notifSettingsEvents": "Event reminders",
+  "@notifSettingsEvents": {
+    "description": "Notification settings: event reminders toggle"
+  },
+  "notifSettingsEventsSubtitle": "A day before and an hour before events you're going to",
+  "@notifSettingsEventsSubtitle": {
+    "description": "Notification settings: event reminders subtitle"
+  },
   "notifSettingsMarketing": "Tips & updates",
   "@notifSettingsMarketing": {
     "description": "Notification settings: marketing toggle"

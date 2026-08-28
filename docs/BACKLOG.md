@@ -58,8 +58,8 @@ Each item lists what exists now, what's missing, and any open decisions. See ref
 - iOS/Android deep linking, thread IDs, interruption levels, badge counts all configured.
 
 **P1 — gaps that block real-world use:**
-- [ ] **`NotificationPreference` isn't respected.** `Profile` has the relation, the table exists, but no runtime filter inside `NotificationService` — all pushes go regardless of opt-out. Owner: **backend**.
-- [ ] **Schedule the reminders cron.** Audit found `notifications:send-reminders` exists but isn't registered in `routes/console.php` (collab reminders are; this one isn't). Owner: **backend**.
+- [x] ~~**`NotificationPreference` isn't respected.**~~ **CORRECTED + FIXED 2026-08-28 (kolabing-v2#252).** The original claim was half wrong: the *email* side-effect (`EMAIL_MAP` + `EmailService::CATEGORY_*`) and chat (`recipientsAllowingMessages()`) always honoured preferences, both defaulting ON for a missing row. What was genuinely ungated was **push and in-app**. `createNotification()` now consults a `PREFERENCE_MAP` before dispatching push — one choke point, every type through it. `marketing_tips` is deliberately mapped to nothing (its column defaults FALSE, so wiring the nudge types to it would retroactively mute them for every profile with a row — a product call).
+- [x] ~~**Schedule the reminders cron.**~~ **STALE — it always was registered.** Verified 2026-08-28 against `kolabing-v2/routes/console.php`: `Schedule::command('notifications:send-reminders')->everyFifteenMinutes()->withoutOverlapping()`. The audit that produced this line was wrong, and the #191 contract inherited the error (it specified a whole new command and cron that were never needed).
 - [ ] Trigger the four enum types currently defined but never dispatched: `BadgeAwarded`, `GamificationBadgeEarned`, `PointsEarned`, `WithdrawalProcessed`. Owner: **backend** (wire from `GamificationWalletService` + `WithdrawalService`).
 - [ ] Subscription state pushes — renewal succeeded, payment failed, sub cancelled (depends on §3 Stripe ship; Apple IAP webhook should trigger these too). Owner: **backend**.
 

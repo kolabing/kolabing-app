@@ -5691,6 +5691,13 @@ class AppLocalizationsCa extends AppLocalizations {
       'Canvis d\'estat als teus Kolabs';
 
   @override
+  String get notifSettingsEvents => 'Recordatoris d\'esdeveniments';
+
+  @override
+  String get notifSettingsEventsSubtitle =>
+      'Un dia abans i una hora abans dels esdeveniments on vas';
+
+  @override
   String get notifSettingsMarketing => 'Consells i novetats';
 
   @override

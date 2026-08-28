@@ -1657,6 +1657,8 @@
   "notifSettingsApplicationsSubtitle": "Quan algú es postula al teu Kolab",
   "notifSettingsCollaborations": "Actualitzacions de col·laboracions",
   "notifSettingsCollaborationsSubtitle": "Canvis d'estat als teus Kolabs",
+  "notifSettingsEvents": "Recordatoris d'esdeveniments",
+  "notifSettingsEventsSubtitle": "Un dia abans i una hora abans dels esdeveniments on vas",
   "notifSettingsMarketing": "Consells i novetats",
   "notifSettingsMarketingSubtitle": "Consells de producte i notícies ocasionals",
   "notifSettingsSaveError": "No s'ha pogut desar la teva preferència. Torna-ho a provar.",

@@ -9980,6 +9980,18 @@ abstract class AppLocalizations {
   /// **'Status changes on your Kolabs'**
   String get notifSettingsCollaborationsSubtitle;
 
+  /// Notification settings: event reminders toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Event reminders'**
+  String get notifSettingsEvents;
+
+  /// Notification settings: event reminders subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'A day before and an hour before events you\'re going to'**
+  String get notifSettingsEventsSubtitle;
+
   /// Notification settings: marketing toggle
   ///
   /// In en, this message translates to:

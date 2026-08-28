@@ -1657,6 +1657,8 @@
   "notifSettingsApplicationsSubtitle": "Cuando alguien se postula a tu Kolab",
   "notifSettingsCollaborations": "Actualizaciones de colaboraciones",
   "notifSettingsCollaborationsSubtitle": "Cambios de estado en tus Kolabs",
+  "notifSettingsEvents": "Recordatorios de eventos",
+  "notifSettingsEventsSubtitle": "Un día antes y una hora antes de los eventos a los que vas",
   "notifSettingsMarketing": "Consejos y novedades",
   "notifSettingsMarketingSubtitle": "Consejos de producto y noticias ocasionales",
   "notifSettingsSaveError": "No se pudo guardar tu preferencia. Inténtalo de nuevo.",

@@ -102,6 +102,15 @@ class _Toggles extends ConsumerWidget {
           onChanged: (v) =>
               _save(context, ref, prefs.copyWith(collaborationsEnabled: v)),
         ),
+        // #191 — sits with the transactional toggles, above "Tips & updates":
+        // an event reminder is time-critical, not marketing.
+        SwitchListTile(
+          value: prefs.eventsEnabled,
+          title: Text(l10n.notifSettingsEvents),
+          subtitle: Text(l10n.notifSettingsEventsSubtitle),
+          onChanged: (v) =>
+              _save(context, ref, prefs.copyWith(eventsEnabled: v)),
+        ),
         SwitchListTile(
           value: prefs.marketingEnabled,
           title: Text(l10n.notifSettingsMarketing),

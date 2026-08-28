@@ -34,13 +34,23 @@ class NotificationSettingsNotifier
       final saved = await ref
           .read(profileServiceProvider)
           .updateNotificationPreferences(_payload(updated));
-      state = AsyncData(saved);
+      // `events_enabled` is kept from what we just sent rather than from the
+      // response. `notification_preferences` has no such column yet
+      // (kolabing-v2#252), so the 200 body omits the key, `fromJson` defaults it
+      // back to true, and the switch would visibly snap back on a moment after
+      // the tap. Once the column ships the server echoes the same value, so
+      // this stays harmless — it is a floor, not an override.
+      state = AsyncData(saved.copyWith(eventsEnabled: updated.eventsEnabled));
     } catch (e) {
       state = previous;
       rethrow;
     }
   }
 
+  /// NOTE: a hand-written whitelist, deliberately not `p.toJson()` (which also
+  /// carries nullable quiet-hours/timezone strings this `Map<String, bool>`
+  /// cannot hold). Adding a preference to the model is therefore NOT enough —
+  /// add its wire key here too, or the toggle is a dead switch.
   Map<String, bool> _payload(NotificationPreferences p) => {
     'message_notifications': p.messagesEnabled,
     'messages_enabled': p.messagesEnabled,
@@ -50,6 +60,7 @@ class NotificationSettingsNotifier
     'collaborations_enabled': p.collaborationsEnabled,
     'marketing_tips': p.marketingEnabled,
     'marketing_enabled': p.marketingEnabled,
+    'events_enabled': p.eventsEnabled,
   };
 }
 

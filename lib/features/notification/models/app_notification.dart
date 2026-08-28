@@ -32,6 +32,14 @@ enum NotificationType {
   /// Follow-up reminder for uncompleted collab ("Did it happen?")
   collabFollowUpReminder,
 
+  /// Event reminder, 24 hours before an event the user signed up for
+  eventReminder24h,
+
+  /// Event reminder, 1 hour before. The backend sweep has a catch-up window, so
+  /// this can legitimately arrive later than an hour out — the copy is rendered
+  /// server-side and is duration-relative, never a literal "in 1 hour".
+  eventReminder1h,
+
   /// A collaboration was created from an accepted application
   collaborationCreated,
 
@@ -72,6 +80,10 @@ enum NotificationType {
         return NotificationType.collabDayReminder;
       case 'collab_followup_reminder':
         return NotificationType.collabFollowUpReminder;
+      case 'event_reminder_24h':
+        return NotificationType.eventReminder24h;
+      case 'event_reminder_1h':
+        return NotificationType.eventReminder1h;
       case 'collaboration_created':
         return NotificationType.collaborationCreated;
       case 'collaboration_activated':
@@ -109,6 +121,10 @@ enum NotificationType {
         return 'collab_day_reminder';
       case NotificationType.collabFollowUpReminder:
         return 'collab_followup_reminder';
+      case NotificationType.eventReminder24h:
+        return 'event_reminder_24h';
+      case NotificationType.eventReminder1h:
+        return 'event_reminder_1h';
       case NotificationType.collaborationCreated:
         return 'collaboration_created';
       case NotificationType.collaborationActivated:
