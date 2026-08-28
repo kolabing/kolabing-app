@@ -383,8 +383,7 @@ class _NotificationTile extends StatelessWidget {
       ),
       // Event reminders get their own mark: they are about a time and a place,
       // not about a Kolab's paperwork moving forward.
-      NotificationType.eventReminder24h ||
-      NotificationType.eventReminder1h => (
+      NotificationType.eventReminder24h || NotificationType.eventReminder1h => (
         LucideIcons.calendarClock,
         context.colors.info.withValues(alpha: 0.12),
         context.colors.info,
