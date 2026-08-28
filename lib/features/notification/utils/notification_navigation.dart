@@ -48,6 +48,10 @@ String resolveNotificationRoute({
         ':id',
         normalizedId,
       );
+    // Event reminders carry the EVENT id in `target_id`.
+    case 'event_reminder_24h':
+    case 'event_reminder_1h':
+      return KolabingRoutes.eventDetail.replaceFirst(':id', normalizedId);
     default:
       return KolabingRoutes.notifications;
   }
