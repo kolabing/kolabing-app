@@ -41,6 +41,10 @@ class NotificationSettingsNotifier
     }
   }
 
+  /// NOTE: a hand-written whitelist, deliberately not `p.toJson()` (which also
+  /// carries nullable quiet-hours/timezone strings this `Map<String, bool>`
+  /// cannot hold). Adding a preference to the model is therefore NOT enough —
+  /// add its wire key here too, or the toggle is a dead switch.
   Map<String, bool> _payload(NotificationPreferences p) => {
     'message_notifications': p.messagesEnabled,
     'messages_enabled': p.messagesEnabled,
@@ -50,6 +54,7 @@ class NotificationSettingsNotifier
     'collaborations_enabled': p.collaborationsEnabled,
     'marketing_tips': p.marketingEnabled,
     'marketing_enabled': p.marketingEnabled,
+    'events_enabled': p.eventsEnabled,
   };
 }
 
