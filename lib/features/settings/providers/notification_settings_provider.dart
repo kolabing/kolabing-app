@@ -34,7 +34,13 @@ class NotificationSettingsNotifier
       final saved = await ref
           .read(profileServiceProvider)
           .updateNotificationPreferences(_payload(updated));
-      state = AsyncData(saved);
+      // `events_enabled` is kept from what we just sent rather than from the
+      // response. `notification_preferences` has no such column yet
+      // (kolabing-v2#252), so the 200 body omits the key, `fromJson` defaults it
+      // back to true, and the switch would visibly snap back on a moment after
+      // the tap. Once the column ships the server echoes the same value, so
+      // this stays harmless — it is a floor, not an override.
+      state = AsyncData(saved.copyWith(eventsEnabled: updated.eventsEnabled));
     } catch (e) {
       state = previous;
       rethrow;

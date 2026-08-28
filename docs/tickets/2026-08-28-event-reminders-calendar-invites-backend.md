@@ -12,6 +12,50 @@ cancelled. No Google OAuth anywhere.
 
 ---
 
+## ⚠️ CORRECTIONS — read before anything below (2026-08-28)
+
+This ticket was written from the app side. Checked against `kolabing-v2`, **five of
+its assumptions were wrong**. The corrected design lives in
+**[kolabing-v2#252](https://github.com/kolabing/kolabing-v2/issues/252)** — follow that,
+and treat the sections below as background only.
+
+1. **`notifications:send-reminders` IS scheduled** — `routes/console.php` runs it
+   `everyFifteenMinutes()->withoutOverlapping()`. **No new command, no new cron.**
+   B2's stateless sweep is unnecessary, and the claim in `docs/BACKLOG.md` §2 that the
+   command is unregistered is stale.
+2. **`notification_reminders` is already a generic reminder chain** (`anchor_at`,
+   `next_sequence`, `scheduled_for`, `cancelled_at`, `meta`, unique on
+   `(profile_id, type, entity_id, entity_type)`). **No new table and no send ledger** —
+   that unique key is the idempotency B2 asked for, and `cancelled_at` already models
+   withdrawal.
+3. **`scheduled_for = anchor_at->addHours($cadence[$i])`**, so a **negative cadence**
+   (`[-24]`, `[-1]`) already means "N hours *before* the anchor". Two single-sequence
+   chains per sign-up, one per wire type.
+4. **B1 is wrong about the payload key.** It says "must carry `event_id`" — a key the
+   app never reads. The app takes the target from `data['id']` on push
+   (`notification_service.dart:312,357,397`) and `target_id` from the API
+   (`app_notification.dart:245`). No change is actually needed: the existing
+   `PushNotificationService` already sends `'id' => $targetId`, so passing
+   `targetId: $event->id, targetType: 'event'` to `createNotification()` is enough.
+5. **B3 forgot a column.** It asks only for `events.ics_sequence`, but B6 assumes a
+   `events_enabled` preference key that does not exist. **`notification_preferences`
+   needs `events_enabled` (boolean, NOT NULL DEFAULT true)** plus
+   `UpdateNotificationPreferencesRequest` / `NotificationPreferenceResource` support,
+   or the toggle the app now ships never persists.
+
+**B6 is half done already, and half misdescribed.** `NotificationService` *does* respect
+preferences — but only on two paths: the transactional-email side-effect (`EMAIL_MAP` +
+`EmailService::CATEGORY_*`) and chat (`recipientsAllowingMessages()`), both with
+missing-row-defaults-ON. **Push and in-app are ungated**: `SendPushNotification::dispatch`
+fires before any preference check. So the root fix is one gate at one choke point reusing
+conventions that already exist — not the ground-up refactor this ticket implied.
+
+**Still true as written:** there is no ICS anywhere in `app/`, `resources/` or `config/`,
+so the calendar half (B4/B5) is genuinely new, and `.env.example` ships
+`MAIL_MAILER=log`.
+
+---
+
 ## B0. Verify before you build
 
 - [ ] **Can `notification_reminders` carry the send ledger?** It needs a unique key on
