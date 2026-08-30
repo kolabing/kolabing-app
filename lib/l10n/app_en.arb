@@ -683,6 +683,54 @@
   "@loginSignInButton": {
     "description": "Login screen submit button."
   },
+  "loginBackLabel": "back",
+  "@loginBackLabel": {
+    "description": "Sign-in screen: back link. Lowercase by design — the casing lives here, not in a toUpperCase()/toLowerCase() call, because casing is locale-sensitive."
+  },
+  "loginSignUpLabel": "sign up",
+  "@loginSignUpLabel": {
+    "description": "Sign-in screen: sign-up link in the top bar. Lowercase by design."
+  },
+  "loginHeadingFirstLine": "WELCOME",
+  "@loginHeadingFirstLine": {
+    "description": "Sign-in hero, first line. Already uppercase: the design sets it in Anton all-caps, and uppercasing in Dart would break locales like Turkish."
+  },
+  "loginHeadingSecondLine": "BACK.",
+  "@loginHeadingSecondLine": {
+    "description": "Sign-in hero, second line — the one carrying the yellow highlighter swash. Keep it short; it is a single line."
+  },
+  "loginSubtitle": "pick up where you left off \u2728",
+  "@loginSubtitle": {
+    "description": "Sign-in hero subtitle, set in the handwritten Caveat face and tilted. Lowercase by design; the sparkle is part of the copy."
+  },
+  "loginContinueWithApple": "Continue with Apple",
+  "@loginContinueWithApple": {
+    "description": "Sign-in screen: Apple sign-in button"
+  },
+  "loginContinueWithGoogle": "Continue with Google",
+  "@loginContinueWithGoogle": {
+    "description": "Sign-in screen: Google sign-in button"
+  },
+  "loginOrWithEmail": "or with email",
+  "@loginOrWithEmail": {
+    "description": "Sign-in screen: divider between the social buttons and the email form"
+  },
+  "loginForgotPasswordPrompt": "forgot password?",
+  "@loginForgotPasswordPrompt": {
+    "description": "Sign-in screen: forgot-password link under the fields. Lowercase by design (distinct from loginForgotPassword, which other screens use)."
+  },
+  "loginTogglePasswordVisibility": "Show or hide password",
+  "@loginTogglePasswordVisibility": {
+    "description": "Sign-in screen: tooltip on the eye button inside the password field"
+  },
+  "loginNoAccountPrompt": "new to kolabing?",
+  "@loginNoAccountPrompt": {
+    "description": "Sign-in screen footer, before the create-account link. Lowercase by design; Kolabing keeps its capital as a brand name."
+  },
+  "loginCreateAccountLink": "create an account",
+  "@loginCreateAccountLink": {
+    "description": "Sign-in screen footer: the tappable half of the create-account line"
+  },
   "loginForgotPassword": "Forgot password?",
   "@loginForgotPassword": {
     "description": "Login screen link to the forgot-password flow."

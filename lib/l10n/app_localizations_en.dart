@@ -553,6 +553,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSignInButton => 'Sign in';
 
   @override
+  String get loginBackLabel => 'back';
+
+  @override
+  String get loginSignUpLabel => 'sign up';
+
+  @override
+  String get loginHeadingFirstLine => 'WELCOME';
+
+  @override
+  String get loginHeadingSecondLine => 'BACK.';
+
+  @override
+  String get loginSubtitle => 'pick up where you left off ✨';
+
+  @override
+  String get loginContinueWithApple => 'Continue with Apple';
+
+  @override
+  String get loginContinueWithGoogle => 'Continue with Google';
+
+  @override
+  String get loginOrWithEmail => 'or with email';
+
+  @override
+  String get loginForgotPasswordPrompt => 'forgot password?';
+
+  @override
+  String get loginTogglePasswordVisibility => 'Show or hide password';
+
+  @override
+  String get loginNoAccountPrompt => 'new to kolabing?';
+
+  @override
+  String get loginCreateAccountLink => 'create an account';
+
+  @override
   String get loginForgotPassword => 'Forgot password?';
 
   @override

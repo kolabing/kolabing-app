@@ -1120,6 +1120,78 @@ abstract class AppLocalizations {
   /// **'Sign in'**
   String get loginSignInButton;
 
+  /// Sign-in screen: back link. Lowercase by design — the casing lives here, not in a toUpperCase()/toLowerCase() call, because casing is locale-sensitive.
+  ///
+  /// In en, this message translates to:
+  /// **'back'**
+  String get loginBackLabel;
+
+  /// Sign-in screen: sign-up link in the top bar. Lowercase by design.
+  ///
+  /// In en, this message translates to:
+  /// **'sign up'**
+  String get loginSignUpLabel;
+
+  /// Sign-in hero, first line. Already uppercase: the design sets it in Anton all-caps, and uppercasing in Dart would break locales like Turkish.
+  ///
+  /// In en, this message translates to:
+  /// **'WELCOME'**
+  String get loginHeadingFirstLine;
+
+  /// Sign-in hero, second line — the one carrying the yellow highlighter swash. Keep it short; it is a single line.
+  ///
+  /// In en, this message translates to:
+  /// **'BACK.'**
+  String get loginHeadingSecondLine;
+
+  /// Sign-in hero subtitle, set in the handwritten Caveat face and tilted. Lowercase by design; the sparkle is part of the copy.
+  ///
+  /// In en, this message translates to:
+  /// **'pick up where you left off ✨'**
+  String get loginSubtitle;
+
+  /// Sign-in screen: Apple sign-in button
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get loginContinueWithApple;
+
+  /// Sign-in screen: Google sign-in button
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get loginContinueWithGoogle;
+
+  /// Sign-in screen: divider between the social buttons and the email form
+  ///
+  /// In en, this message translates to:
+  /// **'or with email'**
+  String get loginOrWithEmail;
+
+  /// Sign-in screen: forgot-password link under the fields. Lowercase by design (distinct from loginForgotPassword, which other screens use).
+  ///
+  /// In en, this message translates to:
+  /// **'forgot password?'**
+  String get loginForgotPasswordPrompt;
+
+  /// Sign-in screen: tooltip on the eye button inside the password field
+  ///
+  /// In en, this message translates to:
+  /// **'Show or hide password'**
+  String get loginTogglePasswordVisibility;
+
+  /// Sign-in screen footer, before the create-account link. Lowercase by design; Kolabing keeps its capital as a brand name.
+  ///
+  /// In en, this message translates to:
+  /// **'new to kolabing?'**
+  String get loginNoAccountPrompt;
+
+  /// Sign-in screen footer: the tappable half of the create-account line
+  ///
+  /// In en, this message translates to:
+  /// **'create an account'**
+  String get loginCreateAccountLink;
+
   /// Login screen link to the forgot-password flow.
   ///
   /// In en, this message translates to:

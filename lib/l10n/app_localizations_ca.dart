@@ -560,6 +560,42 @@ class AppLocalizationsCa extends AppLocalizations {
   String get loginSignInButton => 'Iniciar sessió';
 
   @override
+  String get loginBackLabel => 'enrere';
+
+  @override
+  String get loginSignUpLabel => 'crea un compte';
+
+  @override
+  String get loginHeadingFirstLine => 'BENVINGUT';
+
+  @override
+  String get loginHeadingSecondLine => 'DE NOU.';
+
+  @override
+  String get loginSubtitle => 'continua on ho vas deixar ✨';
+
+  @override
+  String get loginContinueWithApple => 'Continua amb Apple';
+
+  @override
+  String get loginContinueWithGoogle => 'Continua amb Google';
+
+  @override
+  String get loginOrWithEmail => 'o amb el correu';
+
+  @override
+  String get loginForgotPasswordPrompt => 'has oblidat la contrasenya?';
+
+  @override
+  String get loginTogglePasswordVisibility => 'Mostra o amaga la contrasenya';
+
+  @override
+  String get loginNoAccountPrompt => 'ets nou a Kolabing?';
+
+  @override
+  String get loginCreateAccountLink => 'crea un compte';
+
+  @override
   String get loginForgotPassword => 'Has oblidat la contrasenya?';
 
   @override
