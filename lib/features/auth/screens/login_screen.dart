@@ -465,29 +465,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               ),
                             ),
                             const SizedBox(height: _Login.socialTop),
-                            _SocialButton(
-                              label: l10n.loginContinueWithApple,
-                              icon: const Icon(
-                                Icons.apple,
-                                size: _Login.socialIcon,
-                                color: Colors.white,
-                              ),
-                              background: KolabingColors.brandDark,
-                              foreground: Colors.white,
-                              isLoading: _isAppleLoading,
-                              isEnabled: !_anyLoading && !_showSuccess,
-                              onPressed: _handleAppleSignIn,
-                            ),
-                            const SizedBox(height: _Login.socialGap),
-                            _SocialButton(
-                              label: l10n.loginContinueWithGoogle,
-                              icon: const GoogleLogo(size: _Login.socialIcon),
-                              background: Colors.white,
-                              foreground: KolabingColors.brandDark,
-                              bordered: true,
-                              isLoading: _isGoogleLoading,
-                              isEnabled: !_anyLoading && !_showSuccess,
-                              onPressed: _handleGoogleSignIn,
+                            // Side by side rather than stacked, taking variant
+                            // 1b's compact social row from the same design doc.
+                            // Two full-width buttons cost 118pt of a page that
+                            // could not fit its own footer; this costs 52.
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _SocialButton(
+                                    label: _Login.googleLabel,
+                                    semanticLabel: l10n.loginContinueWithGoogle,
+                                    icon: const GoogleLogo(
+                                      size: _Login.socialIcon,
+                                    ),
+                                    background: Colors.white,
+                                    foreground: KolabingColors.brandDark,
+                                    bordered: true,
+                                    isLoading: _isGoogleLoading,
+                                    isEnabled: !_anyLoading && !_showSuccess,
+                                    onPressed: _handleGoogleSignIn,
+                                  ),
+                                ),
+                                const SizedBox(width: _Login.socialGap),
+                                Expanded(
+                                  child: _SocialButton(
+                                    label: _Login.appleLabel,
+                                    semanticLabel: l10n.loginContinueWithApple,
+                                    icon: const Icon(
+                                      Icons.apple,
+                                      size: _Login.socialIcon,
+                                      color: Colors.white,
+                                    ),
+                                    background: KolabingColors.brandDark,
+                                    foreground: Colors.white,
+                                    isLoading: _isAppleLoading,
+                                    isEnabled: !_anyLoading && !_showSuccess,
+                                    onPressed: _handleAppleSignIn,
+                                  ),
+                                ),
+                              ],
                             ),
                             const SizedBox(height: _Login.dividerGap),
                             _OrDivider(label: l10n.loginOrWithEmail),
@@ -754,8 +770,14 @@ abstract final class _Login {
   static const double subtitleTop = 12;
   static const double socialTop = 26;
   static const double socialGap = 10;
-  static const double socialIcon = 18;
-  static const double socialHeight = 54;
+  static const double socialIcon = 17;
+  static const double socialHeight = 52;
+
+  /// Brand names, so they are deliberately not in the ARBs — CLAUDE.md exempts
+  /// them from i18n. The full "Continue with …" phrasing still reaches screen
+  /// readers through [_SocialButton.semanticLabel].
+  static const String googleLabel = 'Google';
+  static const String appleLabel = 'Apple';
   static const double dividerGap = 22;
   static const double fieldHeight = 54;
   static const double fieldGap = 12;
@@ -863,6 +885,7 @@ class _HighlightedText extends StatelessWidget {
 class _SocialButton extends StatelessWidget {
   const _SocialButton({
     required this.label,
+    required this.semanticLabel,
     required this.icon,
     required this.background,
     required this.foreground,
@@ -873,6 +896,11 @@ class _SocialButton extends StatelessWidget {
   });
 
   final String label;
+
+  /// What a screen reader announces — the short visual label would leave a
+  /// blind user with just "Google".
+  final String semanticLabel;
+
   final Widget icon;
   final Color background;
   final Color foreground;
@@ -882,56 +910,60 @@ class _SocialButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    height: _Login.socialHeight,
-    child: Material(
-      color: background,
-      borderRadius: BorderRadius.circular(_Login.socialHeight / 2),
-      child: InkWell(
-        onTap: isEnabled && !isLoading ? onPressed : null,
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    label: semanticLabel,
+    child: SizedBox(
+      height: _Login.socialHeight,
+      child: Material(
+        color: background,
         borderRadius: BorderRadius.circular(_Login.socialHeight / 2),
-        child: Ink(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(_Login.socialHeight / 2),
-            border: bordered
-                ? Border.all(
-                    color: KolabingColors.brandDark.withValues(alpha: 0.12),
-                    width: 1.5,
-                  )
-                : null,
-          ),
-          child: Center(
-            child: isLoading
-                ? SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(foreground),
-                    ),
-                  )
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      icon,
-                      const SizedBox(width: 10),
-                      // Flexible, not bare: the design is drawn at 430pt in
-                      // English, and neither holds everywhere — "Continuar con
-                      // Google" is longer, and a 320pt phone is narrower.
-                      Flexible(
-                        child: Text(
-                          label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: foreground,
+        child: InkWell(
+          onTap: isEnabled && !isLoading ? onPressed : null,
+          borderRadius: BorderRadius.circular(_Login.socialHeight / 2),
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(_Login.socialHeight / 2),
+              border: bordered
+                  ? Border.all(
+                      color: KolabingColors.brandDark.withValues(alpha: 0.12),
+                      width: 1.5,
+                    )
+                  : null,
+            ),
+            child: Center(
+              child: isLoading
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(foreground),
+                      ),
+                    )
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        icon,
+                        const SizedBox(width: 10),
+                        // Flexible, not bare: the design is drawn at 430pt in
+                        // English, and neither holds everywhere — "Continuar con
+                        // Google" is longer, and a 320pt phone is narrower.
+                        Flexible(
+                          child: Text(
+                            label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: foreground,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+            ),
           ),
         ),
       ),

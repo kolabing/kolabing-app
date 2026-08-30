@@ -58,12 +58,14 @@ void main() {
     // The page scrolls rather than clipping on very short screens.
     expect(find.byType(SingleChildScrollView), findsOneWidget);
     // Copy updated for the Mobile Login v2 port (#193): the hero is now two
-    // Anton lines, and the social buttons say what they continue with.
+    // Anton lines, and the social buttons are the compact side-by-side pair
+    // from the design's 1b variant — brand names only, with the full
+    // "Continue with …" phrasing kept for screen readers.
     expect(find.text('WELCOME'), findsOneWidget);
     expect(find.text('BACK.'), findsOneWidget);
     expect(find.text('Sign in'), findsOneWidget);
-    expect(find.text('Continue with Google'), findsOneWidget);
-    expect(find.text('Continue with Apple'), findsOneWidget);
+    expect(find.text('Google'), findsOneWidget);
+    expect(find.text('Apple'), findsOneWidget);
   });
 
   testWidgets('login screen stays stable on iPhone safe-area constraints', (
@@ -78,7 +80,7 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('WELCOME'), findsOneWidget);
-    expect(find.text('Continue with Apple'), findsOneWidget);
+    expect(find.text('Apple'), findsOneWidget);
   });
 
   testWidgets(
@@ -224,7 +226,7 @@ void main() {
     expect(find.byType(AnimatedKolabingKMark), findsOneWidget);
     expect(find.text('WELCOME'), findsOneWidget);
     expect(find.text('BACK.'), findsOneWidget);
-    expect(find.text('Continue with Apple'), findsOneWidget);
+    expect(find.text('Apple'), findsOneWidget);
     expect(find.byType(GoogleLogo), findsOneWidget);
     expect(find.text('or with email'), findsOneWidget);
     expect(find.text('forgot password?'), findsOneWidget);
@@ -234,7 +236,7 @@ void main() {
     );
 
     // The point of variant 1a: the social buttons come before the email form.
-    final apple = tester.getRect(find.text('Continue with Apple'));
+    final apple = tester.getRect(find.text('Apple'));
     final email = tester.getRect(find.text('Email'));
     expect(apple.top, lessThan(email.top));
   });
