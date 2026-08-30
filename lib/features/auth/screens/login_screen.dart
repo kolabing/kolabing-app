@@ -407,11 +407,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     _Login.bottomPad,
                   ),
                   child: ConstrainedBox(
-                    // Lets the footer sit at the bottom when the page fits, and
-                    // scroll away when the keyboard shrinks the viewport —
-                    // the Flutter equivalent of the design's `margin: auto 0 0`.
+                    // Fill the viewport, minus the padding the scroll view adds
+                    // BELOW this box. Using the bare maxHeight made the page
+                    // permanently scrollable by exactly `bottomPad`: the column
+                    // was stretched to the full viewport and the padding then
+                    // pushed it past — a scroll with nothing at the end of it,
+                    // which is what was reported as unnecessary space.
                     constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
+                      minHeight: constraints.maxHeight - _Login.bottomPad,
                     ),
                     child: IntrinsicHeight(
                       child: Form(
@@ -574,13 +577,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               isEnabled: _hasCredentials && !_anyLoading,
                               onPressed: _handleEmailLogin,
                             ),
-                            const Spacer(),
+                            // No Spacer here on purpose. The design pins the
+                            // footer with `margin: auto 0 0`, which works in a
+                            // fixed 880pt web frame where the content always
+                            // fits. On a phone it pushes the footer to the
+                            // bottom of whatever the viewport happens to be,
+                            // leaving a void under the CTA and making the page
+                            // scrollable for no reason — which is exactly what
+                            // was reported. The footer just follows the button.
                             _Collapsible(
                               collapsed: keyboardOpen,
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const SizedBox(height: _Login.footerTop),
+                                  const SizedBox(height: _Login.footerAfterCta),
                                   _buildFooter(l10n),
                                 ],
                               ),
@@ -751,7 +761,10 @@ abstract final class _Login {
   static const double fieldGap = 12;
   static const double ctaTop = 14;
   static const double ctaHeight = 56;
-  static const double footerTop = 22;
+
+  /// The design's own footer gap is 22, measured from the bottom of the page.
+  /// Following the CTA instead, it needs room to read as a separate thing.
+  static const double footerAfterCta = 32;
 
   static TextStyle get headingStyle => GoogleFonts.anton(
     fontSize: 44,

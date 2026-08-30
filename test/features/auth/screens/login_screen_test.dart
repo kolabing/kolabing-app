@@ -185,9 +185,15 @@ void main() {
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
       tester.view.resetViewPadding();
+      tester.view.resetPadding();
     });
     tester.view.physicalSize = const Size(430, 932);
     tester.view.devicePixelRatio = 1.0;
+    // Explicit, not inherited: a sibling test in this file sets a safe-area
+    // padding, and leaving it to teardown ordering makes the geometry these
+    // assertions measure depend on what ran before.
+    tester.view.viewPadding = const FakeViewPadding(top: 59, bottom: 34);
+    tester.view.padding = const FakeViewPadding(top: 59, bottom: 34);
     await tester.binding.setSurfaceSize(const Size(430, 932));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -233,24 +239,24 @@ void main() {
     expect(apple.top, lessThan(email.top));
   });
 
-  testWidgets('the footer sits at the bottom of the page, not after the CTA', (
+  testWidgets('the footer follows the CTA instead of being pinned away', (
     tester,
   ) async {
     await pumpLoginV2(tester);
 
+    // Reported by Volkan: the page scrolled and there was a gap under the CTA.
+    // Both came from pinning the footer to the bottom of the viewport the way
+    // the design's `margin: auto 0 0` does — fine in a fixed 880pt web frame,
+    // a void on a phone. The footer follows the button now.
+    // Whether the page scrolls at all is NOT asserted here: the test binding
+    // substitutes a much wider face for Anton, which inflates the content well
+    // past its real height. That claim is verified on device instead. What is
+    // font-independent, and what actually regressed, is the gap.
     final footer = tester.getRect(
       find.textContaining('new to kolabing', findRichText: true),
     );
     final cta = tester.getRect(find.text('Sign in'));
-
-    // The design pins it with `margin: auto 0 0`; a naive Column would leave it
-    // hugging the button instead.
-    //
-    // Only the gap is asserted, not an absolute y. The test binding substitutes
-    // its own faces for Anton/Inter/Caveat, and those metrics change the page's
-    // height — so pinning `footer.bottom` to the viewport would be pinning the
-    // fallback font, not the layout.
-    expect(footer.top - cta.bottom, greaterThan(100));
+    expect(footer.top - cta.bottom, lessThan(80));
   });
 
   testWidgets('Sign in stays disabled until both fields have something', (
