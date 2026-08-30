@@ -380,6 +380,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
+    /// With the keyboard up the page has ~596pt instead of 932, and variant 1a
+    /// spends its top third on brand. So the decorative half stands down while
+    /// someone is typing — the mark, the handwritten line and the footer — and
+    /// the heading stays, which is the part that was reported missing.
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+
     return PopScope(
       canPop: !_anyLoading,
       child: Scaffold(
@@ -415,32 +421,44 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _buildNavRow(l10n),
-                            const SizedBox(height: _Login.markTop),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Transform.rotate(
-                                angle: _Login.markTilt,
-                                child: AnimatedKolabingKMark(
-                                  width: _Login.markWidth,
-                                  color: KolabingColors.brandDark,
-                                ),
+                            _Collapsible(
+                              collapsed: keyboardOpen,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(height: _Login.markTop),
+                                  Transform.rotate(
+                                    angle: _Login.markTilt,
+                                    child: AnimatedKolabingKMark(
+                                      width: _Login.markWidth,
+                                      color: KolabingColors.brandDark,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             const SizedBox(height: _Login.headingTop),
                             _buildHeading(l10n),
-                            const SizedBox(height: _Login.subtitleTop),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Transform.rotate(
-                                angle: _Login.subtitleTilt,
-                                child: Text(
-                                  l10n.loginSubtitle,
-                                  style: GoogleFonts.caveat(
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.w600,
-                                    color: KolabingColors.inkBody,
+                            _Collapsible(
+                              collapsed: keyboardOpen,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(height: _Login.subtitleTop),
+                                  Transform.rotate(
+                                    angle: _Login.subtitleTilt,
+                                    child: Text(
+                                      l10n.loginSubtitle,
+                                      style: GoogleFonts.caveat(
+                                        fontSize: 21,
+                                        fontWeight: FontWeight.w600,
+                                        color: KolabingColors.inkBody,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                             const SizedBox(height: _Login.socialTop),
@@ -557,8 +575,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               onPressed: _handleEmailLogin,
                             ),
                             const Spacer(),
-                            const SizedBox(height: _Login.footerTop),
-                            _buildFooter(l10n),
+                            _Collapsible(
+                              collapsed: keyboardOpen,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(height: _Login.footerTop),
+                                  _buildFooter(l10n),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -750,6 +776,29 @@ abstract final class _Login {
 // ---------------------------------------------------------------------------
 // Pieces
 // ---------------------------------------------------------------------------
+
+/// Collapses its child to nothing, with a bit of easing, when the keyboard
+/// takes the room it was using.
+///
+/// [AnimatedSize] rather than a bare `if`: without the tween the page jumps by
+/// ~170pt the instant a field takes focus, which reads as a glitch rather than
+/// as the screen making space.
+class _Collapsible extends StatelessWidget {
+  const _Collapsible({required this.collapsed, required this.child});
+
+  final bool collapsed;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => AnimatedSize(
+    duration: const Duration(milliseconds: 200),
+    curve: Curves.easeOutCubic,
+    alignment: Alignment.topCenter,
+    child: collapsed
+        ? const SizedBox(width: double.infinity)
+        : Align(alignment: Alignment.centerLeft, child: child),
+  );
+}
 
 /// Text with a highlighter swash behind its lower half.
 ///

@@ -302,6 +302,59 @@ void main() {
 
     expect(passwordField().obscureText, isFalse);
   });
+
+  testWidgets('the keyboard collapses the brand block but keeps the heading', (
+    tester,
+  ) async {
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+    tester.view.physicalSize = const Size(430, 932);
+    tester.view.devicePixelRatio = 1.0;
+    await tester.binding.setSurfaceSize(const Size(430, 932));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    Future<void> pumpWithInset(double inset) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            locale: const Locale('en'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Builder(
+              builder: (context) => MediaQuery(
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(viewInsets: EdgeInsets.only(bottom: inset)),
+                child: const LoginScreen(),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+      while (tester.takeException() != null) {}
+    }
+
+    await pumpWithInset(0);
+    expect(find.byType(AnimatedKolabingKMark), findsOneWidget);
+    expect(find.text('pick up where you left off ✨'), findsOneWidget);
+
+    // 336 is what iOS reports for the keyboard on this device.
+    await pumpWithInset(336);
+
+    // The decorative half stands down...
+    expect(find.byType(AnimatedKolabingKMark), findsNothing);
+    expect(find.text('pick up where you left off ✨'), findsNothing);
+    // ...and the heading stays, which is the whole point: it going missing is
+    // what was reported in the first place.
+    expect(find.text('WELCOME'), findsOneWidget);
+    expect(find.text('BACK.'), findsOneWidget);
+
+    // Both fields now sit inside the 596pt the keyboard leaves behind.
+    expect(tester.getRect(find.text('Password')).bottom, lessThan(596));
+  });
 }
 
 class _ThrowingAuthNotifier extends AuthNotifier {
