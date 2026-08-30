@@ -157,6 +157,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     return PopScope(
       canPop: !_isLoading,
       child: AuthPageScaffold(
+        keyboardOpen: keyboardOpen,
+        navRow: AuthNavRow(
+          backLabel: l10n.loginBackLabel,
+          onBack: _isLoading ? null : _handleBack,
+        ),
         child: FadeTransition(
           opacity: _fadeIn,
           child: Form(
@@ -165,10 +170,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AuthNavRow(
-                  backLabel: l10n.loginBackLabel,
-                  onBack: _isLoading ? null : _handleBack,
-                ),
                 AuthHero(
                   headingFirstLine: l10n.forgotPasswordHeadingFirstLine,
                   headingSecondLine: l10n.forgotPasswordHeadingSecondLine,

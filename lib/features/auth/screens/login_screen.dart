@@ -11,7 +11,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../widgets/brand/kolabing_k_mark.dart';
 import '../providers/auth_provider.dart';
 import '../utils/auth_navigation.dart';
 import '../widgets/auth_page.dart';
@@ -388,239 +387,163 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
     return PopScope(
       canPop: !_anyLoading,
-      child: Scaffold(
-        backgroundColor: KolabingColors.background,
-        resizeToAvoidBottomInset: true,
-        body: AnimatedBuilder(
+      child: AuthPageScaffold(
+        keyboardOpen: keyboardOpen,
+        navRow: AuthNavRow(
+          backLabel: l10n.loginBackLabel,
+          onBack: _anyLoading ? null : _handleBack,
+          trailingLabel: l10n.loginSignUpLabel,
+          onTrailing: _anyLoading ? null : _navigateToSignUp,
+        ),
+        child: AnimatedBuilder(
           animation: _exitController,
           builder: (context, child) =>
               Opacity(opacity: _exitAnimation.value, child: child),
           child: FadeTransition(
             opacity: _fadeIn,
-            child: SafeArea(
-              child: LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(
-                    AuthMetrics.gutter,
-                    0,
-                    AuthMetrics.gutter,
-                    AuthMetrics.bottomPad,
+            child: Form(
+              key: _formKey,
+              autovalidateMode: _autovalidateMode,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AuthHero(
+                    headingFirstLine: l10n.loginHeadingFirstLine,
+                    headingSecondLine: l10n.loginHeadingSecondLine,
+                    subtitle: l10n.loginSubtitle,
+                    keyboardOpen: keyboardOpen,
                   ),
-                  child: ConstrainedBox(
-                    // Fill the viewport, minus the padding the scroll view adds
-                    // BELOW this box. Using the bare maxHeight made the page
-                    // permanently scrollable by exactly `bottomPad`: the column
-                    // was stretched to the full viewport and the padding then
-                    // pushed it past — a scroll with nothing at the end of it,
-                    // which is what was reported as unnecessary space.
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight - AuthMetrics.bottomPad,
+                  const SizedBox(height: AuthMetrics.bodyTop),
+                  // Side by side rather than stacked, taking variant 1b's
+                  // compact social row from the same design doc.
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _SocialButton(
+                          label: _Login.googleLabel,
+                          semanticLabel: l10n.loginContinueWithGoogle,
+                          icon: const GoogleLogo(size: _Login.socialIcon),
+                          background: Colors.white,
+                          foreground: KolabingColors.brandDark,
+                          bordered: true,
+                          isLoading: _isGoogleLoading,
+                          isEnabled: !_anyLoading && !_showSuccess,
+                          onPressed: _handleGoogleSignIn,
+                        ),
+                      ),
+                      const SizedBox(width: _Login.socialGap),
+                      Expanded(
+                        child: _SocialButton(
+                          label: _Login.appleLabel,
+                          semanticLabel: l10n.loginContinueWithApple,
+                          icon: const Icon(
+                            Icons.apple,
+                            size: _Login.socialIcon,
+                            color: Colors.white,
+                          ),
+                          background: KolabingColors.brandDark,
+                          foreground: Colors.white,
+                          isLoading: _isAppleLoading,
+                          isEnabled: !_anyLoading && !_showSuccess,
+                          onPressed: _handleAppleSignIn,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: _Login.dividerGap),
+                  _OrDivider(label: l10n.loginOrWithEmail),
+                  const SizedBox(height: _Login.dividerGap),
+                  TextFormField(
+                    controller: _emailController,
+                    focusNode: _emailFocusNode,
+                    keyboardType: TextInputType.emailAddress,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    autofillHints: const [AutofillHints.email],
+                    enabled: !_anyLoading,
+                    validator: _validateEmail,
+                    textInputAction: TextInputAction.next,
+                    onFieldSubmitted: (_) => _passwordFocusNode.requestFocus(),
+                    style: AuthMetrics.fieldTextStyle,
+                    decoration: AuthMetrics.fieldDecoration(
+                      hint: l10n.authEmailLabel,
+                      prefixIcon: LucideIcons.mail,
                     ),
-                    child: IntrinsicHeight(
-                      child: Form(
-                        key: _formKey,
-                        autovalidateMode: _autovalidateMode,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _buildNavRow(l10n),
-                            AuthCollapsible(
-                              collapsed: keyboardOpen,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const SizedBox(height: AuthMetrics.markTop),
-                                  Transform.rotate(
-                                    angle: AuthMetrics.markTilt,
-                                    child: AnimatedKolabingKMark(
-                                      width: AuthMetrics.markWidth,
-                                      color: KolabingColors.brandDark,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: AuthMetrics.headingTop),
-                            _buildHeading(l10n),
-                            AuthCollapsible(
-                              collapsed: keyboardOpen,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const SizedBox(
-                                    height: AuthMetrics.subtitleTop,
-                                  ),
-                                  Transform.rotate(
-                                    angle: AuthMetrics.subtitleTilt,
-                                    child: Text(
-                                      l10n.loginSubtitle,
-                                      style: GoogleFonts.caveat(
-                                        fontSize: 21,
-                                        fontWeight: FontWeight.w600,
-                                        color: KolabingColors.inkBody,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: AuthMetrics.bodyTop),
-                            // Side by side rather than stacked, taking variant
-                            // 1b's compact social row from the same design doc.
-                            // Two full-width buttons cost 118pt of a page that
-                            // could not fit its own footer; this costs 52.
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _SocialButton(
-                                    label: _Login.googleLabel,
-                                    semanticLabel: l10n.loginContinueWithGoogle,
-                                    icon: const GoogleLogo(
-                                      size: _Login.socialIcon,
-                                    ),
-                                    background: Colors.white,
-                                    foreground: KolabingColors.brandDark,
-                                    bordered: true,
-                                    isLoading: _isGoogleLoading,
-                                    isEnabled: !_anyLoading && !_showSuccess,
-                                    onPressed: _handleGoogleSignIn,
-                                  ),
-                                ),
-                                const SizedBox(width: _Login.socialGap),
-                                Expanded(
-                                  child: _SocialButton(
-                                    label: _Login.appleLabel,
-                                    semanticLabel: l10n.loginContinueWithApple,
-                                    icon: const Icon(
-                                      Icons.apple,
-                                      size: _Login.socialIcon,
-                                      color: Colors.white,
-                                    ),
-                                    background: KolabingColors.brandDark,
-                                    foreground: Colors.white,
-                                    isLoading: _isAppleLoading,
-                                    isEnabled: !_anyLoading && !_showSuccess,
-                                    onPressed: _handleAppleSignIn,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: _Login.dividerGap),
-                            _OrDivider(label: l10n.loginOrWithEmail),
-                            const SizedBox(height: _Login.dividerGap),
-                            TextFormField(
-                              controller: _emailController,
-                              focusNode: _emailFocusNode,
-                              keyboardType: TextInputType.emailAddress,
-                              autocorrect: false,
-                              enableSuggestions: false,
-                              autofillHints: const [AutofillHints.email],
-                              enabled: !_anyLoading,
-                              validator: _validateEmail,
-                              textInputAction: TextInputAction.next,
-                              onFieldSubmitted: (_) =>
-                                  _passwordFocusNode.requestFocus(),
-                              style: AuthMetrics.fieldTextStyle,
-                              decoration: _fieldDecoration(
-                                hint: l10n.authEmailLabel,
-                                prefixIcon: LucideIcons.mail,
-                              ),
-                            ),
-                            const SizedBox(height: AuthMetrics.fieldGap),
-                            TextFormField(
-                              controller: _passwordController,
-                              focusNode: _passwordFocusNode,
-                              obscureText: _obscurePassword,
-                              autocorrect: false,
-                              enableSuggestions: false,
-                              autofillHints: const [AutofillHints.password],
-                              enabled: !_anyLoading,
-                              validator: _validatePassword,
-                              textInputAction: TextInputAction.done,
-                              onFieldSubmitted: (_) => _handleEmailLogin(),
-                              style: AuthMetrics.fieldTextStyle,
-                              decoration: _fieldDecoration(
-                                hint: l10n.authPasswordLabel,
-                                prefixIcon: LucideIcons.lock,
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _obscurePassword
-                                        ? LucideIcons.eye
-                                        : LucideIcons.eyeOff,
-                                    size: 19,
-                                    color: KolabingColors.muted,
-                                  ),
-                                  onPressed: () => setState(
-                                    () => _obscurePassword = !_obscurePassword,
-                                  ),
-                                  tooltip: l10n.loginTogglePasswordVisibility,
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed: _anyLoading
-                                    ? null
-                                    : () => context.push(_kForgotPasswordRoute),
-                                style: TextButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 2,
-                                    vertical: 4,
-                                  ),
-                                  minimumSize: Size.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                child: Text(
-                                  l10n.loginForgotPasswordPrompt,
-                                  style: GoogleFonts.inter(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: KolabingColors.brandDark,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: AuthMetrics.ctaTop),
-                            AuthPrimaryCta(
-                              label: l10n.loginSignInButton,
-                              isLoading: _isLoading,
-                              showSuccess: _showSuccess,
-                              // The design greys the CTA until both fields have
-                              // something in them, rather than waiting for the
-                              // validator to complain after a tap.
-                              isEnabled: _hasCredentials && !_anyLoading,
-                              onPressed: _handleEmailLogin,
-                            ),
-                            // No Spacer here on purpose. The design pins the
-                            // footer with `margin: auto 0 0`, which works in a
-                            // fixed 880pt web frame where the content always
-                            // fits. On a phone it pushes the footer to the
-                            // bottom of whatever the viewport happens to be,
-                            // leaving a void under the CTA and making the page
-                            // scrollable for no reason — which is exactly what
-                            // was reported. The footer just follows the button.
-                            AuthCollapsible(
-                              collapsed: keyboardOpen,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const SizedBox(
-                                    height: AuthMetrics.footerAfterCta,
-                                  ),
-                                  _buildFooter(l10n),
-                                ],
-                              ),
-                            ),
-                          ],
+                  ),
+                  const SizedBox(height: AuthMetrics.fieldGap),
+                  TextFormField(
+                    controller: _passwordController,
+                    focusNode: _passwordFocusNode,
+                    obscureText: _obscurePassword,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    autofillHints: const [AutofillHints.password],
+                    enabled: !_anyLoading,
+                    validator: _validatePassword,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) => _handleEmailLogin(),
+                    style: AuthMetrics.fieldTextStyle,
+                    decoration: AuthMetrics.fieldDecoration(
+                      hint: l10n.authPasswordLabel,
+                      prefixIcon: LucideIcons.lock,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? LucideIcons.eye
+                              : LucideIcons.eyeOff,
+                          size: 19,
+                          color: KolabingColors.muted,
+                        ),
+                        onPressed: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
+                        tooltip: l10n.loginTogglePasswordVisibility,
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _anyLoading
+                          ? null
+                          : () => context.push(_kForgotPasswordRoute),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 2,
+                          vertical: 4,
+                        ),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        l10n.loginForgotPasswordPrompt,
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: KolabingColors.brandDark,
                         ),
                       ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: AuthMetrics.ctaTop),
+                  AuthPrimaryCta(
+                    label: l10n.loginSignInButton,
+                    isLoading: _isLoading,
+                    showSuccess: _showSuccess,
+                    isEnabled: _hasCredentials && !_anyLoading,
+                    onPressed: _handleEmailLogin,
+                  ),
+                  AuthCollapsible(
+                    collapsed: keyboardOpen,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: AuthMetrics.footerAfterCta),
+                        _buildFooter(l10n),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -628,64 +551,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       ),
     );
   }
-
-  Widget _buildNavRow(AppLocalizations l10n) => SizedBox(
-    height: AuthMetrics.navHeight,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        TextButton.icon(
-          onPressed: _anyLoading ? null : _handleBack,
-          icon: const Icon(LucideIcons.chevronLeft, size: 18),
-          label: Text(l10n.loginBackLabel),
-          style: TextButton.styleFrom(
-            foregroundColor: KolabingColors.brandDark,
-            padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            textStyle: GoogleFonts.inter(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        TextButton(
-          onPressed: _anyLoading ? null : _navigateToSignUp,
-          style: TextButton.styleFrom(
-            foregroundColor: KolabingColors.brandDark,
-            padding: const EdgeInsets.fromLTRB(8, 8, 0, 8),
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-          child: Text(
-            l10n.loginSignUpLabel,
-            style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w600),
-          ),
-        ),
-      ],
-    ),
-  );
-
-  /// "WELCOME" over "BACK.", the second line carrying the yellow swash.
-  ///
-  /// Both lines come out of the ARB already in display case. Uppercasing in
-  /// Dart would be wrong: `toUpperCase()` is locale-sensitive (Turkish dotless
-  /// ı, for one), so the casing belongs to the translator, not to the widget.
-  Widget _buildHeading(AppLocalizations l10n) => Align(
-    alignment: Alignment.centerLeft,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(l10n.loginHeadingFirstLine, style: AuthMetrics.headingStyle),
-        AuthHighlightedText(
-          text: l10n.loginHeadingSecondLine,
-          style: AuthMetrics.headingStyle,
-          color: KolabingColors.primary,
-        ),
-      ],
-    ),
-  );
 
   Widget _buildFooter(AppLocalizations l10n) => Center(
     child: Text.rich(
@@ -705,48 +570,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         ],
       ),
       textAlign: TextAlign.center,
-    ),
-  );
-
-  InputDecoration _fieldDecoration({
-    required String hint,
-    required IconData prefixIcon,
-    Widget? suffixIcon,
-  }) => InputDecoration(
-    hintText: hint,
-    hintStyle: GoogleFonts.inter(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      color: KolabingColors.muted,
-    ),
-    filled: true,
-    fillColor: Colors.white,
-    isDense: true,
-    // The design's field is 54 tall with the glyph inset 20 from the edge.
-    // Height comes from padding rather than a BoxConstraints clamp: a clamp
-    // also caps the decorator when a validation message appears, and Material
-    // then squeezes the text instead of growing.
-    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 17),
-    prefixIcon: Padding(
-      padding: const EdgeInsets.only(left: 20, right: 12),
-      child: Icon(prefixIcon, color: KolabingColors.muted, size: 18),
-    ),
-    prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-    suffixIcon: suffixIcon,
-    suffixIconConstraints: const BoxConstraints(minWidth: 52, minHeight: 44),
-    border: AuthMetrics.fieldBorder(
-      KolabingColors.brandDark.withValues(alpha: 0.12),
-    ),
-    enabledBorder: AuthMetrics.fieldBorder(
-      KolabingColors.brandDark.withValues(alpha: 0.12),
-    ),
-    focusedBorder: AuthMetrics.fieldBorder(KolabingColors.brandDark),
-    errorBorder: AuthMetrics.fieldBorder(KolabingColors.error),
-    focusedErrorBorder: AuthMetrics.fieldBorder(KolabingColors.error),
-    errorStyle: GoogleFonts.inter(
-      fontSize: 11.5,
-      fontWeight: FontWeight.w500,
-      color: KolabingColors.error,
     ),
   );
 }

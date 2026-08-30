@@ -24,8 +24,15 @@ abstract final class AuthMetrics {
   static const double bottomPad = 28;
   static const double navHeight = 48;
 
-  static const double markTop = 18;
-  static const double markWidth = 76;
+  /// The yellow hero band, as a fraction of the screen. Restored at Volkan's
+  /// request (2026-08-30) after the v2 port had replaced it with a cream page
+  /// and a small left-aligned mark: he wanted the forgot-password top back, on
+  /// both screens.
+  static const double heroFraction = 0.32;
+
+  /// The mark centred in that band. Larger than the v2 port's 76 — this is the
+  /// size it had in the hero it is returning to.
+  static const double heroMarkWidth = 84;
 
   /// −2° on the mark, −3° on the handwritten line, in radians.
   static const double markTilt = -2 * math.pi / 180;
@@ -61,6 +68,10 @@ abstract final class AuthMetrics {
   );
 
   static Color get hairline => KolabingColors.brandDark.withValues(alpha: 0.12);
+
+  /// The wave asset was drawn 402x130; scale its height with the screen.
+  static double waveHeightFor(double screenWidth) =>
+      130.0 * screenWidth / 402.0;
 
   static OutlineInputBorder fieldBorder(Color color) => OutlineInputBorder(
     borderRadius: BorderRadius.circular(fieldHeight / 2),
@@ -108,39 +119,145 @@ abstract final class AuthMetrics {
   );
 }
 
-/// The page shell: cream ground, safe area, one scroll view, and the gutter.
+/// The page shell: a yellow hero band with the mark, a wave into the cream
+/// sheet, and the scrolling body beneath it.
+///
+/// The band collapses to the nav row while the keyboard is up. That is not
+/// decoration — the version of this layout that shipped before took a fixed
+/// 0.32 of the FULL screen height and never shrank, so with a keyboard open the
+/// form was left ~298pt for ~560pt of content and the submit button sat below
+/// the fold. Keeping the collapse is what makes the band affordable.
 ///
 /// The scroll view's minimum height subtracts the padding it adds *below* the
 /// content. Using the bare viewport height made the page permanently scrollable
 /// by exactly that padding — a scroll with nothing at the end of it.
 class AuthPageScaffold extends StatelessWidget {
-  const AuthPageScaffold({super.key, required this.child});
+  const AuthPageScaffold({
+    super.key,
+    required this.navRow,
+    required this.keyboardOpen,
+    required this.child,
+  });
 
+  final Widget navRow;
+  final bool keyboardOpen;
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: KolabingColors.background,
-    resizeToAvoidBottomInset: true,
-    body: SafeArea(
-      child: LayoutBuilder(
-        builder: (context, constraints) => SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(
-            AuthMetrics.gutter,
-            0,
-            AuthMetrics.gutter,
-            AuthMetrics.bottomPad,
+  Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    final topInset = MediaQuery.paddingOf(context).top;
+    final waveHeight = AuthMetrics.waveHeightFor(size.width);
+
+    // Collapsed, the band is just the nav row plus the status bar it sits under.
+    final bandHeight = keyboardOpen
+        ? topInset + AuthMetrics.navHeight
+        : size.height * AuthMetrics.heroFraction;
+
+    return Scaffold(
+      backgroundColor: KolabingColors.primary,
+      resizeToAvoidBottomInset: true,
+      body: Stack(
+        children: [
+          Positioned(
+            top: bandHeight,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: const ColoredBox(color: KolabingColors.background),
           ),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: constraints.maxHeight - AuthMetrics.bottomPad,
+          Positioned(
+            top: bandHeight - waveHeight + 12,
+            left: 0,
+            right: 0,
+            height: waveHeight,
+            child: const CustomPaint(
+              painter: AuthWavePainter(color: KolabingColors.background),
             ),
-            child: child,
           ),
-        ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOutCubic,
+                height: bandHeight,
+                child: SafeArea(
+                  bottom: false,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AuthMetrics.gutter,
+                        ),
+                        child: navRow,
+                      ),
+                      if (!keyboardOpen)
+                        const Expanded(
+                          child: Center(
+                            child: AnimatedKolabingKMark(
+                              width: AuthMetrics.heroMarkWidth,
+                              color: KolabingColors.brandDark,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) => SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(
+                      AuthMetrics.gutter,
+                      0,
+                      AuthMetrics.gutter,
+                      AuthMetrics.bottomPad,
+                    ),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight:
+                            constraints.maxHeight - AuthMetrics.bottomPad,
+                      ),
+                      child: SafeArea(top: false, child: child),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
-    ),
-  );
+    );
+  }
+}
+
+/// The curve the cream sheet makes as it meets the yellow band. Lifted verbatim
+/// from the pre-v2 auth screens, which is where Volkan wanted it back from.
+class AuthWavePainter extends CustomPainter {
+  const AuthWavePainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color;
+    final sx = size.width / 402.0;
+    final sy = size.height / 130.0;
+
+    final path = Path()
+      ..moveTo(0, 130 * sy)
+      ..lineTo(0, 66 * sy)
+      ..cubicTo(72 * sx, 22 * sy, 150 * sx, 52 * sy, 230 * sx, 60 * sy)
+      ..cubicTo(300 * sx, 67 * sy, 352 * sx, 34 * sy, 402 * sx, 50 * sy)
+      ..lineTo(402 * sx, 130 * sy)
+      ..close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(AuthWavePainter old) => old.color != color;
 }
 
 /// `‹ back` on the left, an optional action on the right. Lowercase by design;
@@ -202,11 +319,11 @@ class AuthNavRow extends StatelessWidget {
   );
 }
 
-/// Mark, heading and handwritten line — the block every auth page opens with.
+/// Heading and handwritten line — what the cream sheet opens with. The mark
+/// itself now sits in the yellow band above, drawn by [AuthPageScaffold].
 ///
-/// [keyboardOpen] folds the decorative half away. The design spends its top
-/// third on brand, and the keyboard leaves ~596pt of 932; the heading stays
-/// because that is the part people look for.
+/// [keyboardOpen] folds the handwritten line away with the band, so the fields
+/// keep the room.
 class AuthHero extends StatelessWidget {
   const AuthHero({
     super.key,
@@ -229,23 +346,6 @@ class AuthHero extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisSize: MainAxisSize.min,
     children: [
-      AuthCollapsible(
-        collapsed: keyboardOpen,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: AuthMetrics.markTop),
-            Transform.rotate(
-              angle: AuthMetrics.markTilt,
-              child: const AnimatedKolabingKMark(
-                width: AuthMetrics.markWidth,
-                color: KolabingColors.brandDark,
-              ),
-            ),
-          ],
-        ),
-      ),
       const SizedBox(height: AuthMetrics.headingTop),
       Align(
         alignment: Alignment.centerLeft,
