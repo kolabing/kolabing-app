@@ -389,6 +389,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       canPop: !_anyLoading,
       child: AuthPageScaffold(
         keyboardOpen: keyboardOpen,
+        headingFirstLine: l10n.loginHeadingFirstLine,
+        headingSecondLine: l10n.loginHeadingSecondLine,
         navRow: AuthNavRow(
           backLabel: l10n.loginBackLabel,
           onBack: _anyLoading ? null : _handleBack,
@@ -407,10 +409,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AuthHero(
-                    headingFirstLine: l10n.loginHeadingFirstLine,
-                    headingSecondLine: l10n.loginHeadingSecondLine,
-                    subtitle: l10n.loginSubtitle,
+                  AuthSubtitle(
+                    text: l10n.loginSubtitle,
                     keyboardOpen: keyboardOpen,
                   ),
                   const SizedBox(height: AuthMetrics.bodyTop),

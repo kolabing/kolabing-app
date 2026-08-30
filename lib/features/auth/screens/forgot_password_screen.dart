@@ -158,6 +158,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       canPop: !_isLoading,
       child: AuthPageScaffold(
         keyboardOpen: keyboardOpen,
+        headingFirstLine: l10n.forgotPasswordHeadingFirstLine,
+        headingSecondLine: l10n.forgotPasswordHeadingSecondLine,
         navRow: AuthNavRow(
           backLabel: l10n.loginBackLabel,
           onBack: _isLoading ? null : _handleBack,
@@ -170,10 +172,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AuthHero(
-                  headingFirstLine: l10n.forgotPasswordHeadingFirstLine,
-                  headingSecondLine: l10n.forgotPasswordHeadingSecondLine,
-                  subtitle: l10n.forgotPasswordSubtitle,
+                AuthSubtitle(
+                  text: l10n.forgotPasswordSubtitle,
                   keyboardOpen: keyboardOpen,
                 ),
                 const SizedBox(height: AuthMetrics.bodyTop),

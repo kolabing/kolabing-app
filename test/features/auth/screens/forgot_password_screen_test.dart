@@ -53,7 +53,7 @@ void main() {
     // Consistency is enforced by shared widgets rather than by two screens
     // agreeing to look alike (kolabing-app#193): if these stop matching
     // sign-in, it is because someone changed AuthHero for both.
-    expect(find.byType(AuthHero), findsOneWidget);
+    expect(find.byType(AuthSubtitle), findsOneWidget);
     expect(find.byType(AuthNavRow), findsOneWidget);
     expect(find.byType(AuthPrimaryCta), findsOneWidget);
     expect(find.text('RESET'), findsOneWidget);

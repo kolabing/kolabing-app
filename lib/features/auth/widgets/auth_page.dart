@@ -34,6 +34,10 @@ abstract final class AuthMetrics {
   /// size it had in the hero it is returning to.
   static const double heroMarkWidth = 84;
 
+  /// Two Anton lines at 44/0.95, plus breathing room. What the band keeps when
+  /// it collapses for the keyboard.
+  static const double headingBlockHeight = 104;
+
   /// −2° on the mark, −3° on the handwritten line, in radians.
   static const double markTilt = -2 * math.pi / 180;
   static const double subtitleTilt = -3 * math.pi / 180;
@@ -135,11 +139,19 @@ class AuthPageScaffold extends StatelessWidget {
   const AuthPageScaffold({
     super.key,
     required this.navRow,
+    required this.headingFirstLine,
+    required this.headingSecondLine,
     required this.keyboardOpen,
     required this.child,
   });
 
   final Widget navRow;
+
+  final String headingFirstLine;
+
+  /// The line carrying the yellow highlighter swash.
+  final String headingSecondLine;
+
   final bool keyboardOpen;
   final Widget child;
 
@@ -149,9 +161,18 @@ class AuthPageScaffold extends StatelessWidget {
     final topInset = MediaQuery.paddingOf(context).top;
     final waveHeight = AuthMetrics.waveHeightFor(size.width);
 
-    // Collapsed, the band is just the nav row plus the status bar it sits under.
+    /// The heading lives in the band, not in the cream sheet.
+    ///
+    /// It used to sit above the form, where its two Anton lines plus their gap
+    /// cost ~110pt and pushed the footer off the bottom — measured at 100.6pt
+    /// of overflow on a 393x852. The band had ~141pt going spare around the
+    /// mark, so the heading moved into it and the page stopped scrolling.
+    ///
+    /// Collapsed, the band drops the MARK and keeps the HEADING. Dropping the
+    /// heading instead would re-create the thing Volkan reported in the first
+    /// place: "welcome back" vanishing the moment he typed.
     final bandHeight = keyboardOpen
-        ? topInset + AuthMetrics.navHeight
+        ? topInset + AuthMetrics.navHeight + AuthMetrics.headingBlockHeight
         : size.height * AuthMetrics.heroFraction;
 
     return Scaffold(
@@ -192,15 +213,67 @@ class AuthPageScaffold extends StatelessWidget {
                         ),
                         child: navRow,
                       ),
-                      if (!keyboardOpen)
-                        const Expanded(
-                          child: Center(
-                            child: AnimatedKolabingKMark(
-                              width: AuthMetrics.heroMarkWidth,
-                              color: KolabingColors.brandDark,
-                            ),
+                      Expanded(
+                        child: Padding(
+                          // Clear the wave. Its path starts the cream at 66/130
+                          // of the wave rect on the LEFT edge, where the heading
+                          // sits, so the lockup has to stop about half a wave
+                          // above the band's bottom or "BACK." lands on the
+                          // curve.
+                          padding: EdgeInsets.only(
+                            left: AuthMetrics.gutter,
+                            right: AuthMetrics.gutter,
+                            bottom: keyboardOpen ? 0 : waveHeight * 0.42,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // The mark stands down for the keyboard; the
+                              // heading does not.
+                              AuthCollapsible(
+                                collapsed: keyboardOpen,
+                                child: const Padding(
+                                  padding: EdgeInsets.only(right: 16),
+                                  child: AnimatedKolabingKMark(
+                                    width: AuthMetrics.heroMarkWidth,
+                                    color: KolabingColors.brandDark,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                // Scale down rather than wrap. Beside the mark
+                                // the heading has ~170pt on a 320pt phone, and
+                                // "BIENVENIDO" is longer than "WELCOME" — left
+                                // to wrap it becomes four lines and overflows
+                                // the band, which is what the narrow-screen
+                                // test caught.
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        headingFirstLine,
+                                        maxLines: 1,
+                                        softWrap: false,
+                                        style: AuthMetrics.headingStyle,
+                                      ),
+                                      AuthHighlightedText(
+                                        text: headingSecondLine,
+                                        style: AuthMetrics.headingStyle,
+                                        color: KolabingColors.background,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
+                      ),
                     ],
                   ),
                 ),
@@ -319,64 +392,34 @@ class AuthNavRow extends StatelessWidget {
   );
 }
 
-/// Heading and handwritten line — what the cream sheet opens with. The mark
-/// itself now sits in the yellow band above, drawn by [AuthPageScaffold].
-///
-/// [keyboardOpen] folds the handwritten line away with the band, so the fields
-/// keep the room.
-class AuthHero extends StatelessWidget {
-  const AuthHero({
+/// The handwritten line the cream sheet opens with. The heading and the mark
+/// live in the yellow band above, drawn by [AuthPageScaffold].
+class AuthSubtitle extends StatelessWidget {
+  const AuthSubtitle({
     super.key,
-    required this.headingFirstLine,
-    required this.headingSecondLine,
-    required this.subtitle,
+    required this.text,
     required this.keyboardOpen,
   });
 
-  final String headingFirstLine;
+  final String text;
 
-  /// The line carrying the yellow highlighter swash.
-  final String headingSecondLine;
-
-  final String subtitle;
+  /// Folded away with the mark, so the fields keep the room.
   final bool keyboardOpen;
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      const SizedBox(height: AuthMetrics.headingTop),
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(headingFirstLine, style: AuthMetrics.headingStyle),
-            AuthHighlightedText(
-              text: headingSecondLine,
-              style: AuthMetrics.headingStyle,
-              color: KolabingColors.primary,
-            ),
-          ],
+  Widget build(BuildContext context) => AuthCollapsible(
+    collapsed: keyboardOpen,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: AuthMetrics.subtitleTop),
+        Transform.rotate(
+          angle: AuthMetrics.subtitleTilt,
+          child: Text(text, style: AuthMetrics.subtitleStyle),
         ),
-      ),
-      AuthCollapsible(
-        collapsed: keyboardOpen,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: AuthMetrics.subtitleTop),
-            Transform.rotate(
-              angle: AuthMetrics.subtitleTilt,
-              child: Text(subtitle, style: AuthMetrics.subtitleStyle),
-            ),
-          ],
-        ),
-      ),
-    ],
+      ],
+    ),
   );
 }
 
@@ -448,7 +491,7 @@ class AuthHighlightedText extends StatelessWidget {
       // The design pads the swash 2px past the glyphs on each side.
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 2),
-        child: Text(text, style: style),
+        child: Text(text, maxLines: 1, softWrap: false, style: style),
       ),
     ],
   );
