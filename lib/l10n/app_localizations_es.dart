@@ -746,7 +746,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectionCardCommunityTitle => 'Soy una comunidad';
 
   @override
-  String get selectionCardAttendeeTitle => 'Soy un miembro';
+  String get selectionCardAttendeeTitle => 'Soy un usuario';
 
   @override
   String get selectionCardBusinessDescription =>

@@ -751,7 +751,7 @@ class AppLocalizationsCa extends AppLocalizations {
   String get selectionCardCommunityTitle => 'Sóc una comunitat';
 
   @override
-  String get selectionCardAttendeeTitle => 'Sóc un membre';
+  String get selectionCardAttendeeTitle => 'Sóc un usuari';
 
   @override
   String get selectionCardBusinessDescription =>

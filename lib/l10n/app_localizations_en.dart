@@ -743,7 +743,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectionCardCommunityTitle => 'I\'m a community';
 
   @override
-  String get selectionCardAttendeeTitle => 'I\'m a member';
+  String get selectionCardAttendeeTitle => 'I\'m a user';
 
   @override
   String get selectionCardBusinessDescription =>

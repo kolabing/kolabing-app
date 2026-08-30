@@ -1483,7 +1483,7 @@ abstract class AppLocalizations {
   /// User-type selection card title for the Attendee option.
   ///
   /// In en, this message translates to:
-  /// **'I\'m a member'**
+  /// **'I\'m a user'**
   String get selectionCardAttendeeTitle;
 
   /// User-type selection card description for the Business option.
