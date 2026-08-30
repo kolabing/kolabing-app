@@ -621,7 +621,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Si el correo coincide con una cuenta, el enlace de restablecimiento llegará en breve.';
 
   @override
-  String get forgotPasswordSendButton => 'ENVIAR ENLACE DE RESTABLECIMIENTO';
+  String get forgotPasswordSendButton => 'Enviar enlace';
 
   @override
   String get forgotPasswordSuccessTitle => 'Revisa tu bandeja de entrada';
@@ -631,10 +631,19 @@ class AppLocalizationsEs extends AppLocalizations {
       'Si existe una cuenta para este correo, el enlace de restablecimiento está en camino.';
 
   @override
-  String get forgotPasswordBackToSignIn => 'VOLVER A INICIAR SESIÓN';
+  String get forgotPasswordBackToSignIn => 'Volver a iniciar sesión';
 
   @override
   String get forgotPasswordUseAnotherEmail => 'Usar otro correo';
+
+  @override
+  String get forgotPasswordHeadingFirstLine => 'RESTABLECE';
+
+  @override
+  String get forgotPasswordHeadingSecondLine => 'EL ACCESO.';
+
+  @override
+  String get forgotPasswordSubtitle => 'te enviamos un enlace ✨';
 
   @override
   String get forgotPasswordHeroLine1 => 'Recupera el acceso.';

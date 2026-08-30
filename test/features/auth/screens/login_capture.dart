@@ -8,7 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:kolabing_app/config/theme/theme.dart';
+import 'package:kolabing_app/features/auth/screens/forgot_password_screen.dart';
 import 'package:kolabing_app/features/auth/screens/login_screen.dart';
+import 'package:kolabing_app/features/auth/widgets/auth_page.dart';
 import 'package:kolabing_app/l10n/app_localizations.dart';
 
 /// Visual-QA capture for the sign-in screen (#193).
@@ -90,6 +92,7 @@ void main() {
     WidgetTester tester, {
     double bottomInset = 0,
     Locale locale = const Locale('en'),
+    Widget screen = const LoginScreen(),
   }) async {
     await tester.binding.setSurfaceSize(size);
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -114,7 +117,7 @@ void main() {
                 viewInsets: EdgeInsets.only(bottom: bottomInset),
                 padding: const EdgeInsets.only(top: 59, bottom: 34),
               ),
-              child: const LoginScreen(),
+              child: screen,
             ),
           ),
         ),
@@ -127,7 +130,7 @@ void main() {
     // test binding fakes away — without this the golden shows an empty slot
     // where the K should be, which would make the capture a lie.
     await tester.runAsync(() async {
-      final element = tester.element(find.byType(LoginScreen));
+      final element = tester.element(find.byType(AuthPageScaffold));
       await precacheImage(
         const AssetImage('assets/brand/kolabing-k-mark.png'),
         element,
@@ -152,6 +155,14 @@ void main() {
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('goldens/login_v2_keyboard.png'),
+    );
+  });
+
+  testWidgets('forgot password — the same page furniture', (tester) async {
+    await pump(tester, screen: const ForgotPasswordScreen());
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('goldens/forgot_password_v2.png'),
     );
   });
 

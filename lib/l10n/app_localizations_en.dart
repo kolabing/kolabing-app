@@ -619,7 +619,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'If the email matches an account, the reset link will arrive shortly.';
 
   @override
-  String get forgotPasswordSendButton => 'SEND RESET LINK';
+  String get forgotPasswordSendButton => 'Send reset link';
 
   @override
   String get forgotPasswordSuccessTitle => 'Check your inbox';
@@ -629,10 +629,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'If an account exists for this email, the reset link is on its way.';
 
   @override
-  String get forgotPasswordBackToSignIn => 'BACK TO SIGN IN';
+  String get forgotPasswordBackToSignIn => 'Back to sign in';
 
   @override
   String get forgotPasswordUseAnotherEmail => 'Use another email';
+
+  @override
+  String get forgotPasswordHeadingFirstLine => 'RESET';
+
+  @override
+  String get forgotPasswordHeadingSecondLine => 'ACCESS.';
+
+  @override
+  String get forgotPasswordSubtitle => 'we\'ll send you a link ✨';
 
   @override
   String get forgotPasswordHeroLine1 => 'Reset access.';

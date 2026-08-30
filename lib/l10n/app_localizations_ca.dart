@@ -626,7 +626,7 @@ class AppLocalizationsCa extends AppLocalizations {
       'Si el correu coincideix amb un compte, l\'enllaç de restabliment arribarà aviat.';
 
   @override
-  String get forgotPasswordSendButton => 'ENVIAR ENLLAÇ DE RESTABLIMENT';
+  String get forgotPasswordSendButton => 'Enviar enllaç';
 
   @override
   String get forgotPasswordSuccessTitle => 'Revisa la teva safata d\'entrada';
@@ -636,10 +636,19 @@ class AppLocalizationsCa extends AppLocalizations {
       'Si existeix un compte per a aquest correu, l\'enllaç de restabliment està en camí.';
 
   @override
-  String get forgotPasswordBackToSignIn => 'TORNAR A INICIAR SESSIÓ';
+  String get forgotPasswordBackToSignIn => 'Tornar a iniciar sessió';
 
   @override
   String get forgotPasswordUseAnotherEmail => 'Utilitzar un altre correu';
+
+  @override
+  String get forgotPasswordHeadingFirstLine => 'RESTABLEIX';
+
+  @override
+  String get forgotPasswordHeadingSecondLine => 'L\'ACCÉS.';
+
+  @override
+  String get forgotPasswordSubtitle => 't\'enviem un enllaç ✨';
 
   @override
   String get forgotPasswordHeroLine1 => 'Recupera l\'accés.';

@@ -767,7 +767,7 @@
   "@forgotPasswordHelperText": {
     "description": "Forgot-password helper text under the email field."
   },
-  "forgotPasswordSendButton": "SEND RESET LINK",
+  "forgotPasswordSendButton": "Send reset link",
   "@forgotPasswordSendButton": {
     "description": "Forgot-password submit button."
   },
@@ -779,13 +779,25 @@
   "@forgotPasswordSuccessSubtitle": {
     "description": "Forgot-password success panel subtitle."
   },
-  "forgotPasswordBackToSignIn": "BACK TO SIGN IN",
+  "forgotPasswordBackToSignIn": "Back to sign in",
   "@forgotPasswordBackToSignIn": {
     "description": "Forgot-password success panel button returning to login."
   },
   "forgotPasswordUseAnotherEmail": "Use another email",
   "@forgotPasswordUseAnotherEmail": {
     "description": "Forgot-password success panel link to retry with a different email."
+  },
+  "forgotPasswordHeadingFirstLine": "RESET",
+  "@forgotPasswordHeadingFirstLine": {
+    "description": "Forgot-password hero, first line. Already uppercase: set in Anton all-caps, and uppercasing in Dart would break locales like Turkish."
+  },
+  "forgotPasswordHeadingSecondLine": "ACCESS.",
+  "@forgotPasswordHeadingSecondLine": {
+    "description": "Forgot-password hero, second line — the one carrying the yellow highlighter swash. Keep it short; it is a single line."
+  },
+  "forgotPasswordSubtitle": "we'll send you a link \u2728",
+  "@forgotPasswordSubtitle": {
+    "description": "Forgot-password subtitle in the handwritten Caveat face, tilted. Lowercase by design; the sparkle is part of the copy. Mirrors loginSubtitle."
   },
   "forgotPasswordHeroLine1": "Reset access.",
   "@forgotPasswordHeroLine1": {

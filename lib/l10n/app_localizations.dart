@@ -1249,7 +1249,7 @@ abstract class AppLocalizations {
   /// Forgot-password submit button.
   ///
   /// In en, this message translates to:
-  /// **'SEND RESET LINK'**
+  /// **'Send reset link'**
   String get forgotPasswordSendButton;
 
   /// Forgot-password success panel title.
@@ -1267,7 +1267,7 @@ abstract class AppLocalizations {
   /// Forgot-password success panel button returning to login.
   ///
   /// In en, this message translates to:
-  /// **'BACK TO SIGN IN'**
+  /// **'Back to sign in'**
   String get forgotPasswordBackToSignIn;
 
   /// Forgot-password success panel link to retry with a different email.
@@ -1275,6 +1275,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use another email'**
   String get forgotPasswordUseAnotherEmail;
+
+  /// Forgot-password hero, first line. Already uppercase: set in Anton all-caps, and uppercasing in Dart would break locales like Turkish.
+  ///
+  /// In en, this message translates to:
+  /// **'RESET'**
+  String get forgotPasswordHeadingFirstLine;
+
+  /// Forgot-password hero, second line — the one carrying the yellow highlighter swash. Keep it short; it is a single line.
+  ///
+  /// In en, this message translates to:
+  /// **'ACCESS.'**
+  String get forgotPasswordHeadingSecondLine;
+
+  /// Forgot-password subtitle in the handwritten Caveat face, tilted. Lowercase by design; the sparkle is part of the copy. Mirrors loginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'we\'ll send you a link ✨'**
+  String get forgotPasswordSubtitle;
 
   /// Forgot-password hero headline, line 1 (initial state).
   ///

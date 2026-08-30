@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
@@ -15,6 +14,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/brand/kolabing_k_mark.dart';
 import '../providers/auth_provider.dart';
 import '../utils/auth_navigation.dart';
+import '../widgets/auth_page.dart';
 import '../widgets/google_logo.dart';
 
 // ---------------------------------------------------------------------------
@@ -401,10 +401,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               child: LayoutBuilder(
                 builder: (context, constraints) => SingleChildScrollView(
                   padding: const EdgeInsets.fromLTRB(
-                    _Login.gutter,
+                    AuthMetrics.gutter,
                     0,
-                    _Login.gutter,
-                    _Login.bottomPad,
+                    AuthMetrics.gutter,
+                    AuthMetrics.bottomPad,
                   ),
                   child: ConstrainedBox(
                     // Fill the viewport, minus the padding the scroll view adds
@@ -414,7 +414,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     // pushed it past — a scroll with nothing at the end of it,
                     // which is what was reported as unnecessary space.
                     constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight - _Login.bottomPad,
+                      minHeight: constraints.maxHeight - AuthMetrics.bottomPad,
                     ),
                     child: IntrinsicHeight(
                       child: Form(
@@ -424,34 +424,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _buildNavRow(l10n),
-                            _Collapsible(
+                            AuthCollapsible(
                               collapsed: keyboardOpen,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const SizedBox(height: _Login.markTop),
+                                  const SizedBox(height: AuthMetrics.markTop),
                                   Transform.rotate(
-                                    angle: _Login.markTilt,
+                                    angle: AuthMetrics.markTilt,
                                     child: AnimatedKolabingKMark(
-                                      width: _Login.markWidth,
+                                      width: AuthMetrics.markWidth,
                                       color: KolabingColors.brandDark,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(height: _Login.headingTop),
+                            const SizedBox(height: AuthMetrics.headingTop),
                             _buildHeading(l10n),
-                            _Collapsible(
+                            AuthCollapsible(
                               collapsed: keyboardOpen,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const SizedBox(height: _Login.subtitleTop),
+                                  const SizedBox(
+                                    height: AuthMetrics.subtitleTop,
+                                  ),
                                   Transform.rotate(
-                                    angle: _Login.subtitleTilt,
+                                    angle: AuthMetrics.subtitleTilt,
                                     child: Text(
                                       l10n.loginSubtitle,
                                       style: GoogleFonts.caveat(
@@ -464,7 +466,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 ],
                               ),
                             ),
-                            const SizedBox(height: _Login.socialTop),
+                            const SizedBox(height: AuthMetrics.bodyTop),
                             // Side by side rather than stacked, taking variant
                             // 1b's compact social row from the same design doc.
                             // Two full-width buttons cost 118pt of a page that
@@ -520,13 +522,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               textInputAction: TextInputAction.next,
                               onFieldSubmitted: (_) =>
                                   _passwordFocusNode.requestFocus(),
-                              style: _Login.fieldTextStyle,
+                              style: AuthMetrics.fieldTextStyle,
                               decoration: _fieldDecoration(
                                 hint: l10n.authEmailLabel,
                                 prefixIcon: LucideIcons.mail,
                               ),
                             ),
-                            const SizedBox(height: _Login.fieldGap),
+                            const SizedBox(height: AuthMetrics.fieldGap),
                             TextFormField(
                               controller: _passwordController,
                               focusNode: _passwordFocusNode,
@@ -538,7 +540,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               validator: _validatePassword,
                               textInputAction: TextInputAction.done,
                               onFieldSubmitted: (_) => _handleEmailLogin(),
-                              style: _Login.fieldTextStyle,
+                              style: AuthMetrics.fieldTextStyle,
                               decoration: _fieldDecoration(
                                 hint: l10n.authPasswordLabel,
                                 prefixIcon: LucideIcons.lock,
@@ -582,8 +584,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 ),
                               ),
                             ),
-                            const SizedBox(height: _Login.ctaTop),
-                            _SignInCta(
+                            const SizedBox(height: AuthMetrics.ctaTop),
+                            AuthPrimaryCta(
                               label: l10n.loginSignInButton,
                               isLoading: _isLoading,
                               showSuccess: _showSuccess,
@@ -601,12 +603,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             // leaving a void under the CTA and making the page
                             // scrollable for no reason — which is exactly what
                             // was reported. The footer just follows the button.
-                            _Collapsible(
+                            AuthCollapsible(
                               collapsed: keyboardOpen,
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const SizedBox(height: _Login.footerAfterCta),
+                                  const SizedBox(
+                                    height: AuthMetrics.footerAfterCta,
+                                  ),
                                   _buildFooter(l10n),
                                 ],
                               ),
@@ -626,7 +630,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   Widget _buildNavRow(AppLocalizations l10n) => SizedBox(
-    height: _Login.navHeight,
+    height: AuthMetrics.navHeight,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -673,10 +677,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(l10n.loginHeadingFirstLine, style: _Login.headingStyle),
-        _HighlightedText(
+        Text(l10n.loginHeadingFirstLine, style: AuthMetrics.headingStyle),
+        AuthHighlightedText(
           text: l10n.loginHeadingSecondLine,
-          style: _Login.headingStyle,
+          style: AuthMetrics.headingStyle,
           color: KolabingColors.primary,
         ),
       ],
@@ -730,15 +734,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
     suffixIcon: suffixIcon,
     suffixIconConstraints: const BoxConstraints(minWidth: 52, minHeight: 44),
-    border: _Login.fieldBorder(
+    border: AuthMetrics.fieldBorder(
       KolabingColors.brandDark.withValues(alpha: 0.12),
     ),
-    enabledBorder: _Login.fieldBorder(
+    enabledBorder: AuthMetrics.fieldBorder(
       KolabingColors.brandDark.withValues(alpha: 0.12),
     ),
-    focusedBorder: _Login.fieldBorder(KolabingColors.brandDark),
-    errorBorder: _Login.fieldBorder(KolabingColors.error),
-    focusedErrorBorder: _Login.fieldBorder(KolabingColors.error),
+    focusedBorder: AuthMetrics.fieldBorder(KolabingColors.brandDark),
+    errorBorder: AuthMetrics.fieldBorder(KolabingColors.error),
+    focusedErrorBorder: AuthMetrics.fieldBorder(KolabingColors.error),
     errorStyle: GoogleFonts.inter(
       fontSize: 11.5,
       fontWeight: FontWeight.w500,
@@ -748,138 +752,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 }
 
 // ---------------------------------------------------------------------------
-// Design metrics — lifted verbatim from `Mobile Login v2.dc.html`, variant 1a
-// ---------------------------------------------------------------------------
-
-/// Every number here is a value from the design doc rather than a house token,
-/// which is why they live together and named: this screen is a straight port,
-/// and a reviewer should be able to diff these against the source.
-abstract final class _Login {
-  static const double gutter = 24;
-  static const double bottomPad = 28;
-  static const double navHeight = 48;
-
-  static const double markTop = 18;
-  static const double markWidth = 76;
-
-  /// −2° on the mark, −3° on the handwritten line, in radians.
-  static const double markTilt = -2 * math.pi / 180;
-  static const double subtitleTilt = -3 * math.pi / 180;
-
-  static const double headingTop = 26;
-  static const double subtitleTop = 12;
-  static const double socialTop = 26;
-  static const double socialGap = 10;
-  static const double socialIcon = 17;
-  static const double socialHeight = 52;
-
-  /// Brand names, so they are deliberately not in the ARBs — CLAUDE.md exempts
-  /// them from i18n. The full "Continue with …" phrasing still reaches screen
-  /// readers through [_SocialButton.semanticLabel].
-  static const String googleLabel = 'Google';
-  static const String appleLabel = 'Apple';
-  static const double dividerGap = 22;
-  static const double fieldHeight = 54;
-  static const double fieldGap = 12;
-  static const double ctaTop = 14;
-  static const double ctaHeight = 56;
-
-  /// The design's own footer gap is 22, measured from the bottom of the page.
-  /// Following the CTA instead, it needs room to read as a separate thing.
-  static const double footerAfterCta = 32;
-
-  static TextStyle get headingStyle => GoogleFonts.anton(
-    fontSize: 44,
-    fontWeight: FontWeight.w400,
-    height: 0.95,
-    letterSpacing: -0.44,
-    color: KolabingColors.brandDark,
-  );
-
-  static TextStyle get fieldTextStyle => GoogleFonts.inter(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: KolabingColors.brandDark,
-  );
-
-  static OutlineInputBorder fieldBorder(Color color) => OutlineInputBorder(
-    borderRadius: BorderRadius.circular(fieldHeight / 2),
-    borderSide: BorderSide(color: color, width: 1.5),
-  );
-}
-
-// ---------------------------------------------------------------------------
 // Pieces
 // ---------------------------------------------------------------------------
-
-/// Collapses its child to nothing, with a bit of easing, when the keyboard
-/// takes the room it was using.
-///
-/// [AnimatedSize] rather than a bare `if`: without the tween the page jumps by
-/// ~170pt the instant a field takes focus, which reads as a glitch rather than
-/// as the screen making space.
-class _Collapsible extends StatelessWidget {
-  const _Collapsible({required this.collapsed, required this.child});
-
-  final bool collapsed;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => AnimatedSize(
-    duration: const Duration(milliseconds: 200),
-    curve: Curves.easeOutCubic,
-    alignment: Alignment.topCenter,
-    child: collapsed
-        ? const SizedBox(width: double.infinity)
-        : Align(alignment: Alignment.centerLeft, child: child),
-  );
-}
-
-/// Text with a highlighter swash behind its lower half.
-///
-/// The design paints it with a gradient that is transparent above 55% of the
-/// line box and yellow from there to 92% — a marker stroke that sits on the
-/// baseline rather than boxing the word. A [Stack] reproduces it without
-/// measuring glyphs: the band is a fraction of whatever height the text takes.
-class _HighlightedText extends StatelessWidget {
-  const _HighlightedText({
-    required this.text,
-    required this.style,
-    required this.color,
-  });
-
-  final String text;
-  final TextStyle style;
-  final Color color;
-
-  /// 55% → 92% of the line box.
-  static const double _bandHeight = 0.37;
-
-  /// Alignment.y that puts a band of [_bandHeight] with its top at 55%.
-  static const double _bandY = 0.746;
-
-  @override
-  Widget build(BuildContext context) => Stack(
-    alignment: Alignment.centerLeft,
-    children: [
-      Positioned.fill(
-        child: Align(
-          alignment: const Alignment(0, _bandY),
-          child: FractionallySizedBox(
-            heightFactor: _bandHeight,
-            widthFactor: 1,
-            child: ColoredBox(color: color),
-          ),
-        ),
-      ),
-      // The design pads the swash 2px past the glyphs on each side.
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 2),
-        child: Text(text, style: style),
-      ),
-    ],
-  );
-}
 
 /// Full-width social button: dark for Apple, white-with-a-hairline for Google.
 class _SocialButton extends StatelessWidget {
@@ -971,6 +845,20 @@ class _SocialButton extends StatelessWidget {
   );
 }
 
+/// Metrics only the sign-in page has: the compact social row from variant 1b.
+abstract final class _Login {
+  static const double socialIcon = 17;
+  static const double socialHeight = 52;
+  static const double socialGap = 10;
+  static const double dividerGap = 22;
+
+  /// Brand names, so they are deliberately not in the ARBs — CLAUDE.md exempts
+  /// them from i18n. The full "Continue with …" phrasing still reaches screen
+  /// readers through [_SocialButton.semanticLabel].
+  static const String googleLabel = 'Google';
+  static const String appleLabel = 'Apple';
+}
+
 /// A hairline, a label, a hairline.
 class _OrDivider extends StatelessWidget {
   const _OrDivider({required this.label});
@@ -1000,82 +888,6 @@ class _OrDivider extends StatelessWidget {
         ),
       ),
     ],
-  );
-}
-
-/// Primary CTA — dark ground, yellow text. Inverted from the app's usual
-/// yellow-on-dark, which is what the design system specifies for it
-/// (`--kb-cta-bg` dark, `--kb-cta-ink` yellow).
-class _SignInCta extends StatelessWidget {
-  const _SignInCta({
-    required this.label,
-    required this.isLoading,
-    required this.showSuccess,
-    required this.isEnabled,
-    required this.onPressed,
-  });
-
-  final String label;
-  final bool isLoading;
-  final bool showSuccess;
-  final bool isEnabled;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) => AnimatedOpacity(
-    opacity: isEnabled || isLoading || showSuccess ? 1 : 0.5,
-    duration: const Duration(milliseconds: 200),
-    child: SizedBox(
-      height: _Login.ctaHeight,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(_Login.ctaHeight / 2),
-          boxShadow: [
-            BoxShadow(
-              color: KolabingColors.primary.withValues(alpha: 0.8),
-              blurRadius: 26,
-              spreadRadius: -15,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Material(
-          color: KolabingColors.brandDark,
-          borderRadius: BorderRadius.circular(_Login.ctaHeight / 2),
-          child: InkWell(
-            onTap: isEnabled && !isLoading && !showSuccess ? onPressed : null,
-            borderRadius: BorderRadius.circular(_Login.ctaHeight / 2),
-            child: Center(
-              child: showSuccess
-                  ? const Icon(
-                      Icons.check_rounded,
-                      size: 24,
-                      color: KolabingColors.primary,
-                    )
-                  : isLoading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          KolabingColors.primary,
-                        ),
-                      ),
-                    )
-                  : Text(
-                      label,
-                      style: GoogleFonts.inter(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: KolabingColors.primary,
-                      ),
-                    ),
-            ),
-          ),
-        ),
-      ),
-    ),
   );
 }
 
