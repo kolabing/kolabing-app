@@ -58,7 +58,8 @@
 profiles (id uuid PK)
   ├─ email, phone_number, user_type ('business'|'community'|'attendee'),
   │  google_id, apple_id, avatar_url, password, email_verified_at,
-  │  device_token, device_platform, is_test_user, deleted_at, created_at, updated_at
+  │  device_token, device_platform, is_test_user, is_active, deleted_at,
+  │  created_at, updated_at
   ├─ business_profiles   (id PK, profile_id → profiles, name, about, business_type,
   │                       city_id → cities, city_name, city_country, instagram,
   │                       website, profile_photo, primary_venue json, categories json)
@@ -67,6 +68,28 @@ profiles (id uuid PK)
   │                       profile_photo, is_featured)
   └─ attendee_profiles   (id PK, profile_id → profiles)
 ```
+
+### `profiles.is_active` — the global active/passive switch (kolabing-v2#254)
+
+Boolean, `NOT NULL DEFAULT true`, indexed. An admin switch, flipped from
+`/admin/users`. **Do not confuse it with `deleted_at`:**
+
+| | `is_active = false` | `deleted_at` set |
+|---|---|---|
+| Who | Admin | The user (`DELETE /me/account`, App Review 5.1.1(v)) |
+| Reversible | Yes, from the admin panel | No, in product terms |
+| Data | Untouched | Soft-deleted |
+
+When false the account is **inaccessible** (every Sanctum token is revoked, and
+any authenticated call answers **`403` with `"code": "ACCOUNT_DEACTIVATED"`;
+login, Google and Apple answer the same rather than "Invalid credentials") and
+**invisible** (`business_profiles`, `community_profiles` and `attendee_profiles`
+carry a global scope that filters on the owning profile).
+
+The app never reads the column — it is `$hidden`, and an inactive profile is
+simply absent from every response. What the app **must** handle is the `403` +
+`ACCOUNT_DEACTIVATED` code, as a terminal session state: clear the token, return
+to sign-in, and say why.
 
 **Important:** `profiles.id` ≠ `business_profiles.id` ≠ `community_profiles.id`.
 The collaboration table references BOTH levels — `creator_profile_id` /
