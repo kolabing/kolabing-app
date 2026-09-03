@@ -55,8 +55,10 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Kolabing uses the camera to scan QR codes for event check-in, and to take the photos that event challenges ask for — a photo with someone you met, or a shot the challenge asks you to find.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Kolabing uses your location only while the app is open, to show nearby events and collaboration opportunities. Kolabing never uses your location in the background and does not track where you go.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Kolabing needs your location to show nearby collaboration opportunities and connect you with local businesses and communities.</string>
+	<string>Kolabing uses your location while the app is open to show nearby events and collaboration opportunities, and to connect you with local businesses and communities.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Kolabing needs permission to save and manage selected media for your profile, kolabs, and past events.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
