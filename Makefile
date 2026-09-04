@@ -20,7 +20,7 @@
 DEV_DEFINE  := --dart-define=APP_ENV=dev
 PROD_DEFINE := --dart-define=APP_ENV=prod
 
-.PHONY: run-dev run-prod ipa-dev ipa-prod beta-dev beta-prod beta-dry serve-sim serve-sim-status serve-sim-stop help
+.PHONY: run-dev run-prod ipa-dev ipa-prod beta-dev beta-prod beta-dry verify-prod verify-dev serve-sim serve-sim-status serve-sim-stop help
 
 help:
 	@echo "Targets:"
@@ -31,6 +31,8 @@ help:
 	@echo "  make beta-dev         # build AND upload a DEV build to TestFlight"
 	@echo "  make beta-prod        # build AND upload a PROD build to TestFlight"
 	@echo "  make beta-dry         # build + export only, upload nothing"
+	@echo "  make verify-prod      # prove the last archive targets the PROD backend"
+	@echo "  make verify-dev       # prove the last archive targets the DEV backend"
 	@echo "  make serve-sim        # boot the iOS sim + stream it to a browser (macOS only; see docs/ios-serve-sim-qa.md)"
 	@echo "  make serve-sim-status # check whether a backgrounded serve-sim (started remotely) is running"
 	@echo "  make serve-sim-stop   # stop a backgrounded serve-sim"
@@ -78,3 +80,14 @@ beta-prod:
 
 beta-dry:
 	./scripts/release-ios.sh dev --dry-run
+
+# Read the backend host actually baked into the last archive, rather than
+# trusting that the right define was passed (#202). `make beta-*` runs this
+# automatically; these targets are for an archive taken through Xcode, which
+# passes no define at all. Pass a path to check some other artefact:
+#   ./scripts/verify-build-env.sh prod ~/Library/Developer/Xcode/Archives/…
+verify-prod:
+	./scripts/verify-build-env.sh prod
+
+verify-dev:
+	./scripts/verify-build-env.sh dev

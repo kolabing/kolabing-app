@@ -130,6 +130,13 @@ flutter build ipa \
 ARCHIVE="build/ios/archive/Runner.xcarchive"
 [ -d "$ARCHIVE" ] || die "No archive at $ARCHIVE — the build itself failed, so there is nothing to export."
 
+# Fail closed before export, not after upload (#202). The define above is only an
+# instruction; this reads the host actually baked into the binary. Once a build
+# is in App Store Connect, a dev one and a prod one are the same row.
+say "Verifying the archive really targets $ENV_NAME…"
+./scripts/verify-build-env.sh "$ENV_NAME" "$ARCHIVE" \
+  || die "The archive does not target $ENV_NAME. Not exporting, not uploading."
+
 IPA_DIR="build/ios/ipa"
 IPA="$(ls -t "$IPA_DIR"/*.ipa 2>/dev/null | head -1 || true)"
 
