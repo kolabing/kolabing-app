@@ -555,6 +555,42 @@ class AppLocalizationsEs extends AppLocalizations {
   String get loginSignInButton => 'Iniciar sesión';
 
   @override
+  String get loginBackLabel => 'atrás';
+
+  @override
+  String get loginSignUpLabel => 'crear cuenta';
+
+  @override
+  String get loginHeadingFirstLine => 'BIENVENIDO';
+
+  @override
+  String get loginHeadingSecondLine => 'DE NUEVO.';
+
+  @override
+  String get loginSubtitle => 'sigue donde lo dejaste ✨';
+
+  @override
+  String get loginContinueWithApple => 'Continuar con Apple';
+
+  @override
+  String get loginContinueWithGoogle => 'Continuar con Google';
+
+  @override
+  String get loginOrWithEmail => 'o con tu correo';
+
+  @override
+  String get loginForgotPasswordPrompt => '¿has olvidado la contraseña?';
+
+  @override
+  String get loginTogglePasswordVisibility => 'Mostrar u ocultar la contraseña';
+
+  @override
+  String get loginNoAccountPrompt => '¿eres nuevo en Kolabing?';
+
+  @override
+  String get loginCreateAccountLink => 'crea una cuenta';
+
+  @override
   String get loginForgotPassword => '¿Olvidaste tu contraseña?';
 
   @override
@@ -585,7 +621,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Si el correo coincide con una cuenta, el enlace de restablecimiento llegará en breve.';
 
   @override
-  String get forgotPasswordSendButton => 'ENVIAR ENLACE DE RESTABLECIMIENTO';
+  String get forgotPasswordSendButton => 'Enviar enlace';
 
   @override
   String get forgotPasswordSuccessTitle => 'Revisa tu bandeja de entrada';
@@ -595,10 +631,19 @@ class AppLocalizationsEs extends AppLocalizations {
       'Si existe una cuenta para este correo, el enlace de restablecimiento está en camino.';
 
   @override
-  String get forgotPasswordBackToSignIn => 'VOLVER A INICIAR SESIÓN';
+  String get forgotPasswordBackToSignIn => 'Volver a iniciar sesión';
 
   @override
   String get forgotPasswordUseAnotherEmail => 'Usar otro correo';
+
+  @override
+  String get forgotPasswordHeadingFirstLine => 'RESTABLECE';
+
+  @override
+  String get forgotPasswordHeadingSecondLine => 'EL ACCESO.';
+
+  @override
+  String get forgotPasswordSubtitle => 'te enviamos un enlace ✨';
 
   @override
   String get forgotPasswordHeroLine1 => 'Recupera el acceso.';
@@ -701,7 +746,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectionCardCommunityTitle => 'Soy una comunidad';
 
   @override
-  String get selectionCardAttendeeTitle => 'Soy un miembro';
+  String get selectionCardAttendeeTitle => 'Soy un usuario';
 
   @override
   String get selectionCardBusinessDescription =>

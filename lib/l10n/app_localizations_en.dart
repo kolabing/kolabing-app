@@ -553,6 +553,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSignInButton => 'Sign in';
 
   @override
+  String get loginBackLabel => 'back';
+
+  @override
+  String get loginSignUpLabel => 'sign up';
+
+  @override
+  String get loginHeadingFirstLine => 'WELCOME';
+
+  @override
+  String get loginHeadingSecondLine => 'BACK.';
+
+  @override
+  String get loginSubtitle => 'pick up where you left off ✨';
+
+  @override
+  String get loginContinueWithApple => 'Continue with Apple';
+
+  @override
+  String get loginContinueWithGoogle => 'Continue with Google';
+
+  @override
+  String get loginOrWithEmail => 'or with email';
+
+  @override
+  String get loginForgotPasswordPrompt => 'forgot password?';
+
+  @override
+  String get loginTogglePasswordVisibility => 'Show or hide password';
+
+  @override
+  String get loginNoAccountPrompt => 'new to kolabing?';
+
+  @override
+  String get loginCreateAccountLink => 'create an account';
+
+  @override
   String get loginForgotPassword => 'Forgot password?';
 
   @override
@@ -583,7 +619,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'If the email matches an account, the reset link will arrive shortly.';
 
   @override
-  String get forgotPasswordSendButton => 'SEND RESET LINK';
+  String get forgotPasswordSendButton => 'Send reset link';
 
   @override
   String get forgotPasswordSuccessTitle => 'Check your inbox';
@@ -593,10 +629,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'If an account exists for this email, the reset link is on its way.';
 
   @override
-  String get forgotPasswordBackToSignIn => 'BACK TO SIGN IN';
+  String get forgotPasswordBackToSignIn => 'Back to sign in';
 
   @override
   String get forgotPasswordUseAnotherEmail => 'Use another email';
+
+  @override
+  String get forgotPasswordHeadingFirstLine => 'RESET';
+
+  @override
+  String get forgotPasswordHeadingSecondLine => 'ACCESS.';
+
+  @override
+  String get forgotPasswordSubtitle => 'we\'ll send you a link ✨';
 
   @override
   String get forgotPasswordHeroLine1 => 'Reset access.';
@@ -698,7 +743,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectionCardCommunityTitle => 'I\'m a community';
 
   @override
-  String get selectionCardAttendeeTitle => 'I\'m a member';
+  String get selectionCardAttendeeTitle => 'I\'m a user';
 
   @override
   String get selectionCardBusinessDescription =>

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/auth/screens/forgot_password_screen.dart';
-import 'package:kolabing_app/features/auth/widgets/kolabing_logo.dart';
+import 'package:kolabing_app/features/auth/widgets/auth_page.dart';
 
 Future<void> _pumpForgotPassword(
   WidgetTester tester, {
@@ -41,7 +41,7 @@ Future<void> _pumpForgotPassword(
 }
 
 void main() {
-  testWidgets('forgot password screen reuses the login hero shell', (
+  testWidgets('forgot password screen shares the sign-in page furniture', (
     WidgetTester tester,
   ) async {
     await _pumpForgotPassword(tester);
@@ -50,15 +50,14 @@ void main() {
     // The form scrolls rather than risking clipping on shorter screens —
     // the opposite of a stale "must never scroll" assumption.
     expect(find.byType(SingleChildScrollView), findsOneWidget);
-
-    final logo = tester.widget<KolabingLogo>(find.byType(KolabingLogo));
-    expect(logo.tone, KolabingLogoTone.dark);
-
-    expect(find.text('Reset access.'), findsOneWidget);
-    expect(
-      find.text("Enter your account email and we'll send a secure reset link."),
-      findsOneWidget,
-    );
+    // Consistency is enforced by shared widgets rather than by two screens
+    // agreeing to look alike (kolabing-app#193): if these stop matching
+    // sign-in, it is because someone changed AuthHero for both.
+    expect(find.byType(AuthSubtitle), findsOneWidget);
+    expect(find.byType(AuthNavRow), findsOneWidget);
+    expect(find.byType(AuthPrimaryCta), findsOneWidget);
+    expect(find.text('RESET'), findsOneWidget);
+    expect(find.text('ACCESS.'), findsOneWidget);
     expect(find.text('Send reset link'), findsOneWidget);
   });
 
@@ -73,7 +72,7 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.text('Reset access.'), findsOneWidget);
+    expect(find.text('RESET'), findsOneWidget);
     expect(find.text('Send reset link'), findsOneWidget);
     expect(
       tester.getBottomLeft(find.text('Send reset link')).dy,

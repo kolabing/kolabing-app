@@ -41,6 +41,17 @@ abstract final class KolabingColors {
   /// Darkest text (ink black)
   static const Color ink = Color(0xFF19150F);
 
+  /// Near-black from the Kolabing web design system (`--kb-dark`): its body
+  /// ink, footer ground and primary-CTA fill.
+  ///
+  /// Cooler and slightly darker than [ink] (`#19150F`), the warm parchment-era
+  /// black. Both ship on purpose — this one is for surfaces ported verbatim
+  /// from the web design system, starting with the redesigned sign-in screen
+  /// (kolabing-app#193). Everything else in that design already matched the
+  /// app: its yellow is [primary], its page is [background], its muted brown is
+  /// [inkBody] and its placeholder grey is [muted], all exact.
+  static const Color brandDark = Color(0xFF0D1114);
+
   /// Body text
   static const Color inkBody = Color(0xFF3F3A32);
 

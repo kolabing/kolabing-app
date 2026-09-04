@@ -1120,6 +1120,78 @@ abstract class AppLocalizations {
   /// **'Sign in'**
   String get loginSignInButton;
 
+  /// Sign-in screen: back link. Lowercase by design — the casing lives here, not in a toUpperCase()/toLowerCase() call, because casing is locale-sensitive.
+  ///
+  /// In en, this message translates to:
+  /// **'back'**
+  String get loginBackLabel;
+
+  /// Sign-in screen: sign-up link in the top bar. Lowercase by design.
+  ///
+  /// In en, this message translates to:
+  /// **'sign up'**
+  String get loginSignUpLabel;
+
+  /// Sign-in hero, first line. Already uppercase: the design sets it in Anton all-caps, and uppercasing in Dart would break locales like Turkish.
+  ///
+  /// In en, this message translates to:
+  /// **'WELCOME'**
+  String get loginHeadingFirstLine;
+
+  /// Sign-in hero, second line — the one carrying the yellow highlighter swash. Keep it short; it is a single line.
+  ///
+  /// In en, this message translates to:
+  /// **'BACK.'**
+  String get loginHeadingSecondLine;
+
+  /// Sign-in hero subtitle, set in the handwritten Caveat face and tilted. Lowercase by design; the sparkle is part of the copy.
+  ///
+  /// In en, this message translates to:
+  /// **'pick up where you left off ✨'**
+  String get loginSubtitle;
+
+  /// Sign-in screen: Apple sign-in button
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get loginContinueWithApple;
+
+  /// Sign-in screen: Google sign-in button
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get loginContinueWithGoogle;
+
+  /// Sign-in screen: divider between the social buttons and the email form
+  ///
+  /// In en, this message translates to:
+  /// **'or with email'**
+  String get loginOrWithEmail;
+
+  /// Sign-in screen: forgot-password link under the fields. Lowercase by design (distinct from loginForgotPassword, which other screens use).
+  ///
+  /// In en, this message translates to:
+  /// **'forgot password?'**
+  String get loginForgotPasswordPrompt;
+
+  /// Sign-in screen: tooltip on the eye button inside the password field
+  ///
+  /// In en, this message translates to:
+  /// **'Show or hide password'**
+  String get loginTogglePasswordVisibility;
+
+  /// Sign-in screen footer, before the create-account link. Lowercase by design; Kolabing keeps its capital as a brand name.
+  ///
+  /// In en, this message translates to:
+  /// **'new to kolabing?'**
+  String get loginNoAccountPrompt;
+
+  /// Sign-in screen footer: the tappable half of the create-account line
+  ///
+  /// In en, this message translates to:
+  /// **'create an account'**
+  String get loginCreateAccountLink;
+
   /// Login screen link to the forgot-password flow.
   ///
   /// In en, this message translates to:
@@ -1177,7 +1249,7 @@ abstract class AppLocalizations {
   /// Forgot-password submit button.
   ///
   /// In en, this message translates to:
-  /// **'SEND RESET LINK'**
+  /// **'Send reset link'**
   String get forgotPasswordSendButton;
 
   /// Forgot-password success panel title.
@@ -1195,7 +1267,7 @@ abstract class AppLocalizations {
   /// Forgot-password success panel button returning to login.
   ///
   /// In en, this message translates to:
-  /// **'BACK TO SIGN IN'**
+  /// **'Back to sign in'**
   String get forgotPasswordBackToSignIn;
 
   /// Forgot-password success panel link to retry with a different email.
@@ -1203,6 +1275,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use another email'**
   String get forgotPasswordUseAnotherEmail;
+
+  /// Forgot-password hero, first line. Already uppercase: set in Anton all-caps, and uppercasing in Dart would break locales like Turkish.
+  ///
+  /// In en, this message translates to:
+  /// **'RESET'**
+  String get forgotPasswordHeadingFirstLine;
+
+  /// Forgot-password hero, second line — the one carrying the yellow highlighter swash. Keep it short; it is a single line.
+  ///
+  /// In en, this message translates to:
+  /// **'ACCESS.'**
+  String get forgotPasswordHeadingSecondLine;
+
+  /// Forgot-password subtitle in the handwritten Caveat face, tilted. Lowercase by design; the sparkle is part of the copy. Mirrors loginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'we\'ll send you a link ✨'**
+  String get forgotPasswordSubtitle;
 
   /// Forgot-password hero headline, line 1 (initial state).
   ///
@@ -1393,7 +1483,7 @@ abstract class AppLocalizations {
   /// User-type selection card title for the Attendee option.
   ///
   /// In en, this message translates to:
-  /// **'I\'m a member'**
+  /// **'I\'m a user'**
   String get selectionCardAttendeeTitle;
 
   /// User-type selection card description for the Business option.
