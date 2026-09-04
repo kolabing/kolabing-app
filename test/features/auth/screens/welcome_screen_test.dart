@@ -115,11 +115,11 @@ void main() {
       }
       expect(find.text('KOLAB'), findsOneWidget);
 
-      // Light wordmark logo.
+      // The K mark, dark on the yellow hero.
       final logoFinder = find.byType(KolabingLogo);
       expect(logoFinder, findsOneWidget);
       final logo = tester.widget<KolabingLogo>(logoFinder);
-      expect(logo.variant, KolabingLogoVariant.lightTransparent);
+      expect(logo.tone, KolabingLogoTone.dark);
 
       // Primary CTA + login link.
       final getStartedFinder = find.text('Start kolabing');

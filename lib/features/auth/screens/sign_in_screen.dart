@@ -321,8 +321,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                     _AnimatedElement(
                       animation: _logoAnimation,
                       child: const KolabingLogo(
-                        width: 220,
-                        variant: KolabingLogoVariant.yellowTransparent,
+                        width: 116,
+                        tone: KolabingLogoTone.light,
                       ),
                     ),
 

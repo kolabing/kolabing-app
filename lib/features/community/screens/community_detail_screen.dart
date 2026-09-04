@@ -177,19 +177,13 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
               ),
             ),
 
-            // Where the viewer stands in this community: a member sees points +
-            // tier, a manager gets into the roster.
+            // Managers get into the roster from here. Members used to see a
+            // points + tier band in the same slot; it was noise for an
+            // attendee, so it is gone — the goals below carry their progress.
             //
-            // Both are full-bleed bands with a hairline at the top, and the
-            // photo strip above them ends at its last photo — so without a gap
-            // of their own the photos sat directly on that hairline (#185).
-            if (!_canManage)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: KolabingSpacing.lg),
-                  child: _StandingNavRow(community: c),
-                ),
-              ),
+            // The band is full-bleed with a hairline at the top, and the photo
+            // strip above it ends at its last photo — so without a gap of its
+            // own the photos sat directly on that hairline (#185).
             if (_showMembers)
               SliverToBoxAdapter(
                 child: Padding(
@@ -239,29 +233,8 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
 }
 
 // -----------------------------------------------------------------------------
-// Standing / roster rows
+// Identity / roster rows
 // -----------------------------------------------------------------------------
-
-/// A member's own standing: points and tier.
-///
-/// Both arrive inside `GET /communities/{id}` as `my_points` and `my_tier`, so
-/// this no longer waits on the rewards hub — it was making a second call for
-/// something the page had already been sent.
-class _StandingNavRow extends StatelessWidget {
-  const _StandingNavRow({required this.community});
-
-  final Community community;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return CommunityNavRow(
-      icon: LucideIcons.star,
-      title: l10n.communityMembersPoints(community.myPoints),
-      subtitle: community.myTier?.name ?? l10n.communityRewardsNoTier,
-    );
-  }
-}
 
 /// Name, about, meta line and the owner's social handles.
 class _Identity extends ConsumerWidget {

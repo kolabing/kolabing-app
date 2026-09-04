@@ -52,7 +52,7 @@ void main() {
     expect(find.byType(SingleChildScrollView), findsOneWidget);
 
     final logo = tester.widget<KolabingLogo>(find.byType(KolabingLogo));
-    expect(logo.variant, KolabingLogoVariant.onYellow);
+    expect(logo.tone, KolabingLogoTone.dark);
 
     expect(find.text('Reset access.'), findsOneWidget);
     expect(
