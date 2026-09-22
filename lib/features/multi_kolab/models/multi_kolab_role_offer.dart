@@ -261,36 +261,18 @@ class MultiKolabRoleOffer {
   /// position, and roles the viewer already applied to.
   bool get canApply => isOpen && positionsRemaining > 0 && !viewerHasApplied;
 
-  /// Eligibility routing for the two Explore feeds: a Community role shows
-  /// only in Community Explore, a Business role only in Business Explore,
-  /// and an `either` role in both.
-  bool isEligibleFor({required bool isCommunityViewer}) =>
-      switch (eligibleAccountType) {
-        MultiKolabEligibleAccountType.either => true,
-        MultiKolabEligibleAccountType.community => isCommunityViewer,
-        MultiKolabEligibleAccountType.business => !isCommunityViewer,
-      };
-
-  /// Whether the role belongs to the viewer's own event — an organizer must
-  /// never see their own role offered back to them in Explore.
-  bool isOwnedBy(String? viewerProfileId) {
-    final organizerId = organizerProfileId;
-    if (viewerProfileId == null || viewerProfileId.isEmpty) return false;
-    if (organizerId == null || organizerId.isEmpty) return false;
-    return organizerId == viewerProfileId;
-  }
-
-  /// The single visibility gate for the Explore feed. A role appears only
-  /// when it is OPEN, has a remaining position, matches the viewer's feed,
-  /// and isn't the viewer's own.
-  bool isVisibleInExplore({
-    required bool isCommunityViewer,
-    required String? viewerProfileId,
-  }) =>
-      isOpen &&
-      positionsRemaining > 0 &&
-      isEligibleFor(isCommunityViewer: isCommunityViewer) &&
-      !isOwnedBy(viewerProfileId);
+  // `isEligibleFor` / `isOwnedBy` / `isVisibleInExplore` used to live here: the
+  // deck's eligibility routing (a Community role reaches only Community
+  // Explore, a Business role only Business Explore, an `either` role both) plus
+  // open / positions-remaining / not-the-viewer's-own. Every one of those is a
+  // hard filter of `GET /discovery/opportunities`
+  // (`makeMultiKolabRoleBaseQuery()`), and holding a second copy here is what
+  // let the Explore count and the Explore deck disagree — see kolabing-v2#316
+  // and the note at the top of `explore_screen.dart`. They are deleted rather
+  // than left unused so the filter cannot be quietly reassembled.
+  //
+  // [canApply] above stays: gating the Apply BUTTON on a role the viewer is
+  // already looking at is a client concern, not a feed one.
 }
 
 /// A structured partner-type request on a role ("looking for a run club").

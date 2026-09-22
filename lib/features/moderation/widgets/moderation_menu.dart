@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -5,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../discovery/providers/discovery_provider.dart';
 import '../providers/blocked_profiles_provider.dart';
 import '../services/moderation_service.dart';
 import 'report_sheet.dart';
@@ -117,6 +120,13 @@ class ModerationMenu {
     final messenger = ScaffoldMessenger.of(context);
     try {
       await ref.read(blockedProfilesProvider.notifier).block(profileId);
+      // App Review Guideline 1.2 wants the blocked user's content gone at once.
+      // Explore renders `GET /discovery/opportunities` verbatim now, and that
+      // endpoint already excludes blocked creators (kolabing-v2#316), but the
+      // page we are looking at was fetched BEFORE the block — so ask for it
+      // again rather than hiding the cards with a local predicate. Refreshing
+      // is what makes the deck and the result count agree on the way out too.
+      unawaited(ref.read(discoveryListProvider.notifier).refresh());
       messenger.showSnackBar(
         SnackBar(content: Text(l10n.moderationBlockSuccess)),
       );

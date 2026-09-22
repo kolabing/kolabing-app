@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../utils/remote_media_url.dart';
+import '../../opportunity/models/availability_window.dart';
 import '../../opportunity/models/opportunity.dart';
 
 @immutable
@@ -377,30 +378,24 @@ class DiscoveryAvailability {
     this.recurringDays = const <int>[],
   });
 
-  factory DiscoveryAvailability.fromJson(Map<String, dynamic> json) =>
-      DiscoveryAvailability(
-        mode: json['mode']?.toString() ?? 'one_time',
-        start: _parseDate(json['start']),
-        // An absent `end` means OPEN-ENDED, not "ended today". Falling back to
-        // `start` mirrors the server's own COALESCE(availability_end,
-        // availability_start) expiry rule, so client and server agree about
-        // which Kolabs are still open.
-        //
-        // This is the Explore deck's path, and it is where the bug bit:
-        // `_parseDate(null)` returned DateTime.now(), so an open-ended Kolab
-        // starting tomorrow produced end=today < start=tomorrow,
-        // buildSelectableApplicationDates returned no selectable dates, and
-        // filterExploreDeckItems dropped the card — while the API had counted
-        // it. The result was a Kolab visible to the filter and invisible in the
-        // deck, which is how it was reported.
-        end: _parseDate(json['end'] ?? json['start']),
-        selectedTime: json['selected_time']?.toString(),
-        recurringDays:
-            (json['recurring_days'] as List<dynamic>? ?? const <dynamic>[])
-                .map((value) => int.tryParse(value.toString()) ?? 0)
-                .where((int value) => value > 0)
-                .toList(),
-      );
+  factory DiscoveryAvailability.fromJson(Map<String, dynamic> json) {
+    final window = resolveAvailabilityWindow(
+      rawStart: json['start'],
+      rawEnd: json['end'],
+    );
+
+    return DiscoveryAvailability(
+      mode: json['mode']?.toString() ?? 'one_time',
+      start: window.start,
+      end: window.end,
+      selectedTime: json['selected_time']?.toString(),
+      recurringDays:
+          (json['recurring_days'] as List<dynamic>? ?? const <dynamic>[])
+              .map((value) => int.tryParse(value.toString()) ?? 0)
+              .where((int value) => value > 0)
+              .toList(),
+    );
+  }
 
   final String mode;
   final DateTime start;
@@ -419,12 +414,6 @@ class DiscoveryAvailability {
     final minute = int.tryParse(parts[1]);
     if (hour == null || minute == null) return null;
     return TimeOfDay(hour: hour, minute: minute);
-  }
-
-  static DateTime _parseDate(Object? value) {
-    if (value == null) return DateTime.now();
-    if (value is DateTime) return value;
-    return DateTime.tryParse(value.toString()) ?? DateTime.now();
   }
 }
 
