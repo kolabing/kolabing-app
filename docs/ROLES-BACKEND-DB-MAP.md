@@ -2408,7 +2408,7 @@ matched exactly as typed, so an unknown city can never silently collapse into a 
 > admin-panel surfaces with no mobile effect. The numbering below matches the backend copy so the
 > two never disagree about what a section number means.
 
-## 35. Explore's deck filter is server-side, and only server-side (BE-FX-61, added 2026-09-22)
+## 35. Explore's deck filter is server-side, and only server-side (BE-FX-62, added 2026-09-22)
 
 Visibility only. No gate moved, no role's rules changed, and the paywall is untouched.
 
