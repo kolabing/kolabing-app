@@ -120,8 +120,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       child: const Align(
                         alignment: Alignment(0, -0.4),
                         child: KolabingLogo(
-                          width: 158,
-                          variant: KolabingLogoVariant.onYellow,
+                          width: 84,
+                          tone: KolabingLogoTone.dark,
                         ),
                       ),
                     ),

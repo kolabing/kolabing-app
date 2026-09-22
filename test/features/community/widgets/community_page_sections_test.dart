@@ -334,9 +334,10 @@ void main() {
   );
 
   // #185: on the member's community page the photos sat directly on the
-  // hairline of the "0 pts / Member" band below them. Both call sites wrapped
-  // the strip in `fromLTRB(md, md, 0, 0)` — no bottom gap — and the full-bleed
-  // band that followed had none of its own either.
+  // hairline of the full-bleed nav band below them (then "0 pts / Member",
+  // since removed for members; the roster band now fills that slot). Both
+  // call sites wrapped the strip in `fromLTRB(md, md, 0, 0)` — no bottom gap —
+  // and the full-bleed band that followed had none of its own either.
   //
   // The fix put the padding inside the widget, TOP ONLY, and gave the band its
   // own top gap. These two tests hold both halves of that: the strip must own a

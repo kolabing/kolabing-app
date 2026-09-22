@@ -253,8 +253,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                               child: Align(
                                 alignment: Alignment(0, -0.5),
                                 child: KolabingLogo(
-                                  width: 158,
-                                  variant: KolabingLogoVariant.onYellow,
+                                  width: 84,
+                                  tone: KolabingLogoTone.dark,
                                 ),
                               ),
                             ),
