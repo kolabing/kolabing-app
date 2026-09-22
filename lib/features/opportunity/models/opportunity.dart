@@ -508,7 +508,20 @@ class Opportunity {
         json['availability_mode']?.toString() ?? 'one_time',
       ),
       availabilityStart: _parseDate(json['availability_start']),
-      availabilityEnd: _parseDate(json['availability_end']),
+      // An absent `availability_end` means OPEN-ENDED, not "ends today".
+      // Falling back to `availability_start` mirrors the server's own
+      // COALESCE(availability_end, availability_start) expiry rule, so the two
+      // agree about which Kolabs are still open.
+      //
+      // Without this, `_parseDate(null)` returned DateTime.now(), so an
+      // open-ended Kolab starting tomorrow produced end=today < start=tomorrow,
+      // buildSelectableApplicationDates returned [], and
+      // filterExploreDeckItems silently dropped the card — while the server
+      // still counted it. A Kolab you could see in the filter count but never
+      // in the deck.
+      availabilityEnd: _parseDate(
+        json['availability_end'] ?? json['availability_start'],
+      ),
       selectedTime: _parseTimeOfDay(json['selected_time']?.toString()),
       recurringDays: _parseIntList(
         json['recurring_days'] ?? json['recurring_day'],
