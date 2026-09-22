@@ -24,7 +24,6 @@ import '../../discovery/models/discovery_item.dart';
 import '../../discovery/models/explore_feed_item.dart';
 import '../../discovery/providers/discovery_provider.dart';
 import '../../discovery/widgets/discovery_quick_filters.dart';
-import '../../moderation/providers/blocked_profiles_provider.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../opportunity/models/opportunity.dart';
 import '../../opportunity/providers/saved_kolabs_provider.dart';
@@ -35,49 +34,25 @@ import '../widgets/opportunity_card.dart';
 /// create-Kolab FAB (56dp + margin) never covers card actions.
 const double _fabClearance = 88;
 
-/// The Explore deck's item filter, extracted so it can be unit-tested.
+/// Explore renders `GET /discovery/opportunities` verbatim.
 ///
-/// Applies to EVERY feed item type. Drops, in order: the viewer's own posts
-/// (can't collaborate with yourself), posts by a blocked creator
-/// ([blockedProfileIds] — App Review 1.2 instant client-side hide), and then
-/// a per-type availability rule:
+/// This file used to hold `filterExploreDeckItems`, which re-decided what
+/// reached the deck — own posts, blocked creators, date-exhausted offers,
+/// Multi-Kolab role eligibility — while the result count above the deck was
+/// the API's `meta.total`. Two authorities, one label: whenever the client's
+/// copy of a rule read a payload differently from the server's original, the
+/// count named cards the deck never drew. FX-57 was that bug reaching
+/// production.
 ///
-///  * ordinary Kolab offer — must still be open for applications by date;
-///  * Multi-Kolab role — must be open, have a remaining position, and match
-///    the viewer's feed (a Community role only reaches Community Explore, a
-///    Business role only Business Explore, an `either` role both). This is
-///    the single place that eligibility routing happens.
-List<ExploreFeedItem> filterExploreDeckItems(
-  List<ExploreFeedItem> items, {
-  required Set<String> blockedProfileIds,
-  required String? myProfileId,
-  required DateTime today,
-  required bool isCommunityViewer,
-}) {
-  return items.where((ExploreFeedItem item) {
-    final creatorId = item.creatorProfileId;
-    if (myProfileId != null &&
-        myProfileId.isNotEmpty &&
-        creatorId.isNotEmpty &&
-        creatorId == myProfileId) {
-      return false;
-    }
-    if (creatorId.isNotEmpty && blockedProfileIds.contains(creatorId)) {
-      return false;
-    }
-
-    return switch (item) {
-      ExploreOfferItem(:final offer) => opportunityApplicationsOpen(
-        offer.toOpportunity(),
-        today: today,
-      ),
-      ExploreMultiKolabRoleItem(:final role) => role.isVisibleInExplore(
-        isCommunityViewer: isCommunityViewer,
-        viewerProfileId: myProfileId,
-      ),
-    };
-  }).toList();
-}
+/// Every one of those rules is enforced by the endpoint
+/// (`DiscoveryOpportunityService::makeBaseQuery()` /
+/// `makeMultiKolabRoleBaseQuery()`; the complete list is the "Hard filters"
+/// section of `docs/api/2026-05-09-role-aware-discovery-backend-contract.md`).
+/// Do not re-add a client-side copy of any of them — add it to that list
+/// instead, or `meta.total` starts lying again. See kolabing-v2#316 / #208.
+///
+/// The paywall is NOT a filter: a free business receives every community Kolab
+/// and sees it blurred (ROLES golden rules 4 & 5), never filtered out.
 
 class ExploreScreen extends ConsumerStatefulWidget {
   const ExploreScreen({
@@ -605,48 +580,17 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     );
   }
 
-  /// The page we have already auto-requested a follow-up for after the whole
-  /// page was filtered out. Stops the empty-deck recovery from looping.
-  int? _autoLoadedPage;
-
   Widget _buildCardPageView(
     DiscoveryListState listState, {
     required bool hasBusinessSubscription,
     required Set<String> savedIds,
   }) {
-    final today = DateTime.now();
-    // UGC moderation (App Review 1.2): hide Kolabs whose creator the viewer has
-    // blocked so blocked content disappears from the deck instantly.
-    final blocked = ref.watch(blockedProfilesProvider);
-    final user = ref.read(authProvider).user;
-    final myProfileId = user?.communityProfile?.id ?? user?.businessProfile?.id;
-    final activeItems = filterExploreDeckItems(
-      listState.items,
-      blockedProfileIds: blocked,
-      myProfileId: myProfileId,
-      today: today,
-      isCommunityViewer: _isCommunityViewer,
-    );
+    // The response, as it arrived. A page can no longer come back empty after
+    // client-side filtering, so the auto-`loadMore()` recovery that used to
+    // guard against a permanently dead feed is gone with the filter.
+    final activeItems = listState.items;
 
-    // A whole page can be filtered away — a Business viewer whose page happens
-    // to be all community-only roles. `listState.isEmpty` in build() only knows
-    // the UNFILTERED list, so without this the deck rendered zero pages, and
-    // because `_onPageChanged` is the only load-more trigger it could never
-    // fire: a permanently dead feed with no empty state. Ask for the next page
-    // instead, and only call it empty when there is nothing left to ask for.
-    if (activeItems.isEmpty && !listState.isLoadingMore) {
-      // Once per page, never once per frame: an unguarded request here rebuilds,
-      // finds the deck still empty and asks again, and the screen never settles.
-      if (listState.hasMore && _autoLoadedPage != listState.currentPage) {
-        _autoLoadedPage = listState.currentPage;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) ref.read(discoveryListProvider.notifier).loadMore();
-        });
-      }
-      // The empty state, not a spinner: right now there genuinely is nothing to
-      // show, and a spinner that may never resolve is a worse answer than an
-      // honest one. The deck replaces this by itself when the page we just
-      // asked for arrives with something eligible on it.
+    if (activeItems.isEmpty) {
       return _buildEmptyState(ref.read(discoveryFiltersProvider));
     }
 

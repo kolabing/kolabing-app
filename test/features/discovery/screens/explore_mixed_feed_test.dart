@@ -223,21 +223,6 @@ void main() {
       expect(find.byType(ExploreSwipeCard), findsWidgets);
     });
 
-    testWidgets('a business role is absent from the community feed', (
-      tester,
-    ) async {
-      await _pumpExplore(
-        tester,
-        viewerType: UserType.community,
-        feedItems: [
-          _offer(),
-          _role(id: 'role-b', eligible: 'business'),
-        ],
-      );
-
-      expect(await _deckFeedKeys(tester), <String>['offer:kolab-1']);
-    });
-
     testWidgets('a business role sits beside ordinary offers in the '
         'business feed', (tester) async {
       await _pumpExplore(
@@ -271,30 +256,40 @@ void main() {
       }
     });
 
-    testWidgets('a filled role never appears', (tester) async {
+    // Three tests used to live here: a business role absent from the community
+    // feed, a filled role never appearing, and the organiser's own role never
+    // appearing. All three asserted that the DECK dropped items the API had
+    // sent it. It no longer does — `GET /discovery/opportunities` is the only
+    // filter (`makeMultiKolabRoleBaseQuery()`: open, positions remaining,
+    // eligible account type, not the viewer's own event), and the client
+    // printed that endpoint's `meta.total` as its result count while filtering
+    // the list itself, so the two could disagree. Those exclusions are now
+    // asserted in kolabing-v2's `DiscoveryServerSideDeckFilterTest`; what is
+    // asserted HERE is the new contract:
+    testWidgets('the deck draws every item the API returns', (tester) async {
       await _pumpExplore(
         tester,
         viewerType: UserType.community,
         feedItems: [
           _offer(),
-          _role(id: 'role-f', status: 'filled', needed: 1, filled: 1),
+          // A role the old client filter would have dropped three times over:
+          // business-only, filled, and organised by the viewer. If the endpoint
+          // sent it, the deck shows it — and the count above the deck stays true.
+          _role(
+            id: 'role-whatever',
+            eligible: 'business',
+            status: 'filled',
+            needed: 1,
+            filled: 1,
+            organizerProfileId: 'viewer-profile-1',
+          ),
         ],
       );
 
-      expect(await _deckFeedKeys(tester), <String>['offer:kolab-1']);
-    });
-
-    testWidgets("the organizer's own role never appears", (tester) async {
-      await _pumpExplore(
-        tester,
-        viewerType: UserType.community,
-        feedItems: [
-          _offer(),
-          _role(id: 'role-own', organizerProfileId: 'viewer-profile-1'),
-        ],
-      );
-
-      expect(await _deckFeedKeys(tester), <String>['offer:kolab-1']);
+      expect(await _deckFeedKeys(tester), <String>[
+        'offer:kolab-1',
+        'multi-kolab-role:role-whatever',
+      ]);
     });
 
     testWidgets('each open role of one event gets its OWN card', (

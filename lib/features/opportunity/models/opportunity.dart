@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utils/remote_media_url.dart';
+import 'availability_window.dart';
 
 // =============================================================================
 // Enums
@@ -468,6 +469,14 @@ class Opportunity {
   factory Opportunity.fromJson(Map<String, dynamic> json) {
     final id = json['id']?.toString();
 
+    // Both availability bounds come from ONE resolver so they can never be read
+    // by two different rules — see resolveAvailabilityWindow() for what each
+    // missing bound means and why neither may fall back to DateTime.now().
+    final availability = resolveAvailabilityWindow(
+      rawStart: json['availability_start'],
+      rawEnd: json['availability_end'],
+    );
+
     // categories may be a List or a JSON-encoded String like '["Art", "Community"]'
     List<String> categories;
     final rawCats = json['categories'];
@@ -507,21 +516,8 @@ class Opportunity {
       availabilityMode: AvailabilityMode.fromString(
         json['availability_mode']?.toString() ?? 'one_time',
       ),
-      availabilityStart: _parseDate(json['availability_start']),
-      // An absent `availability_end` means OPEN-ENDED, not "ends today".
-      // Falling back to `availability_start` mirrors the server's own
-      // COALESCE(availability_end, availability_start) expiry rule, so the two
-      // agree about which Kolabs are still open.
-      //
-      // Without this, `_parseDate(null)` returned DateTime.now(), so an
-      // open-ended Kolab starting tomorrow produced end=today < start=tomorrow,
-      // buildSelectableApplicationDates returned [], and
-      // filterExploreDeckItems silently dropped the card — while the server
-      // still counted it. A Kolab you could see in the filter count but never
-      // in the deck.
-      availabilityEnd: _parseDate(
-        json['availability_end'] ?? json['availability_start'],
-      ),
+      availabilityStart: availability.start,
+      availabilityEnd: availability.end,
       selectedTime: _parseTimeOfDay(json['selected_time']?.toString()),
       recurringDays: _parseIntList(
         json['recurring_days'] ?? json['recurring_day'],
@@ -748,13 +744,6 @@ class Opportunity {
   // ---------------------------------------------------------------------------
   // Type-safe parsing helpers
   // ---------------------------------------------------------------------------
-
-  static DateTime _parseDate(dynamic value) {
-    if (value == null) return DateTime.now();
-    if (value is DateTime) return value;
-    if (value is String) return DateTime.tryParse(value) ?? DateTime.now();
-    return DateTime.now();
-  }
 
   static List<int> _parseIntList(dynamic value) {
     if (value == null) return const [];

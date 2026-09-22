@@ -1,5 +1,35 @@
 # Changelog
 
+## 1.6.1+44 — 2026-09-22
+
+Explore renders exactly what the API returns. Ships with kolabing-v2#316, which
+must be deployed first.
+
+### Fixed
+
+- **The Explore result count and the Explore deck can no longer disagree.** The
+  screen printed the API's `meta.total` above a deck it had re-filtered itself,
+  so the count could name a Kolab the deck never drew — which is how the
+  open-ended-Kolab bug (1.6.0's FX-57) reached production. The client-side filter
+  is gone; `GET /discovery/opportunities` is the only filter now. Two rules that
+  had only ever been enforced in the app moved to the server to make that safe:
+  a blocked organiser's Multi-Kolab role, and a recurring Kolab whose remaining
+  window holds none of its bookable weekdays.
+- **A Kolab with a missing or unreadable start date no longer appears for one day
+  and then vanishes.** An absent date used to parse as "today"; every missing
+  availability bound is now read the way the server reads it.
+- **Blocking someone clears their Kolabs from Explore at once** by refetching the
+  feed, rather than hiding the cards with a local rule.
+
+### Internal
+
+- `filterExploreDeckItems`, its empty-page auto-load workaround and
+  `MultiKolabRoleOffer.isVisibleInExplore` are deleted. The Apply CTA still uses
+  `opportunityApplicationsOpen` — only its use as a deck filter is gone.
+
+> **Note:** 1.6.0 shipped without a changelog entry; see `BACKLOG.md` (FX-55 →
+> FX-57) for what it contained.
+
 ## 1.5.0+16 — 2026-06-11
 
 Attendee + community release. New attendee experience, friends, city-based event

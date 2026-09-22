@@ -176,130 +176,14 @@ void main() {
     }
   });
 
-  group('MultiKolabRoleOffer.isVisibleInExplore', () {
-    ExploreMultiKolabRoleItem parse(Map<String, dynamic> json) =>
-        ExploreFeedItem.fromJson(json) as ExploreMultiKolabRoleItem;
-
-    test('a community role is visible only in the community feed', () {
-      final role = parse(_roleJson(eligible: 'community')).role;
-
-      expect(
-        role.isVisibleInExplore(
-          isCommunityViewer: true,
-          viewerProfileId: 'viewer-1',
-        ),
-        isTrue,
-      );
-      expect(
-        role.isVisibleInExplore(
-          isCommunityViewer: false,
-          viewerProfileId: 'viewer-1',
-        ),
-        isFalse,
-      );
-    });
-
-    test('a business role is visible only in the business feed', () {
-      final role = parse(_roleJson(eligible: 'business')).role;
-
-      expect(
-        role.isVisibleInExplore(
-          isCommunityViewer: false,
-          viewerProfileId: 'viewer-1',
-        ),
-        isTrue,
-      );
-      expect(
-        role.isVisibleInExplore(
-          isCommunityViewer: true,
-          viewerProfileId: 'viewer-1',
-        ),
-        isFalse,
-      );
-    });
-
-    test('an either role is visible in both feeds', () {
-      final role = parse(_roleJson(eligible: 'either')).role;
-
-      for (final isCommunity in [true, false]) {
-        expect(
-          role.isVisibleInExplore(
-            isCommunityViewer: isCommunity,
-            viewerProfileId: 'viewer-1',
-          ),
-          isTrue,
-        );
-      }
-    });
-
-    test('a filled role is never visible', () {
-      final role = parse(
-        _roleJson(status: 'filled', needed: 1, filled: 1, remaining: 0),
-      ).role;
-
-      expect(
-        role.isVisibleInExplore(
-          isCommunityViewer: true,
-          viewerProfileId: 'viewer-1',
-        ),
-        isFalse,
-      );
-      expect(role.canApply, isFalse);
-    });
-
-    test('a role with no remaining position is never visible', () {
-      final role = parse(_roleJson(needed: 2, filled: 2, remaining: 0)).role;
-
-      expect(role.positionsRemaining, 0);
-      expect(
-        role.isVisibleInExplore(
-          isCommunityViewer: true,
-          viewerProfileId: 'viewer-1',
-        ),
-        isFalse,
-      );
-    });
-
-    test("the organizer never sees their own event's role", () {
-      final role = parse(_roleJson()).role;
-
-      expect(
-        role.isVisibleInExplore(
-          isCommunityViewer: true,
-          viewerProfileId: 'organizer-1',
-        ),
-        isFalse,
-      );
-    });
-
-    test('a multi-position role stays visible and reports its remainder', () {
-      final role = parse(_roleJson(needed: 4, filled: 1)).role;
-
-      expect(role.positionsRemaining, 3);
-      expect(
-        role.isVisibleInExplore(
-          isCommunityViewer: true,
-          viewerProfileId: 'viewer-1',
-        ),
-        isTrue,
-      );
-    });
-  });
-
   test('a role the viewer already applied to cannot be applied to again', () {
     final json = _roleJson()..['viewer_has_applied'] = true;
     final item = ExploreFeedItem.fromJson(json) as ExploreMultiKolabRoleItem;
 
     expect(item.role.viewerHasApplied, isTrue);
     expect(item.role.canApply, isFalse);
-    // Still discoverable — the card shows an already-applied state rather
-    // than silently vanishing from the feed.
-    expect(
-      item.role.isVisibleInExplore(
-        isCommunityViewer: true,
-        viewerProfileId: 'viewer-1',
-      ),
-      isTrue,
-    );
+    // Still discoverable — the card shows an already-applied state rather than
+    // silently vanishing from the feed. Whether it reaches the feed at all is
+    // the endpoint's call now, not this model's (kolabing-v2#316).
   });
 }
