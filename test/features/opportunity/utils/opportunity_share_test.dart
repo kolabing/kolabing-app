@@ -4,7 +4,7 @@ import 'package:kolabing_app/features/opportunity/utils/opportunity_share.dart';
 
 void main() {
   // Host comes from config (flavor-dependent), not a hardcoded literal.
-  const shareHost = Environment.shareHost;
+  const shareHost = Environment.kolabShareHost;
 
   test('buildOpportunitySharePath returns the canonical in-app path', () {
     expect(buildOpportunitySharePath('opp-42'), '/c/opp-42');

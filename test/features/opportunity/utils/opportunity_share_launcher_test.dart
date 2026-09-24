@@ -6,7 +6,7 @@ import 'package:share_plus/share_plus.dart';
 
 void main() {
   // Host comes from config (flavor-dependent), not a hardcoded literal.
-  const shareHost = Environment.shareHost;
+  const shareHost = Environment.kolabShareHost;
 
   test('launchOpportunityShare shares the canonical message', () async {
     var sharedMessage = '';
