@@ -1,6 +1,8 @@
 import '../../../config/environment.dart';
 
-const String _kolabingShareHost = Environment.shareHost;
+/// The web-app host in prod, so the link can open the app when it is installed.
+/// A browser gets the Kolab too: the backend redirects `/c/{kolabId}` to it.
+const String _kolabingShareHost = Environment.kolabShareHost;
 
 String buildOpportunitySharePath(String opportunityId, {bool apply = false}) =>
     Uri(

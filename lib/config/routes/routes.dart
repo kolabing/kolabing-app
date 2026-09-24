@@ -448,7 +448,8 @@ void markAppReadyForNotificationNav() => _notificationNavGate.markReady();
 /// subscription has to outlive any one screen, and there is exactly one of it.
 final DeepLinkService _deepLinkService = DeepLinkService();
 
-/// Start listening for `https://app.kolabing.com/i/{code}` invites.
+/// Start listening for `https://app.kolabing.com/i/{code}` invites and shared
+/// Kolab links (`/c/{kolabId}`, `/kolabs/{kolabId}`).
 ///
 /// The sheet is opened on the root navigator rather than routed to, because an
 /// invite is something that happens *on top of* wherever the person already is
@@ -464,6 +465,11 @@ void connectDeepLinks() {
         if (context == null) return;
         unawaited(ClaimCodeSheet.open(context, initialCode: code));
       },
+      // A Kolab IS a destination, unlike an invite. It goes through the same
+      // gate as a notification tap, so a cold start from the link survives
+      // splash's stack-replacing `go` and lands on the Kolab.
+      onKolab: (kolabId) =>
+          _notificationNavGate.navigate('/opportunity/$kolabId'),
     ),
   );
 }

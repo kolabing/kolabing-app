@@ -54,6 +54,16 @@ class Environment {
       ? 'kolabing.com'
       : 'kolabing-v2-development-uhzrzd.laravel.cloud';
 
+  /// Host for shared Kolab links (no scheme).
+  ///
+  /// In prod this is the web-app host — the one domain the app is associated
+  /// with (`applinks:app.kolabing.com`) — so a tapped link opens the app when it
+  /// is installed. A `kolabing.com` link never can: iOS does not hand a link to
+  /// an app after a server redirect (kolabing-v2 BE-NF-69).
+  static const String kolabShareHost = isProd
+      ? 'app.kolabing.com'
+      : 'kolabing-v2-development-uhzrzd.laravel.cloud';
+
   /// Sentry `environment` tag.
   static const String sentryEnvironment = isProd ? 'production' : 'development';
 
