@@ -30,6 +30,8 @@ import '../../features/friends/screens/add_friend_screen.dart';
 import '../../features/friends/screens/friends_screen.dart';
 import '../../features/gamification/gamification.dart';
 import '../../features/kolab/models/kolab.dart';
+import '../../features/league/screens/league_table_screen.dart';
+import '../../features/league/screens/organiser_level_screen.dart';
 import '../../features/missions/screens/missions_screen.dart';
 import '../../features/multi_kolab/screens/multi_kolab_event_detail_screen.dart';
 import '../../features/multi_kolab/screens/multi_kolab_applicant_review_screen.dart';
@@ -239,6 +241,13 @@ abstract final class KolabingRoutes {
 
   /// Community withdrawal request
   static const String communityWalletWithdraw = '/community/wallet/withdraw';
+
+  /// Organiser city league: full monthly table (incentive v1, organisers only).
+  /// Fed by GET /me/community-rank + GET /leagues/{city}/current.
+  static const String communityLeague = '/community/league';
+
+  /// Organiser level: criteria, perks, next perks. Fed by GET /me/organiser-level.
+  static const String communityLevel = '/community/level';
 
   /// Discover joinable communities (attendee discovery surface)
   static const String discoverCommunities = '/communities/discover';
@@ -921,6 +930,18 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'communityWalletWithdraw',
       builder: (BuildContext context, GoRouterState state) =>
           const WithdrawalRequestScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.communityLeague,
+      name: 'communityLeague',
+      builder: (BuildContext context, GoRouterState state) =>
+          const LeagueTableScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.communityLevel,
+      name: 'communityLevel',
+      builder: (BuildContext context, GoRouterState state) =>
+          const OrganiserLevelScreen(),
     ),
     GoRoute(
       path: KolabingRoutes.businessReferrals,

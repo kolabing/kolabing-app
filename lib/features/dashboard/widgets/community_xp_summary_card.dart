@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
 import '../../../config/theme/typography.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../rewards/providers/wallet_provider.dart';
 
 // Design tokens for the yellow XP card
@@ -17,9 +18,12 @@ const _orangeFill = Color(0xFFFF6114); // progress bar fill
 /// Yellow XP summary card for the Community Dashboard.
 ///
 /// Matches the referral card visual language: solid yellow, black pill badge,
-/// bold numerics, orange progress fill. Styling only — all data wiring is unchanged.
+/// bold numerics, orange progress fill. [onTap] opens the organiser's level
+/// screen; when null the card is not tappable.
 class CommunityXpSummaryCard extends ConsumerWidget {
-  const CommunityXpSummaryCard({super.key});
+  const CommunityXpSummaryCard({this.onTap, super.key});
+
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,8 +33,9 @@ class CommunityXpSummaryCard extends ConsumerWidget {
     final level = wallet.level;
     final progress = wallet.levelProgress;
     final xpToNext = wallet.xpToNextLevel;
+    final l10n = AppLocalizations.of(context);
 
-    return Container(
+    final card = Container(
       width: double.infinity,
       padding: const EdgeInsets.all(22),
       decoration: const BoxDecoration(
@@ -51,7 +56,7 @@ class CommunityXpSummaryCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'To next level',
+                      l10n.xpCardToNextLevel,
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -68,7 +73,7 @@ class CommunityXpSummaryCard extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      'XP NEEDED',
+                      l10n.xpCardXpNeeded,
                       style: GoogleFonts.inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -94,7 +99,7 @@ class CommunityXpSummaryCard extends ConsumerWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'XP POINTS',
+            l10n.walletScreenXpPoints,
             style: GoogleFonts.inter(
               fontSize: 11.5,
               fontWeight: FontWeight.w700,
@@ -125,6 +130,18 @@ class CommunityXpSummaryCard extends ConsumerWidget {
         ],
       ),
     );
+
+    if (onTap == null) return card;
+    return Semantics(
+      button: true,
+      hint: l10n.levelSeeYourLevel,
+      child: GestureDetector(
+        key: const Key('xp-summary-card-tap'),
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: card,
+      ),
+    );
   }
 }
 
@@ -151,7 +168,7 @@ class _LevelBadge extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           Text(
-            'LEVEL $levelNumber',
+            AppLocalizations.of(context).xpCardLevelBadge(levelNumber),
             style: GoogleFonts.inter(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,

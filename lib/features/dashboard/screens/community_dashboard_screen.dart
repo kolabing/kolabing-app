@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/constants/radius.dart';
 import '../../../config/constants/spacing.dart';
+import '../../../config/routes/routes.dart';
 import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
@@ -12,6 +13,8 @@ import '../../../widgets/kolabing_button.dart';
 import '../../../widgets/page_title.dart';
 import '../../../widgets/ui_icon.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../league/providers/league_provider.dart';
+import '../../league/widgets/league_preview_card.dart';
 import '../../../widgets/navigation/profile_avatar_button.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../rewards/widgets/referral_banner_card.dart';
@@ -20,7 +23,6 @@ import '../providers/dashboard_provider.dart';
 import '../widgets/community_xp_summary_card.dart';
 import '../widgets/community_stats_strip.dart';
 import '../widgets/dashboard_badges_row.dart';
-import '../widgets/xp_missions_section.dart';
 import '../widgets/dashboard_shimmer.dart';
 import '../widgets/upcoming_collaboration_card.dart';
 import '../../rewards/providers/wallet_provider.dart';
@@ -60,8 +62,15 @@ class _CommunityDashboardScreenState
   }
 
   Future<void> _onRefresh() async {
+    ref
+      ..invalidate(communityRankProvider)
+      ..invalidate(organiserLevelProvider);
     await ref.read(dashboardProvider.notifier).refresh();
   }
+
+  void _openLeague() => context.push(KolabingRoutes.communityLeague);
+
+  void _openLevel() => context.push(KolabingRoutes.communityLevel);
 
   @override
   Widget build(BuildContext context) {
@@ -160,10 +169,25 @@ class _CommunityDashboardScreenState
   // ---------------------------------------------------------------------------
 
   List<Widget> _buildDashboardContent(CommunityDashboard data, bool isDark) {
+    // The level screen is only reachable once GET /me/organiser-level
+    // answers; before the backend ships it the banner and XP card stay
+    // non-tappable instead of opening an empty screen.
+    final levelAvailable = ref.watch(organiserLevelProvider).value != null;
+    final openLevel = levelAvailable ? _openLevel : null;
+
     return [
-      // Marketplace first: Find a Kolab / My applications stay above the
-      // fold; all gamification content (XP, missions, badges, referral)
-      // renders below the marketplace sections.
+      // 0. City league position + next reward (organisers only; hidden when
+      // the league endpoint is not live). Opens the full league; the banner
+      // opens Your level.
+      LeaguePreviewCard(
+        onOpenLeague: _openLeague,
+        onOpenLevel: openLevel,
+        bottomSpacing: KolabingSpacing.lg,
+      ),
+
+      // Marketplace next: Find a Kolab / My applications; the rest of the
+      // gamification content (XP, badges, referral) renders below the
+      // marketplace sections.
 
       // 1. Quick actions
       _buildQuickActions(isDark),
@@ -182,19 +206,16 @@ class _CommunityDashboardScreenState
       ),
       const SizedBox(height: KolabingSpacing.lg),
 
-      // 4. XP summary card (sage green, non-tappable)
-      const CommunityXpSummaryCard(),
+      // 4. XP summary card; opens Your level once levels are live. (The
+      // hardcoded "Today's XP missions" preview that sat here is gone.)
+      CommunityXpSummaryCard(onTap: openLevel),
       const SizedBox(height: KolabingSpacing.lg),
 
-      // 5. Today's XP missions
-      const XpMissionsSection(),
-      const SizedBox(height: KolabingSpacing.lg),
-
-      // 6. Badges row (earned badges only)
+      // 5. Badges row (earned badges only)
       const DashboardBadgesRow(),
       const SizedBox(height: KolabingSpacing.lg),
 
-      // 7. Referral card — compact nudge; the full €75 hero card lives in
+      // 6. Referral card — compact nudge; the full €75 hero card lives in
       // the wallet/referral surfaces, not the dashboard.
       const ReferralBannerCard(compact: true),
     ];
