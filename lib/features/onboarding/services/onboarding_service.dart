@@ -462,6 +462,8 @@ class OnboardingService {
     ];
   }
 
+  /// Offline fallback only — used when GET /cities fails. Must mirror the
+  /// backend's active set (kolabing-v2 CitySeeder::getActiveCities()).
   Future<List<OnboardingCity>> _mockCities() async {
     await Future<void>.delayed(const Duration(milliseconds: 500));
     return const [
@@ -470,11 +472,11 @@ class OnboardingService {
       OnboardingCity(id: '3', name: 'Valencia', country: 'Spain'),
       OnboardingCity(id: '4', name: 'Sevilla', country: 'Spain'),
       OnboardingCity(id: '5', name: 'Bilbao', country: 'Spain'),
-      OnboardingCity(id: '6', name: 'Malaga', country: 'Spain'),
-      OnboardingCity(id: '7', name: 'Granada', country: 'Spain'),
-      OnboardingCity(id: '8', name: 'Zaragoza', country: 'Spain'),
-      OnboardingCity(id: '9', name: 'Palma', country: 'Spain'),
-      OnboardingCity(id: '10', name: 'Alicante', country: 'Spain'),
+      OnboardingCity(id: '6', name: 'Mexico City', country: 'Mexico'),
+      OnboardingCity(id: '7', name: 'Tallinn', country: 'Estonia'),
+      OnboardingCity(id: '8', name: 'Berlin', country: 'Germany'),
+      OnboardingCity(id: '9', name: 'Paris', country: 'France'),
+      OnboardingCity(id: '10', name: 'Warsaw', country: 'Poland'),
     ];
   }
 }
