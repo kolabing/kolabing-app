@@ -8562,4 +8562,159 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get createChallengeProofTypeHint =>
       'Picks the screen the app opens, nothing more. A challenge confirmed without a photo still counts, so a denied camera or bad signal never costs anybody their points.';
+
+  @override
+  String leagueCardHeading(String city, String month) {
+    return '$city league · $month';
+  }
+
+  @override
+  String leagueTitle(String city) {
+    return '$city league';
+  }
+
+  @override
+  String get leagueTitleFallback => 'City league';
+
+  @override
+  String leagueRankOfTotal(int rank, int total) {
+    return 'You\'re #$rank of $total';
+  }
+
+  @override
+  String leagueRankOnly(int rank) {
+    return 'You\'re #$rank';
+  }
+
+  @override
+  String get leagueNotRankedYet => 'Not ranked yet';
+
+  @override
+  String leagueDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+      zero: 'Last day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get leagueEmpty =>
+      'No standings yet this month. Complete a kolab in the app to get on the board.';
+
+  @override
+  String get leagueSeeFullTable => 'See full league';
+
+  @override
+  String leagueSeasonEnds(String month, String date) {
+    return '$month · ends $date';
+  }
+
+  @override
+  String get leagueHowPointsWork =>
+      'How points work: kolab completed in the app ×40 · check-in at your events ×2 · repeat attendee ×5 · 5★ venue review ×20';
+
+  @override
+  String get leagueErrorLoad => 'Couldn\'t load the league';
+
+  @override
+  String get leagueUnavailable => 'The city league isn\'t available yet.';
+
+  @override
+  String get levelScreenTitle => 'Your level';
+
+  @override
+  String get levelNameNew => 'New';
+
+  @override
+  String get levelNameRising => 'Rising';
+
+  @override
+  String get levelNameTrusted => 'Trusted';
+
+  @override
+  String get levelNameTop => 'Top';
+
+  @override
+  String levelNextLine(String level) {
+    return 'Next: $level';
+  }
+
+  @override
+  String levelCriteriaHeadingNext(String level) {
+    return 'To reach $level';
+  }
+
+  @override
+  String levelCriteriaHeadingKeep(String level) {
+    return 'To keep $level';
+  }
+
+  @override
+  String get levelPerksHeading => 'What you have now';
+
+  @override
+  String levelNextPerksHeading(String level) {
+    return '$level unlocks';
+  }
+
+  @override
+  String get levelTopRewardHeading => 'At the top';
+
+  @override
+  String levelUpdatedAt(String date) {
+    return 'Updated $date';
+  }
+
+  @override
+  String get levelErrorLoad => 'Couldn\'t load your level';
+
+  @override
+  String get levelUnavailable => 'Levels aren\'t available yet.';
+
+  @override
+  String get levelNoCriteria =>
+      'Nothing to track yet. Complete a kolab in the app to start.';
+
+  @override
+  String get levelCriterionMet => 'Done';
+
+  @override
+  String get levelCriterionOpen => 'To do';
+
+  @override
+  String levelHoursValue(String value) {
+    return '$value h';
+  }
+
+  @override
+  String get levelSeeYourLevel => 'See your level';
+
+  @override
+  String get xpCardToNextLevel => 'To next level';
+
+  @override
+  String get xpCardXpNeeded => 'XP NEEDED';
+
+  @override
+  String xpCardLevelBadge(int level) {
+    return 'LEVEL $level';
+  }
+
+  @override
+  String levelRankTarget(String target) {
+    return 'top $target';
+  }
+
+  @override
+  String get levelDaysLeftLabel => 'Days left this month';
+
+  @override
+  String get leaguePromotionZone => 'Promotion zone';
+
+  @override
+  String get leagueRelegationZone => 'Relegation zone';
 }

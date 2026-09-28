@@ -8689,4 +8689,160 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get createChallengeProofTypeHint =>
       'Només tria la pantalla que obre l\'app. Un repte confirmat sense foto compta igual, així que una càmera denegada o mala cobertura no li costen mai els punts a ningú.';
+
+  @override
+  String leagueCardHeading(String city, String month) {
+    return 'Lliga de $city · $month';
+  }
+
+  @override
+  String leagueTitle(String city) {
+    return 'Lliga de $city';
+  }
+
+  @override
+  String get leagueTitleFallback => 'Lliga de la teva ciutat';
+
+  @override
+  String leagueRankOfTotal(int rank, int total) {
+    return 'Ets #$rank de $total';
+  }
+
+  @override
+  String leagueRankOnly(int rank) {
+    return 'Ets #$rank';
+  }
+
+  @override
+  String get leagueNotRankedYet => 'Encara sense classificar';
+
+  @override
+  String leagueDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Queden $count dies',
+      one: 'Queda 1 dia',
+      zero: 'Últim dia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get leagueEmpty =>
+      'Encara no hi ha classificació aquest mes. Completa un kolab a l\'app per entrar a la taula.';
+
+  @override
+  String get leagueSeeFullTable => 'Veure la lliga completa';
+
+  @override
+  String leagueSeasonEnds(String month, String date) {
+    return '$month · acaba el $date';
+  }
+
+  @override
+  String get leagueHowPointsWork =>
+      'Com se sumen punts: kolab completat a l\'app ×40 · check-in als teus esdeveniments ×2 · assistent que repeteix ×5 · ressenya de 5★ del local ×20';
+
+  @override
+  String get leagueErrorLoad => 'No s\'ha pogut carregar la lliga';
+
+  @override
+  String get leagueUnavailable =>
+      'La lliga de la teva ciutat encara no està disponible.';
+
+  @override
+  String get levelScreenTitle => 'El teu nivell';
+
+  @override
+  String get levelNameNew => 'Nou';
+
+  @override
+  String get levelNameRising => 'En ascens';
+
+  @override
+  String get levelNameTrusted => 'De confiança';
+
+  @override
+  String get levelNameTop => 'Top';
+
+  @override
+  String levelNextLine(String level) {
+    return 'Següent: $level';
+  }
+
+  @override
+  String levelCriteriaHeadingNext(String level) {
+    return 'Per arribar a $level';
+  }
+
+  @override
+  String levelCriteriaHeadingKeep(String level) {
+    return 'Per mantenir $level';
+  }
+
+  @override
+  String get levelPerksHeading => 'El que ja tens';
+
+  @override
+  String levelNextPerksHeading(String level) {
+    return 'Amb $level aconsegueixes';
+  }
+
+  @override
+  String get levelTopRewardHeading => 'Al capdamunt';
+
+  @override
+  String levelUpdatedAt(String date) {
+    return 'Actualitzat el $date';
+  }
+
+  @override
+  String get levelErrorLoad => 'No s\'ha pogut carregar el teu nivell';
+
+  @override
+  String get levelUnavailable => 'Els nivells encara no estan disponibles.';
+
+  @override
+  String get levelNoCriteria =>
+      'Encara no hi ha res a seguir. Completa un kolab a l\'app per començar.';
+
+  @override
+  String get levelCriterionMet => 'Fet';
+
+  @override
+  String get levelCriterionOpen => 'Pendent';
+
+  @override
+  String levelHoursValue(String value) {
+    return '$value h';
+  }
+
+  @override
+  String get levelSeeYourLevel => 'Veure el teu nivell';
+
+  @override
+  String get xpCardToNextLevel => 'Per al següent nivell';
+
+  @override
+  String get xpCardXpNeeded => 'XP QUE FALTEN';
+
+  @override
+  String xpCardLevelBadge(int level) {
+    return 'NIVELL $level';
+  }
+
+  @override
+  String levelRankTarget(String target) {
+    return 'top $target';
+  }
+
+  @override
+  String get levelDaysLeftLabel => 'Dies que queden aquest mes';
+
+  @override
+  String get leaguePromotionZone => 'Zona d\'ascens';
+
+  @override
+  String get leagueRelegationZone => 'Zona de descens';
 }

@@ -15079,6 +15079,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Picks the screen the app opens, nothing more. A challenge confirmed without a photo still counts, so a denied camera or bad signal never costs anybody their points.'**
   String get createChallengeProofTypeHint;
+
+  /// Home league card heading: city league and season month.
+  ///
+  /// In en, this message translates to:
+  /// **'{city} league · {month}'**
+  String leagueCardHeading(String city, String month);
+
+  /// Title of the full city league table screen.
+  ///
+  /// In en, this message translates to:
+  /// **'{city} league'**
+  String leagueTitle(String city);
+
+  /// League title when the backend sends no city.
+  ///
+  /// In en, this message translates to:
+  /// **'City league'**
+  String get leagueTitleFallback;
+
+  /// The organiser's community position in the city league.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re #{rank} of {total}'**
+  String leagueRankOfTotal(int rank, int total);
+
+  /// Position when the total is unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re #{rank}'**
+  String leagueRankOnly(int rank);
+
+  /// Shown when the community has no league position yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not ranked yet'**
+  String get leagueNotRankedYet;
+
+  /// Days left in the monthly league season.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Last day} one{1 day left} other{{count} days left}}'**
+  String leagueDaysLeft(int count);
+
+  /// League has no rows yet this month.
+  ///
+  /// In en, this message translates to:
+  /// **'No standings yet this month. Complete a kolab in the app to get on the board.'**
+  String get leagueEmpty;
+
+  /// Link from the Home league card to the full table.
+  ///
+  /// In en, this message translates to:
+  /// **'See full league'**
+  String get leagueSeeFullTable;
+
+  /// Season line on the league table: month and end date.
+  ///
+  /// In en, this message translates to:
+  /// **'{month} · ends {date}'**
+  String leagueSeasonEnds(String month, String date);
+
+  /// How monthly league points are scored (must match backend weights).
+  ///
+  /// In en, this message translates to:
+  /// **'How points work: kolab completed in the app ×40 · check-in at your events ×2 · repeat attendee ×5 · 5★ venue review ×20'**
+  String get leagueHowPointsWork;
+
+  /// Error loading the league table.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the league'**
+  String get leagueErrorLoad;
+
+  /// League endpoint not available (not deployed or not an organiser).
+  ///
+  /// In en, this message translates to:
+  /// **'The city league isn\'t available yet.'**
+  String get leagueUnavailable;
+
+  /// Title of the organiser level screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Your level'**
+  String get levelScreenTitle;
+
+  /// Organiser level: New.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get levelNameNew;
+
+  /// Organiser level: Rising.
+  ///
+  /// In en, this message translates to:
+  /// **'Rising'**
+  String get levelNameRising;
+
+  /// Organiser level: Trusted.
+  ///
+  /// In en, this message translates to:
+  /// **'Trusted'**
+  String get levelNameTrusted;
+
+  /// Organiser level: Top.
+  ///
+  /// In en, this message translates to:
+  /// **'Top'**
+  String get levelNameTop;
+
+  /// Next organiser level.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {level}'**
+  String levelNextLine(String level);
+
+  /// Heading above the criteria for the next level.
+  ///
+  /// In en, this message translates to:
+  /// **'To reach {level}'**
+  String levelCriteriaHeadingNext(String level);
+
+  /// Heading above the criteria to keep the current level.
+  ///
+  /// In en, this message translates to:
+  /// **'To keep {level}'**
+  String levelCriteriaHeadingKeep(String level);
+
+  /// Heading for the perks of the current level.
+  ///
+  /// In en, this message translates to:
+  /// **'What you have now'**
+  String get levelPerksHeading;
+
+  /// Heading for the perks of the next level.
+  ///
+  /// In en, this message translates to:
+  /// **'{level} unlocks'**
+  String levelNextPerksHeading(String level);
+
+  /// Heading for the reward at the very top (Top level).
+  ///
+  /// In en, this message translates to:
+  /// **'At the top'**
+  String get levelTopRewardHeading;
+
+  /// When the level was last evaluated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {date}'**
+  String levelUpdatedAt(String date);
+
+  /// Error loading the organiser level.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your level'**
+  String get levelErrorLoad;
+
+  /// Level endpoint not available.
+  ///
+  /// In en, this message translates to:
+  /// **'Levels aren\'t available yet.'**
+  String get levelUnavailable;
+
+  /// Level screen with no criteria.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to track yet. Complete a kolab in the app to start.'**
+  String get levelNoCriteria;
+
+  /// Accessibility label: criterion met.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get levelCriterionMet;
+
+  /// Accessibility label: criterion not met yet.
+  ///
+  /// In en, this message translates to:
+  /// **'To do'**
+  String get levelCriterionOpen;
+
+  /// A duration in hours.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} h'**
+  String levelHoursValue(String value);
+
+  /// Accessibility hint to open the level screen.
+  ///
+  /// In en, this message translates to:
+  /// **'See your level'**
+  String get levelSeeYourLevel;
+
+  /// XP card: label above XP needed for the next level.
+  ///
+  /// In en, this message translates to:
+  /// **'To next level'**
+  String get xpCardToNextLevel;
+
+  /// XP card: caption under the XP needed number.
+  ///
+  /// In en, this message translates to:
+  /// **'XP NEEDED'**
+  String get xpCardXpNeeded;
+
+  /// XP card level pill.
+  ///
+  /// In en, this message translates to:
+  /// **'LEVEL {level}'**
+  String xpCardLevelBadge(int level);
+
+  /// Target for the city league rank criterion, e.g. 'top 3'.
+  ///
+  /// In en, this message translates to:
+  /// **'top {target}'**
+  String levelRankTarget(String target);
+
+  /// Row label on the level screen: days left in this calendar month.
+  ///
+  /// In en, this message translates to:
+  /// **'Days left this month'**
+  String get levelDaysLeftLabel;
+
+  /// Accessibility label: row is in the promotion places.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion zone'**
+  String get leaguePromotionZone;
+
+  /// Accessibility label: row is in the relegation places.
+  ///
+  /// In en, this message translates to:
+  /// **'Relegation zone'**
+  String get leagueRelegationZone;
 }
 
 class _AppLocalizationsDelegate
