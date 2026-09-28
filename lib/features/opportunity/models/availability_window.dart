@@ -10,12 +10,12 @@ class AvailabilityWindow {
   final DateTime end;
 }
 
-/// How long a Kolab with NO window at all stays offerable to the client.
+/// How far ahead an open-ended Kolab (no `availability_end`) is offerable.
 ///
-/// The server treats a Kolab with neither `availability_start` nor
-/// `availability_end` as always bookable (`applyActiveAvailabilityFilter()`
-/// lets it through unconditionally), and `Kolab::hasSelectableDatesFrom()` caps
-/// its own open-ended look-ahead at 90 days. This mirrors that cap.
+/// The server treats a Kolab with no `availability_end` as open-ended
+/// (`Kolab::scopeWithSelectableDates()`), and `Kolab::hasSelectableDatesFrom()`
+/// — the apply-time guard — caps its open-ended look-ahead at 90 days. This
+/// mirrors that cap.
 const Duration kOpenEndedAvailabilityHorizon = Duration(days: 90);
 
 /// Reads an availability window the way the server reads it, and never invents
@@ -32,13 +32,18 @@ const Duration kOpenEndedAvailabilityHorizon = Duration(days: 90);
 /// The four cases, each read as the server reads it:
 ///
 ///  * both present → the window as given;
-///  * `end` absent → `COALESCE(end, start)` — the server's own expiry rule, so
-///    the two agree about which Kolabs are still open;
+///  * `end` absent → open-ended from `start`: offerable until
+///    [kOpenEndedAvailabilityHorizon] after `start` or today, whichever is
+///    later. This used to be `COALESCE(end, start)`, a one-day window, so every
+///    business's onboarding Kolab (`flexible`, starting tomorrow, no end) read
+///    as closed the day after it started (BE-FX-74, kolabing-app#213);
 ///  * `start` absent → the window is open from today until `end`;
 ///  * both absent → no window at all, i.e. always bookable; represented here as
-///    today plus [kOpenEndedAvailabilityHorizon], because the models this feeds
-///    hold non-nullable dates. This is the one case that cannot be expressed
-///    exactly, and it errs towards "open", never towards "expired".
+///    today plus [kOpenEndedAvailabilityHorizon].
+///
+/// The two open-ended cases cannot be expressed exactly, because the models this
+/// feeds hold non-nullable dates; both err towards "open", never towards
+/// "expired".
 ///
 /// [today] is injectable so tests do not depend on the wall clock.
 AvailabilityWindow resolveAvailabilityWindow({
@@ -52,11 +57,16 @@ AvailabilityWindow resolveAvailabilityWindow({
   if (start != null && end != null) {
     return AvailabilityWindow(start: start, end: end);
   }
-  if (start != null) {
-    return AvailabilityWindow(start: start, end: start);
-  }
 
   final from = _dateOnly(today ?? DateTime.now());
+  if (start != null) {
+    final horizonFrom = start.isAfter(from) ? start : from;
+    return AvailabilityWindow(
+      start: start,
+      end: horizonFrom.add(kOpenEndedAvailabilityHorizon),
+    );
+  }
+
   if (end != null) {
     // A window that ends but never started: offerable from today. If it has
     // already ended, leave it ended rather than stretching it forward — the
