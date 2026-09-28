@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:kolabing_app/features/application/widgets/apply_modal.dart';
 import 'package:kolabing_app/features/discovery/models/discovery_item.dart';
 import 'package:kolabing_app/features/opportunity/models/availability_window.dart';
 import 'package:kolabing_app/features/opportunity/models/opportunity.dart';
@@ -35,20 +36,31 @@ void main() {
       expect(window.end, DateTime.parse('2026-10-30'));
     });
 
-    test(
-      'an absent end is read as the start — the server\'s COALESCE rule',
-      () {
-        // The exact production row behind FX-57.
-        final window = resolve(start: '2026-09-23');
+    test('an absent end is open-ended from a future start', () {
+      // The exact production row behind FX-57.
+      final window = resolve(start: '2026-09-23');
 
-        expect(window.end, DateTime.parse('2026-09-23'));
-        expect(
-          window.end.isBefore(window.start),
-          isFalse,
-          reason: 'An open-ended Kolab must never end before it starts.',
-        );
-      },
-    );
+      expect(window.start, DateTime.parse('2026-09-23'));
+      expect(
+        window.end,
+        DateTime.parse('2026-09-23').add(kOpenEndedAvailabilityHorizon),
+      );
+      expect(
+        window.end.isBefore(window.start),
+        isFalse,
+        reason: 'An open-ended Kolab must never end before it starts.',
+      );
+    });
+
+    test('an absent end stays open after its start has passed', () {
+      // BE-FX-74: MAUI Beach Coworking — onboarding Kolab, starts 25 Sep, no
+      // end. COALESCE(end, start) closed it on 26 Sep.
+      final window = resolve(start: '2026-09-19');
+
+      expect(window.start, DateTime.parse('2026-09-19'));
+      expect(window.end, today.add(kOpenEndedAvailabilityHorizon));
+      expect(window.end.isBefore(today), isFalse);
+    });
 
     test('an absent start does not collapse the window onto today', () {
       final window = resolve(end: '2026-10-30');
@@ -129,16 +141,28 @@ void main() {
           if (end != null) 'availability_end': end,
         });
 
-    test('an absent end resolves to the start in both', () {
-      expect(
-        discoveryOffer(start: '2026-09-23').availability.end,
-        DateTime.parse('2026-09-23'),
-      );
-      expect(
-        opportunity(start: '2026-09-23').availabilityEnd,
-        DateTime.parse('2026-09-23'),
-      );
+    test('an absent end is open-ended in both', () {
+      final horizon = DateTime.parse(
+        '2099-01-01',
+      ).add(kOpenEndedAvailabilityHorizon);
+
+      expect(discoveryOffer(start: '2099-01-01').availability.end, horizon);
+      expect(opportunity(start: '2099-01-01').availabilityEnd, horizon);
     });
+
+    test(
+      'an open-ended Kolab whose start has passed can still be applied to',
+      () {
+        // BE-FX-74: the Apply CTA read these as closed the day after their start.
+        final started = DateTime.now().subtract(const Duration(days: 3));
+        final opp = opportunity(
+          start: started.toIso8601String().split('T').first,
+        );
+
+        expect(opportunityApplicationsOpen(opp), isTrue);
+        expect(buildSelectableApplicationDates(opp), isNotEmpty);
+      },
+    );
 
     test('an explicit end is honoured in both', () {
       expect(
