@@ -64,6 +64,7 @@ class InstagramPickerState {
     this.isLoadingMore = false,
     this.isImporting = false,
     this.error,
+    this.errorIsPersonalAccount = false,
     this.loadMoreError,
     this.selected = const <String>{},
   });
@@ -79,6 +80,9 @@ class InstagramPickerState {
 
   /// First-page failure (full-screen error with Retry).
   final String? error;
+
+  /// The first page failed because the account is not Professional.
+  final bool errorIsPersonalAccount;
 
   /// Next-page failure (inline Retry at the bottom of the grid).
   final String? loadMoreError;
@@ -102,6 +106,7 @@ class InstagramPickerState {
     bool? isLoadingMore,
     bool? isImporting,
     String? error,
+    bool? errorIsPersonalAccount,
     bool clearError = false,
     String? loadMoreError,
     bool clearLoadMoreError = false,
@@ -114,6 +119,8 @@ class InstagramPickerState {
     isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     isImporting: isImporting ?? this.isImporting,
     error: clearError ? null : (error ?? this.error),
+    errorIsPersonalAccount:
+        !clearError && (errorIsPersonalAccount ?? this.errorIsPersonalAccount),
     loadMoreError: clearLoadMoreError
         ? null
         : (loadMoreError ?? this.loadMoreError),
@@ -150,7 +157,11 @@ class InstagramPickerNotifier extends Notifier<InstagramPickerState> {
         selected: state.selected.where(ids.contains).toSet(),
       );
     } on Exception catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+        errorIsPersonalAccount: e is InstagramException && e.isPersonalAccount,
+      );
     }
   }
 

@@ -34,8 +34,15 @@ class InstagramService {
   }
 
   /// POST /api/v1/me/instagram/connect-url → the Instagram authorize URL.
+  ///
+  /// `return: app` makes the backend's callback send the browser back to
+  /// `kolabing://instagram/connected?status=ok|error[&reason=]`.
   Future<Uri> getConnectUrl() async {
-    final data = await _send('POST', '/me/instagram/connect-url');
+    final data = await _send(
+      'POST',
+      '/me/instagram/connect-url',
+      body: const <String, dynamic>{'return': 'app'},
+    );
     final raw = data is Map ? data['url']?.toString() : null;
     final uri = raw == null ? null : Uri.tryParse(raw);
     if (uri == null || !uri.hasScheme) {
@@ -144,6 +151,7 @@ class InstagramService {
       throw InstagramException(
         _messageFrom(response.body, status),
         statusCode: status,
+        code: _codeFrom(response.body),
       );
     }
     if (response.body.trim().isEmpty) return null;
@@ -153,6 +161,17 @@ class InstagramService {
       return json is Map ? json['data'] : null;
     } on FormatException {
       throw const InstagramException('Invalid response format');
+    }
+  }
+
+  /// The backend's stable error code (e.g. `INSTAGRAM_PERSONAL_ACCOUNT`).
+  String? _codeFrom(String body) {
+    try {
+      final json = jsonDecode(body);
+      final code = json is Map ? json['code'] : null;
+      return code is String && code.isNotEmpty ? code : null;
+    } on FormatException {
+      return null;
     }
   }
 
@@ -170,10 +189,18 @@ class InstagramService {
 
 /// Exception for Instagram Connect operations.
 class InstagramException implements Exception {
-  const InstagramException(this.message, {this.statusCode});
+  const InstagramException(this.message, {this.statusCode, this.code});
+
+  /// Backend code for an Instagram account that is not Professional.
+  static const String personalAccountCode = 'INSTAGRAM_PERSONAL_ACCOUNT';
 
   final String message;
   final int? statusCode;
+
+  /// Stable backend error code (`INSTAGRAM_*`), when the API sent one.
+  final String? code;
+
+  bool get isPersonalAccount => code == personalAccountCode;
 
   @override
   String toString() => message;

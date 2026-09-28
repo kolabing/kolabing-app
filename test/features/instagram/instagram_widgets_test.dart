@@ -355,6 +355,28 @@ void main() {
       expect(find.byType(InstagramMediaTile), findsOneWidget);
     });
 
+    testWidgets('a personal account gets the switch helper, not an error', (
+      tester,
+    ) async {
+      final h = _Harness(status: _connected);
+      h.service.mediaError = const InstagramException(
+        'personal',
+        code: InstagramException.personalAccountCode,
+      );
+      await _pump(tester, h, child: const InstagramImportScreen());
+      expect(
+        find.byKey(const Key('instagram-import-personal')),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.text('Using a personal account?'));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const Key('instagram-professional-helper')),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('a short first page pulls the next page by cursor', (
       tester,
     ) async {

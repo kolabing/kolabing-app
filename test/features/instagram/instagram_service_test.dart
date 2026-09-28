@@ -90,6 +90,7 @@ void main() {
 
     expect(sent.method, 'POST');
     expect(sent.url.path, endsWith('/me/instagram/connect-url'));
+    expect(jsonDecode(sent.body), <String, dynamic>{'return': 'app'});
     expect(url.host, 'www.instagram.com');
     expect(url.queryParameters['state'], 's');
   });
@@ -160,6 +161,27 @@ void main() {
       'POST /api/v1/me/instagram/sync',
       'DELETE /api/v1/me/instagram',
     ]);
+  });
+
+  test('the backend error code is kept (personal account)', () async {
+    final service = serviceFor(
+      (_) async => http.Response(
+        jsonEncode(<String, dynamic>{
+          'success': false,
+          'code': 'INSTAGRAM_PERSONAL_ACCOUNT',
+          'message': 'Switch to a professional account',
+        }),
+        422,
+      ),
+    );
+    expect(
+      service.getMedia(),
+      throwsA(
+        isA<InstagramException>()
+            .having((e) => e.isPersonalAccount, 'isPersonalAccount', isTrue)
+            .having((e) => e.statusCode, 'statusCode', 422),
+      ),
+    );
   });
 
   test('non-JSON body throws', () async {

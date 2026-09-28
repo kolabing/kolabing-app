@@ -12,6 +12,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../widgets/kolabing_button.dart';
 import '../models/instagram_models.dart';
 import '../providers/instagram_providers.dart';
+import '../widgets/instagram_professional_helper_sheet.dart';
 
 /// Pick Instagram photos and videos and import them into the profile gallery.
 ///
@@ -187,6 +188,15 @@ class _InstagramImportScreenState extends ConsumerState<InstagramImportScreen> {
       return const Center(
         key: Key('instagram-import-loading'),
         child: CircularProgressIndicator(),
+      );
+    }
+    if (state.items.isEmpty && state.errorIsPersonalAccount) {
+      return _Message(
+        key: const Key('instagram-import-personal'),
+        icon: LucideIcons.instagram,
+        text: l10n.instagramPersonalTitle,
+        actionLabel: l10n.instagramPersonalAccountLink,
+        onAction: () => InstagramProfessionalHelperSheet.show(context),
       );
     }
     if (state.items.isEmpty && state.error != null) {

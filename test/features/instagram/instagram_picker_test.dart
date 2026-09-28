@@ -85,6 +85,19 @@ void main() {
     expect(state().loadMoreError, 'page 2 down');
   });
 
+  test('a personal-account error is flagged for the helper', () async {
+    service.mediaError = const InstagramException(
+      'personal',
+      code: InstagramException.personalAccountCode,
+    );
+    await notifier().loadFirstPage();
+    expect(state().errorIsPersonalAccount, isTrue);
+
+    service.mediaError = null;
+    await notifier().loadFirstPage();
+    expect(state().errorIsPersonalAccount, isFalse);
+  });
+
   test('selection: toggle, imported items are not selectable', () async {
     await notifier().loadFirstPage();
 
