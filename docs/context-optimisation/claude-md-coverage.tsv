@@ -1,0 +1,65 @@
+original_line	rule_summary	new_location	status
+3	file provides guidance to Claude Code	CLAUDE.md#top	kept
+9-16	Volkan/Reverb trigger: read+surface VOLKAN ticket first, summarise, then help	CLAUDE.md#CONTRIBUTOR ROUTING	kept
+22-23	no code before ticket + branch exist; every task, in order	CLAUDE.md#MUST FOLLOW — Ticket → Branch	kept
+25-27	open issue in kolabing/kolabing-app, add to Kolabing Engineering board via gh project item-add 4	CLAUDE.md#MUST FOLLOW — Ticket → Branch	kept
+28-30	ticket body: goal, state, checklist, acceptance criteria; empty body not ready; issue #14 shape	CLAUDE.md#MUST FOLLOW — Ticket → Branch	kept
+31-33	dedicated branch off up-to-date master with prefix; never commit to master	CLAUDE.md#MUST FOLLOW — Ticket → Branch	kept
+34-35	only then develop; PR with template, Closes #n	CLAUDE.md#MUST FOLLOW — Ticket → Branch	kept
+37-39	"just fix X" still needs ticket+branch; keep in sync with AGENTS.md	CLAUDE.md#MUST FOLLOW — Ticket → Branch	kept
+45-47	gen-l10n setup; widget not done until strings in 3 ARBs	CLAUDE.md#MUST FOLLOW — i18n	kept
+49-50	never hardcode user-facing strings in .dart	CLAUDE.md#MUST FOLLOW — i18n	kept
+51-53	add key en→es (Castilian: Aforo, Local/Lugar, Vídeos)→ca; flutter gen-l10n	CLAUDE.md#MUST FOLLOW — i18n	kept
+54-55	render via AppLocalizations; ICU placeholders not interpolation	CLAUDE.md#MUST FOLLOW — i18n	kept
+56-57	only exceptions: brand names, backend error text, symbols/emoji	CLAUDE.md#MUST FOLLOW — i18n	kept
+59	fix literals in passing; no new debt	CLAUDE.md#MUST FOLLOW — i18n	kept
+65-68	every PR uses template, fill every section; empty = not ready/not merged; master protected; only olucvolkan merges	CLAUDE.md#MUST FOLLOW — Pull Request template	kept
+71-72	N/A + reason; never delete heading	CLAUDE.md#MUST FOLLOW — Pull Request template	kept
+73-76	screenshots mandatory for UI change; no-screenshot UI PR must not merge; no-UI box only when true	CLAUDE.md#MUST FOLLOW — Pull Request template	kept
+77-78	How to test reproducible (role, data, steps, expected)	CLAUDE.md#MUST FOLLOW — Pull Request template	kept
+79-80	state production needs or "Nothing extra"	CLAUDE.md#MUST FOLLOW — Pull Request template	kept
+81-83	Definition of Done items	CLAUDE.md#MUST FOLLOW — Pull Request template	kept
+85-86	keep section, template, AGENTS.md PR section in sync	CLAUDE.md#MUST FOLLOW — Pull Request template	kept
+92-94	read docs/BACKEND-SCHEMA.md before data changes; real prod schema, db main	CLAUDE.md#MUST READ — Backend schema	kept
+95-96	never invent columns/tables/enums	CLAUDE.md#MUST READ — Backend schema	kept
+97-99	never hardcode IDs etc; identity in profiles not users	CLAUDE.md#MUST READ — Backend schema	kept
+100-102	lifecycle; viewer-scoped; paywall never bypassed client-side	CLAUDE.md#MUST READ — Backend schema	kept
+108-116	read BACKLOG.md at start, list; keep in sync; maintenance rules	CLAUDE.md#MUST READ — Backlog	kept
+122-124	role scope; read both ROLES docs; synced with kolabing-v2	CLAUDE.md#MUST READ — Roles & Permissions	kept
+126	communities never paywalled; paywall business-only on 2 actions; blur not block; opportunity≠collaboration; STOP and ask	CLAUDE.md#MUST READ — Roles & Permissions	kept
+132-134	ground in real architecture; verify; code wins, fix prose	CLAUDE.md#MUST READ — Architecture grounding	kept
+137-148	authoritative sources list 1-3 with paths	CLAUDE.md#Authoritative sources	kept
+151-153	Laravel Sanctum Bearer; ApiConfig.baseUrl; package:http; AuthService.getToken	CLAUDE.md#The backend is Laravel, NOT Supabase	kept
+154-155	supabase_flutter unused; never add Supabase code; STOP → Laravel endpoint	CLAUDE.md#The backend is Laravel, NOT Supabase	merged-with-Tech Stack line 366-367
+158-159	no hardcoded base URLs except external deep links	CLAUDE.md#Do NOT hardcode	kept
+160-163	no hardcoded IDs; mock offender collaboration_detail_provider.dart; never extend mock	CLAUDE.md#Do NOT hardcode	kept
+164-168	no hardcoded taxonomy lists; CANONICAL-LISTS.md; _mock* behind off flag, never shadow API	CLAUDE.md#Do NOT hardcode	kept
+169-173	CommunityType enum placeholder; never use for filter/match/rank; use communityTypesProvider	CLAUDE.md#Do NOT hardcode	kept
+174	no invented role logic	CLAUDE.md#Do NOT hardcode	kept
+175-178	no magic status strings; reuse enums + mappers; snake_case wire values	CLAUDE.md#Do NOT hardcode	kept
+179-180	design tokens from theme/constants; no raw hex	CLAUDE.md#Do NOT hardcode	kept
+183-186	verify paths exist; stale .agent folders; versions may lag	CLAUDE.md#Verify paths/symbols exist	kept
+192	all dev work MUST go through agent workflow	CLAUDE.md#Agent Workflow System	kept
+196-205	.agent folder structure	CLAUDE.md#Agent Workflow System (tree in docs/CLAUDE-REFERENCE.md)	kept
+209-214	task lifecycle diagram	CLAUDE.md#Agent Workflow System + docs/CLAUDE-REFERENCE.md#Agent workflow	kept
+218-221	agents table	CLAUDE.md#Agent Workflow System	kept
+227	all dev MUST use slash commands; no code without a task	CLAUDE.md#Slash commands	kept
+229-237	/mobile-tasks description + flow	CLAUDE.md#Slash commands	kept
+233-274	slash command usage examples	docs/CLAUDE-REFERENCE.md#Slash command examples	moved-to-reference
+239-274	/mobile-feature, fix (minimal), refactor (no behaviour change), ui (no API) descriptions	CLAUDE.md#Slash commands	kept
+280-285	command execution rules 1-6	CLAUDE.md#Command execution rules	kept
+289-322	task file template	docs/CLAUDE-REFERENCE.md#Task file template	moved-to-reference
+328	project overview	CLAUDE.md#Project Overview	kept
+332-358	build/dev commands	CLAUDE.md#Build & Development Commands (original listing in reference)	kept
+362-371	tech stack incl Riverpod ^3.2.0, base URL, GoRouter ^17.0.1 flat routes, forms, icons	CLAUDE.md#Tech Stack	kept
+376-378	user types	CLAUDE.md#Architecture	kept
+381-396	lib/ project structure	CLAUDE.md#Architecture (full tree in docs/CLAUDE-REFERENCE.md#Original lib/ project structure)	kept
+399-405	auth dark / main light; route patterns	CLAUDE.md#Architecture	kept
+409-412	design tokens source of truth colors.dart/typography.dart; code wins	CLAUDE.md#Design System Reference	kept
+415-419	colors	CLAUDE.md#Design System Reference	kept
+421-423	typography Anton/Inter via google_fonts	CLAUDE.md#Design System Reference	kept
+426-429	component specs	CLAUDE.md#Design System Reference	kept
+433	auth state flow	CLAUDE.md#Key Implementation Notes	kept
+435	bottom nav 5 tabs, My Kolabs hub, IndexedStack, legacy routes	CLAUDE.md#Key Implementation Notes	kept
+437-439	profile completion; animations	CLAUDE.md#Key Implementation Notes	kept
+445-459	quick reference tables (duplicates of slash commands and folders)	docs/CLAUDE-REFERENCE.md#Quick reference tables	moved-to-reference
