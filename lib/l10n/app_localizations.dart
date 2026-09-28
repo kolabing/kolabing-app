@@ -15079,6 +15079,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Picks the screen the app opens, nothing more. A challenge confirmed without a photo still counts, so a denied camera or bad signal never costs anybody their points.'**
   String get createChallengeProofTypeHint;
+
+  /// Title of the Instagram Connect card on the profile screen (brand name).
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram'**
+  String get instagramCardTitle;
+
+  /// Body of the Instagram card before connecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring your photos and videos from Instagram into your Kolabing gallery. You choose exactly what to import.'**
+  String get instagramConnectBody;
+
+  /// Button that starts the Instagram login.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect Instagram'**
+  String get instagramConnectButton;
+
+  /// Link that opens the switch-to-professional helper sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Using a personal account?'**
+  String get instagramPersonalAccountLink;
+
+  /// Connected state: the Instagram handle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected as @{username}'**
+  String instagramConnectedAs(String username);
+
+  /// Connected state when the backend sent no username.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram connected'**
+  String get instagramConnectedGeneric;
+
+  /// Button that opens the Instagram media picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Import photos and videos'**
+  String get instagramImportButton;
+
+  /// Button that disconnects Instagram.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get instagramDisconnectButton;
+
+  /// Title of the disconnect confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect Instagram?'**
+  String get instagramDisconnectTitle;
+
+  /// Body of the disconnect confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Kolabing will stop reading your Instagram. Photos and videos you already imported stay in your gallery.'**
+  String get instagramDisconnectBody;
+
+  /// Cancel button in Instagram dialogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get instagramCancel;
+
+  /// Snackbar after disconnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram disconnected'**
+  String get instagramDisconnected;
+
+  /// Snackbar when the app comes back from a successful Instagram login.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram connected'**
+  String get instagramConnectSuccess;
+
+  /// Snackbar when the app comes back from a failed Instagram login.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram didn\'t connect. Please try again.'**
+  String get instagramConnectError;
+
+  /// Snackbar when the login URL could not be fetched or opened.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open Instagram. Please try again.'**
+  String get instagramOpenFailed;
+
+  /// Generic Instagram action failure.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get instagramActionFailed;
+
+  /// Title of the helper sheet for personal Instagram accounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to a professional account'**
+  String get instagramPersonalTitle;
+
+  /// Intro of the switch-to-professional helper sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram only shares photos and videos from professional accounts (Business or Creator). Switching is free and takes a minute:'**
+  String get instagramPersonalBody;
+
+  /// Helper step 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Instagram and go to your profile.'**
+  String get instagramPersonalStep1;
+
+  /// Helper step 2 (Instagram's own menu names).
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the menu, then Settings → Account type and tools.'**
+  String get instagramPersonalStep2;
+
+  /// Helper step 3.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"Switch to professional account\" and choose Business or Creator.'**
+  String get instagramPersonalStep3;
+
+  /// Helper step 4.
+  ///
+  /// In en, this message translates to:
+  /// **'Come back here and tap Connect Instagram.'**
+  String get instagramPersonalStep4;
+
+  /// Closes the helper sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get instagramPersonalGotIt;
+
+  /// App bar title of the media picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from Instagram'**
+  String get instagramImportTitle;
+
+  /// Media picker empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no photos or videos on this Instagram account yet.'**
+  String get instagramImportEmpty;
+
+  /// Media picker error state.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your Instagram photos and videos.'**
+  String get instagramImportLoadError;
+
+  /// Retry button in the media picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get instagramRetry;
+
+  /// Selection counter in the media picker footer.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Select photos and videos} one{{count} selected} other{{count} selected}}'**
+  String instagramSelectedCount(int count);
+
+  /// Primary button of the media picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Import to gallery'**
+  String get instagramImportToGallery;
+
+  /// Progress label while the import runs.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Importing {count} item…} other{Importing {count} items…}}'**
+  String instagramImporting(int count);
+
+  /// Shown when the selection limit is reached.
+  ///
+  /// In en, this message translates to:
+  /// **'You can import up to {max} at a time.'**
+  String instagramSelectionLimit(int max);
+
+  /// Badge on media already imported.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported'**
+  String get instagramImportedBadge;
+
+  /// Accessibility label of the video badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get instagramVideoBadge;
+
+  /// Accessibility label of the carousel badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Album'**
+  String get instagramCarouselBadge;
+
+  /// Title of the import result sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Import finished'**
+  String get instagramImportResultTitle;
+
+  /// Import result: how many items were added.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing new was added to your gallery.} one{{count} item was added to your gallery.} other{{count} items were added to your gallery.}}'**
+  String instagramImportResultBody(int count);
+
+  /// Import result: items the backend refused.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} item couldn\'t be imported. Your gallery may be full, or the video is too long.} other{{count} items couldn\'t be imported. Your gallery may be full, or the videos are too long.}}'**
+  String instagramImportResultSkipped(int count);
+
+  /// Closes the import result sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get instagramImportDone;
+
+  /// Snackbar when the import request fails.
+  ///
+  /// In en, this message translates to:
+  /// **'The import didn\'t go through. Nothing was added; please try again.'**
+  String get instagramImportFailed;
 }
 
 class _AppLocalizationsDelegate

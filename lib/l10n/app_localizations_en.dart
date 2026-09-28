@@ -8562,4 +8562,172 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get createChallengeProofTypeHint =>
       'Picks the screen the app opens, nothing more. A challenge confirmed without a photo still counts, so a denied camera or bad signal never costs anybody their points.';
+
+  @override
+  String get instagramCardTitle => 'Instagram';
+
+  @override
+  String get instagramConnectBody =>
+      'Bring your photos and videos from Instagram into your Kolabing gallery. You choose exactly what to import.';
+
+  @override
+  String get instagramConnectButton => 'Connect Instagram';
+
+  @override
+  String get instagramPersonalAccountLink => 'Using a personal account?';
+
+  @override
+  String instagramConnectedAs(String username) {
+    return 'Connected as @$username';
+  }
+
+  @override
+  String get instagramConnectedGeneric => 'Instagram connected';
+
+  @override
+  String get instagramImportButton => 'Import photos and videos';
+
+  @override
+  String get instagramDisconnectButton => 'Disconnect';
+
+  @override
+  String get instagramDisconnectTitle => 'Disconnect Instagram?';
+
+  @override
+  String get instagramDisconnectBody =>
+      'Kolabing will stop reading your Instagram. Photos and videos you already imported stay in your gallery.';
+
+  @override
+  String get instagramCancel => 'Cancel';
+
+  @override
+  String get instagramDisconnected => 'Instagram disconnected';
+
+  @override
+  String get instagramConnectSuccess => 'Instagram connected';
+
+  @override
+  String get instagramConnectError =>
+      'Instagram didn\'t connect. Please try again.';
+
+  @override
+  String get instagramOpenFailed =>
+      'Couldn\'t open Instagram. Please try again.';
+
+  @override
+  String get instagramActionFailed => 'Something went wrong. Please try again.';
+
+  @override
+  String get instagramPersonalTitle => 'Switch to a professional account';
+
+  @override
+  String get instagramPersonalBody =>
+      'Instagram only shares photos and videos from professional accounts (Business or Creator). Switching is free and takes a minute:';
+
+  @override
+  String get instagramPersonalStep1 => 'Open Instagram and go to your profile.';
+
+  @override
+  String get instagramPersonalStep2 =>
+      'Tap the menu, then Settings → Account type and tools.';
+
+  @override
+  String get instagramPersonalStep3 =>
+      'Tap \"Switch to professional account\" and choose Business or Creator.';
+
+  @override
+  String get instagramPersonalStep4 =>
+      'Come back here and tap Connect Instagram.';
+
+  @override
+  String get instagramPersonalGotIt => 'Got it';
+
+  @override
+  String get instagramImportTitle => 'Import from Instagram';
+
+  @override
+  String get instagramImportEmpty =>
+      'There are no photos or videos on this Instagram account yet.';
+
+  @override
+  String get instagramImportLoadError =>
+      'Couldn\'t load your Instagram photos and videos.';
+
+  @override
+  String get instagramRetry => 'Retry';
+
+  @override
+  String instagramSelectedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count selected',
+      one: '$count selected',
+      zero: 'Select photos and videos',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get instagramImportToGallery => 'Import to gallery';
+
+  @override
+  String instagramImporting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Importing $count items…',
+      one: 'Importing $count item…',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String instagramSelectionLimit(int max) {
+    return 'You can import up to $max at a time.';
+  }
+
+  @override
+  String get instagramImportedBadge => 'Imported';
+
+  @override
+  String get instagramVideoBadge => 'Video';
+
+  @override
+  String get instagramCarouselBadge => 'Album';
+
+  @override
+  String get instagramImportResultTitle => 'Import finished';
+
+  @override
+  String instagramImportResultBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items were added to your gallery.',
+      one: '$count item was added to your gallery.',
+      zero: 'Nothing new was added to your gallery.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String instagramImportResultSkipped(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count items couldn\'t be imported. Your gallery may be full, or the videos are too long.',
+      one:
+          '$count item couldn\'t be imported. Your gallery may be full, or the video is too long.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get instagramImportDone => 'Done';
+
+  @override
+  String get instagramImportFailed =>
+      'The import didn\'t go through. Nothing was added; please try again.';
 }
