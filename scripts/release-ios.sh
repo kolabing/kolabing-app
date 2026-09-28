@@ -133,7 +133,7 @@ ARCHIVE="build/ios/archive/Runner.xcarchive"
 # Fail closed before export, not after upload (#202). The define above is only an
 # instruction; this reads the host actually baked into the binary. Once a build
 # is in App Store Connect, a dev one and a prod one are the same row.
-say "Verifying the archive really targets $ENV_NAME…"
+say "Verifying the archive really targets ${ENV_NAME}…"
 ./scripts/verify-build-env.sh "$ENV_NAME" "$ARCHIVE" \
   || die "The archive does not target $ENV_NAME. Not exporting, not uploading."
 
