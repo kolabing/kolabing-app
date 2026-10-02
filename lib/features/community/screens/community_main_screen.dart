@@ -51,7 +51,7 @@ class CommunityMainScreen extends ConsumerStatefulWidget {
 
 class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
   late int _currentIndex;
-  /// The create FAB slides away while the reader scrolls a list down and
+  /// The create FAB shrinks away while the reader scrolls a list down and
   /// comes back on the first scroll up, so it never covers a card's own
   /// buttons (Explore Quick chat, 2 Oct 2026).
   bool _fabVisible = true;
@@ -189,9 +189,11 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
           // Create-Opportunity FAB only on Home (0) / Explore (1). Hidden on
           // My Kolabs (2), Chats (3), and Community (4).
           _currentIndex < 2
-          ? AnimatedSlide(
-              offset: _fabVisible ? Offset.zero : const Offset(0, 2),
-              duration: const Duration(milliseconds: 200),
+          ? AnimatedScale(
+              // Shrinks away instead of sliding: a slide parked it on the tab
+              // bar (simulator pass, 2 Oct).
+              scale: _fabVisible ? 1 : 0,
+              duration: const Duration(milliseconds: 180),
               curve: Curves.easeOut,
               child: KolabingFAB(
               onPressed: _onFabPressed,
