@@ -738,7 +738,9 @@ class ExploreDetailSheet extends ConsumerWidget {
             KolabingButton(
               label: showsSubscribeAction
                   ? AppLocalizations.of(context).exploreDetailUnlockToApply
-                  : AppLocalizations.of(context).exploreDetailApplyNow,
+                  // The single main action is the full apply flow. Quick chat
+                  // lives on the Explore card only (Daniel 2026-10-02).
+                  : AppLocalizations.of(context).exploreDetailSendFullRequest,
               onPressed: canApply ? onApply : onSubscribe,
               variant: KolabingButtonVariant.primary,
               icon: Icon(

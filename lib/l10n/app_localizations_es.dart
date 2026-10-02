@@ -8812,4 +8812,89 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get instagramImportFailed =>
       'La importación no se ha completado. No se ha añadido nada; inténtalo de nuevo.';
+
+  @override
+  String get exploreDetailSendFullRequest => 'Enviar solicitud de kolab completa';
+
+  @override
+  String get quickChatButtonLabel => 'Chat rápido';
+
+  @override
+  String get quickChatTitle => 'Chat rápido';
+
+  @override
+  String quickChatWith(String name) {
+    return 'con $name';
+  }
+
+  @override
+  String get quickChatWhenLabel => '¿Cuándo?';
+
+  @override
+  String get quickChatModeDate => 'Fecha concreta';
+
+  @override
+  String get quickChatModeWeekday => 'Día de la semana';
+
+  @override
+  String get quickChatPickDate => 'Elige una fecha';
+
+  @override
+  String quickChatSelectedDate(String date) {
+    return 'Seleccionado: $date';
+  }
+
+  @override
+  String get quickChatPreviousMonth => 'Mes anterior';
+
+  @override
+  String get quickChatNextMonth => 'Mes siguiente';
+
+  @override
+  String get quickChatEveryWeek => 'cada semana';
+
+  @override
+  String get quickChatPeopleLabel => '¿Cuántas personas?';
+
+  @override
+  String get quickChatFewerPeople => 'Menos personas';
+
+  @override
+  String get quickChatMorePeople => 'Más personas';
+
+  @override
+  String get quickChatNoteLabel => 'Nota breve';
+
+  @override
+  String get quickChatNoteHint => 'p. ej. Somos un club de running de unas 30 personas y buscamos un sitio para tomar café después de la carrera del sábado.';
+
+  @override
+  String get quickChatFinePrint => 'No hace falta rellenar toda la kolab ahora. Si dicen que sí, añadirás el resto.';
+
+  @override
+  String get quickChatStart => 'Iniciar chat';
+
+  @override
+  String get quickChatError => 'No hemos podido iniciar el chat. Inténtalo de nuevo.';
+
+  @override
+  String quickChatAvailabilityOnDate(String date) {
+    return 'El $date';
+  }
+
+  @override
+  String quickChatAvailabilityWeekday(String day) {
+    return 'Cualquier $day, todas las semanas';
+  }
+
+  @override
+  String quickChatMessageGroupSize(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Tamaño del grupo: $count personas',
+      one: 'Tamaño del grupo: $count persona',
+    );
+    return '$_temp0';
+  }
 }

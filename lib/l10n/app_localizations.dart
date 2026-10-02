@@ -15313,6 +15313,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The import didn\'t go through. Nothing was added; please try again.'**
   String get instagramImportFailed;
+
+  /// Primary CTA on the Explore detail sheet: opens the full apply flow
+  ///
+  /// In en, this message translates to:
+  /// **'Send full kolab request'**
+  String get exploreDetailSendFullRequest;
+
+  /// Accessibility label of the round Quick chat button on an Explore card
+  ///
+  /// In en, this message translates to:
+  /// **'Quick chat'**
+  String get quickChatButtonLabel;
+
+  /// Title of the Quick chat bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Quick chat'**
+  String get quickChatTitle;
+
+  /// Quick chat sheet subtitle naming the other side
+  ///
+  /// In en, this message translates to:
+  /// **'with {name}'**
+  String quickChatWith(String name);
+
+  /// Quick chat: label above the date / day-of-week picker
+  ///
+  /// In en, this message translates to:
+  /// **'When?'**
+  String get quickChatWhenLabel;
+
+  /// Quick chat: segmented option for a specific calendar date
+  ///
+  /// In en, this message translates to:
+  /// **'Specific date'**
+  String get quickChatModeDate;
+
+  /// Quick chat: segmented option for a recurring day of the week
+  ///
+  /// In en, this message translates to:
+  /// **'Day of the week'**
+  String get quickChatModeWeekday;
+
+  /// Quick chat: hint under the calendar before a date is picked
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get quickChatPickDate;
+
+  /// Quick chat: line under the calendar showing the picked date
+  ///
+  /// In en, this message translates to:
+  /// **'Selected: {date}'**
+  String quickChatSelectedDate(String date);
+
+  /// Quick chat calendar: previous-month button (accessibility)
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get quickChatPreviousMonth;
+
+  /// Quick chat calendar: next-month button (accessibility)
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get quickChatNextMonth;
+
+  /// Quick chat: small caption under each weekday chip
+  ///
+  /// In en, this message translates to:
+  /// **'every week'**
+  String get quickChatEveryWeek;
+
+  /// Quick chat: label above the group-size stepper
+  ///
+  /// In en, this message translates to:
+  /// **'How many people?'**
+  String get quickChatPeopleLabel;
+
+  /// Quick chat stepper: decrease button (accessibility)
+  ///
+  /// In en, this message translates to:
+  /// **'Fewer people'**
+  String get quickChatFewerPeople;
+
+  /// Quick chat stepper: increase button (accessibility)
+  ///
+  /// In en, this message translates to:
+  /// **'More people'**
+  String get quickChatMorePeople;
+
+  /// Quick chat: label of the optional short note
+  ///
+  /// In en, this message translates to:
+  /// **'Short note'**
+  String get quickChatNoteLabel;
+
+  /// Quick chat: placeholder of the short note field
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. We\'re a run club of about 30, looking for a place for coffee after our Saturday run.'**
+  String get quickChatNoteHint;
+
+  /// Quick chat: fine print above the Start chat button
+  ///
+  /// In en, this message translates to:
+  /// **'No need to fill in the whole kolab now. If they say yes, you\'ll add the rest.'**
+  String get quickChatFinePrint;
+
+  /// Quick chat: primary button that sends the request and opens the chat
+  ///
+  /// In en, this message translates to:
+  /// **'Start chat'**
+  String get quickChatStart;
+
+  /// Quick chat: generic error when the request fails
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t start the chat. Please try again.'**
+  String get quickChatError;
+
+  /// Quick chat: availability text sent to the API for a specific date; {date} is the long localized date
+  ///
+  /// In en, this message translates to:
+  /// **'On {date}'**
+  String quickChatAvailabilityOnDate(String date);
+
+  /// Quick chat: availability text sent to the API for a weekly day; {day} is the localized weekday name
+  ///
+  /// In en, this message translates to:
+  /// **'Any {day}, every week'**
+  String quickChatAvailabilityWeekday(String day);
+
+  /// Quick chat: first line of the application message with the group size
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Group size: {count} person} other{Group size: {count} people}}'**
+  String quickChatMessageGroupSize(int count);
 }
 
 class _AppLocalizationsDelegate

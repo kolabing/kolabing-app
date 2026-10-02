@@ -8730,4 +8730,89 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get instagramImportFailed =>
       'The import didn\'t go through. Nothing was added; please try again.';
+
+  @override
+  String get exploreDetailSendFullRequest => 'Send full kolab request';
+
+  @override
+  String get quickChatButtonLabel => 'Quick chat';
+
+  @override
+  String get quickChatTitle => 'Quick chat';
+
+  @override
+  String quickChatWith(String name) {
+    return 'with $name';
+  }
+
+  @override
+  String get quickChatWhenLabel => 'When?';
+
+  @override
+  String get quickChatModeDate => 'Specific date';
+
+  @override
+  String get quickChatModeWeekday => 'Day of the week';
+
+  @override
+  String get quickChatPickDate => 'Pick a date';
+
+  @override
+  String quickChatSelectedDate(String date) {
+    return 'Selected: $date';
+  }
+
+  @override
+  String get quickChatPreviousMonth => 'Previous month';
+
+  @override
+  String get quickChatNextMonth => 'Next month';
+
+  @override
+  String get quickChatEveryWeek => 'every week';
+
+  @override
+  String get quickChatPeopleLabel => 'How many people?';
+
+  @override
+  String get quickChatFewerPeople => 'Fewer people';
+
+  @override
+  String get quickChatMorePeople => 'More people';
+
+  @override
+  String get quickChatNoteLabel => 'Short note';
+
+  @override
+  String get quickChatNoteHint => 'e.g. We\'re a run club of about 30, looking for a place for coffee after our Saturday run.';
+
+  @override
+  String get quickChatFinePrint => 'No need to fill in the whole kolab now. If they say yes, you\'ll add the rest.';
+
+  @override
+  String get quickChatStart => 'Start chat';
+
+  @override
+  String get quickChatError => 'We couldn\'t start the chat. Please try again.';
+
+  @override
+  String quickChatAvailabilityOnDate(String date) {
+    return 'On $date';
+  }
+
+  @override
+  String quickChatAvailabilityWeekday(String day) {
+    return 'Any $day, every week';
+  }
+
+  @override
+  String quickChatMessageGroupSize(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Group size: $count people',
+      one: 'Group size: $count person',
+    );
+    return '$_temp0';
+  }
 }

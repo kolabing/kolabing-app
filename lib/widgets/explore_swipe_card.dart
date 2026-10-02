@@ -24,6 +24,7 @@ class ExploreSwipeCard extends StatefulWidget {
     this.showKolabFirst = false,
     this.hideCreatorIdentity = false,
     this.inList = false,
+    this.onQuickChat,
     super.key,
   });
 
@@ -56,6 +57,11 @@ class ExploreSwipeCard extends StatefulWidget {
   /// natural height and has no scroll view of its own, so a drag on the card
   /// scrolls the list instead of being caught by the card.
   final bool inList;
+
+  /// Opens the Quick chat sheet for this card. When null (the viewer cannot
+  /// apply to this item) no Quick chat button is drawn. Its tap is handled by
+  /// the button itself, so it never also opens the detail.
+  final VoidCallback? onQuickChat;
 
   @override
   State<ExploreSwipeCard> createState() => _ExploreSwipeCardState();
@@ -457,28 +463,75 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
     ],
   );
 
-  Widget _buildViewDetailsRow() => Row(
-    children: [
-      Text(
-        AppLocalizations.of(context).exploreSwipeCardViewDetails,
-        style: GoogleFonts.inter(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: KolabingColors.onSurface,
+  Widget _buildViewDetailsRow() {
+    final onQuickChat = widget.onQuickChat;
+    const chevron = Icon(
+      Icons.chevron_right_rounded,
+      size: 18,
+      color: KolabingColors.onSurface,
+    );
+    return Row(
+      children: [
+        Text(
+          AppLocalizations.of(context).exploreSwipeCardViewDetails,
+          style: GoogleFonts.inter(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: KolabingColors.onSurface,
+          ),
         ),
-      ),
-      const Spacer(),
-      const Icon(
-        Icons.chevron_right_rounded,
-        size: 18,
-        color: KolabingColors.onSurface,
-      ),
-    ],
-  );
+        if (onQuickChat == null) ...[
+          const Spacer(),
+          chevron,
+        ] else ...[
+          const SizedBox(width: 2),
+          chevron,
+          const Spacer(),
+          _QuickChatButton(onTap: onQuickChat),
+        ],
+      ],
+    );
+  }
 
   TextStyle get _secondaryStyle => KolabingTextStyles.captionSecondary.copyWith(
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: KolabingColors.textTertiary,
+  );
+}
+
+/// The round yellow Quick chat button in the bottom-right of a card's
+/// content area. Its own InkWell wins the tap, so the card's onTap (which
+/// opens the detail) does not fire.
+class _QuickChatButton extends StatelessWidget {
+  const _QuickChatButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    label: AppLocalizations.of(context).quickChatButtonLabel,
+    excludeSemantics: true,
+    child: Material(
+      key: const Key('explore-card-quick-chat'),
+      color: KolabingColors.primary,
+      shape: const CircleBorder(),
+      elevation: 1,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: const SizedBox(
+          width: 44,
+          height: 44,
+          child: Icon(
+            Icons.chat_bubble_outline_rounded,
+            size: 20,
+            // Design system: always ink on the yellow primary.
+            color: KolabingColors.onSurface,
+          ),
+        ),
+      ),
+    ),
   );
 }

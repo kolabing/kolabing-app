@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:kolabing_app/features/application/widgets/quick_chat_sheet.dart';
 import 'package:kolabing_app/features/auth/models/user_model.dart';
 import 'package:kolabing_app/features/auth/providers/auth_provider.dart';
 import 'package:kolabing_app/features/business/providers/profile_provider.dart';
@@ -13,7 +14,9 @@ import 'package:kolabing_app/features/discovery/models/explore_feed_item.dart';
 import 'package:kolabing_app/features/discovery/providers/discovery_provider.dart';
 import 'package:kolabing_app/features/notification/providers/notification_provider.dart';
 import 'package:kolabing_app/l10n/app_localizations.dart';
+import 'package:kolabing_app/widgets/explore_detail_sheet.dart';
 import 'package:kolabing_app/widgets/explore_swipe_card.dart';
+import 'package:kolabing_app/widgets/kolabing_button.dart';
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -83,6 +86,7 @@ Future<_CapturedRoutes> _pumpExplore(
   WidgetTester tester, {
   required List<ExploreFeedItem> feedItems,
   required UserType viewerType,
+  bool subscribed = true,
 }) async {
   await tester.binding.setSurfaceSize(const Size(430, 932));
   addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -92,7 +96,7 @@ Future<_CapturedRoutes> _pumpExplore(
     id: 'user-1',
     email: 'user@example.com',
     userType: viewerType,
-    hasActiveSubscription: true,
+    hasActiveSubscription: subscribed,
     communityProfile: isCommunity
         ? const CommunityProfile(id: 'viewer-profile-1', name: 'BCN Creators')
         : null,
@@ -368,6 +372,181 @@ void main() {
 
       expect(find.byIcon(Icons.bookmark_border), findsNothing);
       expect(find.byIcon(Icons.bookmark), findsNothing);
+    });
+  });
+
+  group('quick chat', () {
+    const quickChat = Key('explore-card-quick-chat');
+
+    testWidgets('a community viewer gets the Quick chat button on an '
+        'ordinary offer', (tester) async {
+      await _pumpExplore(
+        tester,
+        viewerType: UserType.community,
+        feedItems: [_offer()],
+      );
+
+      expect(find.byKey(quickChat), findsOneWidget);
+      expect(find.bySemanticsLabel('Quick chat'), findsOneWidget);
+    });
+
+    testWidgets('a subscribed business gets the Quick chat button', (
+      tester,
+    ) async {
+      await _pumpExplore(
+        tester,
+        viewerType: UserType.business,
+        feedItems: [_offer()],
+      );
+
+      expect(find.byKey(quickChat), findsOneWidget);
+    });
+
+    testWidgets('a free business gets no Quick chat button', (tester) async {
+      await _pumpExplore(
+        tester,
+        viewerType: UserType.business,
+        subscribed: false,
+        feedItems: [_offer()],
+      );
+
+      expect(find.byType(ExploreSwipeCard), findsOneWidget);
+      expect(find.byKey(quickChat), findsNothing);
+    });
+
+    testWidgets('a Multi-Kolab role card gets no Quick chat button', (
+      tester,
+    ) async {
+      await _pumpExplore(
+        tester,
+        viewerType: UserType.community,
+        feedItems: [_role(id: 'role-1')],
+      );
+
+      expect(find.byKey(quickChat), findsNothing);
+    });
+
+    testWidgets('tapping Quick chat opens the sheet, not the detail', (
+      tester,
+    ) async {
+      await _pumpExplore(
+        tester,
+        viewerType: UserType.community,
+        feedItems: [_offer()],
+      );
+
+      await tester.tap(find.byKey(quickChat));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(QuickChatSheet), findsOneWidget);
+      expect(find.text('with Casa Sol'), findsOneWidget);
+      expect(find.byType(ExploreDetailSheet), findsNothing);
+    });
+
+    testWidgets('tapping the card itself still opens the detail', (
+      tester,
+    ) async {
+      await _pumpExplore(
+        tester,
+        viewerType: UserType.community,
+        feedItems: [_offer()],
+      );
+
+      await tester.tap(find.byType(ExploreSwipeCard));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ExploreDetailSheet), findsOneWidget);
+      expect(find.byType(QuickChatSheet), findsNothing);
+      expect(find.text('Send full kolab request'), findsOneWidget);
+    });
+  });
+
+  group('quick chat sheet', () {
+    Future<void> pumpSheet(WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(const Size(430, 932));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      final offer = (_offer() as ExploreOfferItem).offer;
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: Scaffold(
+              body: QuickChatSheet(
+                opportunity: offer.toOpportunity(),
+                partnerName: 'Casa Sol',
+                today: DateTime(2030, 5, 1),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+    }
+
+    VoidCallback? startAction(WidgetTester tester) => tester
+        .widget<KolabingButton>(find.byKey(const Key('quick-chat-start')))
+        .onPressed;
+
+    testWidgets('Start chat stays disabled until When is picked', (
+      tester,
+    ) async {
+      await pumpSheet(tester);
+
+      expect(find.text('Quick chat'), findsOneWidget);
+      expect(find.text('with Casa Sol'), findsOneWidget);
+      expect(startAction(tester), isNull);
+
+      // The offer's only date is Monday 20 May 2030.
+      await tester.tap(find.byKey(const Key('quick-chat-day-2030-5-20')));
+      await tester.pump();
+      expect(startAction(tester), isNotNull);
+    });
+
+    testWidgets('days outside the kolab window cannot be picked', (
+      tester,
+    ) async {
+      await pumpSheet(tester);
+
+      await tester.tap(find.byKey(const Key('quick-chat-day-2030-5-21')));
+      await tester.pump();
+      expect(startAction(tester), isNull);
+    });
+
+    testWidgets('switching to Day of the week clears the pick and offers '
+        'only the weekdays the kolab runs on', (tester) async {
+      await pumpSheet(tester);
+
+      await tester.tap(find.byKey(const Key('quick-chat-day-2030-5-20')));
+      await tester.pump();
+      expect(startAction(tester), isNotNull);
+
+      await tester.tap(find.byKey(const Key('quick-chat-mode-weekday')));
+      await tester.pump();
+      expect(startAction(tester), isNull);
+
+      // Tuesday is not a day this one-date kolab runs on.
+      await tester.tap(find.byKey(const Key('quick-chat-weekday-2')));
+      await tester.pump();
+      expect(startAction(tester), isNull);
+
+      await tester.tap(find.byKey(const Key('quick-chat-weekday-1')));
+      await tester.pump();
+      expect(startAction(tester), isNotNull);
+    });
+
+    testWidgets('group size defaults to 20 and steps by one', (tester) async {
+      await pumpSheet(tester);
+
+      expect(find.text('20'), findsWidgets);
+      await tester.tap(find.byKey(const Key('quick-chat-people-plus')));
+      await tester.pump();
+      expect(
+        tester
+            .widget<Text>(find.byKey(const Key('quick-chat-people-count')))
+            .data,
+        '21',
+      );
     });
   });
 

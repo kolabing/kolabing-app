@@ -8857,4 +8857,89 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get instagramImportFailed =>
       'La importació no s\'ha completat. No s\'ha afegit res; torna-ho a provar.';
+
+  @override
+  String get exploreDetailSendFullRequest => 'Envia la sol·licitud de kolab completa';
+
+  @override
+  String get quickChatButtonLabel => 'Xat ràpid';
+
+  @override
+  String get quickChatTitle => 'Xat ràpid';
+
+  @override
+  String quickChatWith(String name) {
+    return 'amb $name';
+  }
+
+  @override
+  String get quickChatWhenLabel => 'Quan?';
+
+  @override
+  String get quickChatModeDate => 'Data concreta';
+
+  @override
+  String get quickChatModeWeekday => 'Dia de la setmana';
+
+  @override
+  String get quickChatPickDate => 'Tria una data';
+
+  @override
+  String quickChatSelectedDate(String date) {
+    return 'Seleccionat: $date';
+  }
+
+  @override
+  String get quickChatPreviousMonth => 'Mes anterior';
+
+  @override
+  String get quickChatNextMonth => 'Mes següent';
+
+  @override
+  String get quickChatEveryWeek => 'cada setmana';
+
+  @override
+  String get quickChatPeopleLabel => 'Quantes persones?';
+
+  @override
+  String get quickChatFewerPeople => 'Menys persones';
+
+  @override
+  String get quickChatMorePeople => 'Més persones';
+
+  @override
+  String get quickChatNoteLabel => 'Nota breu';
+
+  @override
+  String get quickChatNoteHint => 'p. ex. Som un club de running d\'unes 30 persones i busquem un lloc per fer un cafè després de la cursa del dissabte.';
+
+  @override
+  String get quickChatFinePrint => 'No cal omplir tota la kolab ara. Si diuen que sí, hi afegiràs la resta.';
+
+  @override
+  String get quickChatStart => 'Inicia el xat';
+
+  @override
+  String get quickChatError => 'No hem pogut iniciar el xat. Torna-ho a provar.';
+
+  @override
+  String quickChatAvailabilityOnDate(String date) {
+    return 'El $date';
+  }
+
+  @override
+  String quickChatAvailabilityWeekday(String day) {
+    return 'Qualsevol $day, cada setmana';
+  }
+
+  @override
+  String quickChatMessageGroupSize(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Mida del grup: $count persones',
+      one: 'Mida del grup: $count persona',
+    );
+    return '$_temp0';
+  }
 }

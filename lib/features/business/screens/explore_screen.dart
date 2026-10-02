@@ -17,6 +17,7 @@ import '../../../widgets/page_title.dart';
 import '../../../widgets/profile_link.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../application/widgets/apply_success_sheet.dart';
+import '../../application/widgets/quick_chat_sheet.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../discovery/models/discovery_filters.dart';
@@ -75,6 +76,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   /// endpoint has no `saved` feed — the Saved tab is backed by a separate
   /// provider (`GET /kolabs?saved=1`).
   bool _savedSelected = false;
+
+  /// Kolab ids the viewer applied to from this screen (Quick chat or the full
+  /// request). The discovery payload has no `has_applied` flag, so this is
+  /// what hides the Quick chat button once a request is sent; a repeat
+  /// request is still refused by the backend ("already applied").
+  final Set<String> _appliedKolabIds = <String>{};
 
   @override
   void initState() {
@@ -203,9 +210,56 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     );
   }
 
+  /// Whether [item] gets the Quick chat button: an ordinary offer (not a
+  /// Multi-Kolab role) that the viewer can apply to right now — a community,
+  /// or a business with an active subscription; not their own kolab, not one
+  /// they already applied to, and still open for applications.
+  bool _canQuickChat(ExploreFeedItem item, {required bool hasSubscription}) {
+    if (item is! ExploreOfferItem) return false;
+    if (!_isCommunityViewer && !hasSubscription) return false;
+    final offer = item.offer;
+    if (_isOwnItem(offer)) return false;
+    final opportunity = offer.toOpportunity();
+    final id = opportunity.id;
+    if (id == null || id.isEmpty || _appliedKolabIds.contains(id)) {
+      return false;
+    }
+    return opportunityApplicationsOpen(opportunity);
+  }
+
+  /// Quick chat: the short request sheet, sent through the existing apply
+  /// call. On success the application's chat opens; a business the backend
+  /// says needs a subscription gets the same paywall as the full apply flow.
+  Future<void> _openQuickChat(DiscoveryItem item) async {
+    final opportunity = item.toOpportunity();
+    final result = await QuickChatSheet.show(
+      context,
+      opportunity: opportunity,
+      partnerName: item.creatorProfile.displayName,
+    );
+    if (!mounted || result == null) return;
+
+    final application = result.application;
+    if (application != null) {
+      final id = opportunity.id;
+      if (id != null) setState(() => _appliedKolabIds.add(id));
+      await context.push('/application/${application.id}/chat');
+      return;
+    }
+
+    if (result.needsSubscription) {
+      final allowed = await SubscriptionPaywall.checkAndShow(context, ref);
+      if (allowed && mounted) {
+        await ref.read(profileProvider.notifier).refreshSubscription();
+      }
+    }
+  }
+
   Future<void> _openApplyFlow(Opportunity opportunity) async {
     final submitted = await ApplyModal.show(context, opportunity);
     if (!mounted || submitted != true) return;
+    final id = opportunity.id;
+    if (id != null) setState(() => _appliedKolabIds.add(id));
 
     await ApplySuccessSheet.show(
       context,
@@ -673,6 +727,14 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   item,
                   hasSubscription: hasBusinessSubscription,
                 ),
+                onQuickChat:
+                    item is ExploreOfferItem &&
+                        _canQuickChat(
+                          item,
+                          hasSubscription: hasBusinessSubscription,
+                        )
+                    ? () => _openQuickChat(item.offer)
+                    : null,
               ),
               if (saveableKolabId != null)
                 Positioned(
