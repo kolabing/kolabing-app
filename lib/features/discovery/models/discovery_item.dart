@@ -450,6 +450,7 @@ class BusinessOfferSummary {
     this.seekingCommunities = const <DiscoveryLabelValue>[],
     this.minCommunitySize,
     this.expectedDeliverables = const <String>[],
+    this.capacity,
   });
 
   factory BusinessOfferSummary.fromJson(Map<String, dynamic> json) =>
@@ -470,6 +471,7 @@ class BusinessOfferSummary {
                     const <dynamic>[])
                 .map((value) => value.toString())
                 .toList(),
+        capacity: _parseInt(json['capacity']),
       );
 
   final List<String> offerTypes;
@@ -480,6 +482,10 @@ class BusinessOfferSummary {
   final List<DiscoveryLabelValue> seekingCommunities;
   final int? minCommunitySize;
   final List<String> expectedDeliverables;
+
+  /// How many people the venue holds (`business_offer.capacity`), when known.
+  /// Quick chat caps its group-size stepper at this.
+  final int? capacity;
 
   List<String> get offerTypeLabels =>
       offerTypes.map(_discoveryLabelFromKey).toList();

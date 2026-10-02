@@ -236,6 +236,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       context,
       opportunity: opportunity,
       partnerName: item.creatorProfile.displayName,
+      maxPeople: item.businessOffer?.capacity,
     );
     if (!mounted || result == null) return;
 
