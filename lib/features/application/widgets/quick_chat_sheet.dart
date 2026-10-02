@@ -252,6 +252,19 @@ class _QuickChatSheetState extends ConsumerState<QuickChatSheet> {
           );
       if (!mounted) return;
       if (application != null) {
+        // Put the request in the chat itself, so the other side opens a
+        // conversation that already says when, how many and why (simulator
+        // pass, 2 Oct: the chat opened empty). Best effort: the application
+        // already holds the same text, so a failed post must not block.
+        try {
+          await ref
+              .read(applicationServiceProvider)
+              .sendMessage(
+                applicationId: application.id,
+                content: '$availability\n$message',
+              );
+        } on Object catch (_) {}
+        if (!mounted) return;
         Navigator.of(context).pop(QuickChatResult.sent(application));
         return;
       }
@@ -316,6 +329,41 @@ class _QuickChatSheetState extends ConsumerState<QuickChatSheet> {
               ),
             ),
           ),
+          // Pinned header: the title stays put and the form scrolls under a
+          // hairline, so scrolled content never slides up against the drag
+          // handle (simulator pass, 2 Oct).
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              KolabingSpacing.lg,
+              KolabingSpacing.md,
+              KolabingSpacing.lg,
+              KolabingSpacing.sm,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(width: double.infinity, child: Text(
+                    l10n.quickChatTitle,
+                    style: KolabingTextStyles.bodyLarge.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: context.colors.onSurface,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: KolabingSpacing.xxxs),
+                Text(
+                  l10n.quickChatWith(widget.partnerName),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: KolabingTextStyles.bodySmall.copyWith(
+                    color: context.colors.textTertiary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Divider(height: 1, thickness: 1, color: context.colors.darkBorder.withValues(alpha: 0.35)),
           Flexible(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
@@ -327,28 +375,10 @@ class _QuickChatSheetState extends ConsumerState<QuickChatSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    l10n.quickChatTitle,
-                    style: KolabingTextStyles.bodyLarge.copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: context.colors.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: KolabingSpacing.xxxs),
-                  Text(
-                    l10n.quickChatWith(widget.partnerName),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: KolabingTextStyles.bodySmall.copyWith(
-                      color: context.colors.textTertiary,
-                    ),
-                  ),
                   if (_errorMessage != null) ...[
-                    const SizedBox(height: KolabingSpacing.md),
                     _buildError(_errorMessage!),
+                    const SizedBox(height: KolabingSpacing.md),
                   ],
-                  const SizedBox(height: KolabingSpacing.lg),
                   _buildLabel(l10n.quickChatWhenLabel),
                   const SizedBox(height: KolabingSpacing.xs),
                   _buildModeToggle(l10n),
