@@ -50,6 +50,17 @@ class ExploreDetailSheet extends ConsumerWidget {
   final bool hideCreatorIdentity;
   final VoidCallback? onSubscribe;
 
+  /// The photos opened on tap (Daniel 2 Oct: "tap on profile and see
+  /// pictures"): the kolab's own photos, else its cover. None when the
+  /// creator's identity is hidden from this viewer (§2.6).
+  List<String> get _galleryUrls {
+    final item = discoveryItem;
+    if (item == null || hideCreatorIdentity) return const <String>[];
+    if (item.photoUrls.isNotEmpty) return item.photoUrls;
+    final cover = item.coverPhotoUrl;
+    return cover != null && cover.isNotEmpty ? <String>[cover] : const <String>[];
+  }
+
   /// Day labels indexed 1..7 (Mon..Sun) matching [Opportunity.recurringDays].
   static const _dayLabels = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
 
@@ -119,6 +130,10 @@ class ExploreDetailSheet extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (_galleryUrls.isNotEmpty) ...[
+                  _DetailGallery(urls: _galleryUrls),
+                  const SizedBox(height: KolabingSpacing.md),
+                ],
                 _buildHeaderRow(context),
                 const SizedBox(height: KolabingSpacing.lg),
                 _buildTitleSection(context),
@@ -976,4 +991,75 @@ class _PastEventPhotoSlide {
   final String photoUrl;
   final String title;
   final String subtitle;
+}
+
+
+/// Swipeable photo strip at the top of the detail sheet, with page dots.
+class _DetailGallery extends StatefulWidget {
+  const _DetailGallery({required this.urls});
+
+  final List<String> urls;
+
+  @override
+  State<_DetailGallery> createState() => _DetailGalleryState();
+}
+
+class _DetailGalleryState extends State<_DetailGallery> {
+  final PageController _controller = PageController();
+  int _page = 0;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => ClipRRect(
+    key: const Key('explore-detail-gallery'),
+    borderRadius: BorderRadius.circular(KolabingRadius.lg),
+    child: AspectRatio(
+      aspectRatio: 4 / 3,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          PageView.builder(
+            controller: _controller,
+            itemCount: widget.urls.length,
+            onPageChanged: (int index) => setState(() => _page = index),
+            itemBuilder: (BuildContext context, int index) => Image.network(
+              widget.urls[index],
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) =>
+                  ColoredBox(color: context.colors.surfaceVariant),
+            ),
+          ),
+          if (widget.urls.length > 1)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: KolabingSpacing.sm,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 0; i < widget.urls.length; i++)
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      width: i == _page ? 16 : 7,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: i == _page
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    ),
+  );
 }

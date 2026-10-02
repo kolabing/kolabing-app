@@ -42,7 +42,12 @@ class ExploreCardData {
     final avatar = item.creatorProfile.avatarUrl;
 
     final imageUrls = <String>[];
-    if (cover != null && cover.isNotEmpty) {
+    // All the kolab's own photos, so the card can be swiped through them. Not
+    // for a free business viewing a community: the cover is blurred for that
+    // viewer (§2.6), and more photos would give the identity away.
+    if (!hideCreatorIdentity && item.photoUrls.isNotEmpty) {
+      imageUrls.addAll(item.photoUrls);
+    } else if (cover != null && cover.isNotEmpty) {
       imageUrls.add(cover);
     } else if (avatar != null && avatar.isNotEmpty) {
       imageUrls.add(avatar);
