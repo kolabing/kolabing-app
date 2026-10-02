@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollDirection;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -44,6 +45,10 @@ class BusinessMainScreen extends ConsumerStatefulWidget {
 
 class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
   late int _currentIndex;
+  /// The create FAB slides away while the reader scrolls a list down and
+  /// comes back on the first scroll up, so it never covers a card's own
+  /// buttons (Explore Quick chat, 2 Oct 2026).
+  bool _fabVisible = true;
 
   @override
   void initState() {
@@ -54,6 +59,7 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
   void _onTabChanged(int index) {
     setState(() {
       _currentIndex = index;
+      _fabVisible = true;
     });
   }
 
@@ -72,6 +78,17 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
         ref.invalidate(dashboardProvider);
       }
     }
+  }
+
+  bool _onUserScroll(UserScrollNotification notification) {
+    if (notification.metrics.axis != Axis.vertical) return false;
+    final direction = notification.direction;
+    if (direction == ScrollDirection.reverse && _fabVisible) {
+      setState(() => _fabVisible = false);
+    } else if (direction == ScrollDirection.forward && !_fabVisible) {
+      setState(() => _fabVisible = true);
+    }
+    return false;
   }
 
   @override
@@ -126,7 +143,9 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
       backgroundColor: isDark
           ? context.colors.surface
           : context.colors.background,
-      body: IndexedStack(
+      body: NotificationListener<UserScrollNotification>(
+        onNotification: _onUserScroll,
+        child: IndexedStack(
         index: _currentIndex,
         children: [
           _BusinessHomeTab(onSwitchTab: _onTabChanged),
@@ -139,14 +158,20 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
           const _BusinessProfileTab(),
         ],
       ),
+      ),
       floatingActionButton:
           // Hidden on Home (0, the yellow hero card already has a Create Kolab
           // CTA), My Kolabs (2, has its own create FAB), Chats (3), Profile (4).
           // Shown only on Explore (1).
           _currentIndex == 1
-          ? KolabingFAB(
+          ? AnimatedSlide(
+              offset: _fabVisible ? Offset.zero : const Offset(0, 2),
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+              child: KolabingFAB(
               onPressed: _onFabPressed,
               tooltip: l10n.businessMainCreateKolabTooltip,
+            ),
             )
           : null,
       bottomNavigationBar: KolabingBottomNavBar(

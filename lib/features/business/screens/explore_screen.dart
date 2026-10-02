@@ -739,8 +739,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               ),
               if (saveableKolabId != null)
                 Positioned(
+                  // Top-left of the photo: the match badge owns the top-right,
+                  // and the top-left Multi-Kolab chip never shares a card with
+                  // a bookmark (roles can't be saved).
                   top: KolabingSpacing.xs + KolabingSpacing.sm,
-                  right: KolabingSpacing.md + KolabingSpacing.sm,
+                  left: KolabingSpacing.md + KolabingSpacing.sm,
                   child: _SaveBookmarkButton(
                     isSaved: savedIds.contains(saveableKolabId),
                     onTap: () => _toggleSaved(saveableKolabId),
