@@ -342,6 +342,34 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                       ),
                       const SizedBox(height: 24),
                     ],
+                    // Capacity is the one required input on this step, so it
+                    // leads the form (Daniel 2026-10-02).
+                    _FieldLabel(
+                      label: AppLocalizations.of(
+                        context,
+                      ).businessStep2CapacityLabel,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      AppLocalizations.of(context).businessStep2CapacityHelper,
+                      style: KolabingTextStyles.captionSecondary.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _capacityController,
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) =>
+                          notifier.updateVenueCapacity(int.tryParse(value)),
+                      decoration: _inputDecoration(
+                        context,
+                        hint: AppLocalizations.of(
+                          context,
+                        ).businessStep2CapacityHint,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
                     PhotoUploadWidget(
                       photoBase64: data.photoBase64,
                       onPhotoSelected: notifier.updatePhoto,
@@ -518,32 +546,6 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                         padding: EdgeInsets.only(top: 12),
                         child: Center(child: CircularProgressIndicator()),
                       ),
-                    const SizedBox(height: 20),
-                    _FieldLabel(
-                      label: AppLocalizations.of(
-                        context,
-                      ).businessStep2CapacityLabel,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      AppLocalizations.of(context).businessStep2CapacityHelper,
-                      style: KolabingTextStyles.captionSecondary.copyWith(
-                        color: context.colors.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _capacityController,
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) =>
-                          notifier.updateVenueCapacity(int.tryParse(value)),
-                      decoration: _inputDecoration(
-                        context,
-                        hint: AppLocalizations.of(
-                          context,
-                        ).businessStep2CapacityHint,
-                      ),
-                    ),
                     const SizedBox(height: 24),
                     _FieldLabel(
                       label: AppLocalizations.of(
