@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollDirection;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -83,6 +86,16 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   /// request is still refused by the backend ("already applied").
   final Set<String> _appliedKolabIds = <String>{};
 
+  /// Search + quick filters fold away while the reader scrolls the list down,
+  /// and come back on scroll up, so more of the feed shows (Daniel 2 Oct:
+  /// "nothing makes it intuitive to scroll down").
+  bool _filtersCollapsed = false;
+
+  /// The one-time "it scrolls" nudge runs once per app launch.
+  static bool _scrollNudgeShown = false;
+  bool _userTouchedFeed = false;
+  Timer? _scrollNudgeTimer;
+
   /// Kolab id -> the application its Quick chat created this session, so the
   /// detail sheet can open that chat instead of a second request.
   final Map<String, String> _quickChatApplications = <String, String>{};
@@ -101,6 +114,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
   @override
   void dispose() {
+    _scrollNudgeTimer?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
@@ -133,9 +147,40 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   void _onScroll() {
     if (!_scrollController.hasClients) return;
     final position = _scrollController.position;
+    final direction = position.userScrollDirection;
+    if (direction != ScrollDirection.idle) _userTouchedFeed = true;
+    final collapse = direction == ScrollDirection.reverse && position.pixels > 40;
+    final expand = direction == ScrollDirection.forward || position.pixels <= 0;
+    if (collapse && !_filtersCollapsed) {
+      setState(() => _filtersCollapsed = true);
+    } else if (expand && _filtersCollapsed) {
+      setState(() => _filtersCollapsed = false);
+    }
     if (position.pixels >= position.maxScrollExtent - position.viewportDimension * 1.5) {
       ref.read(discoveryListProvider.notifier).loadMore();
     }
+  }
+
+  /// Once per launch, slide the list up a little and back so the reader sees
+  /// it scrolls. Skipped if they already touched the feed or it has one card.
+  void _maybeNudgeScroll(int itemCount) {
+    if (_scrollNudgeShown || itemCount < 2) return;
+    _scrollNudgeShown = true;
+    _scrollNudgeTimer = Timer(const Duration(milliseconds: 700), () async {
+      if (!mounted || _userTouchedFeed || !_scrollController.hasClients) return;
+      if (_scrollController.offset > 0) return;
+      await _scrollController.animateTo(
+        110,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeOut,
+      );
+      if (!mounted || _userTouchedFeed || !_scrollController.hasClients) return;
+      await _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeInOut,
+      );
+    });
   }
 
   /// Routes a tap to the right destination for the item's type. A
@@ -318,10 +363,19 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             _buildHeader(),
             const SizedBox(height: 6),
             // The search/filter bar + quick filters drive the discovery feed only.
-            if (!_savedSelected) ...[
-              _buildTopBar(filters, listState),
-              const SizedBox(height: 6),
-            ],
+            if (!_savedSelected)
+              AnimatedSize(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+                child: _filtersCollapsed
+                    ? const SizedBox(width: double.infinity)
+                    : Column(
+                        children: [
+                          _buildTopBar(filters, listState),
+                          const SizedBox(height: 6),
+                        ],
+                      ),
+              ),
             _FeedToggle(
               feed: filters.feed,
               savedSelected: _savedSelected,
@@ -340,14 +394,23 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               onSaved: () => setState(() => _savedSelected = true),
             ),
             const SizedBox(height: KolabingSpacing.xs),
-            if (!_savedSelected) ...[
-              DiscoveryQuickFilters(
-                filters: filters,
-                isCommunityViewer: _isCommunityViewer,
-                onOpenFilters: _openFilterSheet,
+            if (!_savedSelected)
+              AnimatedSize(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+                child: _filtersCollapsed
+                    ? const SizedBox(width: double.infinity)
+                    : Column(
+                        children: [
+                          DiscoveryQuickFilters(
+                            filters: filters,
+                            isCommunityViewer: _isCommunityViewer,
+                            onOpenFilters: _openFilterSheet,
+                          ),
+                          const SizedBox(height: KolabingSpacing.xs),
+                        ],
+                      ),
               ),
-              const SizedBox(height: KolabingSpacing.xs),
-            ],
             Expanded(
               child: _savedSelected
                   ? _buildSavedTab()
@@ -669,6 +732,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     }
 
     final itemCount = activeItems.length + (listState.isLoadingMore ? 1 : 0);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _maybeNudgeScroll(activeItems.length),
+    );
 
     // Reserve the FAB's zone under each card so it never covers the card's
     // bottom-right action area (View Details / bookmark).
