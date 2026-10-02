@@ -2559,6 +2559,7 @@
   "exploreDetailSendFullRequest": "Enviar solicitud de kolab completa",
   "quickChatButtonLabel": "Chat rápido",
   "quickChatTitle": "Chat rápido",
+  "quickChatOpenChat": "Abrir chat",
   "quickChatWith": "con {name}",
   "quickChatWhenLabel": "¿Cuándo?",
   "quickChatModeDate": "Fecha concreta",

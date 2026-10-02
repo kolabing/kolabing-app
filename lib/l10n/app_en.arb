@@ -10230,6 +10230,8 @@
   "@quickChatButtonLabel": {"description": "Accessibility label of the round Quick chat button on an Explore card"},
   "quickChatTitle": "Quick chat",
   "@quickChatTitle": {"description": "Title of the Quick chat bottom sheet"},
+  "quickChatOpenChat": "Open chat",
+  "@quickChatOpenChat": {"description": "Detail sheet main button once a Quick chat was sent to this kolab"},
   "quickChatWith": "with {name}",
   "@quickChatWith": {"description": "Quick chat sheet subtitle naming the other side", "placeholders": {"name": {"type": "String"}}},
   "quickChatWhenLabel": "When?",

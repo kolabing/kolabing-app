@@ -8823,6 +8823,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get quickChatTitle => 'Chat rápido';
 
   @override
+  String get quickChatOpenChat => 'Abrir chat';
+
+  @override
   String quickChatWith(String name) {
     return 'con $name';
   }
