@@ -34,6 +34,9 @@ import '../widgets/opportunity_card.dart';
 /// create-Kolab FAB (56dp + margin) never covers card actions.
 const double _fabClearance = 88;
 
+/// How much of the visible feed one card takes; the rest shows the next card.
+const double _cardHeightFraction = 0.82;
+
 /// Explore renders `GET /discovery/opportunities` verbatim.
 ///
 /// This file used to hold `filterExploreDeckItems`, which re-decided what
@@ -69,7 +72,7 @@ class ExploreScreen extends ConsumerStatefulWidget {
 }
 
 class _ExploreScreenState extends ConsumerState<ExploreScreen> {
-  late final PageController _pageController;
+  late final ScrollController _scrollController;
 
   /// Local-only third tab. Kept out of [DiscoveryFeed] because the discovery
   /// endpoint has no `saved` feed — the Saved tab is backed by a separate
@@ -79,7 +82,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+    _scrollController = ScrollController()..addListener(_onScroll);
     // Kick off the saved-kolabs fetch so the deck bookmarks reflect prior saves
     // even before the user opens the Saved tab (the discovery feed has no
     // `is_saved` flag; the saved list seeds `savedKolabIdsProvider`).
@@ -90,7 +93,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -117,9 +120,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     return user?.communityProfile?.id ?? user?.businessProfile?.id;
   }
 
-  void _onPageChanged(int index) {
-    final listState = ref.read(discoveryListProvider);
-    if (index >= listState.items.length - 2) {
+  /// Loads the next page when the reader is within about two cards of the
+  /// end of the list.
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final position = _scrollController.position;
+    if (position.pixels >= position.maxScrollExtent - position.viewportDimension * 1.5) {
       ref.read(discoveryListProvider.notifier).loadMore();
     }
   }
@@ -598,20 +604,34 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
     // Reserve the FAB's zone under each card so it never covers the card's
     // bottom-right action area (View Details / bookmark).
-    return Padding(
-      padding: const EdgeInsets.only(bottom: _fabClearance),
-      child: PageView.builder(
+    // A scrolling list, not a full-screen deck (Daniel 2026-10-02: "the swipe
+    // deck doesn't work"). Each card is a little shorter than the screen so the
+    // top of the next listing always shows below it: the reader can see there
+    // is more and scrolls down to it, like Hinge.
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final cardHeight = (constraints.maxHeight - _fabClearance) * _cardHeightFraction;
+        return ListView.separated(
         key: const Key('explore-deck'),
-        controller: _pageController,
-        scrollDirection: Axis.vertical,
-        onPageChanged: _onPageChanged,
+        controller: _scrollController,
+        padding: const EdgeInsets.only(
+          left: KolabingSpacing.md,
+          right: KolabingSpacing.md,
+          top: KolabingSpacing.sm,
+          bottom: _fabClearance,
+        ),
         itemCount: itemCount,
+        separatorBuilder: (BuildContext context, int index) =>
+            const SizedBox(height: KolabingSpacing.md),
         itemBuilder: (BuildContext context, int index) {
           if (index >= activeItems.length) {
-            return Center(
+            return SizedBox(
+              height: 96,
+              child: Center(
               child: CircularProgressIndicator(
                 color: context.colors.primary,
                 strokeWidth: 2,
+              ),
               ),
             );
           }
@@ -649,7 +669,11 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             ExploreMultiKolabRoleItem() => null,
           };
 
-          return Stack(
+          return SizedBox(
+            height: cardHeight,
+            child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
             key: Key('explore-feed-item-${item.feedKey}'),
             children: [
               ExploreSwipeCard(
@@ -671,9 +695,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                   ),
                 ),
             ],
+            ),
+            ),
           );
         },
-      ),
+        );
+      },
     );
   }
 

@@ -164,38 +164,39 @@ Future<_CapturedRoutes> _pumpExplore(
   return captured;
 }
 
-/// Walks the vertical Explore deck, collecting the feed key of every card it
-/// builds. The deck is a lazy [PageView], so items are only constructed as
-/// they scroll into view — this is the only honest way to assert on the
-/// deck's full contents.
+/// Walks the vertical Explore list, collecting the feed key of every card it
+/// builds. The list is lazy, so items are only constructed as they scroll into
+/// view, and several cards can be on screen at once (the next one peeks) —
+/// this is the only honest way to assert on the feed's full contents.
 Future<List<String>> _deckFeedKeys(
   WidgetTester tester, {
   int maxPages = 8,
 }) async {
   final keys = <String>[];
 
-  String? currentKey() {
+  int collectVisible() {
+    var added = 0;
     for (final element in tester.allWidgets) {
       final key = element.key;
       if (key is ValueKey<String> &&
           key.value.startsWith('explore-feed-item-')) {
-        return key.value.substring('explore-feed-item-'.length);
+        final feedKey = key.value.substring('explore-feed-item-'.length);
+        if (!keys.contains(feedKey)) {
+          keys.add(feedKey);
+          added++;
+        }
       }
     }
-    return null;
+    return added;
   }
 
+  collectVisible();
   for (var page = 0; page < maxPages; page++) {
-    final key = currentKey();
-    if (key != null && !keys.contains(key)) {
-      keys.add(key);
-    }
     final deck = find.byKey(const Key('explore-deck'));
     if (deck.evaluate().isEmpty) break;
     await tester.drag(deck, const Offset(0, -600));
     await tester.pumpAndSettle();
-    final next = currentKey();
-    if (next == null || keys.contains(next)) break;
+    if (collectVisible() == 0) break;
   }
 
   return keys;
