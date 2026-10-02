@@ -83,6 +83,10 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   /// request is still refused by the backend ("already applied").
   final Set<String> _appliedKolabIds = <String>{};
 
+  /// Kolab id -> the application its Quick chat created this session, so the
+  /// detail sheet can open that chat instead of a second request.
+  final Map<String, String> _quickChatApplications = <String, String>{};
+
   @override
   void initState() {
     super.initState();
@@ -165,10 +169,17 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     final hideCreatorIdentity =
         !_isCommunityViewer && item.isCommunityRequest && !hasSubscription;
 
+    final sentApplicationId = _quickChatApplications[opportunity.id];
     ExploreDetailSheet.show(
       context,
       opportunity: opportunity,
       discoveryItem: item,
+      onOpenChat: sentApplicationId == null
+          ? null
+          : () {
+              Navigator.of(context).pop();
+              context.push('/application/$sentApplicationId/chat');
+            },
       hideCreatorIdentity: hideCreatorIdentity,
       // Apply is BUTTON-gated, not screen-gated: a free business can always open
       // the sheet and read everything. Tapping Apply either runs the apply flow
@@ -243,7 +254,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     final application = result.application;
     if (application != null) {
       final id = opportunity.id;
-      if (id != null) setState(() => _appliedKolabIds.add(id));
+      if (id != null) {
+        setState(() {
+          _appliedKolabIds.add(id);
+          _quickChatApplications[id] = application.id;
+        });
+      }
       await context.push('/application/${application.id}/chat');
       return;
     }

@@ -2559,6 +2559,7 @@
   "exploreDetailSendFullRequest": "Envia la sol·licitud de kolab completa",
   "quickChatButtonLabel": "Xat ràpid",
   "quickChatTitle": "Xat ràpid",
+  "quickChatOpenChat": "Obrir xat",
   "quickChatWith": "amb {name}",
   "quickChatWhenLabel": "Quan?",
   "quickChatModeDate": "Data concreta",

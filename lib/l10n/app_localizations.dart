@@ -15332,6 +15332,12 @@ abstract class AppLocalizations {
   /// **'Quick chat'**
   String get quickChatTitle;
 
+  /// Detail sheet main button once a Quick chat was sent to this kolab
+  ///
+  /// In en, this message translates to:
+  /// **'Open chat'**
+  String get quickChatOpenChat;
+
   /// Quick chat sheet subtitle naming the other side
   ///
   /// In en, this message translates to:

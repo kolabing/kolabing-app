@@ -36,6 +36,7 @@ class ExploreDetailSheet extends ConsumerWidget {
     this.discoveryItem,
     this.hideCreatorIdentity = false,
     this.onSubscribe,
+    this.onOpenChat,
     super.key,
   });
 
@@ -49,6 +50,11 @@ class ExploreDetailSheet extends ConsumerWidget {
   final bool canApply;
   final bool hideCreatorIdentity;
   final VoidCallback? onSubscribe;
+
+  /// Set once the viewer already sent a request to this kolab (Quick chat):
+  /// the main button opens that chat instead of offering a second request,
+  /// which the backend would refuse (simulator pass, 2 Oct).
+  final VoidCallback? onOpenChat;
 
   /// The photos opened on tap (Daniel 2 Oct: "tap on profile and see
   /// pictures"): the kolab's own photos, else its cover. None when the
@@ -75,6 +81,7 @@ class ExploreDetailSheet extends ConsumerWidget {
     DiscoveryItem? discoveryItem,
     bool hideCreatorIdentity = false,
     VoidCallback? onSubscribe,
+    VoidCallback? onOpenChat,
   }) => showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -88,6 +95,7 @@ class ExploreDetailSheet extends ConsumerWidget {
       discoveryItem: discoveryItem,
       hideCreatorIdentity: hideCreatorIdentity,
       onSubscribe: onSubscribe,
+      onOpenChat: onOpenChat,
     ),
   );
 
@@ -741,7 +749,16 @@ class ExploreDetailSheet extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (!applicationsOpen)
+          if (onOpenChat != null)
+            KolabingButton(
+              key: const Key('explore-detail-open-chat'),
+              label: AppLocalizations.of(context).quickChatOpenChat,
+              onPressed: onOpenChat,
+              variant: KolabingButtonVariant.primary,
+              icon: const Icon(LucideIcons.messageCircle),
+              height: 52,
+            )
+          else if (!applicationsOpen)
             KolabingButton(
               label: AppLocalizations.of(context).exploreApplicationsClosed,
               onPressed: null,

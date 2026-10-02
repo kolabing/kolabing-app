@@ -8741,6 +8741,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quickChatTitle => 'Quick chat';
 
   @override
+  String get quickChatOpenChat => 'Open chat';
+
+  @override
   String quickChatWith(String name) {
     return 'with $name';
   }
