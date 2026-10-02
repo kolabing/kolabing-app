@@ -34,9 +34,6 @@ import '../widgets/opportunity_card.dart';
 /// create-Kolab FAB (56dp + margin) never covers card actions.
 const double _fabClearance = 88;
 
-/// How much of the visible feed one card takes; the rest shows the next card.
-const double _cardHeightFraction = 0.82;
-
 /// Explore renders `GET /discovery/opportunities` verbatim.
 ///
 /// This file used to hold `filterExploreDeckItems`, which re-decided what
@@ -605,24 +602,19 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     // Reserve the FAB's zone under each card so it never covers the card's
     // bottom-right action area (View Details / bookmark).
     // A scrolling list, not a full-screen deck (Daniel 2026-10-02: "the swipe
-    // deck doesn't work"). Each card is a little shorter than the screen so the
-    // top of the next listing always shows below it: the reader can see there
-    // is more and scrolls down to it, like Hinge.
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        final cardHeight = (constraints.maxHeight - _fabClearance) * _cardHeightFraction;
-        return ListView.separated(
+    // deck doesn't work"). Each card keeps its natural height (a 16:10 photo
+    // and the text under it, like an Airbnb or Instagram feed), so the top of
+    // the next listing shows below it and the reader scrolls down to it.
+    return ListView.separated(
         key: const Key('explore-deck'),
         controller: _scrollController,
         padding: const EdgeInsets.only(
-          left: KolabingSpacing.md,
-          right: KolabingSpacing.md,
-          top: KolabingSpacing.sm,
+          top: KolabingSpacing.xs,
           bottom: _fabClearance,
         ),
         itemCount: itemCount,
         separatorBuilder: (BuildContext context, int index) =>
-            const SizedBox(height: KolabingSpacing.md),
+            const SizedBox(height: KolabingSpacing.sm),
         itemBuilder: (BuildContext context, int index) {
           if (index >= activeItems.length) {
             return SizedBox(
@@ -669,15 +661,12 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             ExploreMultiKolabRoleItem() => null,
           };
 
-          return SizedBox(
-            height: cardHeight,
-            child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Stack(
+          return Stack(
             key: Key('explore-feed-item-${item.feedKey}'),
             children: [
               ExploreSwipeCard(
                 item: item,
+                inList: true,
                 showKolabFirst: !_isCommunityViewer && isCommunityRequest,
                 hideCreatorIdentity: hideCreatorIdentity,
                 onTap: () => _onFeedItemTap(
@@ -687,20 +676,16 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               ),
               if (saveableKolabId != null)
                 Positioned(
-                  top: KolabingSpacing.md,
-                  right: KolabingSpacing.md,
+                  top: KolabingSpacing.xs + KolabingSpacing.sm,
+                  right: KolabingSpacing.md + KolabingSpacing.sm,
                   child: _SaveBookmarkButton(
                     isSaved: savedIds.contains(saveableKolabId),
                     onTap: () => _toggleSaved(saveableKolabId),
                   ),
                 ),
             ],
-            ),
-            ),
           );
         },
-        );
-      },
     );
   }
 

@@ -23,6 +23,7 @@ class ExploreSwipeCard extends StatefulWidget {
     this.onTap,
     this.showKolabFirst = false,
     this.hideCreatorIdentity = false,
+    this.inList = false,
     super.key,
   });
 
@@ -50,6 +51,11 @@ class ExploreSwipeCard extends StatefulWidget {
   /// meaningful for ordinary community offers; Multi-Kolab role cards carry
   /// no creator identity to hide.
   final bool hideCreatorIdentity;
+
+  /// True when the card is one item in Explore's scrolling list: it takes its
+  /// natural height and has no scroll view of its own, so a drag on the card
+  /// scrolls the list instead of being caught by the card.
+  final bool inList;
 
   @override
   State<ExploreSwipeCard> createState() => _ExploreSwipeCardState();
@@ -92,6 +98,28 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   @override
   Widget build(BuildContext context) {
     final data = _data(context);
+    final card = RepaintBoundary(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(KolabingRadius.lg),
+          border: Border.all(color: KolabingColors.hairline),
+          boxShadow: const [KolabingShadows.card],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(KolabingRadius.lg),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildPhotoSection(data),
+              _buildContentSection(data),
+            ],
+          ),
+        ),
+      ),
+    );
     return GestureDetector(
       onTap: widget.onTap,
       child: Padding(
@@ -99,32 +127,9 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
           horizontal: KolabingSpacing.md,
           vertical: KolabingSpacing.xs,
         ),
-        child: Center(
-          child: SingleChildScrollView(
-            child: RepaintBoundary(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(KolabingRadius.lg),
-                  border: Border.all(color: KolabingColors.hairline),
-                  boxShadow: const [KolabingShadows.card],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(KolabingRadius.lg),
-                  clipBehavior: Clip.antiAlias,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildPhotoSection(data),
-                      _buildContentSection(data),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
+        child: widget.inList
+            ? card
+            : Center(child: SingleChildScrollView(child: card)),
       ),
     );
   }
