@@ -145,7 +145,8 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
   // ---------------------------------------------------------------------------
 
   Widget _buildPhotoSection(ExploreCardData data) => AspectRatio(
-    aspectRatio: 16 / 10,
+    // A little wider in the list, so more of the next card shows below.
+    aspectRatio: widget.inList ? 16 / 9 : 16 / 10,
     child: Stack(
       fit: StackFit.expand,
       children: [
