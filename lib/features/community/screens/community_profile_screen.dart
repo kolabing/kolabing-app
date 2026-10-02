@@ -21,6 +21,7 @@ import '../../auth/models/user_model.dart';
 import '../../business/models/notification_preferences.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../event/widgets/past_events_section.dart';
+import '../../instagram/widgets/instagram_connect_card.dart';
 import '../providers/community_providers.dart';
 import '../../rewards/providers/wallet_provider.dart';
 import '../widgets/community_manage_sections.dart';
@@ -621,6 +622,9 @@ class _CommunityProfileScreenState
 
                   const ProfileGallerySection(),
                   const SizedBox(height: _sectionGap),
+
+                  // Instagram Connect (hidden unless the backend enables it)
+                  const InstagramConnectCard(bottomSpacing: _sectionGap),
 
                   const PastEventsSection(),
                   const SizedBox(height: _sectionGap),

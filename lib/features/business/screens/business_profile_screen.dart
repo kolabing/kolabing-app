@@ -21,6 +21,7 @@ import '../models/notification_preferences.dart';
 import '../models/subscription.dart';
 import '../providers/profile_provider.dart';
 import '../../event/widgets/past_events_section.dart';
+import '../../instagram/widgets/instagram_connect_card.dart';
 import '../../profile/providers/public_profile_provider.dart';
 import '../../profile/widgets/reputation_summary_card.dart';
 
@@ -517,6 +518,9 @@ class _BusinessProfileScreenState extends ConsumerState<BusinessProfileScreen> {
             const ProfileGallerySection(),
 
             const SizedBox(height: KolabingSpacing.md),
+
+            // Instagram Connect (hidden unless the backend enables it)
+            const InstagramConnectCard(bottomSpacing: KolabingSpacing.md),
 
             // Past Events Section
             const PastEventsSection(),

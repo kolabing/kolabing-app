@@ -8689,4 +8689,172 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get createChallengeProofTypeHint =>
       'Només tria la pantalla que obre l\'app. Un repte confirmat sense foto compta igual, així que una càmera denegada o mala cobertura no li costen mai els punts a ningú.';
+
+  @override
+  String get instagramCardTitle => 'Instagram';
+
+  @override
+  String get instagramConnectBody =>
+      'Porta les teves fotos i vídeos d\'Instagram a la teva galeria de Kolabing. Tu tries exactament què importar.';
+
+  @override
+  String get instagramConnectButton => 'Connectar Instagram';
+
+  @override
+  String get instagramPersonalAccountLink => 'Fas servir un compte personal?';
+
+  @override
+  String instagramConnectedAs(String username) {
+    return 'Connectat com a @$username';
+  }
+
+  @override
+  String get instagramConnectedGeneric => 'Instagram connectat';
+
+  @override
+  String get instagramImportButton => 'Importar fotos i vídeos';
+
+  @override
+  String get instagramDisconnectButton => 'Desconnectar';
+
+  @override
+  String get instagramDisconnectTitle => 'Vols desconnectar Instagram?';
+
+  @override
+  String get instagramDisconnectBody =>
+      'Kolabing deixarà de llegir el teu Instagram. Les fotos i els vídeos que ja has importat es queden a la teva galeria.';
+
+  @override
+  String get instagramCancel => 'Cancel·lar';
+
+  @override
+  String get instagramDisconnected => 'Instagram desconnectat';
+
+  @override
+  String get instagramConnectSuccess => 'Instagram connectat';
+
+  @override
+  String get instagramConnectError =>
+      'No s\'ha pogut connectar Instagram. Torna-ho a provar.';
+
+  @override
+  String get instagramOpenFailed =>
+      'No s\'ha pogut obrir Instagram. Torna-ho a provar.';
+
+  @override
+  String get instagramActionFailed =>
+      'Alguna cosa ha fallat. Torna-ho a provar.';
+
+  @override
+  String get instagramPersonalTitle => 'Canvia a un compte professional';
+
+  @override
+  String get instagramPersonalBody =>
+      'Instagram només comparteix fotos i vídeos de comptes professionals (Empresa o Creador). Canviar és gratuït i triga un minut:';
+
+  @override
+  String get instagramPersonalStep1 => 'Obre Instagram i ves al teu perfil.';
+
+  @override
+  String get instagramPersonalStep2 =>
+      'Toca el menú i després Configuració → Tipus de compte i eines.';
+
+  @override
+  String get instagramPersonalStep3 =>
+      'Toca \"Canvia a compte professional\" i tria Empresa o Creador.';
+
+  @override
+  String get instagramPersonalStep4 => 'Torna aquí i toca Connectar Instagram.';
+
+  @override
+  String get instagramPersonalGotIt => 'Entesos';
+
+  @override
+  String get instagramImportTitle => 'Importar d\'Instagram';
+
+  @override
+  String get instagramImportEmpty =>
+      'Aquest compte d\'Instagram encara no té fotos ni vídeos.';
+
+  @override
+  String get instagramImportLoadError =>
+      'No s\'han pogut carregar les teves fotos i vídeos d\'Instagram.';
+
+  @override
+  String get instagramRetry => 'Torna-ho a provar';
+
+  @override
+  String instagramSelectedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count seleccionats',
+      one: '$count seleccionat',
+      zero: 'Selecciona fotos i vídeos',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get instagramImportToGallery => 'Importar a la galeria';
+
+  @override
+  String instagramImporting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'S\'estan important $count elements…',
+      one: 'S\'està important $count element…',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String instagramSelectionLimit(int max) {
+    return 'Pots importar fins a $max alhora.';
+  }
+
+  @override
+  String get instagramImportedBadge => 'Importat';
+
+  @override
+  String get instagramVideoBadge => 'Vídeo';
+
+  @override
+  String get instagramCarouselBadge => 'Àlbum';
+
+  @override
+  String get instagramImportResultTitle => 'Importació acabada';
+
+  @override
+  String instagramImportResultBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'S\'han afegit $count elements a la teva galeria.',
+      one: 'S\'ha afegit $count element a la teva galeria.',
+      zero: 'No s\'ha afegit res de nou a la teva galeria.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String instagramImportResultSkipped(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'No s\'han pogut importar $count elements. Potser la teva galeria és plena o els vídeos són massa llargs.',
+      one:
+          'No s\'ha pogut importar $count element. Potser la teva galeria és plena o el vídeo és massa llarg.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get instagramImportDone => 'Fet';
+
+  @override
+  String get instagramImportFailed =>
+      'La importació no s\'ha completat. No s\'ha afegit res; torna-ho a provar.';
 }

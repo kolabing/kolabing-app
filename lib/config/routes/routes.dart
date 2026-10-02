@@ -64,6 +64,8 @@ import '../../features/permission/screens/permission_screen.dart';
 import '../../features/profile/screens/profile_reviews_screen.dart';
 import '../../features/profile/screens/public_profile_screen.dart';
 import '../../features/gamification/widgets/claim_code_sheet.dart';
+import '../../features/instagram/models/instagram_return_link.dart';
+import '../../features/instagram/screens/instagram_import_screen.dart';
 import '../../services/deep_link_service.dart';
 import '../../features/rewards/screens/referral_screen.dart';
 import '../../features/rewards/screens/wallet_screen.dart';
@@ -420,6 +422,11 @@ abstract final class KolabingRoutes {
   // ---------------------------------------------------------------------------
   /// Permission request screen
   static const String permissions = '/permissions';
+
+  // ---------------------------------------------------------------------------
+  /// Instagram media picker (business + community), opened from the
+  /// Instagram card on the profile screen.
+  static const String instagramImport = '/instagram/import';
 }
 
 /// Navigator key for programmatic navigation (e.g. from push notifications)
@@ -470,6 +477,10 @@ void connectDeepLinks() {
       // splash's stack-replacing `go` and lands on the Kolab.
       onKolab: (kolabId) =>
           _notificationNavGate.navigate('/opportunity/$kolabId'),
+      // Not a destination either: the Instagram card that started the
+      // connect refreshes itself in place. (The router's redirect catches the
+      // same link when Flutter's deep linking delivers it; the bus keeps one.)
+      onInstagramReturn: InstagramReturnBus.instance.add,
     ),
   );
 }
@@ -503,6 +514,20 @@ final GoRouter kolabingRouter = GoRouter(
   // presence of both token+email params on the root and redirect to the
   // reset-password screen.
   redirect: (BuildContext context, GoRouterState state) {
+    // `kolabing://instagram/connected?status=` (the Instagram Connect return)
+    // is an event, not a page: hand it to the Instagram card and stay where
+    // the person is. Without this, Flutter's own deep linking would route it
+    // to the "page not found" screen.
+    final instagramReturn = instagramReturnRedirect(
+      state.uri,
+      currentLocation: () {
+        final current = kolabingRouter.routerDelegate.currentConfiguration;
+        return current.isEmpty ? null : current.uri.toString();
+      },
+      fallback: KolabingRoutes.splash,
+    );
+    if (instagramReturn != null) return instagramReturn;
+
     if (state.matchedLocation == '/') {
       final token = state.uri.queryParameters['token'];
       final email = state.uri.queryParameters['email'];
@@ -723,6 +748,13 @@ final GoRouter kolabingRouter = GoRouter(
     ),
 
     // Permission request screen
+    GoRoute(
+      path: KolabingRoutes.instagramImport,
+      name: 'instagramImport',
+      builder: (BuildContext context, GoRouterState state) =>
+          const InstagramImportScreen(),
+    ),
+
     GoRoute(
       path: KolabingRoutes.permissions,
       name: 'permissions',
