@@ -64,7 +64,9 @@ class ExploreDetailSheet extends ConsumerWidget {
     if (item == null || hideCreatorIdentity) return const <String>[];
     if (item.photoUrls.isNotEmpty) return item.photoUrls;
     final cover = item.coverPhotoUrl;
-    return cover != null && cover.isNotEmpty ? <String>[cover] : const <String>[];
+    return cover != null && cover.isNotEmpty
+        ? <String>[cover]
+        : const <String>[];
   }
 
   /// Day labels indexed 1..7 (Mon..Sun) matching [Opportunity.recurringDays].
@@ -1009,7 +1011,6 @@ class _PastEventPhotoSlide {
   final String title;
   final String subtitle;
 }
-
 
 /// Swipeable photo strip at the top of the detail sheet, with page dots.
 class _DetailGallery extends StatefulWidget {

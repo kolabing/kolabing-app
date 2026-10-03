@@ -380,6 +380,8 @@ void main() {
 
     testWidgets('a community viewer gets the Quick chat button on an '
         'ordinary offer', (tester) async {
+      // bySemanticsLabel needs the semantics tree, which is off by default.
+      final semantics = tester.ensureSemantics();
       await _pumpExplore(
         tester,
         viewerType: UserType.community,
@@ -388,6 +390,7 @@ void main() {
 
       expect(find.byKey(quickChat), findsOneWidget);
       expect(find.bySemanticsLabel('Quick chat'), findsOneWidget);
+      semantics.dispose();
     });
 
     testWidgets('a subscribed business gets the Quick chat button', (
@@ -539,7 +542,11 @@ void main() {
       await pumpSheet(tester);
 
       expect(find.text('20'), findsWidgets);
-      await tester.tap(find.byKey(const Key('quick-chat-people-plus')));
+      // The stepper sits below the calendar, outside the first viewport.
+      const plus = Key('quick-chat-people-plus');
+      await tester.ensureVisible(find.byKey(plus));
+      await tester.pump();
+      await tester.tap(find.byKey(plus));
       await tester.pump();
       expect(
         tester

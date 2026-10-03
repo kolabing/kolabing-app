@@ -45,6 +45,7 @@ class BusinessMainScreen extends ConsumerStatefulWidget {
 
 class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
   late int _currentIndex;
+
   /// The create FAB shrinks away while the reader scrolls a list down and
   /// comes back on the first scroll up, so it never covers a card's own
   /// buttons (Explore Quick chat, 2 Oct 2026).
@@ -146,18 +147,18 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
       body: NotificationListener<UserScrollNotification>(
         onNotification: _onUserScroll,
         child: IndexedStack(
-        index: _currentIndex,
-        children: [
-          _BusinessHomeTab(onSwitchTab: _onTabChanged),
-          const _BusinessExploreTab(),
-          _BusinessKollabsTab(
-            initialSubTab: widget.initialKolabsSubTab,
-            onExploreTap: () => _onTabChanged(1),
-          ),
-          ChatsScreen(embedded: true, onExplore: () => _onTabChanged(1)),
-          const _BusinessProfileTab(),
-        ],
-      ),
+          index: _currentIndex,
+          children: [
+            _BusinessHomeTab(onSwitchTab: _onTabChanged),
+            const _BusinessExploreTab(),
+            _BusinessKollabsTab(
+              initialSubTab: widget.initialKolabsSubTab,
+              onExploreTap: () => _onTabChanged(1),
+            ),
+            ChatsScreen(embedded: true, onExplore: () => _onTabChanged(1)),
+            const _BusinessProfileTab(),
+          ],
+        ),
       ),
       floatingActionButton:
           // Hidden on Home (0, the yellow hero card already has a Create Kolab
@@ -171,9 +172,9 @@ class _BusinessMainScreenState extends ConsumerState<BusinessMainScreen> {
               duration: const Duration(milliseconds: 180),
               curve: Curves.easeOut,
               child: KolabingFAB(
-              onPressed: _onFabPressed,
-              tooltip: l10n.businessMainCreateKolabTooltip,
-            ),
+                onPressed: _onFabPressed,
+                tooltip: l10n.businessMainCreateKolabTooltip,
+              ),
             )
           : null,
       bottomNavigationBar: KolabingBottomNavBar(

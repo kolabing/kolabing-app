@@ -149,14 +149,16 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     final position = _scrollController.position;
     final direction = position.userScrollDirection;
     if (direction != ScrollDirection.idle) _userTouchedFeed = true;
-    final collapse = direction == ScrollDirection.reverse && position.pixels > 40;
+    final collapse =
+        direction == ScrollDirection.reverse && position.pixels > 40;
     final expand = direction == ScrollDirection.forward || position.pixels <= 0;
     if (collapse && !_filtersCollapsed) {
       setState(() => _filtersCollapsed = true);
     } else if (expand && _filtersCollapsed) {
       setState(() => _filtersCollapsed = false);
     }
-    if (position.pixels >= position.maxScrollExtent - position.viewportDimension * 1.5) {
+    if (position.pixels >=
+        position.maxScrollExtent - position.viewportDimension * 1.5) {
       ref.read(discoveryListProvider.notifier).loadMore();
     }
   }
@@ -743,97 +745,97 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     // and the text under it, like an Airbnb or Instagram feed), so the top of
     // the next listing shows below it and the reader scrolls down to it.
     return ListView.separated(
-        key: const Key('explore-deck'),
-        controller: _scrollController,
-        padding: const EdgeInsets.only(
-          top: KolabingSpacing.xs,
-          bottom: _fabClearance,
-        ),
-        itemCount: itemCount,
-        separatorBuilder: (BuildContext context, int index) =>
-            const SizedBox(height: KolabingSpacing.sm),
-        itemBuilder: (BuildContext context, int index) {
-          if (index >= activeItems.length) {
-            return SizedBox(
-              height: 96,
-              child: Center(
+      key: const Key('explore-deck'),
+      controller: _scrollController,
+      padding: const EdgeInsets.only(
+        top: KolabingSpacing.xs,
+        bottom: _fabClearance,
+      ),
+      itemCount: itemCount,
+      separatorBuilder: (BuildContext context, int index) =>
+          const SizedBox(height: KolabingSpacing.sm),
+      itemBuilder: (BuildContext context, int index) {
+        if (index >= activeItems.length) {
+          return SizedBox(
+            height: 96,
+            child: Center(
               child: CircularProgressIndicator(
                 color: context.colors.primary,
                 strokeWidth: 2,
               ),
-              ),
-            );
-          }
-
-          final item = activeItems[index];
-          // Blur the community identity only for a FREE business; subscribing
-          // reveals it (§2.6). Only ordinary community offers carry a
-          // creator identity to hide.
-          final isCommunityRequest =
-              item is ExploreOfferItem && item.offer.isCommunityRequest;
-          // A Multi-Kolab role card is blurred for a free business too. The
-          // Explore payload's `creator_profile` carries no profile TYPE, so the
-          // app cannot tell a community organizer from a business one — and the
-          // contract says `image_url` always falls back to the organizer's
-          // avatar (a Multi-Kolab event has no cover-photo column). Left
-          // unblurred, a free business saw a community's logo on every
-          // community-organized role, which is the disclosure §2.6 forbids.
-          // Over-blurring a business-organized role is the safe side of that
-          // trade; the precise fix is a `creator_profile.type` on the role
-          // payload.
-          final isMultiKolabRole = item is ExploreMultiKolabRoleItem;
-          final hideCreatorIdentity =
-              !_isCommunityViewer &&
-              (isCommunityRequest || isMultiKolabRole) &&
-              !hasBusinessSubscription;
-
-          // Saving is backed by `GET/POST /kolabs?saved=1`, which is keyed by
-          // a concrete Kolab id. A Multi-Kolab ROLE has no Kolab id, and
-          // reusing the role id here would silently save the wrong record —
-          // so the bookmark control is offered only where it has a real
-          // target. See the Task 9 follow-up note about a typed save target.
-          final saveableKolabId = switch (item) {
-            ExploreOfferItem(:final offer) =>
-              offer.id.isNotEmpty ? offer.id : null,
-            ExploreMultiKolabRoleItem() => null,
-          };
-
-          return Stack(
-            key: Key('explore-feed-item-${item.feedKey}'),
-            children: [
-              ExploreSwipeCard(
-                item: item,
-                inList: true,
-                showKolabFirst: !_isCommunityViewer && isCommunityRequest,
-                hideCreatorIdentity: hideCreatorIdentity,
-                onTap: () => _onFeedItemTap(
-                  item,
-                  hasSubscription: hasBusinessSubscription,
-                ),
-                onQuickChat:
-                    item is ExploreOfferItem &&
-                        _canQuickChat(
-                          item,
-                          hasSubscription: hasBusinessSubscription,
-                        )
-                    ? () => _openQuickChat(item.offer)
-                    : null,
-              ),
-              if (saveableKolabId != null)
-                Positioned(
-                  // Top-left of the photo: the match badge owns the top-right,
-                  // and the top-left Multi-Kolab chip never shares a card with
-                  // a bookmark (roles can't be saved).
-                  top: KolabingSpacing.xs + KolabingSpacing.sm,
-                  left: KolabingSpacing.md + KolabingSpacing.sm,
-                  child: _SaveBookmarkButton(
-                    isSaved: savedIds.contains(saveableKolabId),
-                    onTap: () => _toggleSaved(saveableKolabId),
-                  ),
-                ),
-            ],
+            ),
           );
-        },
+        }
+
+        final item = activeItems[index];
+        // Blur the community identity only for a FREE business; subscribing
+        // reveals it (§2.6). Only ordinary community offers carry a
+        // creator identity to hide.
+        final isCommunityRequest =
+            item is ExploreOfferItem && item.offer.isCommunityRequest;
+        // A Multi-Kolab role card is blurred for a free business too. The
+        // Explore payload's `creator_profile` carries no profile TYPE, so the
+        // app cannot tell a community organizer from a business one — and the
+        // contract says `image_url` always falls back to the organizer's
+        // avatar (a Multi-Kolab event has no cover-photo column). Left
+        // unblurred, a free business saw a community's logo on every
+        // community-organized role, which is the disclosure §2.6 forbids.
+        // Over-blurring a business-organized role is the safe side of that
+        // trade; the precise fix is a `creator_profile.type` on the role
+        // payload.
+        final isMultiKolabRole = item is ExploreMultiKolabRoleItem;
+        final hideCreatorIdentity =
+            !_isCommunityViewer &&
+            (isCommunityRequest || isMultiKolabRole) &&
+            !hasBusinessSubscription;
+
+        // Saving is backed by `GET/POST /kolabs?saved=1`, which is keyed by
+        // a concrete Kolab id. A Multi-Kolab ROLE has no Kolab id, and
+        // reusing the role id here would silently save the wrong record —
+        // so the bookmark control is offered only where it has a real
+        // target. See the Task 9 follow-up note about a typed save target.
+        final saveableKolabId = switch (item) {
+          ExploreOfferItem(:final offer) =>
+            offer.id.isNotEmpty ? offer.id : null,
+          ExploreMultiKolabRoleItem() => null,
+        };
+
+        return Stack(
+          key: Key('explore-feed-item-${item.feedKey}'),
+          children: [
+            ExploreSwipeCard(
+              item: item,
+              inList: true,
+              showKolabFirst: !_isCommunityViewer && isCommunityRequest,
+              hideCreatorIdentity: hideCreatorIdentity,
+              onTap: () => _onFeedItemTap(
+                item,
+                hasSubscription: hasBusinessSubscription,
+              ),
+              onQuickChat:
+                  item is ExploreOfferItem &&
+                      _canQuickChat(
+                        item,
+                        hasSubscription: hasBusinessSubscription,
+                      )
+                  ? () => _openQuickChat(item.offer)
+                  : null,
+            ),
+            if (saveableKolabId != null)
+              Positioned(
+                // Top-left of the photo: the match badge owns the top-right,
+                // and the top-left Multi-Kolab chip never shares a card with
+                // a bookmark (roles can't be saved).
+                top: KolabingSpacing.xs + KolabingSpacing.sm,
+                left: KolabingSpacing.md + KolabingSpacing.sm,
+                child: _SaveBookmarkButton(
+                  isSaved: savedIds.contains(saveableKolabId),
+                  onTap: () => _toggleSaved(saveableKolabId),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 

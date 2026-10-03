@@ -118,10 +118,7 @@ class _ExploreSwipeCardState extends State<ExploreSwipeCard> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildPhotoSection(data),
-              _buildContentSection(data),
-            ],
+            children: [_buildPhotoSection(data), _buildContentSection(data)],
           ),
         ),
       ),
@@ -511,8 +508,13 @@ class _QuickChatButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
+    // Its own node with its own tap: otherwise excludeSemantics drops the
+    // InkWell's action and the label merges into the card's, so a screen
+    // reader can only ever open the detail.
+    container: true,
     button: true,
     label: AppLocalizations.of(context).quickChatButtonLabel,
+    onTap: onTap,
     excludeSemantics: true,
     child: Material(
       key: const Key('explore-card-quick-chat'),

@@ -51,6 +51,7 @@ class CommunityMainScreen extends ConsumerStatefulWidget {
 
 class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
   late int _currentIndex;
+
   /// The create FAB shrinks away while the reader scrolls a list down and
   /// comes back on the first scroll up, so it never covers a card's own
   /// buttons (Explore Quick chat, 2 Oct 2026).
@@ -172,18 +173,18 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
       body: NotificationListener<UserScrollNotification>(
         onNotification: _onUserScroll,
         child: IndexedStack(
-        index: _currentIndex,
-        children: [
-          _CommunityHomeTab(onSwitchTab: _onTabChanged),
-          const _CommunityExploreTab(),
-          _CommunityMyOppsTab(
-            initialSubTab: widget.initialKolabsSubTab,
-            onExploreTap: () => _onTabChanged(1),
-          ),
-          ChatsScreen(embedded: true, onExplore: () => _onTabChanged(1)),
-          const _CommunityLeaderTab(),
-        ],
-      ),
+          index: _currentIndex,
+          children: [
+            _CommunityHomeTab(onSwitchTab: _onTabChanged),
+            const _CommunityExploreTab(),
+            _CommunityMyOppsTab(
+              initialSubTab: widget.initialKolabsSubTab,
+              onExploreTap: () => _onTabChanged(1),
+            ),
+            ChatsScreen(embedded: true, onExplore: () => _onTabChanged(1)),
+            const _CommunityLeaderTab(),
+          ],
+        ),
       ),
       floatingActionButton:
           // Create-Opportunity FAB only on Home (0) / Explore (1). Hidden on
@@ -196,10 +197,10 @@ class _CommunityMainScreenState extends ConsumerState<CommunityMainScreen> {
               duration: const Duration(milliseconds: 180),
               curve: Curves.easeOut,
               child: KolabingFAB(
-              onPressed: _onFabPressed,
-              tooltip: l10n.communityMainCreateOpportunityTooltip,
-              heroTag: 'community_main_fab',
-            ),
+                onPressed: _onFabPressed,
+                tooltip: l10n.communityMainCreateOpportunityTooltip,
+                heroTag: 'community_main_fab',
+              ),
             )
           : null,
       bottomNavigationBar: KolabingBottomNavBar(

@@ -342,7 +342,9 @@ class _QuickChatSheetState extends ConsumerState<QuickChatSheet> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(width: double.infinity, child: Text(
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
                     l10n.quickChatTitle,
                     style: KolabingTextStyles.bodyLarge.copyWith(
                       fontSize: 18,
@@ -363,7 +365,11 @@ class _QuickChatSheetState extends ConsumerState<QuickChatSheet> {
               ],
             ),
           ),
-          Divider(height: 1, thickness: 1, color: context.colors.darkBorder.withValues(alpha: 0.35)),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: context.colors.darkBorder.withValues(alpha: 0.35),
+          ),
           Flexible(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
@@ -518,9 +524,7 @@ class _QuickChatSheetState extends ConsumerState<QuickChatSheet> {
         child: GestureDetector(
           key: Key('quick-chat-day-$year-$month-$dayNumber'),
           behavior: HitTestBehavior.opaque,
-          onTap: selectable
-              ? () => setState(() => _pickedDate = day)
-              : null,
+          onTap: selectable ? () => setState(() => _pickedDate = day) : null,
           child: SizedBox(
             height: 38,
             child: Center(
