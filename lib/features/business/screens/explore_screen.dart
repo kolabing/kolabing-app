@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollDirection;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -17,6 +20,7 @@ import '../../../widgets/page_title.dart';
 import '../../../widgets/profile_link.dart';
 import '../../application/widgets/apply_modal.dart';
 import '../../application/widgets/apply_success_sheet.dart';
+import '../../application/widgets/quick_chat_sheet.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../business/providers/profile_provider.dart';
 import '../../discovery/models/discovery_filters.dart';
@@ -69,17 +73,37 @@ class ExploreScreen extends ConsumerStatefulWidget {
 }
 
 class _ExploreScreenState extends ConsumerState<ExploreScreen> {
-  late final PageController _pageController;
+  late final ScrollController _scrollController;
 
   /// Local-only third tab. Kept out of [DiscoveryFeed] because the discovery
   /// endpoint has no `saved` feed — the Saved tab is backed by a separate
   /// provider (`GET /kolabs?saved=1`).
   bool _savedSelected = false;
 
+  /// Kolab ids the viewer applied to from this screen (Quick chat or the full
+  /// request). The discovery payload has no `has_applied` flag, so this is
+  /// what hides the Quick chat button once a request is sent; a repeat
+  /// request is still refused by the backend ("already applied").
+  final Set<String> _appliedKolabIds = <String>{};
+
+  /// Search + quick filters fold away while the reader scrolls the list down,
+  /// and come back on scroll up, so more of the feed shows (Daniel 2 Oct:
+  /// "nothing makes it intuitive to scroll down").
+  bool _filtersCollapsed = false;
+
+  /// The one-time "it scrolls" nudge runs once per app launch.
+  static bool _scrollNudgeShown = false;
+  bool _userTouchedFeed = false;
+  Timer? _scrollNudgeTimer;
+
+  /// Kolab id -> the application its Quick chat created this session, so the
+  /// detail sheet can open that chat instead of a second request.
+  final Map<String, String> _quickChatApplications = <String, String>{};
+
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+    _scrollController = ScrollController()..addListener(_onScroll);
     // Kick off the saved-kolabs fetch so the deck bookmarks reflect prior saves
     // even before the user opens the Saved tab (the discovery feed has no
     // `is_saved` flag; the saved list seeds `savedKolabIdsProvider`).
@@ -90,7 +114,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _scrollNudgeTimer?.cancel();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -117,11 +142,47 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     return user?.communityProfile?.id ?? user?.businessProfile?.id;
   }
 
-  void _onPageChanged(int index) {
-    final listState = ref.read(discoveryListProvider);
-    if (index >= listState.items.length - 2) {
+  /// Loads the next page when the reader is within about two cards of the
+  /// end of the list.
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final position = _scrollController.position;
+    final direction = position.userScrollDirection;
+    if (direction != ScrollDirection.idle) _userTouchedFeed = true;
+    final collapse =
+        direction == ScrollDirection.reverse && position.pixels > 40;
+    final expand = direction == ScrollDirection.forward || position.pixels <= 0;
+    if (collapse && !_filtersCollapsed) {
+      setState(() => _filtersCollapsed = true);
+    } else if (expand && _filtersCollapsed) {
+      setState(() => _filtersCollapsed = false);
+    }
+    if (position.pixels >=
+        position.maxScrollExtent - position.viewportDimension * 1.5) {
       ref.read(discoveryListProvider.notifier).loadMore();
     }
+  }
+
+  /// Once per launch, slide the list up a little and back so the reader sees
+  /// it scrolls. Skipped if they already touched the feed or it has one card.
+  void _maybeNudgeScroll(int itemCount) {
+    if (_scrollNudgeShown || itemCount < 2) return;
+    _scrollNudgeShown = true;
+    _scrollNudgeTimer = Timer(const Duration(milliseconds: 700), () async {
+      if (!mounted || _userTouchedFeed || !_scrollController.hasClients) return;
+      if (_scrollController.offset > 0) return;
+      await _scrollController.animateTo(
+        110,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeOut,
+      );
+      if (!mounted || _userTouchedFeed || !_scrollController.hasClients) return;
+      await _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeInOut,
+      );
+    });
   }
 
   /// Routes a tap to the right destination for the item's type. A
@@ -155,10 +216,17 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     final hideCreatorIdentity =
         !_isCommunityViewer && item.isCommunityRequest && !hasSubscription;
 
+    final sentApplicationId = _quickChatApplications[opportunity.id];
     ExploreDetailSheet.show(
       context,
       opportunity: opportunity,
       discoveryItem: item,
+      onOpenChat: sentApplicationId == null
+          ? null
+          : () {
+              Navigator.of(context).pop();
+              context.push('/application/$sentApplicationId/chat');
+            },
       hideCreatorIdentity: hideCreatorIdentity,
       // Apply is BUTTON-gated, not screen-gated: a free business can always open
       // the sheet and read everything. Tapping Apply either runs the apply flow
@@ -200,9 +268,62 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     );
   }
 
+  /// Whether [item] gets the Quick chat button: an ordinary offer (not a
+  /// Multi-Kolab role) that the viewer can apply to right now — a community,
+  /// or a business with an active subscription; not their own kolab, not one
+  /// they already applied to, and still open for applications.
+  bool _canQuickChat(ExploreFeedItem item, {required bool hasSubscription}) {
+    if (item is! ExploreOfferItem) return false;
+    if (!_isCommunityViewer && !hasSubscription) return false;
+    final offer = item.offer;
+    if (_isOwnItem(offer)) return false;
+    final opportunity = offer.toOpportunity();
+    final id = opportunity.id;
+    if (id == null || id.isEmpty || _appliedKolabIds.contains(id)) {
+      return false;
+    }
+    return opportunityApplicationsOpen(opportunity);
+  }
+
+  /// Quick chat: the short request sheet, sent through the existing apply
+  /// call. On success the application's chat opens; a business the backend
+  /// says needs a subscription gets the same paywall as the full apply flow.
+  Future<void> _openQuickChat(DiscoveryItem item) async {
+    final opportunity = item.toOpportunity();
+    final result = await QuickChatSheet.show(
+      context,
+      opportunity: opportunity,
+      partnerName: item.creatorProfile.displayName,
+      maxPeople: item.businessOffer?.capacity,
+    );
+    if (!mounted || result == null) return;
+
+    final application = result.application;
+    if (application != null) {
+      final id = opportunity.id;
+      if (id != null) {
+        setState(() {
+          _appliedKolabIds.add(id);
+          _quickChatApplications[id] = application.id;
+        });
+      }
+      await context.push('/application/${application.id}/chat');
+      return;
+    }
+
+    if (result.needsSubscription) {
+      final allowed = await SubscriptionPaywall.checkAndShow(context, ref);
+      if (allowed && mounted) {
+        await ref.read(profileProvider.notifier).refreshSubscription();
+      }
+    }
+  }
+
   Future<void> _openApplyFlow(Opportunity opportunity) async {
     final submitted = await ApplyModal.show(context, opportunity);
     if (!mounted || submitted != true) return;
+    final id = opportunity.id;
+    if (id != null) setState(() => _appliedKolabIds.add(id));
 
     await ApplySuccessSheet.show(
       context,
@@ -244,10 +365,19 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             _buildHeader(),
             const SizedBox(height: 6),
             // The search/filter bar + quick filters drive the discovery feed only.
-            if (!_savedSelected) ...[
-              _buildTopBar(filters, listState),
-              const SizedBox(height: 6),
-            ],
+            if (!_savedSelected)
+              AnimatedSize(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+                child: _filtersCollapsed
+                    ? const SizedBox(width: double.infinity)
+                    : Column(
+                        children: [
+                          _buildTopBar(filters, listState),
+                          const SizedBox(height: 6),
+                        ],
+                      ),
+              ),
             _FeedToggle(
               feed: filters.feed,
               savedSelected: _savedSelected,
@@ -266,14 +396,23 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
               onSaved: () => setState(() => _savedSelected = true),
             ),
             const SizedBox(height: KolabingSpacing.xs),
-            if (!_savedSelected) ...[
-              DiscoveryQuickFilters(
-                filters: filters,
-                isCommunityViewer: _isCommunityViewer,
-                onOpenFilters: _openFilterSheet,
+            if (!_savedSelected)
+              AnimatedSize(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+                child: _filtersCollapsed
+                    ? const SizedBox(width: double.infinity)
+                    : Column(
+                        children: [
+                          DiscoveryQuickFilters(
+                            filters: filters,
+                            isCommunityViewer: _isCommunityViewer,
+                            onOpenFilters: _openFilterSheet,
+                          ),
+                          const SizedBox(height: KolabingSpacing.xs),
+                        ],
+                      ),
               ),
-              const SizedBox(height: KolabingSpacing.xs),
-            ],
             Expanded(
               child: _savedSelected
                   ? _buildSavedTab()
@@ -595,85 +734,108 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
     }
 
     final itemCount = activeItems.length + (listState.isLoadingMore ? 1 : 0);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _maybeNudgeScroll(activeItems.length),
+    );
 
     // Reserve the FAB's zone under each card so it never covers the card's
     // bottom-right action area (View Details / bookmark).
-    return Padding(
-      padding: const EdgeInsets.only(bottom: _fabClearance),
-      child: PageView.builder(
-        key: const Key('explore-deck'),
-        controller: _pageController,
-        scrollDirection: Axis.vertical,
-        onPageChanged: _onPageChanged,
-        itemCount: itemCount,
-        itemBuilder: (BuildContext context, int index) {
-          if (index >= activeItems.length) {
-            return Center(
+    // A scrolling list, not a full-screen deck (Daniel 2026-10-02: "the swipe
+    // deck doesn't work"). Each card keeps its natural height (a 16:10 photo
+    // and the text under it, like an Airbnb or Instagram feed), so the top of
+    // the next listing shows below it and the reader scrolls down to it.
+    return ListView.separated(
+      key: const Key('explore-deck'),
+      controller: _scrollController,
+      padding: const EdgeInsets.only(
+        top: KolabingSpacing.xs,
+        bottom: _fabClearance,
+      ),
+      itemCount: itemCount,
+      separatorBuilder: (BuildContext context, int index) =>
+          const SizedBox(height: KolabingSpacing.sm),
+      itemBuilder: (BuildContext context, int index) {
+        if (index >= activeItems.length) {
+          return SizedBox(
+            height: 96,
+            child: Center(
               child: CircularProgressIndicator(
                 color: context.colors.primary,
                 strokeWidth: 2,
               ),
-            );
-          }
+            ),
+          );
+        }
 
-          final item = activeItems[index];
-          // Blur the community identity only for a FREE business; subscribing
-          // reveals it (§2.6). Only ordinary community offers carry a
-          // creator identity to hide.
-          final isCommunityRequest =
-              item is ExploreOfferItem && item.offer.isCommunityRequest;
-          // A Multi-Kolab role card is blurred for a free business too. The
-          // Explore payload's `creator_profile` carries no profile TYPE, so the
-          // app cannot tell a community organizer from a business one — and the
-          // contract says `image_url` always falls back to the organizer's
-          // avatar (a Multi-Kolab event has no cover-photo column). Left
-          // unblurred, a free business saw a community's logo on every
-          // community-organized role, which is the disclosure §2.6 forbids.
-          // Over-blurring a business-organized role is the safe side of that
-          // trade; the precise fix is a `creator_profile.type` on the role
-          // payload.
-          final isMultiKolabRole = item is ExploreMultiKolabRoleItem;
-          final hideCreatorIdentity =
-              !_isCommunityViewer &&
-              (isCommunityRequest || isMultiKolabRole) &&
-              !hasBusinessSubscription;
+        final item = activeItems[index];
+        // Blur the community identity only for a FREE business; subscribing
+        // reveals it (§2.6). Only ordinary community offers carry a
+        // creator identity to hide.
+        final isCommunityRequest =
+            item is ExploreOfferItem && item.offer.isCommunityRequest;
+        // A Multi-Kolab role card is blurred for a free business too. The
+        // Explore payload's `creator_profile` carries no profile TYPE, so the
+        // app cannot tell a community organizer from a business one — and the
+        // contract says `image_url` always falls back to the organizer's
+        // avatar (a Multi-Kolab event has no cover-photo column). Left
+        // unblurred, a free business saw a community's logo on every
+        // community-organized role, which is the disclosure §2.6 forbids.
+        // Over-blurring a business-organized role is the safe side of that
+        // trade; the precise fix is a `creator_profile.type` on the role
+        // payload.
+        final isMultiKolabRole = item is ExploreMultiKolabRoleItem;
+        final hideCreatorIdentity =
+            !_isCommunityViewer &&
+            (isCommunityRequest || isMultiKolabRole) &&
+            !hasBusinessSubscription;
 
-          // Saving is backed by `GET/POST /kolabs?saved=1`, which is keyed by
-          // a concrete Kolab id. A Multi-Kolab ROLE has no Kolab id, and
-          // reusing the role id here would silently save the wrong record —
-          // so the bookmark control is offered only where it has a real
-          // target. See the Task 9 follow-up note about a typed save target.
-          final saveableKolabId = switch (item) {
-            ExploreOfferItem(:final offer) =>
-              offer.id.isNotEmpty ? offer.id : null,
-            ExploreMultiKolabRoleItem() => null,
-          };
+        // Saving is backed by `GET/POST /kolabs?saved=1`, which is keyed by
+        // a concrete Kolab id. A Multi-Kolab ROLE has no Kolab id, and
+        // reusing the role id here would silently save the wrong record —
+        // so the bookmark control is offered only where it has a real
+        // target. See the Task 9 follow-up note about a typed save target.
+        final saveableKolabId = switch (item) {
+          ExploreOfferItem(:final offer) =>
+            offer.id.isNotEmpty ? offer.id : null,
+          ExploreMultiKolabRoleItem() => null,
+        };
 
-          return Stack(
-            key: Key('explore-feed-item-${item.feedKey}'),
-            children: [
-              ExploreSwipeCard(
-                item: item,
-                showKolabFirst: !_isCommunityViewer && isCommunityRequest,
-                hideCreatorIdentity: hideCreatorIdentity,
-                onTap: () => _onFeedItemTap(
-                  item,
-                  hasSubscription: hasBusinessSubscription,
+        return Stack(
+          key: Key('explore-feed-item-${item.feedKey}'),
+          children: [
+            ExploreSwipeCard(
+              item: item,
+              inList: true,
+              showKolabFirst: !_isCommunityViewer && isCommunityRequest,
+              hideCreatorIdentity: hideCreatorIdentity,
+              onTap: () => _onFeedItemTap(
+                item,
+                hasSubscription: hasBusinessSubscription,
+              ),
+              onQuickChat:
+                  item is ExploreOfferItem &&
+                      _canQuickChat(
+                        item,
+                        hasSubscription: hasBusinessSubscription,
+                      )
+                  ? () => _openQuickChat(item.offer)
+                  : null,
+            ),
+            if (saveableKolabId != null)
+              Positioned(
+                // Top-left of the photo: the match badge owns the top-right,
+                // and the top-left Multi-Kolab chip never shares a card with
+                // a bookmark (roles can't be saved).
+                top: KolabingSpacing.xs + KolabingSpacing.sm,
+                left: KolabingSpacing.md + KolabingSpacing.sm,
+                child: _SaveBookmarkButton(
+                  isSaved: savedIds.contains(saveableKolabId),
+                  onTap: () => _toggleSaved(saveableKolabId),
                 ),
               ),
-              if (saveableKolabId != null)
-                Positioned(
-                  top: KolabingSpacing.md,
-                  right: KolabingSpacing.md,
-                  child: _SaveBookmarkButton(
-                    isSaved: savedIds.contains(saveableKolabId),
-                    onTap: () => _toggleSaved(saveableKolabId),
-                  ),
-                ),
-            ],
-          );
-        },
-      ),
+          ],
+        );
+      },
     );
   }
 

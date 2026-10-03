@@ -18,6 +18,7 @@ class DiscoveryItem {
     this.canonicalOpportunityId,
     this.area,
     this.coverPhotoUrl,
+    this.photoUrls = const <String>[],
     this.publishedAt,
     this.businessOffer,
     this.communityRequest,
@@ -40,6 +41,10 @@ class DiscoveryItem {
     coverPhotoUrl: normalizeRemoteMediaUrlOrNull(
       json['cover_photo_url']?.toString(),
     ),
+    photoUrls: (json['photo_urls'] as List<dynamic>? ?? const <dynamic>[])
+        .map((value) => normalizeRemoteMediaUrlOrNull(value?.toString()))
+        .whereType<String>()
+        .toList(),
     publishedAt: _parseDateTime(json['published_at']),
     offerHeadline: _firstNonEmptyString(<Object?>[
       json['offer_headline'],
@@ -104,6 +109,10 @@ class DiscoveryItem {
   final String preferredCity;
   final String? area;
   final String? coverPhotoUrl;
+
+  /// Every photo of the kolab itself (`photo_urls`), for the swipeable card
+  /// and the detail gallery. Empty on an older backend.
+  final List<String> photoUrls;
   final DateTime? publishedAt;
   final DiscoveryAvailability availability;
   final DiscoveryCreatorProfile creatorProfile;
@@ -450,6 +459,7 @@ class BusinessOfferSummary {
     this.seekingCommunities = const <DiscoveryLabelValue>[],
     this.minCommunitySize,
     this.expectedDeliverables = const <String>[],
+    this.capacity,
   });
 
   factory BusinessOfferSummary.fromJson(Map<String, dynamic> json) =>
@@ -470,6 +480,7 @@ class BusinessOfferSummary {
                     const <dynamic>[])
                 .map((value) => value.toString())
                 .toList(),
+        capacity: _parseInt(json['capacity']),
       );
 
   final List<String> offerTypes;
@@ -480,6 +491,10 @@ class BusinessOfferSummary {
   final List<DiscoveryLabelValue> seekingCommunities;
   final int? minCommunitySize;
   final List<String> expectedDeliverables;
+
+  /// How many people the venue holds (`business_offer.capacity`), when known.
+  /// Quick chat caps its group-size stepper at this.
+  final int? capacity;
 
   List<String> get offerTypeLabels =>
       offerTypes.map(_discoveryLabelFromKey).toList();

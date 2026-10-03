@@ -36,6 +36,7 @@ class ExploreDetailSheet extends ConsumerWidget {
     this.discoveryItem,
     this.hideCreatorIdentity = false,
     this.onSubscribe,
+    this.onOpenChat,
     super.key,
   });
 
@@ -49,6 +50,24 @@ class ExploreDetailSheet extends ConsumerWidget {
   final bool canApply;
   final bool hideCreatorIdentity;
   final VoidCallback? onSubscribe;
+
+  /// Set once the viewer already sent a request to this kolab (Quick chat):
+  /// the main button opens that chat instead of offering a second request,
+  /// which the backend would refuse (simulator pass, 2 Oct).
+  final VoidCallback? onOpenChat;
+
+  /// The photos opened on tap (Daniel 2 Oct: "tap on profile and see
+  /// pictures"): the kolab's own photos, else its cover. None when the
+  /// creator's identity is hidden from this viewer (§2.6).
+  List<String> get _galleryUrls {
+    final item = discoveryItem;
+    if (item == null || hideCreatorIdentity) return const <String>[];
+    if (item.photoUrls.isNotEmpty) return item.photoUrls;
+    final cover = item.coverPhotoUrl;
+    return cover != null && cover.isNotEmpty
+        ? <String>[cover]
+        : const <String>[];
+  }
 
   /// Day labels indexed 1..7 (Mon..Sun) matching [Opportunity.recurringDays].
   static const _dayLabels = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
@@ -64,6 +83,7 @@ class ExploreDetailSheet extends ConsumerWidget {
     DiscoveryItem? discoveryItem,
     bool hideCreatorIdentity = false,
     VoidCallback? onSubscribe,
+    VoidCallback? onOpenChat,
   }) => showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -77,6 +97,7 @@ class ExploreDetailSheet extends ConsumerWidget {
       discoveryItem: discoveryItem,
       hideCreatorIdentity: hideCreatorIdentity,
       onSubscribe: onSubscribe,
+      onOpenChat: onOpenChat,
     ),
   );
 
@@ -119,6 +140,10 @@ class ExploreDetailSheet extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (_galleryUrls.isNotEmpty) ...[
+                  _DetailGallery(urls: _galleryUrls),
+                  const SizedBox(height: KolabingSpacing.md),
+                ],
                 _buildHeaderRow(context),
                 const SizedBox(height: KolabingSpacing.lg),
                 _buildTitleSection(context),
@@ -726,7 +751,16 @@ class ExploreDetailSheet extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (!applicationsOpen)
+          if (onOpenChat != null)
+            KolabingButton(
+              key: const Key('explore-detail-open-chat'),
+              label: AppLocalizations.of(context).quickChatOpenChat,
+              onPressed: onOpenChat,
+              variant: KolabingButtonVariant.primary,
+              icon: const Icon(LucideIcons.messageCircle),
+              height: 52,
+            )
+          else if (!applicationsOpen)
             KolabingButton(
               label: AppLocalizations.of(context).exploreApplicationsClosed,
               onPressed: null,
@@ -738,7 +772,9 @@ class ExploreDetailSheet extends ConsumerWidget {
             KolabingButton(
               label: showsSubscribeAction
                   ? AppLocalizations.of(context).exploreDetailUnlockToApply
-                  : AppLocalizations.of(context).exploreDetailApplyNow,
+                  // The single main action is the full apply flow. Quick chat
+                  // lives on the Explore card only (Daniel 2026-10-02).
+                  : AppLocalizations.of(context).exploreDetailSendFullRequest,
               onPressed: canApply ? onApply : onSubscribe,
               variant: KolabingButtonVariant.primary,
               icon: Icon(
@@ -974,4 +1010,74 @@ class _PastEventPhotoSlide {
   final String photoUrl;
   final String title;
   final String subtitle;
+}
+
+/// Swipeable photo strip at the top of the detail sheet, with page dots.
+class _DetailGallery extends StatefulWidget {
+  const _DetailGallery({required this.urls});
+
+  final List<String> urls;
+
+  @override
+  State<_DetailGallery> createState() => _DetailGalleryState();
+}
+
+class _DetailGalleryState extends State<_DetailGallery> {
+  final PageController _controller = PageController();
+  int _page = 0;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => ClipRRect(
+    key: const Key('explore-detail-gallery'),
+    borderRadius: BorderRadius.circular(KolabingRadius.lg),
+    child: AspectRatio(
+      aspectRatio: 4 / 3,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          PageView.builder(
+            controller: _controller,
+            itemCount: widget.urls.length,
+            onPageChanged: (int index) => setState(() => _page = index),
+            itemBuilder: (BuildContext context, int index) => Image.network(
+              widget.urls[index],
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) =>
+                  ColoredBox(color: context.colors.surfaceVariant),
+            ),
+          ),
+          if (widget.urls.length > 1)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: KolabingSpacing.sm,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 0; i < widget.urls.length; i++)
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      width: i == _page ? 16 : 7,
+                      height: 7,
+                      decoration: BoxDecoration(
+                        color: i == _page
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    ),
+  );
 }
