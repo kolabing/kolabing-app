@@ -197,6 +197,63 @@ void main() {
   });
 
   testWidgets(
+    'the K sits in its own yellow on the black hero, like the splash',
+    (WidgetTester tester) async {
+      await _pumpLogin(tester);
+
+      final mark = tester.widget<Image>(
+        find.byKey(const Key('login-logo-mark')),
+      );
+      // Untinted: the asset's own yellow, not recoloured to ink.
+      expect(mark.color, isNull);
+      expect(find.text('KOLABING'), findsOneWidget);
+    },
+  );
+
+  testWidgets('the footer Sign Up link opens user-type selection', (
+    WidgetTester tester,
+  ) async {
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1.0;
+
+    final router = GoRouter(
+      initialLocation: '/auth/login',
+      routes: [
+        GoRoute(
+          path: '/auth/login',
+          builder: (context, state) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/auth/user-type',
+          builder: (context, state) => const Scaffold(body: Text('USER TYPE')),
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        child: MaterialApp.router(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 900));
+
+    expect(find.text("Don't have an account?"), findsOneWidget);
+    await tester.ensureVisible(find.text('Sign Up'));
+    await tester.tap(find.text('Sign Up'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('USER TYPE'), findsOneWidget);
+  });
+
+  testWidgets(
     'with the keyboard up, the focused password field scrolls into view (FX-60)',
     (WidgetTester tester) async {
       // iPhone SE height with a 260pt keyboard: only ~400pt of page is left.
