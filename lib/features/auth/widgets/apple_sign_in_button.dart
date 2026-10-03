@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../config/theme/colors.dart';
 import '../../../config/theme/typography.dart';
 
 /// Apple Sign In button matching the app's design system
@@ -13,7 +14,11 @@ class AppleSignInButton extends StatefulWidget {
     this.showSuccess = false,
     this.isEnabled = true,
     this.height = 52,
+    this.light = false,
   });
+
+  /// Apple's white-outline style: white fill, ink logo and label.
+  final bool light;
 
   final VoidCallback? onPressed;
   final String buttonText;
@@ -33,6 +38,8 @@ class _AppleSignInButtonState extends State<AppleSignInButton> {
       !widget.showSuccess &&
       widget.onPressed != null;
 
+  Color get _foreground => widget.light ? KolabingColors.ink : Colors.white;
+
   @override
   Widget build(BuildContext context) => GestureDetector(
     onTap: () {
@@ -46,9 +53,14 @@ class _AppleSignInButtonState extends State<AppleSignInButton> {
       child: Container(
         height: widget.height,
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: widget.light ? KolabingColors.surface : Colors.black,
           borderRadius: BorderRadius.circular(widget.height / 2),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
+          border: Border.all(
+            color: widget.light
+                ? KolabingColors.outlineVariant
+                : Colors.white.withValues(alpha: 0.16),
+            width: widget.light ? 1.2 : 1,
+          ),
         ),
         child: _buildContent(),
       ),
@@ -57,20 +69,20 @@ class _AppleSignInButtonState extends State<AppleSignInButton> {
 
   Widget _buildContent() {
     if (widget.isLoading) {
-      return const Center(
+      return Center(
         child: SizedBox(
           width: 24,
           height: 24,
           child: CircularProgressIndicator(
             strokeWidth: 2.5,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            valueColor: AlwaysStoppedAnimation<Color>(_foreground),
           ),
         ),
       );
     }
     if (widget.showSuccess) {
-      return const Center(
-        child: Icon(Icons.check_rounded, size: 24, color: Colors.white),
+      return Center(
+        child: Icon(Icons.check_rounded, size: 24, color: _foreground),
       );
     }
     return Padding(
@@ -82,12 +94,12 @@ class _AppleSignInButtonState extends State<AppleSignInButton> {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.apple, size: 24, color: Colors.white),
+              Icon(Icons.apple, size: 24, color: _foreground),
               const SizedBox(width: 10),
               Text(
                 widget.buttonText,
                 style: KolabingTextStyles.button.copyWith(
-                  color: Colors.white,
+                  color: _foreground,
                   letterSpacing: 0.2,
                 ),
               ),
