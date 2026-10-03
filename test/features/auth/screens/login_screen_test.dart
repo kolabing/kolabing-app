@@ -210,48 +210,52 @@ void main() {
     },
   );
 
-  testWidgets('the footer Sign Up link opens user-type selection', (
-    WidgetTester tester,
-  ) async {
-    addTearDown(() {
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
-    });
-    tester.view.physicalSize = const Size(390, 844);
-    tester.view.devicePixelRatio = 1.0;
+  testWidgets(
+    'tapping anywhere on the Sign Up footer opens user-type selection',
+    (WidgetTester tester) async {
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1.0;
 
-    final router = GoRouter(
-      initialLocation: '/auth/login',
-      routes: [
-        GoRoute(
-          path: '/auth/login',
-          builder: (context, state) => const LoginScreen(),
+      final router = GoRouter(
+        initialLocation: '/auth/login',
+        routes: [
+          GoRoute(
+            path: '/auth/login',
+            builder: (context, state) => const LoginScreen(),
+          ),
+          GoRoute(
+            path: '/auth/user-type',
+            builder: (context, state) =>
+                const Scaffold(body: Text('USER TYPE')),
+          ),
+        ],
+      );
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp.router(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            routerConfig: router,
+          ),
         ),
-        GoRoute(
-          path: '/auth/user-type',
-          builder: (context, state) => const Scaffold(body: Text('USER TYPE')),
-        ),
-      ],
-    );
-    await tester.pumpWidget(
-      ProviderScope(
-        child: MaterialApp.router(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          routerConfig: router,
-        ),
-      ),
-    );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 900));
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 900));
 
-    expect(find.text("Don't have an account?"), findsOneWidget);
-    await tester.ensureVisible(find.text('Sign Up'));
-    await tester.tap(find.text('Sign Up'));
-    await tester.pumpAndSettle();
+      // The whole row is the button: a tap on the prompt opens sign-up too.
+      final prompt = find.text("Don't have an account?");
+      expect(prompt, findsOneWidget);
+      await tester.ensureVisible(prompt);
+      await tester.tap(prompt);
+      await tester.pumpAndSettle();
 
-    expect(find.text('USER TYPE'), findsOneWidget);
-  });
+      expect(find.text('USER TYPE'), findsOneWidget);
+    },
+  );
 
   testWidgets(
     'with the keyboard up, the focused password field scrolls into view (FX-60)',

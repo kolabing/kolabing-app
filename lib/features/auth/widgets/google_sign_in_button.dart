@@ -21,7 +21,12 @@ class GoogleSignInButton extends StatefulWidget {
     this.showSuccess = false,
     this.isEnabled = true,
     this.height = 52,
+    this.light = false,
   });
+
+  /// White fill with a hairline border instead of the beige pill — for
+  /// screens where social sign-in sits under a dark primary CTA.
+  final bool light;
 
   /// Callback when button is pressed
   final VoidCallback? onPressed;
@@ -158,8 +163,13 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton>
           child: Container(
             height: widget.height,
             decoration: BoxDecoration(
-              color: KolabingColors.buttonSecondary,
+              color: widget.light
+                  ? KolabingColors.surface
+                  : KolabingColors.buttonSecondary,
               borderRadius: BorderRadius.circular(widget.height / 2),
+              border: widget.light
+                  ? Border.all(color: KolabingColors.outlineVariant, width: 1.2)
+                  : null,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.08),

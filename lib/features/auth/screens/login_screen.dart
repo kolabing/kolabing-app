@@ -98,7 +98,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       end: 0.0,
     ).animate(CurvedAnimation(parent: _exitController, curve: Curves.easeIn));
 
+    // Repaint the focus glow as focus moves between the fields.
+    _emailFocusNode.addListener(_onFocusChanged);
+    _passwordFocusNode.addListener(_onFocusChanged);
+
     _entryController.forward();
+  }
+
+  void _onFocusChanged() {
+    if (mounted) setState(() {});
   }
 
   void _configureSystemUI() {
@@ -116,6 +124,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   @override
   void dispose() {
+    _emailFocusNode.removeListener(_onFocusChanged);
+    _passwordFocusNode.removeListener(_onFocusChanged);
     _emailController.dispose();
     _passwordController.dispose();
     _emailFocusNode.dispose();
@@ -492,27 +502,31 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   children: [
                                     _FieldLabel(text: l10n.authEmailLabel),
                                     const SizedBox(height: 8),
-                                    TextFormField(
-                                      controller: _emailController,
-                                      focusNode: _emailFocusNode,
-                                      keyboardType: TextInputType.emailAddress,
-                                      autocorrect: false,
-                                      enableSuggestions: false,
-                                      autofillHints: const [
-                                        AutofillHints.email,
-                                      ],
-                                      scrollPadding: _kFieldScrollPadding,
-                                      enabled: !_anyLoading,
-                                      validator: _validateEmail,
-                                      textInputAction: TextInputAction.next,
-                                      onFieldSubmitted: (_) =>
-                                          _passwordFocusNode.requestFocus(),
-                                      style: _fieldTextStyle,
-                                      cursorColor: _kInk,
-                                      decoration: _fieldDecoration(
-                                        hint: l10n.authEmailHint,
-                                        prefixIcon:
-                                            Icons.alternate_email_rounded,
+                                    _FocusGlow(
+                                      focused: _emailFocusNode.hasFocus,
+                                      child: TextFormField(
+                                        controller: _emailController,
+                                        focusNode: _emailFocusNode,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
+                                        autocorrect: false,
+                                        enableSuggestions: false,
+                                        autofillHints: const [
+                                          AutofillHints.email,
+                                        ],
+                                        scrollPadding: _kFieldScrollPadding,
+                                        enabled: !_anyLoading,
+                                        validator: _validateEmail,
+                                        textInputAction: TextInputAction.next,
+                                        onFieldSubmitted: (_) =>
+                                            _passwordFocusNode.requestFocus(),
+                                        style: _fieldTextStyle,
+                                        cursorColor: _kInk,
+                                        decoration: _fieldDecoration(
+                                          hint: l10n.authEmailHint,
+                                          prefixIcon:
+                                              Icons.alternate_email_rounded,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -545,34 +559,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                       ],
                                     ),
                                     const SizedBox(height: 8),
-                                    TextFormField(
-                                      controller: _passwordController,
-                                      focusNode: _passwordFocusNode,
-                                      obscureText: _obscurePassword,
-                                      enabled: !_anyLoading,
-                                      validator: _validatePassword,
-                                      autofillHints: const [
-                                        AutofillHints.password,
-                                      ],
-                                      scrollPadding: _kFieldScrollPadding,
-                                      textInputAction: TextInputAction.done,
-                                      onFieldSubmitted: (_) =>
-                                          _handleEmailLogin(),
-                                      style: _fieldTextStyle,
-                                      cursorColor: _kInk,
-                                      decoration: _fieldDecoration(
-                                        prefixIcon: Icons.lock_outline_rounded,
-                                        suffixIcon: IconButton(
-                                          icon: Icon(
-                                            _obscurePassword
-                                                ? Icons.visibility_outlined
-                                                : Icons.visibility_off_outlined,
-                                            color: _kMuted,
-                                            size: 20,
-                                          ),
-                                          onPressed: () => setState(
-                                            () => _obscurePassword =
-                                                !_obscurePassword,
+                                    _FocusGlow(
+                                      focused: _passwordFocusNode.hasFocus,
+                                      child: TextFormField(
+                                        controller: _passwordController,
+                                        focusNode: _passwordFocusNode,
+                                        obscureText: _obscurePassword,
+                                        enabled: !_anyLoading,
+                                        validator: _validatePassword,
+                                        autofillHints: const [
+                                          AutofillHints.password,
+                                        ],
+                                        scrollPadding: _kFieldScrollPadding,
+                                        textInputAction: TextInputAction.done,
+                                        onFieldSubmitted: (_) =>
+                                            _handleEmailLogin(),
+                                        style: _fieldTextStyle,
+                                        cursorColor: _kInk,
+                                        decoration: _fieldDecoration(
+                                          hint: '••••••••',
+                                          prefixIcon:
+                                              Icons.lock_outline_rounded,
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              _obscurePassword
+                                                  ? Icons.visibility_outlined
+                                                  : Icons
+                                                        .visibility_off_outlined,
+                                              color: _kMuted,
+                                              size: 20,
+                                            ),
+                                            onPressed: () => setState(
+                                              () => _obscurePassword =
+                                                  !_obscurePassword,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -612,6 +632,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                             showSuccess: _showSuccess,
                                             isEnabled: interactive,
                                             height: 52,
+                                            light: true,
                                           ),
                                         ),
                                         const SizedBox(width: 12),
@@ -623,6 +644,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                             showSuccess: _showSuccess,
                                             isEnabled: interactive,
                                             height: 52,
+                                            light: true,
                                           ),
                                         ),
                                       ],
@@ -966,42 +988,80 @@ class _SignUpFooter extends StatelessWidget {
   final bool isEnabled;
 
   @override
-  Widget build(BuildContext context) => Row(
-    // A Row, not a Wrap: SliverFillRemaining sizes the sheet from its
-    // intrinsic height, which a Wrap under-reports.
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Flexible(
-        child: Text(
-          prompt,
-          textAlign: TextAlign.end,
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: _kMuted,
+  Widget build(BuildContext context) => Center(
+    // The whole row is the button, so a tap on the prompt counts too.
+    child: Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        key: const Key('login-sign-up'),
+        onTap: isEnabled
+            ? () {
+                HapticFeedback.selectionClick();
+                onTap();
+              }
+            : null,
+        borderRadius: BorderRadius.circular(999),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    prompt,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: _kMuted,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  action,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: _kInk,
+                    decoration: TextDecoration.underline,
+                    decorationColor: _kYellowDeep,
+                    decorationThickness: 2.5,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                const Icon(Icons.arrow_forward_rounded, size: 16, color: _kInk),
+              ],
+            ),
           ),
         ),
       ),
-      TextButton(
-        onPressed: isEnabled ? onTap : null,
-        style: TextButton.styleFrom(
-          foregroundColor: _kInk,
-          minimumSize: const Size(48, 44),
-          padding: const EdgeInsets.symmetric(horizontal: 6),
+    ),
+  );
+}
+
+/// A soft yellow halo around a field while it has focus.
+class _FocusGlow extends StatelessWidget {
+  const _FocusGlow({required this.focused, required this.child});
+
+  final bool focused;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => AnimatedContainer(
+    duration: const Duration(milliseconds: 180),
+    curve: Curves.easeOut,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(_kFieldRadius),
+      boxShadow: [
+        BoxShadow(
+          color: _kYellow.withValues(alpha: focused ? 0.75 : 0),
+          spreadRadius: focused ? 4 : 0,
         ),
-        child: Text(
-          action,
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            fontWeight: FontWeight.w800,
-            color: _kInk,
-            decoration: TextDecoration.underline,
-            decorationColor: _kYellowDeep,
-            decorationThickness: 2.5,
-          ),
-        ),
-      ),
-    ],
+      ],
+    ),
+    child: child,
   );
 }
 
