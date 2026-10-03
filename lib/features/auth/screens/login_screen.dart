@@ -12,6 +12,7 @@ import '../../../l10n/app_localizations.dart';
 import '../providers/auth_provider.dart';
 import '../utils/auth_navigation.dart';
 import '../widgets/apple_sign_in_button.dart';
+import '../widgets/auth_brand_hero.dart';
 import '../widgets/auth_fade_slide.dart';
 import '../widgets/google_sign_in_button.dart';
 
@@ -19,10 +20,9 @@ import '../widgets/google_sign_in_button.dart';
 // Tokens — black hero (matches the splash), warm cream sheet
 // ---------------------------------------------------------------------------
 
-const Color _kNight = Color(0xFF000000);
 const Color _kYellow = KolabingColors.primary;
 const Color _kYellowDeep = KolabingColors.primaryDark;
-const Color _kCream = Color(0xFFF6F1E7);
+const Color _kCream = kAuthSheetCream;
 const Color _kInk = KolabingColors.ink;
 const Color _kInkBody = KolabingColors.inkBody;
 const Color _kMuted = KolabingColors.muted;
@@ -34,11 +34,9 @@ const Color _kDivider = Color(0xFFE1D9C8);
 const String _kWelcomeRoute = '/auth/welcome';
 const String _kUserTypeSelectionRoute = '/auth/user-type';
 const String _kForgotPasswordRoute = '/auth/forgot-password';
-const String _kLogoMarkAsset = 'assets/brand/kolabing-k-mark.png';
 
-const double _kNavHeight = 56;
+/// Height of the area the K and KOLABING sit in, between nav row and sheet.
 const double _kMarkAreaHeight = 150;
-const double _kSheetRadius = 32;
 const double _kFieldRadius = 16;
 const double _kRiseDistance = 18;
 
@@ -110,16 +108,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   }
 
   void _configureSystemUI() {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        // Light icons over the black hero.
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: _kCream,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ),
-    );
+    SystemChrome.setSystemUIOverlayStyle(kAuthHeroOverlayStyle);
   }
 
   @override
@@ -409,7 +398,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final l10n = AppLocalizations.of(context);
     final topInset = MediaQuery.paddingOf(context).top;
     final heroHeight =
-        topInset + _kNavHeight + _kMarkAreaHeight + _kSheetRadius;
+        topInset +
+        AuthBrandHero.navHeight +
+        _kMarkAreaHeight +
+        AuthBrandHero.sheetRadius;
     final interactive = !_anyLoading && !_showSuccess;
 
     return PopScope(
@@ -428,7 +420,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [_kNight, _kNight, _kCream, _kCream],
+                colors: [kAuthHeroNight, kAuthHeroNight, _kCream, _kCream],
                 stops: [0, 0.5, 0.5, 1],
               ),
             ),
@@ -439,13 +431,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               slivers: [
                 SliverToBoxAdapter(
-                  child: _Hero(
+                  child: AuthBrandHero(
                     height: heroHeight,
-                    topInset: topInset,
-                    markScale: _stagger(0, 0.55),
-                    backEnabled: interactive,
-                    onBack: _handleBack,
-                    backLabel: l10n.commonBack,
+                    reveal: _stagger(0, 0.55),
+                    leading: AuthHeroBackButton(
+                      onTap: _handleBack,
+                      isEnabled: interactive,
+                      semanticLabel: l10n.commonBack,
+                    ),
                   ),
                 ),
 
@@ -724,175 +717,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       ),
     );
   }
-}
-
-// ---------------------------------------------------------------------------
-// Hero — the yellow K on black, as on the splash, so the hand-off from the
-// splash has no colour seam. The cream sheet's rounded top is drawn here.
-// ---------------------------------------------------------------------------
-
-class _Hero extends StatelessWidget {
-  const _Hero({
-    required this.height,
-    required this.topInset,
-    required this.markScale,
-    required this.backEnabled,
-    required this.onBack,
-    required this.backLabel,
-  });
-
-  final double height;
-  final double topInset;
-  final Animation<double> markScale;
-  final bool backEnabled;
-  final VoidCallback onBack;
-  final String backLabel;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    height: height,
-    child: Stack(
-      clipBehavior: Clip.none,
-      children: [
-        const Positioned.fill(child: ColoredBox(color: _kNight)),
-        // A soft yellow glow behind the mark.
-        Positioned(
-          left: 0,
-          right: 0,
-          top: topInset + _kNavHeight - 30,
-          height: _kMarkAreaHeight + 60,
-          child: const DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                radius: 0.45,
-                colors: [Color(0x38FFE28C), Color(0x00FFE28C)],
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(16, topInset, 16, 0),
-          child: Column(
-            children: [
-              SizedBox(
-                height: _kNavHeight,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: _CircleBackButton(
-                    onTap: onBack,
-                    isEnabled: backEnabled,
-                    semanticLabel: backLabel,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: _kMarkAreaHeight,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ScaleTransition(
-                      scale: Tween<double>(begin: 0.6, end: 1).animate(
-                        CurvedAnimation(
-                          parent: markScale,
-                          curve: Curves.easeOutBack,
-                        ),
-                      ),
-                      child: FadeTransition(
-                        opacity: markScale,
-                        child: Image.asset(
-                          _kLogoMarkAsset,
-                          key: const Key('login-logo-mark'),
-                          height: 78,
-                          semanticLabel: 'Kolabing',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    FadeTransition(
-                      opacity: markScale,
-                      // Brand name — exempt from i18n, as on the splash.
-                      child: Text(
-                        'KOLABING',
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w800,
-                          color: _kYellow,
-                          letterSpacing: 6,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        // The cream sheet's rounded top, overlapping the black.
-        const Positioned(
-          left: 0,
-          right: 0,
-          bottom: -1,
-          height: _kSheetRadius + 1,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: _kCream,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(_kSheetRadius),
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Circular back button on the dark hero
-// ---------------------------------------------------------------------------
-
-class _CircleBackButton extends StatelessWidget {
-  const _CircleBackButton({
-    required this.onTap,
-    required this.isEnabled,
-    required this.semanticLabel,
-  });
-
-  final VoidCallback onTap;
-  final bool isEnabled;
-  final String semanticLabel;
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-    button: true,
-    label: semanticLabel,
-    child: AnimatedOpacity(
-      duration: const Duration(milliseconds: 150),
-      opacity: isEnabled ? 1 : 0.35,
-      child: Material(
-        color: Colors.white.withValues(alpha: 0.1),
-        shape: const CircleBorder(),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: isEnabled
-              ? () {
-                  HapticFeedback.lightImpact();
-                  onTap();
-                }
-              : null,
-          child: const SizedBox(
-            width: 44,
-            height: 44,
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 17,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
 }
 
 // ---------------------------------------------------------------------------

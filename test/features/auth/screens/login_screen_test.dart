@@ -180,7 +180,7 @@ void main() {
   ) async {
     await _pumpLogin(tester);
 
-    final mark = tester.widget<Image>(find.byKey(const Key('login-logo-mark')));
+    final mark = tester.widget<Image>(find.byKey(const Key('auth-logo-mark')));
     expect(
       (mark.image as AssetImage).assetName,
       'assets/brand/kolabing-k-mark.png',
@@ -202,7 +202,7 @@ void main() {
       await _pumpLogin(tester);
 
       final mark = tester.widget<Image>(
-        find.byKey(const Key('login-logo-mark')),
+        find.byKey(const Key('auth-logo-mark')),
       );
       // Untinted: the asset's own yellow, not recoloured to ink.
       expect(mark.color, isNull);
@@ -284,7 +284,7 @@ void main() {
       'at a fixed edge mid-sheet (FX-60)', (WidgetTester tester) async {
     await _pumpLogin(tester, size: const Size(375, 667));
 
-    final mark = find.byKey(const Key('login-logo-mark'));
+    final mark = find.byKey(const Key('auth-logo-mark'));
     final emailTopBefore = tester
         .getTopLeft(find.byType(TextFormField).first)
         .dy;

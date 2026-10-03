@@ -68,6 +68,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingFieldCommunityCity => 'City';
 
   @override
+  String get welcomeAlreadyIn => 'Already in?';
+
+  @override
   String get welcomeLogIn => 'Log in';
 
   @override
@@ -594,6 +597,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPasswordBackToSignIn => 'BACK TO SIGN IN';
+
+  @override
+  String get forgotPasswordSpamHint =>
+      'If the email matches an account, the reset link will arrive shortly. Check spam if you don\'t see it.';
+
+  @override
+  String get forgotPasswordRemembered => 'Remembered it?';
 
   @override
   String get forgotPasswordUseAnotherEmail => 'Use another email';

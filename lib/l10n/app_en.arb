@@ -54,6 +54,10 @@
   "@commonErrorGeneric": {
     "description": "Fallback error message shown when an operation fails without a specific reason."
   },
+  "welcomeAlreadyIn": "Already in?",
+  "@welcomeAlreadyIn": {
+    "description": "Welcome screen — prompt before the Log in link for existing users."
+  },
   "welcomeLogIn": "Log in",
   "@welcomeLogIn": {
     "description": "Welcome screen — secondary text button for existing users to sign in."
@@ -734,6 +738,14 @@
   "forgotPasswordBackToSignIn": "BACK TO SIGN IN",
   "@forgotPasswordBackToSignIn": {
     "description": "Forgot-password success panel button returning to login."
+  },
+  "forgotPasswordSpamHint": "If the email matches an account, the reset link will arrive shortly. Check spam if you don't see it.",
+  "@forgotPasswordSpamHint": {
+    "description": "Forgot password — reassurance under the email field."
+  },
+  "forgotPasswordRemembered": "Remembered it?",
+  "@forgotPasswordRemembered": {
+    "description": "Forgot password — prompt before the Log in link."
   },
   "forgotPasswordUseAnotherEmail": "Use another email",
   "@forgotPasswordUseAnotherEmail": {

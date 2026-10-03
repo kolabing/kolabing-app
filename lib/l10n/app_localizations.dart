@@ -214,6 +214,12 @@ abstract class AppLocalizations {
   /// **'City'**
   String get onboardingFieldCommunityCity;
 
+  /// Welcome screen — prompt before the Log in link for existing users.
+  ///
+  /// In en, this message translates to:
+  /// **'Already in?'**
+  String get welcomeAlreadyIn;
+
   /// Welcome screen — secondary text button for existing users to sign in.
   ///
   /// In en, this message translates to:
@@ -1197,6 +1203,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'BACK TO SIGN IN'**
   String get forgotPasswordBackToSignIn;
+
+  /// Forgot password — reassurance under the email field.
+  ///
+  /// In en, this message translates to:
+  /// **'If the email matches an account, the reset link will arrive shortly. Check spam if you don\'t see it.'**
+  String get forgotPasswordSpamHint;
+
+  /// Forgot password — prompt before the Log in link.
+  ///
+  /// In en, this message translates to:
+  /// **'Remembered it?'**
+  String get forgotPasswordRemembered;
 
   /// Forgot-password success panel link to retry with a different email.
   ///

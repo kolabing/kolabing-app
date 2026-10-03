@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/auth/screens/forgot_password_screen.dart';
+import 'package:kolabing_app/features/auth/widgets/auth_brand_hero.dart';
 import 'package:kolabing_app/features/auth/widgets/kolabing_logo.dart';
 
 Future<void> _pumpForgotPassword(
@@ -41,7 +42,7 @@ Future<void> _pumpForgotPassword(
 }
 
 void main() {
-  testWidgets('forgot password screen reuses the login hero shell', (
+  testWidgets('forgot password screen uses the K brand hero, like login', (
     WidgetTester tester,
   ) async {
     await _pumpForgotPassword(tester);
@@ -51,8 +52,10 @@ void main() {
     // the opposite of a stale "must never scroll" assumption.
     expect(find.byType(SingleChildScrollView), findsOneWidget);
 
-    final logo = tester.widget<KolabingLogo>(find.byType(KolabingLogo));
-    expect(logo.variant, KolabingLogoVariant.onYellow);
+    // The K brand hero, as on login — not the old cloud lockup.
+    expect(find.byType(AuthBrandHero), findsOneWidget);
+    expect(find.byKey(const Key('auth-logo-mark')), findsOneWidget);
+    expect(find.byType(KolabingLogo), findsNothing);
 
     expect(find.text('Reset access.'), findsOneWidget);
     expect(
