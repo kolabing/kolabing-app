@@ -661,6 +661,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInWithApple => 'Sign in with Apple';
 
   @override
+  String get authOr => 'or';
+
+  @override
   String get authOrContinueWith => 'or continue with';
 
   @override
@@ -8787,10 +8790,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quickChatNoteLabel => 'Short note';
 
   @override
-  String get quickChatNoteHint => 'e.g. We\'re a run club of about 30, looking for a place for coffee after our Saturday run.';
+  String get quickChatNoteHint =>
+      'e.g. We\'re a run club of about 30, looking for a place for coffee after our Saturday run.';
 
   @override
-  String get quickChatFinePrint => 'No need to fill in the whole kolab now. If they say yes, you\'ll add the rest.';
+  String get quickChatFinePrint =>
+      'No need to fill in the whole kolab now. If they say yes, you\'ll add the rest.';
 
   @override
   String get quickChatStart => 'Start chat';

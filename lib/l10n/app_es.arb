@@ -204,6 +204,7 @@
   "signInSubtitle": "Inicia sesión para continuar",
   "signInWithGoogle": "Iniciar sesión con Google",
   "signInWithApple": "Iniciar sesión con Apple",
+  "authOr": "o",
   "authOrContinueWith": "o continúa con",
   "signInNoAccount": "¿No tienes una cuenta?",
   "signInSignUp": "Registrarse",

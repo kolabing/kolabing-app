@@ -669,6 +669,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get signInWithApple => 'Iniciar sessió amb Apple';
 
   @override
+  String get authOr => 'o';
+
+  @override
   String get authOrContinueWith => 'o continua amb';
 
   @override
@@ -8859,7 +8862,8 @@ class AppLocalizationsCa extends AppLocalizations {
       'La importació no s\'ha completat. No s\'ha afegit res; torna-ho a provar.';
 
   @override
-  String get exploreDetailSendFullRequest => 'Envia la sol·licitud de kolab completa';
+  String get exploreDetailSendFullRequest =>
+      'Envia la sol·licitud de kolab completa';
 
   @override
   String get quickChatButtonLabel => 'Xat ràpid';
@@ -8914,16 +8918,19 @@ class AppLocalizationsCa extends AppLocalizations {
   String get quickChatNoteLabel => 'Nota breu';
 
   @override
-  String get quickChatNoteHint => 'p. ex. Som un club de running d\'unes 30 persones i busquem un lloc per fer un cafè després de la cursa del dissabte.';
+  String get quickChatNoteHint =>
+      'p. ex. Som un club de running d\'unes 30 persones i busquem un lloc per fer un cafè després de la cursa del dissabte.';
 
   @override
-  String get quickChatFinePrint => 'No cal omplir tota la kolab ara. Si diuen que sí, hi afegiràs la resta.';
+  String get quickChatFinePrint =>
+      'No cal omplir tota la kolab ara. Si diuen que sí, hi afegiràs la resta.';
 
   @override
   String get quickChatStart => 'Inicia el xat';
 
   @override
-  String get quickChatError => 'No hem pogut iniciar el xat. Torna-ho a provar.';
+  String get quickChatError =>
+      'No hem pogut iniciar el xat. Torna-ho a provar.';
 
   @override
   String quickChatAvailabilityOnDate(String date) {

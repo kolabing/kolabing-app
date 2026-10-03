@@ -1324,6 +1324,12 @@ abstract class AppLocalizations {
   /// **'Sign in with Apple'**
   String get signInWithApple;
 
+  /// Short divider label between the email sign-in form and the social sign-in buttons on the login screen.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get authOr;
+
   /// Divider label above the social sign-in buttons.
   ///
   /// In en, this message translates to:

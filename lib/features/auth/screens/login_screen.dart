@@ -13,7 +13,6 @@ import '../providers/auth_provider.dart';
 import '../utils/auth_navigation.dart';
 import '../widgets/apple_sign_in_button.dart';
 import '../widgets/google_sign_in_button.dart';
-import '../widgets/kolabing_logo.dart';
 
 // ---------------------------------------------------------------------------
 // Warm sheet tokens
@@ -30,6 +29,11 @@ const Color _kDivider = Color(0xFFE1D9C8);
 const String _kWelcomeRoute = '/auth/welcome';
 const String _kUserTypeSelectionRoute = '/auth/user-type';
 const String _kForgotPasswordRoute = '/auth/forgot-password';
+const String _kLogoMarkAsset = 'assets/brand/kolabing-k-mark.png';
+
+/// When a field scrolls above the keyboard, keep this much room below it so the
+/// Sign in button under the password field comes along.
+const EdgeInsets _kFieldScrollPadding = EdgeInsets.fromLTRB(20, 20, 20, 120);
 
 // ---------------------------------------------------------------------------
 // LoginScreen
@@ -364,14 +368,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final screenWidth = size.width;
-    final heroHeight = size.height * 0.32;
-    final waveHeight = 130.0 * screenWidth / 402.0;
+    final topInset = MediaQuery.paddingOf(context).top;
+    final waveHeight = 130.0 * size.width / 402.0;
+    // Nav row + the mark + the part of the wave that is still yellow.
+    final heroHeight = topInset + 48 + 112 + waveHeight * 0.6;
 
     return PopScope(
       canPop: !_anyLoading,
       child: Scaffold(
-        backgroundColor: _kYellow,
+        backgroundColor: _kCream,
         resizeToAvoidBottomInset: true,
         body: AnimatedBuilder(
           animation: _exitController,
@@ -379,110 +384,127 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               Opacity(opacity: _exitAnimation.value, child: child),
           child: FadeTransition(
             opacity: _fadeIn,
-            child: Stack(
-              children: [
-                // Cream sheet background
-                Positioned(
-                  top: heroHeight,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Container(color: _kCream),
+            // Yellow above the middle, cream below, so an iOS overscroll at
+            // either end shows the colour of the section it pulls away from.
+            child: DecoratedBox(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [_kYellow, _kYellow, _kCream, _kCream],
+                  stops: [0, 0.5, 0.5, 1],
                 ),
-
-                // Wave transition
-                Positioned(
-                  top: heroHeight - waveHeight + 12,
-                  left: 0,
-                  right: 0,
-                  height: waveHeight,
-                  child: CustomPaint(painter: _WavePainter(color: _kCream)),
-                ),
-
-                // Main layout
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Yellow hero with top nav + logo
-                    SafeArea(
-                      bottom: false,
-                      child: SizedBox(
-                        height: heroHeight,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            children: [
-                              // Top nav row
-                              SizedBox(
-                                height: 48,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    _HeroButton(
-                                      onTap: _handleBack,
-                                      isEnabled: !_anyLoading && !_showSuccess,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(
-                                            Icons.arrow_back_ios_new_rounded,
-                                            size: 13,
-                                            color: _kInk,
-                                          ),
-                                          const SizedBox(width: 3),
-                                          Text(
-                                            AppLocalizations.of(
-                                              context,
-                                            ).commonBack,
-                                            style: GoogleFonts.inter(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600,
+              ),
+              // One scroll view for the whole page (FX-60): the hero, the wave
+              // and the form move together, so a field is never clipped at a
+              // fixed edge, and the focused field scrolls above the keyboard.
+              child: CustomScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: heroHeight,
+                      child: Stack(
+                        children: [
+                          const Positioned.fill(
+                            child: ColoredBox(color: _kYellow),
+                          ),
+                          // Wave transition into the cream sheet
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            height: waveHeight,
+                            child: const CustomPaint(
+                              painter: _WavePainter(color: _kCream),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(20, topInset, 20, 0),
+                            child: Column(
+                              children: [
+                                // Top nav row
+                                SizedBox(
+                                  height: 48,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      _HeroButton(
+                                        onTap: _handleBack,
+                                        isEnabled:
+                                            !_anyLoading && !_showSuccess,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(
+                                              Icons.arrow_back_ios_new_rounded,
+                                              size: 13,
                                               color: _kInk,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    _HeroButton(
-                                      onTap: _navigateToSignUp,
-                                      isEnabled: !_anyLoading && !_showSuccess,
-                                      child: Text(
-                                        AppLocalizations.of(
-                                          context,
-                                        ).loginSignUpLink,
-                                        style: GoogleFonts.inter(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w700,
-                                          color: _kInk,
+                                            const SizedBox(width: 3),
+                                            Text(
+                                              AppLocalizations.of(
+                                                context,
+                                              ).commonBack,
+                                              style: GoogleFonts.inter(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                                color: _kInk,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // Space where the logo used to live — now overlaid on the seam
-                              // Logo centred in remaining hero space, shifted slightly above centre
-                              // to match the welcome screen's logo position.
-                              const Expanded(
-                                child: Align(
-                                  alignment: Alignment(0, -0.5),
-                                  child: KolabingLogo(
-                                    width: 158,
-                                    variant: KolabingLogoVariant.onYellow,
+                                      _HeroButton(
+                                        onTap: _navigateToSignUp,
+                                        isEnabled:
+                                            !_anyLoading && !_showSuccess,
+                                        child: Text(
+                                          AppLocalizations.of(
+                                            context,
+                                          ).loginSignUpLink,
+                                          style: GoogleFonts.inter(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                            color: _kInk,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ],
+                                // The K logomark (app icon + splash), in ink
+                                // on the yellow hero.
+                                SizedBox(
+                                  height: 112,
+                                  child: Center(
+                                    child: Image.asset(
+                                      _kLogoMarkAsset,
+                                      key: const Key('login-logo-mark'),
+                                      height: 76,
+                                      color: _kInk,
+                                      colorBlendMode: BlendMode.srcIn,
+                                      semanticLabel: 'Kolabing',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
+                  ),
 
-                    // Cream sheet — scrollable form
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(28, 48, 28, 32),
+                  // Cream sheet — the form
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: ColoredBox(
+                      color: _kCream,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(28, 8, 28, 32),
                         child: SafeArea(
                           top: false,
                           child: Form(
@@ -522,6 +544,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   autocorrect: false,
                                   enableSuggestions: false,
                                   autofillHints: const [AutofillHints.email],
+                                  scrollPadding: _kFieldScrollPadding,
                                   enabled: !_anyLoading,
                                   validator: _validateEmail,
                                   textInputAction: TextInputAction.next,
@@ -550,6 +573,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   enabled: !_anyLoading,
                                   validator: _validatePassword,
                                   autofillHints: const [AutofillHints.password],
+                                  scrollPadding: _kFieldScrollPadding,
                                   textInputAction: TextInputAction.done,
                                   onFieldSubmitted: (_) => _handleEmailLogin(),
                                   style: GoogleFonts.inter(
@@ -635,7 +659,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                         horizontal: 14,
                                       ),
                                       child: Text(
-                                        'or',
+                                        AppLocalizations.of(context).authOr,
                                         style: GoogleFonts.inter(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w400,
@@ -689,9 +713,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
