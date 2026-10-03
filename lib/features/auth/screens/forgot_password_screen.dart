@@ -7,14 +7,14 @@ import '../../../config/theme/typography.dart';
 import '../../../l10n/app_localizations.dart';
 import '../models/auth_response.dart';
 import '../services/auth_service.dart';
-import '../widgets/kolabing_logo.dart';
+import '../widgets/auth_brand_hero.dart';
 
 // ---------------------------------------------------------------------------
 // Warm-sheet tokens — mirrors login_screen.dart
 // ---------------------------------------------------------------------------
 
 const Color _kYellow = Color(0xFFFFE28C);
-const Color _kCream = Color(0xFFF6F1E7);
+const Color _kCream = kAuthSheetCream;
 const Color _kInk = Color(0xFF19150F);
 const Color _kMuted = Color(0xFF8C8474);
 const Color _kInputBorder = Color(0xFFE4DCCB);
@@ -22,6 +22,9 @@ const Color _kInputFill = Color(0xFFFFFFFF);
 const Color _kReassurance = Color(0xFF9A9281);
 
 const String _kLoginRoute = '/auth/login';
+
+/// Height of the area the K and KOLABING sit in, between nav row and sheet.
+const double _kMarkAreaHeight = 120;
 
 // ---------------------------------------------------------------------------
 // ForgotPasswordScreen
@@ -68,15 +71,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   }
 
   void _configureSystemUI() {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: _kCream,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ),
-    );
+    SystemChrome.setSystemUIOverlayStyle(kAuthHeroOverlayStyle);
   }
 
   void _onEmailChanged() {
@@ -159,108 +154,35 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final screenWidth = size.width;
-    final heroHeight = size.height * 0.32;
-    final waveHeight = 130.0 * screenWidth / 402.0;
+    final heroHeight =
+        MediaQuery.paddingOf(context).top +
+        AuthBrandHero.navHeight +
+        _kMarkAreaHeight +
+        AuthBrandHero.sheetRadius;
 
     return PopScope(
       canPop: !_isLoading,
       child: Scaffold(
-        backgroundColor: _kYellow,
+        backgroundColor: _kCream,
         resizeToAvoidBottomInset: true,
         body: FadeTransition(
           opacity: _fadeIn,
           child: Stack(
             children: [
-              // Cream sheet background
-              Positioned(
-                top: heroHeight,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(color: _kCream),
-              ),
-
-              // Wave transition
-              Positioned(
-                top: heroHeight - waveHeight + 12,
-                left: 0,
-                right: 0,
-                height: waveHeight,
-                child: CustomPaint(painter: const _WavePainter(color: _kCream)),
-              ),
+              const Positioned.fill(child: ColoredBox(color: _kCream)),
 
               // Main layout
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Yellow hero
-                  SafeArea(
-                    bottom: false,
-                    child: SizedBox(
-                      height: heroHeight,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 48,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  _HeroButton(
-                                    onTap: _handleBack,
-                                    isEnabled: !_isLoading,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(
-                                          Icons.arrow_back_ios_new_rounded,
-                                          size: 13,
-                                          color: _kInk,
-                                        ),
-                                        const SizedBox(width: 3),
-                                        Text(
-                                          AppLocalizations.of(
-                                            context,
-                                          ).commonBack,
-                                          style: GoogleFonts.inter(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                            color: _kInk,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  _HeroButton(
-                                    onTap: _handleGoToLogin,
-                                    isEnabled: !_isLoading,
-                                    child: Text(
-                                      'Log in',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                        color: _kInk,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const Expanded(
-                              child: Align(
-                                alignment: Alignment(0, -0.5),
-                                child: KolabingLogo(
-                                  width: 158,
-                                  variant: KolabingLogoVariant.onYellow,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                  AuthBrandHero(
+                    height: heroHeight,
+                    markHeight: 64,
+                    reveal: _fadeIn,
+                    leading: AuthHeroBackButton(
+                      onTap: _handleBack,
+                      isEnabled: !_isLoading,
+                      semanticLabel: AppLocalizations.of(context).commonBack,
                     ),
                   ),
 
@@ -272,11 +194,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                         top: false,
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
-                            minHeight:
-                                size.height -
-                                heroHeight -
-                                MediaQuery.paddingOf(context).top -
-                                80,
+                            minHeight: size.height - heroHeight - 80,
                           ),
                           child: Form(
                             key: _formKey,
@@ -386,7 +304,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                     const SizedBox(width: 6),
                                     Expanded(
                                       child: Text(
-                                        'If the email matches an account, the reset link will arrive shortly. Check spam if you don\'t see it.',
+                                        AppLocalizations.of(
+                                          context,
+                                        ).forgotPasswordSpamHint,
                                         style: GoogleFonts.inter(
                                           fontSize: 12.5,
                                           fontWeight: FontWeight.w500,
@@ -412,11 +332,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                           color: _kMuted,
                                         ),
                                         children: [
-                                          const TextSpan(
-                                            text: 'Remembered it? ',
+                                          TextSpan(
+                                            text:
+                                                '${AppLocalizations.of(context).forgotPasswordRemembered} ',
                                           ),
                                           TextSpan(
-                                            text: 'Log in',
+                                            text: AppLocalizations.of(
+                                              context,
+                                            ).welcomeLogIn,
                                             style: GoogleFonts.inter(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w600,
@@ -638,84 +561,4 @@ class _SuccessState extends StatelessWidget {
       ),
     ],
   );
-}
-
-// ---------------------------------------------------------------------------
-// Hero tap button — mirrors login_screen.dart _HeroButton
-// ---------------------------------------------------------------------------
-
-class _HeroButton extends StatefulWidget {
-  const _HeroButton({
-    required this.onTap,
-    required this.child,
-    this.isEnabled = true,
-  });
-
-  final VoidCallback onTap;
-  final Widget child;
-  final bool isEnabled;
-
-  @override
-  State<_HeroButton> createState() => _HeroButtonState();
-}
-
-class _HeroButtonState extends State<_HeroButton> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTapDown: (_) {
-      if (widget.isEnabled) setState(() => _pressed = true);
-    },
-    onTapUp: (_) {
-      if (widget.isEnabled) setState(() => _pressed = false);
-    },
-    onTapCancel: () {
-      if (widget.isEnabled) setState(() => _pressed = false);
-    },
-    onTap: () {
-      if (widget.isEnabled) {
-        HapticFeedback.lightImpact();
-        widget.onTap();
-      }
-    },
-    child: AnimatedOpacity(
-      duration: const Duration(milliseconds: 100),
-      opacity: widget.isEnabled ? (_pressed ? 0.5 : 1.0) : 0.35,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-        child: widget.child,
-      ),
-    ),
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Wave painter — identical to login_screen.dart
-// ---------------------------------------------------------------------------
-
-class _WavePainter extends CustomPainter {
-  const _WavePainter({required this.color});
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = color;
-    final sx = size.width / 402.0;
-    final sy = size.height / 130.0;
-
-    final path = Path()
-      ..moveTo(0, 130 * sy)
-      ..lineTo(0, 66 * sy)
-      ..cubicTo(72 * sx, 22 * sy, 150 * sx, 52 * sy, 230 * sx, 60 * sy)
-      ..cubicTo(300 * sx, 67 * sy, 352 * sx, 34 * sy, 402 * sx, 50 * sy)
-      ..lineTo(402 * sx, 130 * sy)
-      ..close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(_WavePainter old) => old.color != color;
 }

@@ -1,24 +1,31 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../config/routes/routes.dart';
+import '../../../config/theme/colors.dart';
 import '../../../l10n/app_localizations.dart';
-import '../widgets/kolabing_logo.dart';
+import '../widgets/auth_brand_hero.dart';
+import '../widgets/auth_fade_slide.dart';
 
 // ---------------------------------------------------------------------------
-// Warm sheet tokens
+// Tokens
 // ---------------------------------------------------------------------------
 
-const Color _kYellow = Color(0xFFFFE28C);
-const Color _kCream = Color(0xFFF6F1E7);
-const Color _kInk = Color(0xFF19150F);
-const Color _kMuted = Color(0xFF8C8474);
+const Color _kYellow = KolabingColors.primary;
+const Color _kYellowDeep = KolabingColors.primaryDark;
+const Color _kCream = kAuthSheetCream;
+const Color _kInk = KolabingColors.ink;
+const Color _kMuted = KolabingColors.muted;
+const Color _kTaglineDot = Color(0xFFB5914A);
+
+const double _kRiseDistance = 18;
 
 // ---------------------------------------------------------------------------
-// WelcomeScreen — Warm sheet direction
+// WelcomeScreen — the K on black, as on the splash and login
 // ---------------------------------------------------------------------------
 
 class WelcomeScreen extends StatefulWidget {
@@ -31,16 +38,14 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _entry;
-  late final Animation<double> _fadeIn;
 
   @override
   void initState() {
     super.initState();
     _entry = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 900),
     );
-    _fadeIn = CurvedAnimation(parent: _entry, curve: Curves.easeOut);
   }
 
   @override
@@ -69,115 +74,99 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     context.push(KolabingRoutes.login);
   }
 
+  /// One staggered slice of the entry animation, [start]..[end] of 0..1.
+  Animation<double> _stagger(double start, double end) => CurvedAnimation(
+    parent: _entry,
+    curve: Interval(start, end, curve: Curves.easeOutCubic),
+  );
+
+  /// Fades a row in while it rises [_kRiseDistance] into place.
+  Widget _rise(double start, Widget child) {
+    final t = _stagger(start, math.min(start + 0.45, 1));
+    return AuthFadeSlide(
+      opacity: t,
+      offset: Tween<Offset>(
+        begin: const Offset(0, _kRiseDistance),
+        end: Offset.zero,
+      ).animate(t),
+      child: child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final size = MediaQuery.sizeOf(context);
-    final screenWidth = size.width;
-    final heroHeight = size.height * 0.40;
-    final waveHeight = 130.0 * screenWidth / 402.0;
+    final topInset = MediaQuery.paddingOf(context).top;
+    // Just under half the screen, but never so short the mark feels cramped.
+    final heroHeight = math.max(
+      size.height * 0.46,
+      topInset + AuthBrandHero.navHeight + 190 + AuthBrandHero.sheetRadius,
+    );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: _kCream,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ),
+      value: kAuthHeroOverlayStyle,
       child: Scaffold(
-        backgroundColor: _kYellow,
-        body: FadeTransition(
-          opacity: _fadeIn,
-          child: Stack(
-            children: [
-              // Cream sheet background (bottom portion)
-              Positioned(
-                top: heroHeight,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(color: _kCream),
+        backgroundColor: _kCream,
+        // Black above the middle, cream below, so an iOS overscroll at either
+        // end shows the colour of the section it pulls away from.
+        body: DecoratedBox(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [kAuthHeroNight, kAuthHeroNight, _kCream, _kCream],
+              stops: [0, 0.5, 0.5, 1],
+            ),
+          ),
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: AuthBrandHero(
+                  height: heroHeight,
+                  markHeight: 104,
+                  reveal: _stagger(0, 0.55),
+                ),
               ),
-
-              // Wave transition — cream flowing up over yellow hero boundary
-              Positioned(
-                top: heroHeight - waveHeight + 12,
-                left: 0,
-                right: 0,
-                height: waveHeight,
-                child: CustomPaint(painter: _WavePainter(color: _kCream)),
-              ),
-
-              // Main layout
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Yellow hero — logo shifted above centre
-                  SafeArea(
-                    bottom: false,
-                    child: SizedBox(
-                      height: heroHeight,
-                      child: const Align(
-                        alignment: Alignment(0, -0.4),
-                        child: KolabingLogo(
-                          width: 158,
-                          variant: KolabingLogoVariant.onYellow,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Cream sheet content
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(30, 50, 30, 40),
-                      child: SafeArea(
-                        top: false,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _WelcomeHeadline(),
-                            const SizedBox(height: 28),
-                            const _TaglineRow(),
-                            const SizedBox(height: 32),
-                            _PrimaryCta(onPressed: _onPrimaryCta),
-                            const SizedBox(height: 18),
-                            Center(
-                              child: GestureDetector(
-                                onTap: _onLogin,
-                                behavior: HitTestBehavior.opaque,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8,
-                                  ),
-                                  child: RichText(
-                                    text: TextSpan(
-                                      style: GoogleFonts.inter(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: _kMuted,
-                                      ),
-                                      children: const [
-                                        TextSpan(text: 'Already in? '),
-                                        TextSpan(
-                                          text: 'Log in',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            color: _kInk,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: ColoredBox(
+                  color: _kCream,
+                  child: SafeArea(
+                    top: false,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(28, 4, 28, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _rise(0.2, const _WelcomeHeadline()),
+                          const SizedBox(height: 22),
+                          _rise(0.3, const _TaglineRow()),
+                          // Pushes the actions to the thumb zone on tall
+                          // screens; collapses when space is short.
+                          const Spacer(),
+                          const SizedBox(height: 32),
+                          _rise(
+                            0.4,
+                            _PrimaryCta(
+                              label: l10n.welcomeStartKolabing,
+                              onPressed: _onPrimaryCta,
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(height: 10),
+                          _rise(
+                            0.5,
+                            _LoginLink(
+                              prompt: l10n.welcomeAlreadyIn,
+                              action: l10n.welcomeLogIn,
+                              onTap: _onLogin,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
             ],
           ),
@@ -188,7 +177,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 }
 
 // ---------------------------------------------------------------------------
-// Headline — "where / businesses & communities / grow together"
+// Headline — "Where businesses / and communities / grow together"
 // ---------------------------------------------------------------------------
 
 class _WelcomeHeadline extends StatelessWidget {
@@ -196,24 +185,33 @@ class _WelcomeHeadline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final style = GoogleFonts.inter(
-      fontSize: 24,
-      fontWeight: FontWeight.w700,
+      fontSize: 30,
+      fontWeight: FontWeight.w800,
       color: _kInk,
-      height: 1.14,
+      height: 1.15,
+      letterSpacing: -0.6,
     );
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text('where', style: style),
-        Text('businesses & communities', style: style),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
+        Text(
+          '${l10n.welcomeHeroWhere} ${l10n.welcomeHeroBusinesses}',
+          style: style,
+          textAlign: TextAlign.center,
+        ),
+        Text(
+          '${l10n.welcomeHeroAnd} ${l10n.welcomeHeroCommunities}',
+          style: style,
+          textAlign: TextAlign.center,
+        ),
+        Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.end,
           children: [
-            Text('grow ', style: style),
-            _YellowUnderlineText(text: 'together', style: style),
+            Text('${l10n.welcomeHeroGrow} ', style: style),
+            _YellowSwashText(text: l10n.welcomeHeroTogether, style: style),
           ],
         ),
       ],
@@ -221,9 +219,9 @@ class _WelcomeHeadline extends StatelessWidget {
   }
 }
 
-/// Renders text with a yellow swash underline behind the baseline.
-class _YellowUnderlineText extends StatelessWidget {
-  const _YellowUnderlineText({required this.text, required this.style});
+/// Text with a yellow swash behind its baseline.
+class _YellowSwashText extends StatelessWidget {
+  const _YellowSwashText({required this.text, required this.style});
 
   final String text;
   final TextStyle style;
@@ -232,13 +230,12 @@ class _YellowUnderlineText extends StatelessWidget {
   Widget build(BuildContext context) => Stack(
     alignment: Alignment.bottomLeft,
     children: [
-      // Yellow swash behind the text
       Positioned(
-        bottom: 1,
-        left: 0,
-        right: 0,
+        bottom: 3,
+        left: -2,
+        right: -2,
         child: Container(
-          height: 9,
+          height: 11,
           decoration: BoxDecoration(
             color: _kYellow,
             borderRadius: BorderRadius.circular(4),
@@ -260,86 +257,109 @@ class _TaglineRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final baseStyle = GoogleFonts.inter(
+    final base = GoogleFonts.inter(
       fontSize: 12,
       fontWeight: FontWeight.w700,
       letterSpacing: 3.4,
     );
+    final dot = Text(
+      l10n.welcomeTaglineDot,
+      style: base.copyWith(color: _kTaglineDot),
+    );
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          l10n.welcomeTaglineMatch,
-          style: baseStyle.copyWith(color: _kMuted),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          l10n.welcomeTaglineDot,
-          style: baseStyle.copyWith(color: const Color(0xFFB5914A)),
-        ),
-        const SizedBox(width: 6),
-        Text(l10n.welcomeTaglineKolab, style: baseStyle.copyWith(color: _kInk)),
-        const SizedBox(width: 6),
-        Text(
-          l10n.welcomeTaglineDot,
-          style: baseStyle.copyWith(color: const Color(0xFFB5914A)),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          l10n.welcomeTaglineGrow,
-          style: baseStyle.copyWith(color: _kMuted),
-        ),
-      ],
+    // Scales down rather than overflowing on narrow, large-text screens.
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(l10n.welcomeTaglineMatch, style: base.copyWith(color: _kMuted)),
+          const SizedBox(width: 6),
+          dot,
+          const SizedBox(width: 6),
+          Text(l10n.welcomeTaglineKolab, style: base.copyWith(color: _kInk)),
+          const SizedBox(width: 6),
+          dot,
+          const SizedBox(width: 6),
+          Text(l10n.welcomeTaglineGrow, style: base.copyWith(color: _kMuted)),
+        ],
+      ),
     );
   }
 }
 
 // ---------------------------------------------------------------------------
-// Primary CTA — pill, yellow, ink text, arrow
+// Primary CTA — ink pill, yellow label, as on login
 // ---------------------------------------------------------------------------
 
-class _PrimaryCta extends StatelessWidget {
-  const _PrimaryCta({required this.onPressed});
+class _PrimaryCta extends StatefulWidget {
+  const _PrimaryCta({required this.label, required this.onPressed});
 
+  final String label;
   final VoidCallback onPressed;
+
+  @override
+  State<_PrimaryCta> createState() => _PrimaryCtaState();
+}
+
+class _PrimaryCtaState extends State<_PrimaryCta> {
+  bool _pressed = false;
+
+  void _setPressed(bool value) {
+    if (_pressed != value) setState(() => _pressed = value);
+  }
 
   @override
   Widget build(BuildContext context) => Semantics(
     button: true,
-    label: 'Start kolabing',
     child: GestureDetector(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        onPressed();
-      },
-      child: Container(
-        height: 58,
-        decoration: BoxDecoration(
-          color: _kYellow,
-          borderRadius: BorderRadius.circular(999),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF141210).withValues(alpha: 0.12),
-              blurRadius: 26,
-              offset: const Offset(0, 12),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Start kolabing',
-              style: GoogleFonts.inter(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: _kInk,
+      key: const Key('welcome-start'),
+      onTapDown: (_) => _setPressed(true),
+      onTapUp: (_) => _setPressed(false),
+      onTapCancel: () => _setPressed(false),
+      onTap: widget.onPressed,
+      child: AnimatedScale(
+        scale: _pressed ? 0.98 : 1,
+        duration: const Duration(milliseconds: 100),
+        child: Container(
+          height: 58,
+          decoration: BoxDecoration(
+            color: _kInk,
+            borderRadius: BorderRadius.circular(999),
+            boxShadow: [
+              BoxShadow(
+                color: _kInk.withValues(alpha: 0.22),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
               ),
+            ],
+          ),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          // Scales down rather than overflowing for long translations or
+          // large text.
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.label,
+                  style: GoogleFonts.inter(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: _kYellow,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 20,
+                  color: _kYellow,
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            const Icon(LucideIcons.arrowRight, size: 18, color: _kInk),
-          ],
+          ),
         ),
       ),
     ),
@@ -347,31 +367,62 @@ class _PrimaryCta extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Wave painter — cream sheet with organic wavy top edge
+// "Already in? Log in" — the whole row is the button
 // ---------------------------------------------------------------------------
 
-class _WavePainter extends CustomPainter {
-  const _WavePainter({required this.color});
+class _LoginLink extends StatelessWidget {
+  const _LoginLink({
+    required this.prompt,
+    required this.action,
+    required this.onTap,
+  });
 
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = color;
-    final sx = size.width / 402.0;
-    final sy = size.height / 130.0;
-
-    final path = Path()
-      ..moveTo(0, 130 * sy)
-      ..lineTo(0, 66 * sy)
-      ..cubicTo(72 * sx, 22 * sy, 150 * sx, 52 * sy, 230 * sx, 60 * sy)
-      ..cubicTo(300 * sx, 67 * sy, 352 * sx, 34 * sy, 402 * sx, 50 * sy)
-      ..lineTo(402 * sx, 130 * sy)
-      ..close();
-
-    canvas.drawPath(path, paint);
-  }
+  final String prompt;
+  final String action;
+  final VoidCallback onTap;
 
   @override
-  bool shouldRepaint(_WavePainter old) => old.color != color;
+  Widget build(BuildContext context) => Center(
+    child: Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        key: const Key('welcome-login'),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    prompt,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: _kMuted,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  action,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: _kInk,
+                    decoration: TextDecoration.underline,
+                    decorationColor: _kYellowDeep,
+                    decorationThickness: 2.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }

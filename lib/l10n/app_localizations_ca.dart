@@ -69,6 +69,9 @@ class AppLocalizationsCa extends AppLocalizations {
   String get onboardingFieldCommunityCity => 'Ciutat';
 
   @override
+  String get welcomeAlreadyIn => 'Ja tens compte?';
+
+  @override
   String get welcomeLogIn => 'Inicia la sessió';
 
   @override
@@ -601,6 +604,13 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get forgotPasswordBackToSignIn => 'TORNAR A INICIAR SESSIÓ';
+
+  @override
+  String get forgotPasswordSpamHint =>
+      'Si el correu coincideix amb un compte, l\'enllaç arribarà aviat. Si no el veus, revisa la carpeta de correu brossa.';
+
+  @override
+  String get forgotPasswordRemembered => 'Ja te\'n recordes?';
 
   @override
   String get forgotPasswordUseAnotherEmail => 'Utilitzar un altre correu';

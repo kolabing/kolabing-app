@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:kolabing_app/config/routes/routes.dart';
 import 'package:kolabing_app/features/auth/screens/welcome_screen.dart';
+import 'package:kolabing_app/features/auth/widgets/auth_brand_hero.dart';
 import 'package:kolabing_app/features/auth/widgets/kolabing_logo.dart';
 
 GoRouter _buildRouter() => GoRouter(
@@ -27,29 +28,11 @@ GoRouter _buildRouter() => GoRouter(
   ],
 );
 
-/// The restyled hero uses an offset typographic layout with
-/// `softWrap: false` + `TextOverflow.visible`, so the headline deliberately
-/// bleeds past the centre column and the framework reports a horizontal
-/// RenderFlex overflow. Swallow those (and only those) while pumping, but let
-/// any genuinely unexpected error through.
-void _installOverflowTolerantErrorHandler() {
-  final previous = FlutterError.onError;
-  addTearDown(() => FlutterError.onError = previous);
-  FlutterError.onError = (FlutterErrorDetails details) {
-    final message = details.exceptionAsString();
-    final isOverflow =
-        message.contains('overflowed') || message.contains('RenderFlex');
-    if (isOverflow) return; // designed bleed — ignore.
-    (previous ?? FlutterError.presentError)(details);
-  };
-}
-
 Future<void> _pumpWelcome(
   WidgetTester tester, {
   Size size = const Size(390, 844),
   double textScaleFactor = 1.0,
 }) async {
-  _installOverflowTolerantErrorHandler();
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
@@ -78,76 +61,57 @@ Future<void> _pumpWelcome(
 }
 
 void main() {
-  // The welcome screen (light-mode-first restyle, commit 7904b40) is a near-black
-  // hero (_kBg 0xFF0A0A0A), light wordmark, an offset typographic "where /
-  // businesses / & communities / grow together" headline, a "MATCH · KOLAB ·
-  // GROW" tagline, a "Start kolabing" primary CTA and a "Log in" text link
-  // (localized via AppLocalizations).
-  testWidgets(
-    'welcome screen renders the dark landing hero and routes correctly',
-    (WidgetTester tester) async {
-      await _pumpWelcome(tester);
+  // Welcome is the K brand hero (yellow K + KOLABING on black, the same as the
+  // splash and login) over a cream sheet: headline, MATCH · KOLAB · GROW,
+  // an ink "Start kolabing" CTA and an "Already in? Log in" row.
+  testWidgets('welcome shows the K brand hero, not the cloud lockup', (
+    WidgetTester tester,
+  ) async {
+    await _pumpWelcome(tester);
 
-      // Near-black hero background (not the old cream editorial layout).
-      final scaffold = tester.widget<Scaffold>(find.byType(Scaffold).first);
-      expect(scaffold.backgroundColor, const Color(0xFF0A0A0A));
+    expect(find.byType(AuthBrandHero), findsOneWidget);
+    final mark = tester.widget<Image>(find.byKey(const Key('auth-logo-mark')));
+    expect(
+      (mark.image as AssetImage).assetName,
+      'assets/brand/kolabing-k-mark.png',
+    );
+    expect(find.text('KOLABING'), findsOneWidget);
+    expect(find.byType(KolabingLogo), findsNothing);
 
-      // Old editorial copy is gone.
-      const removedCopy = [
-        'BRANDS X',
-        'COMMUNITIES',
-        'Match fast. Launch louder.',
-        'OFFERS',
-        'EVENTS',
-        'PARTNERSHIPS',
-        'CREATE ACCOUNT',
-        'Free to join as a brand or community.',
-        'Where local brands',
-        'meet real communities.',
-      ];
-      for (final label in removedCopy) {
-        expect(find.text(label), findsNothing);
-      }
+    expect(find.text('Where businesses'), findsOneWidget);
+    expect(find.text('and communities'), findsOneWidget);
+    expect(find.text('together'), findsOneWidget);
+    expect(find.text('KOLAB'), findsOneWidget);
+  });
 
-      // Offset typographic headline + tagline.
-      for (final line in ['where', 'businesses', 'communities', 'together']) {
-        expect(find.text(line), findsOneWidget);
-      }
-      expect(find.text('KOLAB'), findsOneWidget);
+  testWidgets('Start kolabing opens user-type selection', (
+    WidgetTester tester,
+  ) async {
+    await _pumpWelcome(tester);
 
-      // Light wordmark logo.
-      final logoFinder = find.byType(KolabingLogo);
-      expect(logoFinder, findsOneWidget);
-      final logo = tester.widget<KolabingLogo>(logoFinder);
-      expect(logo.variant, KolabingLogoVariant.lightTransparent);
+    final start = find.text('Start kolabing');
+    final login = find.text('Log in');
+    expect(start, findsOneWidget);
+    expect(login, findsOneWidget);
+    // The CTA sits above the login row.
+    expect(tester.getTopLeft(start).dy, lessThan(tester.getTopLeft(login).dy));
 
-      // Primary CTA + login link.
-      final getStartedFinder = find.text('Start kolabing');
-      final loginFinder = find.text('Log in');
-      expect(getStartedFinder, findsOneWidget);
-      expect(loginFinder, findsOneWidget);
-      expect(find.byType(ElevatedButton), findsOneWidget);
-      expect(find.byType(TextButton), findsOneWidget);
-      // CTA sits above the login link.
-      expect(
-        tester.getTopLeft(getStartedFinder).dy,
-        lessThan(tester.getTopLeft(loginFinder).dy),
-      );
+    await tester.tap(start);
+    await tester.pumpAndSettle();
+    expect(find.text('user type selection'), findsOneWidget);
+  });
 
-      // Start kolabing routes to user-type selection.
-      await tester.tap(getStartedFinder);
-      await tester.pumpAndSettle();
-      expect(find.text('user type selection'), findsOneWidget);
+  testWidgets('a tap anywhere on "Already in? Log in" opens login', (
+    WidgetTester tester,
+  ) async {
+    await _pumpWelcome(tester);
 
-      // Login link routes to the login screen.
-      await _pumpWelcome(tester);
-      await tester.tap(find.text('Log in'));
-      await tester.pumpAndSettle();
-      expect(find.text('login screen'), findsOneWidget);
-    },
-  );
+    await tester.tap(find.text('Already in?'));
+    await tester.pumpAndSettle();
+    expect(find.text('login screen'), findsOneWidget);
+  });
 
-  testWidgets('welcome screen remains stable on compact scaled layouts', (
+  testWidgets('welcome remains stable on compact scaled layouts', (
     WidgetTester tester,
   ) async {
     await _pumpWelcome(
@@ -156,16 +120,10 @@ void main() {
       textScaleFactor: 1.25,
     );
 
-    // The offset typographic hero intentionally bleeds past the centre column
-    // (softWrap:false + TextOverflow.visible), so a horizontal RenderFlex
-    // overflow is the *designed* behaviour on narrow widths. Drain those, then
-    // assert the key chrome still renders and nothing else blew up.
-    expect(find.byType(KolabingLogo), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    expect(find.byType(AuthBrandHero), findsOneWidget);
+    await tester.ensureVisible(find.text('Log in'));
     expect(find.text('Start kolabing'), findsOneWidget);
-    // The login link is a raw RichText (two TextSpans: "Already in? " +
-    // "Log in"), not a plain Text — find.text only matches RichText when
-    // findRichText is set, and the search term is a substring of the whole
-    // span, so textContaining is needed too.
-    expect(find.textContaining('Log in', findRichText: true), findsOneWidget);
+    expect(find.text('Log in'), findsOneWidget);
   });
 }

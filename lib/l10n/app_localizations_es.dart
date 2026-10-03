@@ -68,6 +68,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get onboardingFieldCommunityCity => 'Ciudad';
 
   @override
+  String get welcomeAlreadyIn => '¿Ya tienes cuenta?';
+
+  @override
   String get welcomeLogIn => 'Iniciar sesión';
 
   @override
@@ -596,6 +599,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get forgotPasswordBackToSignIn => 'VOLVER A INICIAR SESIÓN';
+
+  @override
+  String get forgotPasswordSpamHint =>
+      'Si el correo coincide con una cuenta, el enlace llegará en breve. Si no lo ves, revisa la carpeta de spam.';
+
+  @override
+  String get forgotPasswordRemembered => '¿Ya te acuerdas?';
 
   @override
   String get forgotPasswordUseAnotherEmail => 'Usar otro correo';
