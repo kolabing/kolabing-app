@@ -32,7 +32,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('2/10'), findsOneWidget);
+      expect(find.text('2/20'), findsOneWidget);
       expect(find.text('Showcase your venue'), findsNothing);
       expect(
         find.byWidgetPredicate(
