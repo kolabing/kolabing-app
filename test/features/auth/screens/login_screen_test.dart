@@ -12,16 +12,19 @@ Future<void> _pumpLogin(
   Size size = const Size(390, 844),
   double textScaleFactor = 1.0,
   FakeViewPadding viewPadding = FakeViewPadding.zero,
+  double keyboardHeight = 0,
 }) async {
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
     tester.view.resetViewPadding();
+    tester.view.resetViewInsets();
   });
 
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
   tester.view.viewPadding = viewPadding;
+  tester.view.viewInsets = FakeViewPadding(bottom: keyboardHeight);
 
   await tester.pumpWidget(
     ProviderScope(
@@ -54,7 +57,7 @@ void main() {
     // The form scrolls rather than risking clipping on very short screens —
     // no longer the strict "must never scroll" layout this test originally
     // asserted.
-    expect(find.byType(SingleChildScrollView), findsOneWidget);
+    expect(find.byType(CustomScrollView), findsOneWidget);
     // Current minimal hero copy (localized) + social buttons.
     expect(find.text('Welcome back.'), findsOneWidget);
     expect(find.text('Pick up where you left off.'), findsOneWidget);
@@ -171,6 +174,75 @@ void main() {
       expect(find.text('WELCOME ROOT'), findsOneWidget);
     },
   );
+
+  testWidgets('login shows the K logomark, not the old cloud lockup', (
+    WidgetTester tester,
+  ) async {
+    await _pumpLogin(tester);
+
+    final mark = tester.widget<Image>(find.byKey(const Key('login-logo-mark')));
+    expect(
+      (mark.image as AssetImage).assetName,
+      'assets/brand/kolabing-k-mark.png',
+    );
+    expect(
+      find.byWidgetPredicate(
+        (w) =>
+            w is Image &&
+            w.image is AssetImage &&
+            (w.image as AssetImage).assetName.contains('logo_cloud'),
+      ),
+      findsNothing,
+    );
+  });
+
+  testWidgets(
+    'with the keyboard up, the focused password field scrolls into view (FX-60)',
+    (WidgetTester tester) async {
+      // iPhone SE height with a 260pt keyboard: only ~400pt of page is left.
+      await _pumpLogin(
+        tester,
+        size: const Size(375, 667),
+        viewPadding: const FakeViewPadding(top: 20),
+        keyboardHeight: 260,
+      );
+      expect(tester.takeException(), isNull);
+
+      final password = find.byType(TextFormField).at(1);
+      await tester.showKeyboard(password);
+      await tester.pumpAndSettle();
+
+      final visibleBottom = 667.0 - 260.0;
+      final rect = tester.getRect(password);
+      expect(rect.top, greaterThanOrEqualTo(0));
+      expect(rect.bottom, lessThanOrEqualTo(visibleBottom));
+    },
+  );
+
+  testWidgets('scrolling the form moves the hero with it — nothing is clipped '
+      'at a fixed edge mid-sheet (FX-60)', (WidgetTester tester) async {
+    await _pumpLogin(tester, size: const Size(375, 667));
+
+    final mark = find.byKey(const Key('login-logo-mark'));
+    final emailTopBefore = tester
+        .getTopLeft(find.byType(TextFormField).first)
+        .dy;
+    final markTopBefore = tester.getTopLeft(mark).dy;
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -120));
+    await tester.pumpAndSettle();
+
+    final emailTopAfter = tester
+        .getTopLeft(find.byType(TextFormField).first)
+        .dy;
+    final markTopAfter = tester.getTopLeft(mark).dy;
+    // Hero and form travel by the same amount: one scroll surface.
+    expect(markTopBefore - markTopAfter, greaterThan(0));
+    expect(
+      emailTopBefore - emailTopAfter,
+      moreOrLessEquals(markTopBefore - markTopAfter, epsilon: 0.5),
+    );
+  });
 }
 
 class _ThrowingAuthNotifier extends AuthNotifier {
