@@ -48,6 +48,13 @@ String resolveNotificationRoute({
         ':id',
         normalizedId,
       );
+    // Kolabing invited this community to apply to a Kolab. `target_id` is the
+    // KOLAB id; its detail screen carries the Apply button.
+    case 'kolab_invite':
+      return KolabingRoutes.opportunityDetails.replaceFirst(
+        ':id',
+        normalizedId,
+      );
     // Event reminders carry the EVENT id in `target_id`.
     case 'event_reminder_24h':
     case 'event_reminder_1h':
@@ -98,6 +105,10 @@ bool _isSupportedNotificationPath(String path) {
     return true;
   }
   if (segments.length == 2 && segments[0] == 'event') {
+    return true;
+  }
+  // Kolab detail (`kolab_invite` push deeplink: /opportunity/{kolabId}).
+  if (segments.length == 2 && segments[0] == 'opportunity') {
     return true;
   }
 
