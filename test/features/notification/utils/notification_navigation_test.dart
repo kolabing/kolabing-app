@@ -96,4 +96,27 @@ void main() {
       '/event/event-2',
     );
   });
+
+  test('resolveNotificationRoute routes kolab_invite to the kolab detail', () {
+    final route = resolveNotificationRoute(
+      type: 'kolab_invite',
+      id: 'kolab-3',
+      targetType: 'kolab',
+    );
+
+    expect(
+      route,
+      KolabingRoutes.opportunityDetails.replaceFirst(':id', 'kolab-3'),
+    );
+  });
+
+  test('resolveNotificationRoute accepts the kolab_invite push deeplink', () {
+    final route = resolveNotificationRoute(
+      type: 'kolab_invite',
+      id: 'kolab-3',
+      deeplink: '/opportunity/kolab-3',
+    );
+
+    expect(route, '/opportunity/kolab-3');
+  });
 }

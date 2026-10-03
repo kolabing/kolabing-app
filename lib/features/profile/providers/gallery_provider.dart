@@ -133,7 +133,8 @@ class GalleryState {
   final bool isDeleting;
   final String? error;
 
-  static const int maxPhotos = 10;
+  // Matches the backend (GalleryController::MAX_GALLERY_PHOTOS = 20 since 12 Jun 2026).
+  static const int maxPhotos = 20;
 
   bool get isEmpty => photos.isEmpty;
   bool get canAddMore => photos.length < maxPhotos;
