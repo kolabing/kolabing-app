@@ -614,6 +614,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get forgotPasswordBackToSignInCta => 'Volver a iniciar sesión';
 
   @override
+  String get forgotPasswordOpenGmail => 'Abrir Gmail';
+
+  @override
   String get forgotPasswordUseAnotherEmail => 'Usar otro correo';
 
   @override

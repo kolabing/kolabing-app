@@ -612,6 +612,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPasswordBackToSignInCta => 'Back to sign in';
 
   @override
+  String get forgotPasswordOpenGmail => 'Open Gmail';
+
+  @override
   String get forgotPasswordUseAnotherEmail => 'Use another email';
 
   @override

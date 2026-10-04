@@ -94,6 +94,8 @@ void main() {
     expect(find.text('Remembered it?'), findsOneWidget);
     // The old literal success CTA is gone from the idle form.
     expect(find.text('BACK TO SIGN IN'), findsNothing);
+    // Open Gmail only appears once the link is sent.
+    expect(find.text('Open Gmail'), findsNothing);
   });
 
   testWidgets('a tap anywhere on "Remembered it? Log in" opens login', (

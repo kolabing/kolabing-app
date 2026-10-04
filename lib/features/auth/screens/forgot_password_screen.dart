@@ -1,7 +1,10 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../config/theme/colors.dart';
 import '../../../l10n/app_localizations.dart';
@@ -20,6 +23,11 @@ const Color _kMuted = KolabingColors.muted;
 const Color _kReassurance = Color(0xFF9A9281);
 
 const String _kLoginRoute = '/auth/login';
+
+// External deep links (allowed literals): the Gmail iOS app scheme, and Gmail
+// on the web as the fallback.
+const String _kGmailAppUrl = 'googlegmail:///';
+const String _kGmailWebUrl = 'https://mail.google.com/mail/';
 
 /// Height of the area the K and KOLABING sit in, between nav row and sheet.
 const double _kMarkAreaHeight = 120;
@@ -107,6 +115,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   }
 
   void _handleGoToLogin() => context.go(_kLoginRoute);
+
+  /// The Gmail app when it is installed, otherwise Gmail on the web. On
+  /// Android the web link opens the app itself when Gmail handles it.
+  Future<void> _openGmail() async {
+    if (Platform.isIOS) {
+      try {
+        final opened = await launchUrl(
+          Uri.parse(_kGmailAppUrl),
+          mode: LaunchMode.externalApplication,
+        );
+        if (opened) return;
+      } on Object catch (e) {
+        debugPrint('[AUTH][UI] Gmail app not available: $e');
+      }
+    }
+    try {
+      await launchUrl(
+        Uri.parse(_kGmailWebUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } on Object catch (e) {
+      debugPrint('[AUTH][UI] could not open Gmail: $e');
+    }
+  }
 
   Future<void> _handleSendResetLink() async {
     if (_isLoading || _emailSent) return;
@@ -239,7 +271,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                     email: _emailController.text.trim(),
                                   ),
                                   const SizedBox(height: 24),
+                                  // The next thing they do is open their
+                                  // mail, so that is the primary action.
                                   AuthPrimaryCta(
+                                    key: const Key('forgot-open-gmail'),
+                                    label: l10n.forgotPasswordOpenGmail,
+                                    leadingIcon: Icons.mail_outline_rounded,
+                                    showArrow: false,
+                                    onPressed: _openGmail,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  AuthSecondaryCta(
                                     key: const Key('forgot-back-to-login'),
                                     label: l10n.forgotPasswordBackToSignInCta,
                                     onPressed: _handleGoToLogin,

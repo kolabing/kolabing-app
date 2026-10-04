@@ -251,11 +251,15 @@ class AuthPrimaryCta extends StatefulWidget {
     this.showSuccess = false,
     this.isEnabled = true,
     this.showArrow = true,
+    this.leadingIcon,
     super.key,
   });
 
   final String label;
   final VoidCallback onPressed;
+
+  /// Shown before the label, e.g. a mail icon.
+  final IconData? leadingIcon;
   final bool isLoading;
   final bool showSuccess;
   final bool isEnabled;
@@ -302,6 +306,10 @@ class _AuthPrimaryCtaState extends State<AuthPrimaryCta> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (widget.leadingIcon != null) ...[
+              Icon(widget.leadingIcon, size: 20, color: _kYellow),
+              const SizedBox(width: 10),
+            ],
             Text(
               widget.label,
               style: GoogleFonts.inter(
@@ -367,4 +375,56 @@ class _AuthPrimaryCtaState extends State<AuthPrimaryCta> {
       ),
     );
   }
+}
+
+/// The secondary action: a white pill with a hairline border and ink label.
+class AuthSecondaryCta extends StatelessWidget {
+  const AuthSecondaryCta({
+    required this.label,
+    required this.onPressed,
+    this.isEnabled = true,
+    super.key,
+  });
+
+  final String label;
+  final VoidCallback onPressed;
+  final bool isEnabled;
+
+  @override
+  Widget build(BuildContext context) => AnimatedOpacity(
+    duration: const Duration(milliseconds: 150),
+    opacity: isEnabled ? 1 : 0.45,
+    child: Material(
+      color: _kInputFill,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(999),
+        side: const BorderSide(color: _kInputBorder, width: 1.2),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: isEnabled
+            ? () {
+                HapticFeedback.selectionClick();
+                onPressed();
+              }
+            : null,
+        child: Container(
+          height: 54,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          alignment: Alignment.center,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: _kInk,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
