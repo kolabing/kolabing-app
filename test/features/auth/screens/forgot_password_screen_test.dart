@@ -4,7 +4,6 @@ import 'package:kolabing_app/l10n/app_localizations.dart';
 
 import 'package:kolabing_app/features/auth/screens/forgot_password_screen.dart';
 import 'package:kolabing_app/features/auth/widgets/auth_brand_hero.dart';
-import 'package:kolabing_app/features/auth/widgets/kolabing_logo.dart';
 
 Future<void> _pumpForgotPassword(
   WidgetTester tester, {
@@ -55,7 +54,6 @@ void main() {
     // The K brand hero, as on login — not the old cloud lockup.
     expect(find.byType(AuthBrandHero), findsOneWidget);
     expect(find.byKey(const Key('auth-logo-mark')), findsOneWidget);
-    expect(find.byType(KolabingLogo), findsNothing);
 
     expect(find.text('Reset access.'), findsOneWidget);
     expect(

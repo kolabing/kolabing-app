@@ -14,7 +14,6 @@ import '../providers/auth_provider.dart';
 import '../utils/auth_navigation.dart';
 import '../widgets/auth_link.dart';
 import '../widgets/google_sign_in_button.dart';
-import '../widgets/kolabing_logo.dart';
 
 /// Sign In screen with Google OAuth
 ///
@@ -320,9 +319,15 @@ class _SignInScreenState extends ConsumerState<SignInScreen>
                     // Logo
                     _AnimatedElement(
                       animation: _logoAnimation,
-                      child: const KolabingLogo(
-                        width: 220,
-                        variant: KolabingLogoVariant.yellowTransparent,
+                      // The K app-icon tile (the cloud lockup is retired).
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(28),
+                        child: Image.asset(
+                          'assets/brand/kolabing-app-icon-k.png',
+                          width: 120,
+                          height: 120,
+                          semanticLabel: 'Kolabing',
+                        ),
                       ),
                     ),
 

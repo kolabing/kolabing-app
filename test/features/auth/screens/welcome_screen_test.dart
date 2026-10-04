@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:kolabing_app/config/routes/routes.dart';
 import 'package:kolabing_app/features/auth/screens/welcome_screen.dart';
 import 'package:kolabing_app/features/auth/widgets/auth_brand_hero.dart';
-import 'package:kolabing_app/features/auth/widgets/kolabing_logo.dart';
 
 GoRouter _buildRouter() => GoRouter(
   initialLocation: KolabingRoutes.welcome,
@@ -76,7 +75,6 @@ void main() {
       'assets/brand/kolabing-k-mark.png',
     );
     expect(find.text('KOLABING'), findsOneWidget);
-    expect(find.byType(KolabingLogo), findsNothing);
 
     expect(find.text('Where businesses'), findsOneWidget);
     expect(find.text('and communities'), findsOneWidget);
