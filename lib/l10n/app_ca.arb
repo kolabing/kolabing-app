@@ -186,6 +186,8 @@
   "forgotPasswordBackToSignIn": "TORNAR A INICIAR SESSIÓ",
   "forgotPasswordSpamHint": "Si el correu coincideix amb un compte, l'enllaç arribarà aviat. Si no el veus, revisa la carpeta de correu brossa.",
   "forgotPasswordRemembered": "Ja te'n recordes?",
+  "forgotPasswordSendLink": "Envia l'enllaç",
+  "forgotPasswordBackToSignInCta": "Torna a iniciar la sessió",
   "forgotPasswordUseAnotherEmail": "Utilitzar un altre correu",
   "forgotPasswordHeroLine1": "Recupera l'accés.",
   "forgotPasswordHeroLine2": "TORNA A ENTRAR.",

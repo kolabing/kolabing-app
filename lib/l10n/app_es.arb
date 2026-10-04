@@ -186,6 +186,8 @@
   "forgotPasswordBackToSignIn": "VOLVER A INICIAR SESIÓN",
   "forgotPasswordSpamHint": "Si el correo coincide con una cuenta, el enlace llegará en breve. Si no lo ves, revisa la carpeta de spam.",
   "forgotPasswordRemembered": "¿Ya te acuerdas?",
+  "forgotPasswordSendLink": "Enviar enlace",
+  "forgotPasswordBackToSignInCta": "Volver a iniciar sesión",
   "forgotPasswordUseAnotherEmail": "Usar otro correo",
   "forgotPasswordHeroLine1": "Recupera el acceso.",
   "forgotPasswordHeroLine2": "VUELVE A ENTRAR.",

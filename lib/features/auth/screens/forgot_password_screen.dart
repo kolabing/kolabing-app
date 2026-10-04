@@ -3,22 +3,20 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../config/theme/typography.dart';
+import '../../../config/theme/colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../models/auth_response.dart';
 import '../services/auth_service.dart';
 import '../widgets/auth_brand_hero.dart';
+import '../widgets/auth_form.dart';
 
 // ---------------------------------------------------------------------------
 // Warm-sheet tokens — mirrors login_screen.dart
 // ---------------------------------------------------------------------------
 
-const Color _kYellow = Color(0xFFFFE28C);
 const Color _kCream = kAuthSheetCream;
-const Color _kInk = Color(0xFF19150F);
-const Color _kMuted = Color(0xFF8C8474);
-const Color _kInputBorder = Color(0xFFE4DCCB);
-const Color _kInputFill = Color(0xFFFFFFFF);
+const Color _kInk = KolabingColors.ink;
+const Color _kMuted = KolabingColors.muted;
 const Color _kReassurance = Color(0xFF9A9281);
 
 const String _kLoginRoute = '/auth/login';
@@ -68,6 +66,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     _fadeIn = CurvedAnimation(parent: _entryController, curve: Curves.easeOut);
     _entryController.forward();
     _emailController.addListener(_onEmailChanged);
+    // Repaint the focus halo as the field gains and loses focus.
+    _emailFocusNode.addListener(_onFocusChanged);
+  }
+
+  void _onFocusChanged() {
+    if (mounted) setState(() {});
   }
 
   void _configureSystemUI() {
@@ -87,7 +91,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     _emailController
       ..removeListener(_onEmailChanged)
       ..dispose();
-    _emailFocusNode.dispose();
+    _emailFocusNode
+      ..removeListener(_onFocusChanged)
+      ..dispose();
     _entryController.dispose();
     super.dispose();
   }
@@ -153,6 +159,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final size = MediaQuery.sizeOf(context);
     final heroHeight =
         MediaQuery.paddingOf(context).top +
@@ -189,7 +196,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   // Cream sheet
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(28, 48, 28, 32),
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                       child: SafeArea(
                         top: false,
                         child: ConstrainedBox(
@@ -202,155 +209,147 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // Heading
+                                // Heading — same type as login
                                 Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  ).forgotPasswordHeroLine1,
-                                  style: KolabingTextStyles.displayMedium
-                                      .copyWith(
-                                        color: _kInk,
-                                        height: 0.98,
-                                        letterSpacing: 0,
-                                      ),
-                                ),
-                                const SizedBox(height: 6),
-
-                                // Subtitle
-                                Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  ).forgotPasswordFormSubtitle,
+                                  l10n.forgotPasswordHeroLine1,
                                   style: GoogleFonts.inter(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: _kMuted,
-                                    height: 1.5,
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w800,
+                                    color: _kInk,
+                                    height: 1.05,
+                                    letterSpacing: -0.8,
                                   ),
                                 ),
-                                const SizedBox(height: 24),
-
-                                // Email field
-                                TextFormField(
-                                  controller: _emailController,
-                                  focusNode: _emailFocusNode,
-                                  keyboardType: TextInputType.emailAddress,
-                                  autocorrect: false,
-                                  enableSuggestions: false,
-                                  autofillHints: const [AutofillHints.email],
-                                  enabled: !_isLoading && !_emailSent,
-                                  validator: _validateEmail,
-                                  textInputAction: TextInputAction.done,
-                                  onFieldSubmitted: (_) {
-                                    if (_emailValid) _handleSendResetLink();
-                                  },
+                                const SizedBox(height: 8),
+                                Text(
+                                  l10n.forgotPasswordFormSubtitle,
                                   style: GoogleFonts.inter(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500,
-                                    color: _kInk,
-                                  ),
-                                  cursorColor: _kInk,
-                                  decoration: _fieldDecoration(
-                                    hint: AppLocalizations.of(
-                                      context,
-                                    ).authEmailLabel,
-                                    prefixIcon: Icons.alternate_email_rounded,
+                                    color: _kMuted,
+                                    height: 1.45,
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 28),
 
-                                // Network/server error
-                                if (_networkError != null) ...[
-                                  Text(
-                                    _networkError!,
-                                    style: GoogleFonts.inter(
-                                      fontSize: 12.5,
-                                      fontWeight: FontWeight.w500,
-                                      color: const Color(0xFFBA1A1A),
-                                      height: 1.4,
+                                if (_emailSent) ...[
+                                  _SentCard(
+                                    title: l10n.forgotPasswordSuccessTitle,
+                                    message: l10n.forgotPasswordSuccessSubtitle,
+                                    email: _emailController.text.trim(),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  AuthPrimaryCta(
+                                    key: const Key('forgot-back-to-login'),
+                                    label: l10n.forgotPasswordBackToSignInCta,
+                                    onPressed: _handleGoToLogin,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Center(
+                                    child: AuthInlineLink(
+                                      label: l10n.forgotPasswordUseAnotherEmail,
+                                      onTap: () => setState(() {
+                                        _emailSent = false;
+                                        _emailController.clear();
+                                      }),
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
-                                ],
+                                ] else ...[
+                                  // Email
+                                  AuthFieldLabel(text: l10n.authEmailLabel),
+                                  const SizedBox(height: 8),
+                                  AuthFocusGlow(
+                                    focused: _emailFocusNode.hasFocus,
+                                    child: TextFormField(
+                                      controller: _emailController,
+                                      focusNode: _emailFocusNode,
+                                      keyboardType: TextInputType.emailAddress,
+                                      autocorrect: false,
+                                      enableSuggestions: false,
+                                      autofillHints: const [
+                                        AutofillHints.email,
+                                      ],
+                                      enabled: !_isLoading,
+                                      validator: _validateEmail,
+                                      textInputAction: TextInputAction.done,
+                                      onFieldSubmitted: (_) {
+                                        if (_emailValid) _handleSendResetLink();
+                                      },
+                                      style: authFieldTextStyle,
+                                      cursorColor: _kInk,
+                                      decoration: authFieldDecoration(
+                                        context,
+                                        hint: l10n.authEmailHint,
+                                        prefixIcon:
+                                            Icons.alternate_email_rounded,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
 
-                                // CTA pill / success state
-                                if (_emailSent)
-                                  _SuccessState(
-                                    email: _emailController.text.trim(),
-                                    onBackToLogin: _handleGoToLogin,
-                                    onTryAnother: () => setState(() {
-                                      _emailSent = false;
-                                      _emailController.clear();
-                                    }),
-                                  )
-                                else
-                                  _SendCta(
+                                  // Network/server error
+                                  if (_networkError != null) ...[
+                                    Text(
+                                      _networkError!,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w500,
+                                        color: context.colors.error,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                  ],
+                                  const SizedBox(height: 12),
+
+                                  AuthPrimaryCta(
+                                    label: l10n.forgotPasswordSendLink,
                                     isLoading: _isLoading,
                                     isEnabled: _emailValid && !_isLoading,
                                     onPressed: _handleSendResetLink,
                                   ),
+                                  const SizedBox(height: 16),
 
-                                const SizedBox(height: 16),
-
-                                // Reassurance — always visible
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Icon(
-                                      Icons.info_outline_rounded,
-                                      size: 14,
-                                      color: _kReassurance,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        AppLocalizations.of(
-                                          context,
-                                        ).forgotPasswordSpamHint,
-                                        style: GoogleFonts.inter(
-                                          fontSize: 12.5,
-                                          fontWeight: FontWeight.w500,
+                                  // Reassurance
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(top: 2),
+                                        child: Icon(
+                                          Icons.info_outline_rounded,
+                                          size: 14,
                                           color: _kReassurance,
-                                          height: 1.5,
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-
-                                const SizedBox(height: 32),
-
-                                // Footer link
-                                Center(
-                                  child: GestureDetector(
-                                    onTap: _isLoading ? null : _handleGoToLogin,
-                                    child: RichText(
-                                      text: TextSpan(
-                                        style: GoogleFonts.inter(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: _kMuted,
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          l10n.forgotPasswordSpamHint,
+                                          style: GoogleFonts.inter(
+                                            fontSize: 12.5,
+                                            fontWeight: FontWeight.w500,
+                                            color: _kReassurance,
+                                            height: 1.5,
+                                          ),
                                         ),
-                                        children: [
-                                          TextSpan(
-                                            text:
-                                                '${AppLocalizations.of(context).forgotPasswordRemembered} ',
-                                          ),
-                                          TextSpan(
-                                            text: AppLocalizations.of(
-                                              context,
-                                            ).welcomeLogIn,
-                                            style: GoogleFonts.inter(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: _kInk,
-                                            ),
-                                          ),
-                                        ],
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                ),
+                                ],
+
+                                // After sending, "Back to sign in" already does this.
+                                if (!_emailSent) ...[
+                                  const SizedBox(height: 28),
+                                  AuthFooterLink(
+                                    inkKey: const Key('forgot-login-link'),
+                                    prompt: l10n.forgotPasswordRemembered,
+                                    action: l10n.welcomeLogIn,
+                                    isEnabled: !_isLoading,
+                                    onTap: _handleGoToLogin,
+                                  ),
+                                ],
                               ],
                             ),
                           ),
@@ -366,199 +365,86 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       ),
     );
   }
-
-  InputDecoration _fieldDecoration({
-    required String hint,
-    required IconData prefixIcon,
-  }) => InputDecoration(
-    hintText: hint,
-    hintStyle: GoogleFonts.inter(
-      fontSize: 15,
-      fontWeight: FontWeight.w400,
-      color: _kMuted,
-    ),
-    prefixIcon: Icon(prefixIcon, color: _kMuted, size: 19),
-    prefixIconConstraints: const BoxConstraints(minWidth: 50, minHeight: 56),
-    isDense: false,
-    filled: true,
-    fillColor: _kInputFill,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(24),
-      borderSide: const BorderSide(color: _kInputBorder, width: 1.5),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(24),
-      borderSide: const BorderSide(color: _kInputBorder, width: 1.5),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(24),
-      borderSide: const BorderSide(color: _kInk, width: 1.5),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(24),
-      borderSide: BorderSide(color: const Color(0xFFBA1A1A)),
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(24),
-      borderSide: BorderSide(color: const Color(0xFFBA1A1A), width: 1.5),
-    ),
-    errorStyle: GoogleFonts.inter(
-      fontSize: 11.5,
-      fontWeight: FontWeight.w500,
-      color: const Color(0xFFBA1A1A),
-    ),
-  );
 }
 
 // ---------------------------------------------------------------------------
-// Send reset link CTA — yellow pill with trailing arrow
+// "Check your inbox" — shown after the reset link is requested
 // ---------------------------------------------------------------------------
 
-class _SendCta extends StatelessWidget {
-  const _SendCta({
-    required this.isLoading,
-    required this.isEnabled,
-    required this.onPressed,
+class _SentCard extends StatelessWidget {
+  const _SentCard({
+    required this.title,
+    required this.message,
+    required this.email,
   });
 
-  final bool isLoading;
-  final bool isEnabled;
-  final VoidCallback onPressed;
+  final String title;
+  final String message;
+  final String email;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: double.infinity,
-    height: 54,
-    child: GestureDetector(
-      onTap: isEnabled ? onPressed : null,
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 150),
-        opacity: isEnabled ? 1.0 : 0.45,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: _kYellow,
-            borderRadius: BorderRadius.circular(999),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF141210).withValues(alpha: 0.12),
-                blurRadius: 26,
-                offset: const Offset(0, 12),
-              ),
-            ],
+  Widget build(BuildContext context) => Container(
+    key: const Key('forgot-sent-card'),
+    padding: const EdgeInsets.all(18),
+    decoration: BoxDecoration(
+      color: KolabingColors.surface,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: KolabingColors.outlineVariant, width: 1.2),
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: const BoxDecoration(
+            color: KolabingColors.tertiaryContainer,
+            shape: BoxShape.circle,
           ),
-          child: Center(
-            child: isLoading
-                ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
-                      valueColor: AlwaysStoppedAnimation<Color>(_kInk),
-                    ),
-                  )
-                // FittedBox(scaleDown) so the label+icon shrink together
-                // on narrow screens instead of overflowing the pill
-                // (matches KolabingButton's compact-width strategy).
-                : FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Send reset link',
-                          style: GoogleFonts.inter(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                            color: _kInk,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Icon(
-                          Icons.arrow_forward_rounded,
-                          size: 18,
-                          color: _kInk,
-                        ),
-                      ],
-                    ),
-                  ),
+          child: const Icon(
+            Icons.mark_email_read_outlined,
+            size: 20,
+            color: KolabingColors.tertiary,
           ),
         ),
-      ),
-    ),
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Success state — shown after submit
-// ---------------------------------------------------------------------------
-
-class _SuccessState extends StatelessWidget {
-  const _SuccessState({
-    required this.email,
-    required this.onBackToLogin,
-    required this.onTryAnother,
-  });
-
-  final String email;
-  final VoidCallback onBackToLogin;
-  final VoidCallback onTryAnother;
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      SizedBox(
-        width: double.infinity,
-        height: 54,
-        child: GestureDetector(
-          onTap: onBackToLogin,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: _kYellow,
-              borderRadius: BorderRadius.circular(999),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF141210).withValues(alpha: 0.12),
-                  blurRadius: 26,
-                  offset: const Offset(0, 12),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                AppLocalizations.of(context).forgotPasswordBackToSignIn,
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
                 style: GoogleFonts.inter(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
                   color: _kInk,
                 ),
               ),
-            ),
+              const SizedBox(height: 4),
+              Text(
+                message,
+                style: GoogleFonts.inter(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w500,
+                  color: _kMuted,
+                  height: 1.45,
+                ),
+              ),
+              if (email.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  email,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: _kInk,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
-      ),
-      const SizedBox(height: 8),
-      Align(
-        alignment: Alignment.centerRight,
-        child: TextButton(
-          onPressed: onTryAnother,
-          style: TextButton.styleFrom(
-            foregroundColor: _kMuted,
-            minimumSize: const Size(0, 32),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            padding: EdgeInsets.zero,
-          ),
-          child: Text(
-            AppLocalizations.of(context).forgotPasswordUseAnotherEmail,
-            style: GoogleFonts.inter(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: _kMuted,
-            ),
-          ),
-        ),
-      ),
-    ],
+      ],
+    ),
   );
 }

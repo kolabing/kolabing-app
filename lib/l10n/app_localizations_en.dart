@@ -606,6 +606,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPasswordRemembered => 'Remembered it?';
 
   @override
+  String get forgotPasswordSendLink => 'Send reset link';
+
+  @override
+  String get forgotPasswordBackToSignInCta => 'Back to sign in';
+
+  @override
   String get forgotPasswordUseAnotherEmail => 'Use another email';
 
   @override

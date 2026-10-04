@@ -608,6 +608,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get forgotPasswordRemembered => '¿Ya te acuerdas?';
 
   @override
+  String get forgotPasswordSendLink => 'Enviar enlace';
+
+  @override
+  String get forgotPasswordBackToSignInCta => 'Volver a iniciar sesión';
+
+  @override
   String get forgotPasswordUseAnotherEmail => 'Usar otro correo';
 
   @override

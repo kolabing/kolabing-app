@@ -14,6 +14,7 @@ import '../utils/auth_navigation.dart';
 import '../widgets/apple_sign_in_button.dart';
 import '../widgets/auth_brand_hero.dart';
 import '../widgets/auth_fade_slide.dart';
+import '../widgets/auth_form.dart';
 import '../widgets/google_sign_in_button.dart';
 
 // ---------------------------------------------------------------------------
@@ -21,15 +22,9 @@ import '../widgets/google_sign_in_button.dart';
 // ---------------------------------------------------------------------------
 
 const Color _kYellow = KolabingColors.primary;
-const Color _kYellowDeep = KolabingColors.primaryDark;
 const Color _kCream = kAuthSheetCream;
 const Color _kInk = KolabingColors.ink;
-const Color _kInkBody = KolabingColors.inkBody;
 const Color _kMuted = KolabingColors.muted;
-const Color _kAmber = KolabingColors.amber;
-const Color _kInputBorder = KolabingColors.outlineVariant;
-const Color _kInputFill = KolabingColors.surface;
-const Color _kDivider = Color(0xFFE1D9C8);
 
 const String _kWelcomeRoute = '/auth/welcome';
 const String _kUserTypeSelectionRoute = '/auth/user-type';
@@ -37,7 +32,6 @@ const String _kForgotPasswordRoute = '/auth/forgot-password';
 
 /// Height of the area the K and KOLABING sit in, between nav row and sheet.
 const double _kMarkAreaHeight = 150;
-const double _kFieldRadius = 16;
 const double _kRiseDistance = 18;
 
 /// When a field scrolls above the keyboard, keep this much room below it so the
@@ -493,9 +487,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   crossAxisAlignment:
                                       CrossAxisAlignment.stretch,
                                   children: [
-                                    _FieldLabel(text: l10n.authEmailLabel),
+                                    AuthFieldLabel(text: l10n.authEmailLabel),
                                     const SizedBox(height: 8),
-                                    _FocusGlow(
+                                    AuthFocusGlow(
                                       focused: _emailFocusNode.hasFocus,
                                       child: TextFormField(
                                         controller: _emailController,
@@ -513,9 +507,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                         textInputAction: TextInputAction.next,
                                         onFieldSubmitted: (_) =>
                                             _passwordFocusNode.requestFocus(),
-                                        style: _fieldTextStyle,
+                                        style: authFieldTextStyle,
                                         cursorColor: _kInk,
-                                        decoration: _fieldDecoration(
+                                        decoration: authFieldDecoration(
+                                          context,
                                           hint: l10n.authEmailHint,
                                           prefixIcon:
                                               Icons.alternate_email_rounded,
@@ -538,11 +533,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                     Row(
                                       children: [
                                         Expanded(
-                                          child: _FieldLabel(
+                                          child: AuthFieldLabel(
                                             text: l10n.authPasswordLabel,
                                           ),
                                         ),
-                                        _InlineLink(
+                                        AuthInlineLink(
                                           label: l10n.loginForgotPassword,
                                           isEnabled: interactive,
                                           onTap: () => context.push(
@@ -552,7 +547,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                       ],
                                     ),
                                     const SizedBox(height: 8),
-                                    _FocusGlow(
+                                    AuthFocusGlow(
                                       focused: _passwordFocusNode.hasFocus,
                                       child: TextFormField(
                                         controller: _passwordController,
@@ -567,9 +562,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                         textInputAction: TextInputAction.done,
                                         onFieldSubmitted: (_) =>
                                             _handleEmailLogin(),
-                                        style: _fieldTextStyle,
+                                        style: authFieldTextStyle,
                                         cursorColor: _kInk,
-                                        decoration: _fieldDecoration(
+                                        decoration: authFieldDecoration(
+                                          context,
                                           hint: '••••••••',
                                           prefixIcon:
                                               Icons.lock_outline_rounded,
@@ -597,7 +593,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
                               _rise(
                                 0.4,
-                                _SignInCta(
+                                AuthPrimaryCta(
                                   label: l10n.loginSignInButton,
                                   isLoading: _isLoading,
                                   showSuccess: _showSuccess,
@@ -613,7 +609,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                   crossAxisAlignment:
                                       CrossAxisAlignment.stretch,
                                   children: [
-                                    _OrDivider(label: l10n.authOrContinueWith),
+                                    AuthOrDivider(
+                                      label: l10n.authOrContinueWith,
+                                    ),
                                     const SizedBox(height: 16),
                                     Row(
                                       children: [
@@ -652,7 +650,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               const SizedBox(height: 24),
                               _rise(
                                 0.55,
-                                _SignUpFooter(
+                                AuthFooterLink(
+                                  inkKey: const Key('login-sign-up'),
                                   prompt: l10n.signInNoAccount,
                                   action: l10n.signInSignUp,
                                   isEnabled: interactive,
@@ -667,336 +666,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   ),
                 ),
               ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  TextStyle get _fieldTextStyle => GoogleFonts.inter(
-    fontSize: 15,
-    fontWeight: FontWeight.w500,
-    color: _kInk,
-  );
-
-  InputDecoration _fieldDecoration({
-    required IconData prefixIcon,
-    String? hint,
-    Widget? suffixIcon,
-  }) {
-    OutlineInputBorder border(Color color, [double width = 1.2]) =>
-        OutlineInputBorder(
-          borderRadius: BorderRadius.circular(_kFieldRadius),
-          borderSide: BorderSide(color: color, width: width),
-        );
-
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: GoogleFonts.inter(
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        color: _kMuted.withValues(alpha: 0.7),
-      ),
-      prefixIcon: Icon(prefixIcon, color: _kMuted, size: 19),
-      prefixIconConstraints: const BoxConstraints(minWidth: 48, minHeight: 56),
-      suffixIcon: suffixIcon,
-      filled: true,
-      fillColor: _kInputFill,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-      border: border(_kInputBorder),
-      enabledBorder: border(_kInputBorder),
-      disabledBorder: border(_kInputBorder),
-      focusedBorder: border(_kInk, 1.6),
-      errorBorder: border(context.colors.error),
-      focusedErrorBorder: border(context.colors.error, 1.6),
-      errorStyle: GoogleFonts.inter(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: context.colors.error,
-      ),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Form pieces
-// ---------------------------------------------------------------------------
-
-class _FieldLabel extends StatelessWidget {
-  const _FieldLabel({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(left: 4),
-    child: Text(
-      text,
-      style: GoogleFonts.inter(
-        fontSize: 13,
-        fontWeight: FontWeight.w700,
-        color: _kInkBody,
-      ),
-    ),
-  );
-}
-
-class _InlineLink extends StatelessWidget {
-  const _InlineLink({
-    required this.label,
-    required this.onTap,
-    this.isEnabled = true,
-  });
-
-  final String label;
-  final VoidCallback onTap;
-  final bool isEnabled;
-
-  @override
-  Widget build(BuildContext context) => TextButton(
-    onPressed: isEnabled ? onTap : null,
-    style: TextButton.styleFrom(
-      foregroundColor: _kInk,
-      minimumSize: const Size(0, 32),
-      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-    ),
-    child: Text(
-      label,
-      style: GoogleFonts.inter(
-        fontSize: 13,
-        fontWeight: FontWeight.w600,
-        color: isEnabled ? _kAmber : _kMuted,
-      ),
-    ),
-  );
-}
-
-class _OrDivider extends StatelessWidget {
-  const _OrDivider({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => Row(
-    children: [
-      const Expanded(child: Divider(color: _kDivider, thickness: 1)),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        child: Text(
-          label,
-          style: GoogleFonts.inter(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: _kMuted,
-          ),
-        ),
-      ),
-      const Expanded(child: Divider(color: _kDivider, thickness: 1)),
-    ],
-  );
-}
-
-class _SignUpFooter extends StatelessWidget {
-  const _SignUpFooter({
-    required this.prompt,
-    required this.action,
-    required this.onTap,
-    required this.isEnabled,
-  });
-
-  final String prompt;
-  final String action;
-  final VoidCallback onTap;
-  final bool isEnabled;
-
-  @override
-  Widget build(BuildContext context) => Center(
-    // The whole row is the button, so a tap on the prompt counts too.
-    child: Material(
-      type: MaterialType.transparency,
-      child: InkWell(
-        key: const Key('login-sign-up'),
-        onTap: isEnabled
-            ? () {
-                HapticFeedback.selectionClick();
-                onTap();
-              }
-            : null,
-        borderRadius: BorderRadius.circular(999),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 48),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Text(
-                    prompt,
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: _kMuted,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  action,
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                    color: _kInk,
-                    decoration: TextDecoration.underline,
-                    decorationColor: _kYellowDeep,
-                    decorationThickness: 2.5,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                const Icon(Icons.arrow_forward_rounded, size: 16, color: _kInk),
-              ],
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
-/// A soft yellow halo around a field while it has focus.
-class _FocusGlow extends StatelessWidget {
-  const _FocusGlow({required this.focused, required this.child});
-
-  final bool focused;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => AnimatedContainer(
-    duration: const Duration(milliseconds: 180),
-    curve: Curves.easeOut,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(_kFieldRadius),
-      boxShadow: [
-        BoxShadow(
-          color: _kYellow.withValues(alpha: focused ? 0.75 : 0),
-          spreadRadius: focused ? 4 : 0,
-        ),
-      ],
-    ),
-    child: child,
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Sign in CTA — ink pill, yellow label
-// ---------------------------------------------------------------------------
-
-class _SignInCta extends StatefulWidget {
-  const _SignInCta({
-    required this.label,
-    required this.isLoading,
-    required this.showSuccess,
-    required this.isEnabled,
-    required this.onPressed,
-  });
-
-  final String label;
-  final bool isLoading;
-  final bool showSuccess;
-  final bool isEnabled;
-  final VoidCallback onPressed;
-
-  @override
-  State<_SignInCta> createState() => _SignInCtaState();
-}
-
-class _SignInCtaState extends State<_SignInCta> {
-  bool _pressed = false;
-
-  void _setPressed(bool value) {
-    if (widget.isEnabled && _pressed != value) {
-      setState(() => _pressed = value);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final Widget content;
-    if (widget.isLoading) {
-      content = const SizedBox(
-        key: ValueKey('loading'),
-        width: 22,
-        height: 22,
-        child: CircularProgressIndicator(
-          strokeWidth: 2.5,
-          valueColor: AlwaysStoppedAnimation<Color>(_kYellow),
-        ),
-      );
-    } else if (widget.showSuccess) {
-      content = const Icon(
-        Icons.check_rounded,
-        key: ValueKey('success'),
-        size: 24,
-        color: _kYellow,
-      );
-    } else {
-      content = Row(
-        key: const ValueKey('label'),
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            widget.label,
-            style: GoogleFonts.inter(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-              color: _kYellow,
-            ),
-          ),
-          const SizedBox(width: 10),
-          const Icon(Icons.arrow_forward_rounded, size: 20, color: _kYellow),
-        ],
-      );
-    }
-
-    return Semantics(
-      button: true,
-      enabled: widget.isEnabled,
-      child: GestureDetector(
-        onTapDown: (_) => _setPressed(true),
-        onTapUp: (_) => _setPressed(false),
-        onTapCancel: () => _setPressed(false),
-        onTap: widget.isEnabled
-            ? () {
-                HapticFeedback.lightImpact();
-                widget.onPressed();
-              }
-            : null,
-        child: AnimatedScale(
-          scale: _pressed ? 0.98 : 1,
-          duration: const Duration(milliseconds: 100),
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 150),
-            opacity: widget.isEnabled || widget.isLoading ? 1 : 0.6,
-            child: Container(
-              height: 56,
-              decoration: BoxDecoration(
-                color: _kInk,
-                borderRadius: BorderRadius.circular(999),
-                boxShadow: [
-                  BoxShadow(
-                    color: _kInk.withValues(alpha: 0.22),
-                    blurRadius: 24,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              alignment: Alignment.center,
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: content,
-              ),
             ),
           ),
         ),
