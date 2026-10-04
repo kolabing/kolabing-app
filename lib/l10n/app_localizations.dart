@@ -1216,6 +1216,24 @@ abstract class AppLocalizations {
   /// **'Remembered it?'**
   String get forgotPasswordRemembered;
 
+  /// Forgot password — primary button that emails the reset link.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reset link'**
+  String get forgotPasswordSendLink;
+
+  /// Forgot password — primary button on the success state.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get forgotPasswordBackToSignInCta;
+
+  /// Forgot password — sent state: opens the Gmail app (or Gmail on the web) to find the reset email. "Gmail" is a brand name.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Gmail'**
+  String get forgotPasswordOpenGmail;
+
   /// Forgot-password success panel link to retry with a different email.
   ///
   /// In en, this message translates to:

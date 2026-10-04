@@ -747,6 +747,18 @@
   "@forgotPasswordRemembered": {
     "description": "Forgot password — prompt before the Log in link."
   },
+  "forgotPasswordSendLink": "Send reset link",
+  "@forgotPasswordSendLink": {
+    "description": "Forgot password — primary button that emails the reset link."
+  },
+  "forgotPasswordBackToSignInCta": "Back to sign in",
+  "@forgotPasswordBackToSignInCta": {
+    "description": "Forgot password — primary button on the success state."
+  },
+  "forgotPasswordOpenGmail": "Open Gmail",
+  "@forgotPasswordOpenGmail": {
+    "description": "Forgot password \u2014 sent state: opens the Gmail app (or Gmail on the web) to find the reset email. \"Gmail\" is a brand name."
+  },
   "forgotPasswordUseAnotherEmail": "Use another email",
   "@forgotPasswordUseAnotherEmail": {
     "description": "Forgot-password success panel link to retry with a different email."

@@ -613,6 +613,15 @@ class AppLocalizationsCa extends AppLocalizations {
   String get forgotPasswordRemembered => 'Ja te\'n recordes?';
 
   @override
+  String get forgotPasswordSendLink => 'Envia l\'enllaç';
+
+  @override
+  String get forgotPasswordBackToSignInCta => 'Torna a iniciar la sessió';
+
+  @override
+  String get forgotPasswordOpenGmail => 'Obre Gmail';
+
+  @override
   String get forgotPasswordUseAnotherEmail => 'Utilitzar un altre correu';
 
   @override
