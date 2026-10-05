@@ -5203,6 +5203,34 @@
   "@communityFinalTermsNotice": {
     "description": "Terms and privacy notice below register button"
   },
+  "communityOnboardingCardsLiveTitle": "Your community is live",
+  "@communityOnboardingCardsLiveTitle": {
+    "description": "Organiser onboarding cards (Direction A), card 1 title — what happens next."
+  },
+  "communityOnboardingCardsLiveBody": "You've just created your community on Kolabing. It's live now — businesses and members can already find it.",
+  "@communityOnboardingCardsLiveBody": {
+    "description": "Organiser onboarding cards (Direction A), card 1 body — what happens next."
+  },
+  "communityOnboardingCardsDiscoverTitle": "Members discover and join kolabs",
+  "@communityOnboardingCardsDiscoverTitle": {
+    "description": "Organiser onboarding cards (Direction A), card 2 title — how members discover/join kolabs through the community."
+  },
+  "communityOnboardingCardsDiscoverBody": "When a business offers a kolab to your community, your members see it and can join directly — no extra setup needed from you.",
+  "@communityOnboardingCardsDiscoverBody": {
+    "description": "Organiser onboarding cards (Direction A), card 2 body — how members discover/join kolabs through the community."
+  },
+  "communityOnboardingCardsCtaTitle": "Ready to get things moving?",
+  "@communityOnboardingCardsCtaTitle": {
+    "description": "Organiser onboarding cards (Direction A), card 3 title — call to action."
+  },
+  "communityOnboardingCardsCtaBody": "Post your first kolab to start attracting offers for your community today.",
+  "@communityOnboardingCardsCtaBody": {
+    "description": "Organiser onboarding cards (Direction A), card 3 body — call to action."
+  },
+  "communityOnboardingCardsPostFirstKolab": "Post your first kolab",
+  "@communityOnboardingCardsPostFirstKolab": {
+    "description": "Organiser onboarding cards (Direction A), final CTA button — routes into the existing kolab-creation flow."
+  },
   "communityStep1Title": "Tell us about you",
   "@communityStep1Title": {
     "description": "Community onboarding step 1 title"

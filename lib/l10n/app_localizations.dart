@@ -7336,6 +7336,48 @@ abstract class AppLocalizations {
   /// **'By creating an account, you agree to our Terms of Service and Privacy Policy'**
   String get communityFinalTermsNotice;
 
+  /// Organiser onboarding cards (Direction A), card 1 title — what happens next.
+  ///
+  /// In en, this message translates to:
+  /// **'Your community is live'**
+  String get communityOnboardingCardsLiveTitle;
+
+  /// Organiser onboarding cards (Direction A), card 1 body — what happens next.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve just created your community on Kolabing. It\'s live now — businesses and members can already find it.'**
+  String get communityOnboardingCardsLiveBody;
+
+  /// Organiser onboarding cards (Direction A), card 2 title — how members discover/join kolabs through the community.
+  ///
+  /// In en, this message translates to:
+  /// **'Members discover and join kolabs'**
+  String get communityOnboardingCardsDiscoverTitle;
+
+  /// Organiser onboarding cards (Direction A), card 2 body — how members discover/join kolabs through the community.
+  ///
+  /// In en, this message translates to:
+  /// **'When a business offers a kolab to your community, your members see it and can join directly — no extra setup needed from you.'**
+  String get communityOnboardingCardsDiscoverBody;
+
+  /// Organiser onboarding cards (Direction A), card 3 title — call to action.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to get things moving?'**
+  String get communityOnboardingCardsCtaTitle;
+
+  /// Organiser onboarding cards (Direction A), card 3 body — call to action.
+  ///
+  /// In en, this message translates to:
+  /// **'Post your first kolab to start attracting offers for your community today.'**
+  String get communityOnboardingCardsCtaBody;
+
+  /// Organiser onboarding cards (Direction A), final CTA button — routes into the existing kolab-creation flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Post your first kolab'**
+  String get communityOnboardingCardsPostFirstKolab;
+
   /// Community onboarding step 1 title
   ///
   /// In en, this message translates to:
