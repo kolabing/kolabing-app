@@ -7,7 +7,6 @@ import '../../../../config/routes/routes.dart';
 import '../../../../config/theme/colors.dart';
 import '../../../../config/theme/typography.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../../auth/utils/auth_navigation.dart';
 import '../../../auth/widgets/terms_consent_checkbox.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../utils/onboarding_field_label.dart';
@@ -153,13 +152,11 @@ class _CommunityFinalScreenState extends ConsumerState<CommunityFinalScreen> {
       await Future<void>.delayed(const Duration(milliseconds: 500));
       if (!mounted) return;
 
-      // Show the permission screen on first registration.
-      final route = await gateDestinationOnPermissions(
-        KolabingRoutes.communityDashboard,
-      );
-      if (!mounted) return;
-
-      context.go(route);
+      // Direction A: show the static "what's next" cards right after the
+      // community is created, before the /permissions gate / dashboard.
+      // That screen is itself responsible for resolving
+      // gateDestinationOnPermissions once the organiser finishes it.
+      context.go(KolabingRoutes.communityOnboardingCards);
     } else if (result.isNetworkError) {
       setState(() => _isLoading = false);
       _showNetworkErrorSnackBar();
