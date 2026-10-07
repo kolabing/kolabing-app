@@ -54,7 +54,7 @@ import '../../features/onboarding/screens/business/business_product_identity_scr
 import '../../features/onboarding/screens/business/business_step2_screen.dart';
 import '../../features/onboarding/screens/business/business_step5_screen.dart';
 import '../../features/onboarding/screens/community/community_final_screen.dart';
-import '../../features/onboarding/screens/community/community_onboarding_cards_screen.dart';
+import '../../features/onboarding/screens/community/community_rank_preview_screen.dart';
 import '../../features/onboarding/screens/community/community_step1_screen.dart';
 import '../../features/onboarding/screens/community/community_step2_screen.dart';
 import '../../features/onboarding/screens/community/community_step3_screen.dart';
@@ -128,10 +128,11 @@ abstract final class KolabingRoutes {
   static const String communityOnboardingStep4 = '/onboarding/community/step4';
   static const String communityOnboardingFinal = '/onboarding/community/final';
 
-  /// Organiser "what's next" cards (Direction A, static) — shown right after
+  /// Organiser "what's next" live preview (Direction C) — shown right after
   /// [communityOnboardingFinal] registration succeeds, before the
   /// `/permissions` gate / [communityDashboard]. See
-  /// `CommunityOnboardingCardsScreen`.
+  /// `CommunityRankPreviewScreen` (falls back to the Direction A static
+  /// cards, `CommunityOnboardingCardsScreen`, when the backend call fails).
   static const String communityOnboardingCards = '/onboarding/community/cards';
 
   /// Attendee registration (no onboarding)
@@ -700,14 +701,15 @@ final GoRouter kolabingRouter = GoRouter(
       builder: (BuildContext context, GoRouterState state) =>
           const CommunityFinalScreen(),
     ),
-    // Organiser "what's next" cards (Direction A, static) — inserted right
+    // Organiser "what's next" live preview (Direction C) — inserted right
     // after communityOnboardingFinal registration succeeds, before the
-    // /permissions gate / communityDashboard.
+    // /permissions gate / communityDashboard. Falls back to the Direction A
+    // static cards itself when /me/community-rank 403s or fails.
     GoRoute(
       path: KolabingRoutes.communityOnboardingCards,
       name: 'communityOnboardingCards',
       builder: (BuildContext context, GoRouterState state) =>
-          CommunityOnboardingCardsScreen(
+          CommunityRankPreviewScreen(
             onPostFirstKolab: () => _finishCommunityOnboardingCards(context),
           ),
     ),

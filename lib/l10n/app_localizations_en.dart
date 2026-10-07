@@ -4084,6 +4084,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get communityOnboardingCardsPostFirstKolab => 'Post your first kolab';
 
   @override
+  String communityRankPreviewCurrentRank(int rank, String city) {
+    return 'You\'re #$rank in $city';
+  }
+
+  @override
+  String communityRankPreviewNotRankedYet(String city) {
+    return 'Not ranked yet in $city';
+  }
+
+  @override
+  String communityRankPreviewCurrentPoints(int points) {
+    return '$points pts this month';
+  }
+
+  @override
+  String get communityRankPreviewSliderTitle => 'See what one kolab can do';
+
+  @override
+  String communityRankPreviewSliderSubtitle(int checkins) {
+    return '$checkins check-ins at your first kolab';
+  }
+
+  @override
+  String get communityRankPreviewProjectedPoints => 'New points';
+
+  @override
+  String get communityRankPreviewProjectedRank => 'New rank';
+
+  @override
+  String get communityRankPreviewNotRankedShort => 'Not ranked';
+
+  @override
+  String get communityRankPreviewTrustedUnlocked => 'That unlocks Trusted';
+
+  @override
   String get communityStep1Title => 'Tell us about you';
 
   @override
