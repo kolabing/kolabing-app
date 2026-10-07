@@ -4131,6 +4131,42 @@ class AppLocalizationsEs extends AppLocalizations {
   String get communityOnboardingCardsPostFirstKolab => 'Post your first kolab';
 
   @override
+  String communityRankPreviewCurrentRank(int rank, String city) {
+    return 'Eres el #$rank en $city';
+  }
+
+  @override
+  String communityRankPreviewNotRankedYet(String city) {
+    return 'Todavía no estás clasificado en $city';
+  }
+
+  @override
+  String communityRankPreviewCurrentPoints(int points) {
+    return '$points pts este mes';
+  }
+
+  @override
+  String get communityRankPreviewSliderTitle =>
+      'Mira lo que puede hacer un kolab';
+
+  @override
+  String communityRankPreviewSliderSubtitle(int checkins) {
+    return '$checkins check-ins en tu primer kolab';
+  }
+
+  @override
+  String get communityRankPreviewProjectedPoints => 'Puntos nuevos';
+
+  @override
+  String get communityRankPreviewProjectedRank => 'Posición nueva';
+
+  @override
+  String get communityRankPreviewNotRankedShort => 'Sin clasificar';
+
+  @override
+  String get communityRankPreviewTrustedUnlocked => 'Eso desbloquea Trusted';
+
+  @override
   String get communityStep1Title => 'Cuéntanos sobre ti';
 
   @override

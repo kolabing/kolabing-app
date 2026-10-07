@@ -5203,6 +5203,65 @@
   "@communityOnboardingCardsPostFirstKolab": {
     "description": "Organiser onboarding cards (Direction A), final CTA button — routes into the existing kolab-creation flow."
   },
+  "communityRankPreviewCurrentRank": "You're #{rank} in {city}",
+  "@communityRankPreviewCurrentRank": {
+    "description": "Organiser onboarding live preview (Direction C) — current league standing when the organiser already has a rank.",
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "communityRankPreviewNotRankedYet": "Not ranked yet in {city}",
+  "@communityRankPreviewNotRankedYet": {
+    "description": "Organiser onboarding live preview (Direction C) — shown instead of a rank number when the organiser has 0 points this month.",
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "communityRankPreviewCurrentPoints": "{points} pts this month",
+  "@communityRankPreviewCurrentPoints": {
+    "description": "Organiser onboarding live preview (Direction C) — current month's league points.",
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+  "communityRankPreviewSliderTitle": "See what one kolab can do",
+  "@communityRankPreviewSliderTitle": {
+    "description": "Organiser onboarding live preview (Direction C) — projection slider card title."
+  },
+  "communityRankPreviewSliderSubtitle": "{checkins} check-ins at your first kolab",
+  "@communityRankPreviewSliderSubtitle": {
+    "description": "Organiser onboarding live preview (Direction C) — slider subtitle showing the current drag position.",
+    "placeholders": {
+      "checkins": {
+        "type": "int"
+      }
+    }
+  },
+  "communityRankPreviewProjectedPoints": "New points",
+  "@communityRankPreviewProjectedPoints": {
+    "description": "Organiser onboarding live preview (Direction C) — stat pill label for projected points."
+  },
+  "communityRankPreviewProjectedRank": "New rank",
+  "@communityRankPreviewProjectedRank": {
+    "description": "Organiser onboarding live preview (Direction C) — stat pill label for projected rank."
+  },
+  "communityRankPreviewNotRankedShort": "Not ranked",
+  "@communityRankPreviewNotRankedShort": {
+    "description": "Organiser onboarding live preview (Direction C) — short fallback for the projected-rank stat pill when still not ranked."
+  },
+  "communityRankPreviewTrustedUnlocked": "That unlocks Trusted",
+  "@communityRankPreviewTrustedUnlocked": {
+    "description": "Organiser onboarding live preview (Direction C) — shown once the slider reaches the Trusted threshold (1 kolab + 20 check-ins)."
+  },
   "communityStep1Title": "Tell us about you",
   "@communityStep1Title": {
     "description": "Community onboarding step 1 title"

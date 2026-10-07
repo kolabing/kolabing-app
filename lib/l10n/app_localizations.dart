@@ -7336,6 +7336,60 @@ abstract class AppLocalizations {
   /// **'Post your first kolab'**
   String get communityOnboardingCardsPostFirstKolab;
 
+  /// Organiser onboarding live preview (Direction C) — current league standing when the organiser already has a rank.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re #{rank} in {city}'**
+  String communityRankPreviewCurrentRank(int rank, String city);
+
+  /// Organiser onboarding live preview (Direction C) — shown instead of a rank number when the organiser has 0 points this month.
+  ///
+  /// In en, this message translates to:
+  /// **'Not ranked yet in {city}'**
+  String communityRankPreviewNotRankedYet(String city);
+
+  /// Organiser onboarding live preview (Direction C) — current month's league points.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} pts this month'**
+  String communityRankPreviewCurrentPoints(int points);
+
+  /// Organiser onboarding live preview (Direction C) — projection slider card title.
+  ///
+  /// In en, this message translates to:
+  /// **'See what one kolab can do'**
+  String get communityRankPreviewSliderTitle;
+
+  /// Organiser onboarding live preview (Direction C) — slider subtitle showing the current drag position.
+  ///
+  /// In en, this message translates to:
+  /// **'{checkins} check-ins at your first kolab'**
+  String communityRankPreviewSliderSubtitle(int checkins);
+
+  /// Organiser onboarding live preview (Direction C) — stat pill label for projected points.
+  ///
+  /// In en, this message translates to:
+  /// **'New points'**
+  String get communityRankPreviewProjectedPoints;
+
+  /// Organiser onboarding live preview (Direction C) — stat pill label for projected rank.
+  ///
+  /// In en, this message translates to:
+  /// **'New rank'**
+  String get communityRankPreviewProjectedRank;
+
+  /// Organiser onboarding live preview (Direction C) — short fallback for the projected-rank stat pill when still not ranked.
+  ///
+  /// In en, this message translates to:
+  /// **'Not ranked'**
+  String get communityRankPreviewNotRankedShort;
+
+  /// Organiser onboarding live preview (Direction C) — shown once the slider reaches the Trusted threshold (1 kolab + 20 check-ins).
+  ///
+  /// In en, this message translates to:
+  /// **'That unlocks Trusted'**
+  String get communityRankPreviewTrustedUnlocked;
+
   /// Community onboarding step 1 title
   ///
   /// In en, this message translates to:
