@@ -16,18 +16,25 @@ class _FixedDirectory extends CommunityDirectoryNotifier {
   _FixedDirectory(this._state);
 
   final CommunityDirectoryState _state;
+  int loadMoreCalls = 0;
 
   @override
   CommunityDirectoryState build() => _state;
 
   @override
-  Future<void> loadMore() async {}
+  Future<void> loadMore() async {
+    loadMoreCalls++;
+  }
 
   @override
   Future<void> refresh() async {}
 }
 
-Future<void> _pump(WidgetTester tester, CommunityDirectoryState state) async {
+Future<void> _pump(
+  WidgetTester tester,
+  CommunityDirectoryState state, {
+  _FixedDirectory? notifier,
+}) async {
   tester.view.physicalSize = const Size(1179, 2556);
   tester.view.devicePixelRatio = 3.0;
   addTearDown(tester.view.resetPhysicalSize);
@@ -36,7 +43,9 @@ Future<void> _pump(WidgetTester tester, CommunityDirectoryState state) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        communityDirectoryProvider.overrideWith(() => _FixedDirectory(state)),
+        communityDirectoryProvider.overrideWith(
+          () => notifier ?? _FixedDirectory(state),
+        ),
         communityTypesProvider.overrideWith(
           (ref) async => const <CommunityType>[
             CommunityType(id: '1', name: 'Running club', slug: 'running'),
@@ -118,5 +127,51 @@ void main() {
     await _pump(tester, const CommunityDirectoryState());
 
     expect(find.text('No communities yet'), findsOneWidget);
+  });
+
+  testWidgets('a masked row never draws a name or logo, even if one is sent', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      const CommunityDirectoryState(
+        currentPage: 1,
+        total: 1,
+        items: <DirectoryCommunity>[
+          DirectoryCommunity(
+            id: 'c-1',
+            identityMasked: true,
+            displayName: 'Leaked Name',
+            avatarUrl: 'https://cdn.test/leak.png',
+          ),
+        ],
+      ),
+    );
+
+    expect(find.text('Leaked Name'), findsNothing);
+    expect(find.textContaining('Leaked'), findsNothing);
+    expect(find.byType(Image), findsNothing);
+  });
+
+  testWidgets('scrolling to the end asks for the next page', (tester) async {
+    final state = CommunityDirectoryState(
+      currentPage: 1,
+      lastPage: 3,
+      total: 60,
+      items: <DirectoryCommunity>[
+        for (var i = 0; i < 20; i++)
+          DirectoryCommunity(id: 'c-$i', identityMasked: true),
+      ],
+    );
+    final notifier = _FixedDirectory(state);
+    await _pump(tester, state, notifier: notifier);
+
+    expect(notifier.loadMoreCalls, 0);
+    await tester.drag(find.byType(ListView), const Offset(0, -6000));
+    await tester.pump();
+
+    expect(notifier.loadMoreCalls, greaterThan(0));
+    // A loader sits under the last row while pages remain.
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 }
