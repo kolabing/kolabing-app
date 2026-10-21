@@ -15539,7 +15539,7 @@ abstract class AppLocalizations {
   /// How many published kolabs a community has
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =0{No open kolabs} =1{1 open kolab} other{{count} open kolabs}}'**
+  /// **'{count, plural, =0{No kolabs yet} =1{1 kolab published} other{{count} kolabs published}}'**
   String communityDirectoryOpenKolabs(int count);
 
   /// Community directory empty state

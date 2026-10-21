@@ -36,6 +36,11 @@ class CommunityDirectoryState {
 class CommunityDirectoryNotifier extends Notifier<CommunityDirectoryState> {
   late DiscoveryService _service;
   int _generation = 0;
+  DateTime? _lastLoadMoreFailure;
+
+  /// After a failed page, wait this long before the next scroll tick may
+  /// retry, so an offline phone does not hammer the API.
+  static const Duration retryCooldown = Duration(seconds: 5);
 
   @override
   CommunityDirectoryState build() {
@@ -64,6 +69,11 @@ class CommunityDirectoryNotifier extends Notifier<CommunityDirectoryState> {
 
   Future<void> loadMore() async {
     if (state.isLoading || state.isLoadingMore || !state.hasMore) return;
+    final failedAt = _lastLoadMoreFailure;
+    if (failedAt != null &&
+        DateTime.now().difference(failedAt) < retryCooldown) {
+      return;
+    }
     final generation = _generation;
     final current = state;
     state = CommunityDirectoryState(
@@ -86,7 +96,8 @@ class CommunityDirectoryNotifier extends Notifier<CommunityDirectoryState> {
       );
     } on Exception {
       if (generation != _generation) return;
-      // Keep what is on screen; the next scroll to the bottom tries again.
+      // Keep what is on screen; a later scroll retries after the cooldown.
+      _lastLoadMoreFailure = DateTime.now();
       state = current;
     }
   }
@@ -95,7 +106,8 @@ class CommunityDirectoryNotifier extends Notifier<CommunityDirectoryState> {
     ApiException(:final error) => error.message,
     AuthException(:final message) => message,
     NetworkException(:final message) => message,
-    _ => e.toString(),
+    // Unknown failures show only the screen's own localized message.
+    _ => '',
   };
 }
 

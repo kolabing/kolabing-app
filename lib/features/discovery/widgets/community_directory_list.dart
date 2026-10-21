@@ -54,6 +54,15 @@ class _CommunityDirectoryListState
     }
   }
 
+  /// A first page shorter than the screen never scrolls, so ask for the next
+  /// one straight away.
+  void _fillIfShort() {
+    if (!mounted || !_controller.hasClients) return;
+    if (_controller.position.maxScrollExtent <= 0) {
+      ref.read(communityDirectoryProvider.notifier).loadMore();
+    }
+  }
+
   Future<void> _subscribe() async {
     final allowed = await SubscriptionPaywall.checkAndShow(context, ref);
     if (!allowed || !mounted) return;
@@ -88,7 +97,7 @@ class _CommunityDirectoryListState
       return _Message(
         icon: LucideIcons.alertCircle,
         title: l10n.exploreSomethingWrong,
-        body: state.error,
+        body: state.error!.isEmpty ? null : state.error,
         actionLabel: l10n.exploreTryAgain,
         onAction: () => ref.read(communityDirectoryProvider.notifier).refresh(),
       );
@@ -101,6 +110,9 @@ class _CommunityDirectoryListState
     }
 
     final anyMasked = state.items.any((c) => c.identityMasked);
+    if (state.hasMore && !state.isLoadingMore) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _fillIfShort());
+    }
 
     return RefreshIndicator(
       onRefresh: () => ref.read(communityDirectoryProvider.notifier).refresh(),

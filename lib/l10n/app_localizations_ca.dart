@@ -9006,9 +9006,9 @@ class AppLocalizationsCa extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count kolabs oberts',
-      one: '1 kolab obert',
-      zero: 'Cap kolab obert',
+      other: '$count kolabs publicats',
+      one: '1 kolab publicat',
+      zero: 'Encara cap kolab',
     );
     return '$_temp0';
   }

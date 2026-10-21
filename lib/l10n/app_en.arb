@@ -10312,7 +10312,7 @@
   "@communityDirectoryHiddenName": {"description": "Screen-reader label for a community whose name is hidden from a free business"},
   "communityDirectoryPeople": "{count} people",
   "@communityDirectoryPeople": {"description": "Community size on a directory row", "placeholders": {"count": {"type": "int"}}},
-  "communityDirectoryOpenKolabs": "{count, plural, =0{No open kolabs} =1{1 open kolab} other{{count} open kolabs}}",
+  "communityDirectoryOpenKolabs": "{count, plural, =0{No kolabs yet} =1{1 kolab published} other{{count} kolabs published}}",
   "@communityDirectoryOpenKolabs": {"description": "How many published kolabs a community has", "placeholders": {"count": {"type": "int"}}},
   "communityDirectoryEmpty": "No communities yet",
   "@communityDirectoryEmpty": {"description": "Community directory empty state"},

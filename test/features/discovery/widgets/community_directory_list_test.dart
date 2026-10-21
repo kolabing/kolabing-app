@@ -34,6 +34,7 @@ Future<void> _pump(
   WidgetTester tester,
   CommunityDirectoryState state, {
   _FixedDirectory? notifier,
+  bool settle = true,
 }) async {
   tester.view.physicalSize = const Size(1179, 2556);
   tester.view.devicePixelRatio = 3.0;
@@ -61,7 +62,13 @@ Future<void> _pump(
       ),
     ),
   );
-  await tester.pumpAndSettle();
+  // The bottom loader spins forever while pages remain, so a visible one
+  // never settles.
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
 }
 
 void main() {
@@ -90,7 +97,7 @@ void main() {
     expect(find.text('2 communities on Kolabing'), findsOneWidget);
     expect(find.textContaining('hidden until you subscribe'), findsOneWidget);
     expect(find.text('Running club · 120 people · Barcelona'), findsOneWidget);
-    expect(find.text('No open kolabs'), findsNWidgets(2));
+    expect(find.text('No kolabs yet'), findsNWidgets(2));
     // A screen reader hears "Hidden community", never the placeholder dots.
     expect(find.bySemanticsLabel(RegExp('Hidden community')), findsNWidgets(2));
     expect(find.bySemanticsLabel(RegExp('●')), findsNothing);
@@ -119,7 +126,7 @@ void main() {
 
     expect(find.text('1 community on Kolabing'), findsOneWidget);
     expect(find.text('Barcelona Run Club'), findsOneWidget);
-    expect(find.text('2 open kolabs'), findsOneWidget);
+    expect(find.text('2 kolabs published'), findsOneWidget);
     expect(find.textContaining('hidden until you subscribe'), findsNothing);
   });
 
@@ -173,5 +180,22 @@ void main() {
     expect(notifier.loadMoreCalls, greaterThan(0));
     // A loader sits under the last row while pages remain.
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+
+  testWidgets('a first page shorter than the screen loads the next one', (
+    tester,
+  ) async {
+    const state = CommunityDirectoryState(
+      currentPage: 1,
+      lastPage: 2,
+      total: 21,
+      items: <DirectoryCommunity>[
+        DirectoryCommunity(id: 'c-1', identityMasked: true),
+      ],
+    );
+    final notifier = _FixedDirectory(state);
+    await _pump(tester, state, notifier: notifier, settle: false);
+
+    expect(notifier.loadMoreCalls, greaterThan(0));
   });
 }
