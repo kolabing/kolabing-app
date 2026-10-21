@@ -2586,5 +2586,14 @@
   "quickChatError": "No hemos podido iniciar el chat. Inténtalo de nuevo.",
   "quickChatAvailabilityOnDate": "El {date}",
   "quickChatAvailabilityWeekday": "Cualquier {day}, todas las semanas",
-  "quickChatMessageGroupSize": "{count, plural, one{Tamaño del grupo: {count} persona} other{Tamaño del grupo: {count} personas}}"
+  "quickChatMessageGroupSize": "{count, plural, one{Tamaño del grupo: {count} persona} other{Tamaño del grupo: {count} personas}}",
+  "exploreFeedCommunities": "Comunidades",
+  "communityDirectoryCount": "{count, plural, =1{1 comunidad en Kolabing} other{{count} comunidades en Kolabing}}",
+  "communityDirectoryLockedBanner": "Los nombres y logos se muestran al suscribirte. Desliza para ver todas las comunidades.",
+  "communityDirectorySubscribe": "Suscribirme",
+  "communityDirectoryHiddenName": "Comunidad oculta",
+  "communityDirectoryPeople": "{count} personas",
+  "communityDirectoryOpenKolabs": "{count, plural, =0{Sin kolabs abiertos} =1{1 kolab abierto} other{{count} kolabs abiertos}}",
+  "communityDirectoryEmpty": "Aún no hay comunidades",
+  "communityDirectoryVerified": "Verificada"
 }

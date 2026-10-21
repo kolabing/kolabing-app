@@ -8971,4 +8971,51 @@ class AppLocalizationsCa extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get exploreFeedCommunities => 'Comunitats';
+
+  @override
+  String communityDirectoryCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count comunitats a Kolabing',
+      one: '1 comunitat a Kolabing',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityDirectoryLockedBanner =>
+      'Els noms i logos es mostren quan et subscrius. Llisca per veure totes les comunitats.';
+
+  @override
+  String get communityDirectorySubscribe => 'Subscriure\'m';
+
+  @override
+  String get communityDirectoryHiddenName => 'Comunitat oculta';
+
+  @override
+  String communityDirectoryPeople(int count) {
+    return '$count persones';
+  }
+
+  @override
+  String communityDirectoryOpenKolabs(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count kolabs oberts',
+      one: '1 kolab obert',
+      zero: 'Cap kolab obert',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityDirectoryEmpty => 'Encara no hi ha comunitats';
+
+  @override
+  String get communityDirectoryVerified => 'Verificada';
 }

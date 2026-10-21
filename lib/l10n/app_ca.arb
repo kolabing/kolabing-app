@@ -2586,5 +2586,14 @@
   "quickChatError": "No hem pogut iniciar el xat. Torna-ho a provar.",
   "quickChatAvailabilityOnDate": "El {date}",
   "quickChatAvailabilityWeekday": "Qualsevol {day}, cada setmana",
-  "quickChatMessageGroupSize": "{count, plural, one{Mida del grup: {count} persona} other{Mida del grup: {count} persones}}"
+  "quickChatMessageGroupSize": "{count, plural, one{Mida del grup: {count} persona} other{Mida del grup: {count} persones}}",
+  "exploreFeedCommunities": "Comunitats",
+  "communityDirectoryCount": "{count, plural, =1{1 comunitat a Kolabing} other{{count} comunitats a Kolabing}}",
+  "communityDirectoryLockedBanner": "Els noms i logos es mostren quan et subscrius. Llisca per veure totes les comunitats.",
+  "communityDirectorySubscribe": "Subscriure'm",
+  "communityDirectoryHiddenName": "Comunitat oculta",
+  "communityDirectoryPeople": "{count} persones",
+  "communityDirectoryOpenKolabs": "{count, plural, =0{Cap kolab obert} =1{1 kolab obert} other{{count} kolabs oberts}}",
+  "communityDirectoryEmpty": "Encara no hi ha comunitats",
+  "communityDirectoryVerified": "Verificada"
 }

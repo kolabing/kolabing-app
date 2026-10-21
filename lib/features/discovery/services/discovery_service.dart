@@ -7,6 +7,7 @@ import '../../../config/constants/api.dart';
 import '../../auth/models/auth_response.dart';
 import '../../auth/services/auth_service.dart';
 import '../../opportunity/models/opportunity.dart';
+import '../models/directory_community.dart';
 import '../models/discovery_filters.dart';
 import '../models/explore_feed_item.dart';
 
@@ -95,6 +96,62 @@ class DiscoveryService {
     } on Exception catch (e) {
       debugPrint('DiscoveryService error: $e');
       throw NetworkException('Failed to load discovery opportunities: $e');
+    }
+  }
+
+  /// Every community, for a business to scroll (ROLES §2.24). The identity
+  /// arrives already masked for a free business.
+  Future<PaginatedResponse<DirectoryCommunity>> getCommunityDirectory({
+    int page = 1,
+    int perPage = 20,
+    bool allowRetry = true,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/discovery/communities').replace(
+      queryParameters: <String, String>{
+        'page': page.toString(),
+        'per_page': perPage.toString(),
+      },
+    );
+
+    try {
+      final response = await _httpClient.get(uri, headers: await _getHeaders());
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final items = (json['data'] as List<dynamic>? ?? const <dynamic>[])
+            .whereType<Map<String, dynamic>>()
+            .map(DirectoryCommunity.fromJson)
+            .toList();
+        final meta = (json['meta'] as Map<String, dynamic>?) ?? json;
+        return PaginatedResponse<DirectoryCommunity>(
+          data: items,
+          currentPage: _parseInt(meta['current_page']) ?? page,
+          lastPage: _parseInt(meta['last_page']) ?? page,
+          total: _parseInt(meta['total']) ?? items.length,
+        );
+      }
+      if (response.statusCode == 401) {
+        if (allowRetry) {
+          await _authService.refreshSession();
+          return getCommunityDirectory(
+            page: page,
+            perPage: perPage,
+            allowRetry: false,
+          );
+        }
+        throw const AuthException('Session expired. Please sign in again.');
+      }
+
+      throw _parseApiError(response);
+    } on ApiException {
+      rethrow;
+    } on AuthException {
+      rethrow;
+    } on NetworkException {
+      rethrow;
+    } on Exception catch (e) {
+      debugPrint('DiscoveryService directory error: $e');
+      throw NetworkException('Failed to load communities: $e');
     }
   }
 

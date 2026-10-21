@@ -8926,4 +8926,51 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get exploreFeedCommunities => 'Comunidades';
+
+  @override
+  String communityDirectoryCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count comunidades en Kolabing',
+      one: '1 comunidad en Kolabing',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityDirectoryLockedBanner =>
+      'Los nombres y logos se muestran al suscribirte. Desliza para ver todas las comunidades.';
+
+  @override
+  String get communityDirectorySubscribe => 'Suscribirme';
+
+  @override
+  String get communityDirectoryHiddenName => 'Comunidad oculta';
+
+  @override
+  String communityDirectoryPeople(int count) {
+    return '$count personas';
+  }
+
+  @override
+  String communityDirectoryOpenKolabs(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count kolabs abiertos',
+      one: '1 kolab abierto',
+      zero: 'Sin kolabs abiertos',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get communityDirectoryEmpty => 'Aún no hay comunidades';
+
+  @override
+  String get communityDirectoryVerified => 'Verificada';
 }

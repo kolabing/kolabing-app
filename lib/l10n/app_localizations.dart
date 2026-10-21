@@ -15499,6 +15499,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{Group size: {count} person} other{Group size: {count} people}}'**
   String quickChatMessageGroupSize(int count);
+
+  /// Feed toggle (business only): every community on Kolabing
+  ///
+  /// In en, this message translates to:
+  /// **'Communities'**
+  String get exploreFeedCommunities;
+
+  /// Community directory header: how many communities there are
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 community on Kolabing} other{{count} communities on Kolabing}}'**
+  String communityDirectoryCount(int count);
+
+  /// Community directory banner for a free business
+  ///
+  /// In en, this message translates to:
+  /// **'Names and logos stay hidden until you subscribe. Scroll to see every community.'**
+  String get communityDirectoryLockedBanner;
+
+  /// Community directory banner button that opens the paywall
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe'**
+  String get communityDirectorySubscribe;
+
+  /// Screen-reader label for a community whose name is hidden from a free business
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden community'**
+  String get communityDirectoryHiddenName;
+
+  /// Community size on a directory row
+  ///
+  /// In en, this message translates to:
+  /// **'{count} people'**
+  String communityDirectoryPeople(int count);
+
+  /// How many published kolabs a community has
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No open kolabs} =1{1 open kolab} other{{count} open kolabs}}'**
+  String communityDirectoryOpenKolabs(int count);
+
+  /// Community directory empty state
+  ///
+  /// In en, this message translates to:
+  /// **'No communities yet'**
+  String get communityDirectoryEmpty;
+
+  /// Badge on a verified community
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get communityDirectoryVerified;
 }
 
 class _AppLocalizationsDelegate
