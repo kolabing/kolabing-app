@@ -89,6 +89,8 @@ void main() {
 
     expect(find.text('Recommended'), findsOneWidget);
     expect(find.text('All'), findsOneWidget);
+    // The community directory is for venues only (ROLES §2.24).
+    expect(find.text('Communities'), findsNothing);
 
     await tester.tap(find.text('All'));
     await tester.pumpAndSettle();
@@ -210,6 +212,9 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+
+      // A business gets the community directory tab (ROLES §2.24).
+      expect(find.text('Communities'), findsOneWidget);
 
       // The redesigned card shows the creator name + offer line, not the
       // opportunity title (the title lives in the detail sheet).

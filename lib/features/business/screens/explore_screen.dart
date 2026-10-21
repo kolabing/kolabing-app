@@ -27,6 +27,7 @@ import '../../discovery/models/discovery_filters.dart';
 import '../../discovery/models/discovery_item.dart';
 import '../../discovery/models/explore_feed_item.dart';
 import '../../discovery/providers/discovery_provider.dart';
+import '../../discovery/widgets/community_directory_list.dart';
 import '../../discovery/widgets/discovery_quick_filters.dart';
 import '../../notification/widgets/notification_bell.dart';
 import '../../opportunity/models/opportunity.dart';
@@ -79,6 +80,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
   /// endpoint has no `saved` feed — the Saved tab is backed by a separate
   /// provider (`GET /kolabs?saved=1`).
   bool _savedSelected = false;
+
+  /// Business only: the community directory tab (ROLES §2.24).
+  bool _communitiesSelected = false;
 
   /// Kolab ids the viewer applied to from this screen (Quick chat or the full
   /// request). The discovery payload has no `has_applied` flag, so this is
@@ -365,7 +369,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             _buildHeader(),
             const SizedBox(height: 6),
             // The search/filter bar + quick filters drive the discovery feed only.
-            if (!_savedSelected)
+            if (!_savedSelected && !_communitiesSelected)
               AnimatedSize(
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeOut,
@@ -381,22 +385,39 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             _FeedToggle(
               feed: filters.feed,
               savedSelected: _savedSelected,
+              communitiesSelected: _communitiesSelected,
               onRecommended: () {
-                setState(() => _savedSelected = false);
+                setState(() {
+                  _savedSelected = false;
+                  _communitiesSelected = false;
+                });
                 ref
                     .read(discoveryFiltersProvider.notifier)
                     .setFeed(DiscoveryFeed.recommended);
               },
               onAll: () {
-                setState(() => _savedSelected = false);
+                setState(() {
+                  _savedSelected = false;
+                  _communitiesSelected = false;
+                });
                 ref
                     .read(discoveryFiltersProvider.notifier)
                     .setFeed(DiscoveryFeed.all);
               },
-              onSaved: () => setState(() => _savedSelected = true),
+              onSaved: () => setState(() {
+                _savedSelected = true;
+                _communitiesSelected = false;
+              }),
+              // Communities browse Kolabs only; the directory is for venues.
+              onCommunities: _isCommunityViewer
+                  ? null
+                  : () => setState(() {
+                      _communitiesSelected = true;
+                      _savedSelected = false;
+                    }),
             ),
             const SizedBox(height: KolabingSpacing.xs),
-            if (!_savedSelected)
+            if (!_savedSelected && !_communitiesSelected)
               AnimatedSize(
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeOut,
@@ -414,7 +435,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                       ),
               ),
             Expanded(
-              child: _savedSelected
+              child: _communitiesSelected
+                  ? const CommunityDirectoryList()
+                  : _savedSelected
                   ? _buildSavedTab()
                   : listState.isLoading
                   ? _buildLoadingState()
@@ -1061,13 +1084,19 @@ class _FeedToggle extends StatelessWidget {
     required this.onRecommended,
     required this.onAll,
     required this.onSaved,
+    this.communitiesSelected = false,
+    this.onCommunities,
   });
 
   final DiscoveryFeed feed;
   final bool savedSelected;
+  final bool communitiesSelected;
   final VoidCallback onRecommended;
   final VoidCallback onAll;
   final VoidCallback onSaved;
+
+  /// Null hides the Communities segment (community viewers).
+  final VoidCallback? onCommunities;
 
   @override
   Widget build(BuildContext context) {
@@ -1086,14 +1115,20 @@ class _FeedToggle extends StatelessWidget {
             Expanded(
               child: _FeedSegment(
                 label: l10n.exploreFeedRecommended,
-                isSelected: !savedSelected && feed == DiscoveryFeed.recommended,
+                isSelected:
+                    !savedSelected &&
+                    !communitiesSelected &&
+                    feed == DiscoveryFeed.recommended,
                 onTap: onRecommended,
               ),
             ),
             Expanded(
               child: _FeedSegment(
                 label: l10n.exploreFeedAll,
-                isSelected: !savedSelected && feed == DiscoveryFeed.all,
+                isSelected:
+                    !savedSelected &&
+                    !communitiesSelected &&
+                    feed == DiscoveryFeed.all,
                 onTap: onAll,
               ),
             ),
@@ -1104,6 +1139,14 @@ class _FeedToggle extends StatelessWidget {
                 onTap: onSaved,
               ),
             ),
+            if (onCommunities != null)
+              Expanded(
+                child: _FeedSegment(
+                  label: l10n.exploreFeedCommunities,
+                  isSelected: communitiesSelected,
+                  onTap: onCommunities!,
+                ),
+              ),
           ],
         ),
       ),
@@ -1207,21 +1250,26 @@ class _FeedSegment extends StatelessWidget {
     onTap: onTap,
     child: AnimatedContainer(
       duration: const Duration(milliseconds: 180),
-      padding: const EdgeInsets.symmetric(vertical: 7),
+      padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 4),
       decoration: BoxDecoration(
         color: isSelected ? context.colors.softYellow : Colors.transparent,
         borderRadius: BorderRadius.circular(KolabingRadius.round),
         border: isSelected ? Border.all(color: context.colors.primary) : null,
       ),
       alignment: Alignment.center,
-      child: Text(
-        label,
-        style: KolabingTextStyles.button.copyWith(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: isSelected
-              ? KolabingColors.onSurface
-              : context.colors.onSurfaceVariant,
+      // Four segments for a business: a long label shrinks, never wraps.
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          label,
+          maxLines: 1,
+          style: KolabingTextStyles.button.copyWith(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: isSelected
+                ? KolabingColors.onSurface
+                : context.colors.onSurfaceVariant,
+          ),
         ),
       ),
     ),

@@ -60,7 +60,7 @@ The business Explore feed shows COMMUNITY Kolabs (the posts communities created,
 - The community size / number of people expected at the event
 - The available dates
 
-Business Explore shows Kolabs, NOT community profiles. A community profile is reached by tapping into a Kolab (subscribed businesses only).
+Business Explore shows Kolabs, NOT community profiles. A community profile is reached by tapping into a Kolab (subscribed businesses only). The one exception is Explore's **Communities** tab (business only, SERR-201, 2026-10-21): every community from `GET /discovery/communities`, paged to the end, with name and logo withheld by the server for a free business (`identity_masked`); a masked row opens the paywall, an unmasked one opens the profile. Backend ROLES §2.24.
 
 ### 2.4 Profile — what a business has
 - Logo, business name, venue or product type (formatted tag, e.g. "Coffee Shop", never "coffee_shop")
