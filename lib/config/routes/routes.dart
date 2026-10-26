@@ -54,6 +54,7 @@ import '../../features/onboarding/screens/business/business_product_identity_scr
 import '../../features/onboarding/screens/business/business_step2_screen.dart';
 import '../../features/onboarding/screens/business/business_step5_screen.dart';
 import '../../features/onboarding/screens/community/community_final_screen.dart';
+import '../../features/onboarding/screens/community/community_onboarding_cards_screen.dart';
 import '../../features/onboarding/screens/community/community_step1_screen.dart';
 import '../../features/onboarding/screens/community/community_step2_screen.dart';
 import '../../features/onboarding/screens/community/community_step3_screen.dart';
@@ -126,6 +127,12 @@ abstract final class KolabingRoutes {
   static const String communityOnboardingStep3 = '/onboarding/community/step3';
   static const String communityOnboardingStep4 = '/onboarding/community/step4';
   static const String communityOnboardingFinal = '/onboarding/community/final';
+
+  /// Organiser "what's next" cards (Direction A, static) — shown right after
+  /// [communityOnboardingFinal] registration succeeds, before the
+  /// `/permissions` gate / [communityDashboard]. See
+  /// `CommunityOnboardingCardsScreen`.
+  static const String communityOnboardingCards = '/onboarding/community/cards';
 
   /// Attendee registration (no onboarding)
   static const String attendeeRegister = '/auth/register/attendee';
@@ -692,6 +699,17 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'communityOnboardingFinal',
       builder: (BuildContext context, GoRouterState state) =>
           const CommunityFinalScreen(),
+    ),
+    // Organiser "what's next" cards (Direction A, static) — inserted right
+    // after communityOnboardingFinal registration succeeds, before the
+    // /permissions gate / communityDashboard.
+    GoRoute(
+      path: KolabingRoutes.communityOnboardingCards,
+      name: 'communityOnboardingCards',
+      builder: (BuildContext context, GoRouterState state) =>
+          CommunityOnboardingCardsScreen(
+            onPostFirstKolab: () => _finishCommunityOnboardingCards(context),
+          ),
     ),
 
     // Attendee Onboarding (You · City · Interests · Join)
@@ -1329,6 +1347,25 @@ class _RouteNotFoundScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+/// Finishes the organiser onboarding cards screen (Direction A): routes
+/// through the same `/permissions` gate every other onboarding final step
+/// uses, then — only when that gate is already settled, so there is no
+/// interstitial screen in between — pushes the unified kolab-creation entry
+/// on top so its back button has the dashboard to return to. A first-time
+/// permission interstitial lands on the dashboard without the extra push,
+/// same as every other onboarding destination; chaining through that screen
+/// too is explicitly out of scope for Direction A (logged in the PR).
+Future<void> _finishCommunityOnboardingCards(BuildContext context) async {
+  final route = await gateDestinationOnPermissions(
+    KolabingRoutes.communityDashboard,
+  );
+  if (!context.mounted) return;
+  context.go(route);
+  if (route == KolabingRoutes.communityDashboard) {
+    context.push(KolabingRoutes.kolabNew);
   }
 }
 

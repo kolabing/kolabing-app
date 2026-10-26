@@ -14,6 +14,7 @@ import '../../event/providers/event_provider.dart';
 import '../../event/screens/create_event_screen.dart';
 import '../../event/screens/event_detail_screen.dart';
 import '../../gamification/screens/community_challenges_screen.dart';
+import '../../onboarding/screens/community/community_onboarding_cards_screen.dart';
 import '../models/community.dart';
 import '../models/community_member.dart';
 import '../models/community_tier.dart';
@@ -69,6 +70,12 @@ class CommunityHubScreen extends ConsumerWidget {
     );
     if (created ?? false) {
       await ref.read(communityManageProvider.notifier).reloadCommunities();
+      if (!context.mounted) return;
+      // Direction A: same static "what's next" cards shown on the
+      // registration-time onboarding path, for the in-app "create a
+      // community" entry point (this screen isn't a GoRoute, so the cards
+      // screen is pushed on the plain Navigator stack instead of go_router).
+      await pushCommunityOnboardingCards(context);
     }
   }
 }

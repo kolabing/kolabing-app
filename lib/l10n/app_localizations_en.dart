@@ -4081,6 +4081,31 @@ class AppLocalizationsEn extends AppLocalizations {
       'By creating an account, you agree to our Terms of Service and Privacy Policy';
 
   @override
+  String get communityOnboardingCardsLiveTitle => 'Your community is live';
+
+  @override
+  String get communityOnboardingCardsLiveBody =>
+      'You\'ve just created your community on Kolabing. It\'s live now — businesses and members can already find it.';
+
+  @override
+  String get communityOnboardingCardsDiscoverTitle =>
+      'Members discover and join kolabs';
+
+  @override
+  String get communityOnboardingCardsDiscoverBody =>
+      'When a business offers a kolab to your community, your members see it and can join directly — no extra setup needed from you.';
+
+  @override
+  String get communityOnboardingCardsCtaTitle => 'Ready to get things moving?';
+
+  @override
+  String get communityOnboardingCardsCtaBody =>
+      'Post your first kolab to start attracting offers for your community today.';
+
+  @override
+  String get communityOnboardingCardsPostFirstKolab => 'Post your first kolab';
+
+  @override
   String get communityStep1Title => 'Tell us about you';
 
   @override
