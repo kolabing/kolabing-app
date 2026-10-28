@@ -9037,4 +9037,16 @@ class AppLocalizationsCa extends AppLocalizations {
   @override
   String get hotelPlanNoteBody =>
       'Tot Kolabing més estadístiques del local. Es cobra a través de l\'App Store quan et subscrius.';
+
+  @override
+  String venueProUpgradeTitle(String price) {
+    return 'Millora a Venue Pro, $price al mes';
+  }
+
+  @override
+  String get venueProUpgradeBody =>
+      'Afegeix estadístiques del local: ingressos per esdeveniment, assistència i les teves millors comunitats. Apple prorrateja el canvi.';
+
+  @override
+  String get venueProUpgradeButton => 'Millorar a Venue Pro';
 }

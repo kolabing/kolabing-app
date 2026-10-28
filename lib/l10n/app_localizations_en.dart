@@ -8908,4 +8908,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get hotelPlanNoteBody =>
       'Everything in Kolabing plus venue insights. Billed through the App Store when you subscribe.';
+
+  @override
+  String venueProUpgradeTitle(String price) {
+    return 'Upgrade to Venue Pro, $price per month';
+  }
+
+  @override
+  String get venueProUpgradeBody =>
+      'Adds venue insights: revenue per event, attendance and your best communities. Apple prorates the change.';
+
+  @override
+  String get venueProUpgradeButton => 'Upgrade to Venue Pro';
 }

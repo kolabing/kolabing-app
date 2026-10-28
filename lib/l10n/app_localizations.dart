@@ -15583,6 +15583,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Everything in Kolabing plus venue insights. Billed through the App Store when you subscribe.'**
   String get hotelPlanNoteBody;
+
+  /// Subscription screen: upgrade card title for a hotel on a standard plan
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Venue Pro, {price} per month'**
+  String venueProUpgradeTitle(String price);
+
+  /// Subscription screen: what the Venue Pro upgrade adds
+  ///
+  /// In en, this message translates to:
+  /// **'Adds venue insights: revenue per event, attendance and your best communities. Apple prorates the change.'**
+  String get venueProUpgradeBody;
+
+  /// Subscription screen: button that starts the Venue Pro purchase
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Venue Pro'**
+  String get venueProUpgradeButton;
 }
 
 class _AppLocalizationsDelegate

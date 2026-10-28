@@ -2600,5 +2600,8 @@
   "subscriptionPlanVenueProDescription": "Tot Kolabing, més estadístiques del local: ingressos per esdeveniment, assistència i les teves millors comunitats.",
   "subscriptionPlanVenueProBadge": "Per a hotels",
   "hotelPlanNoteTitle": "Hotels: Venue Pro costa {price} al mes",
-  "hotelPlanNoteBody": "Tot Kolabing més estadístiques del local. Es cobra a través de l'App Store quan et subscrius."
+  "hotelPlanNoteBody": "Tot Kolabing més estadístiques del local. Es cobra a través de l'App Store quan et subscrius.",
+  "venueProUpgradeTitle": "Millora a Venue Pro, {price} al mes",
+  "venueProUpgradeBody": "Afegeix estadístiques del local: ingressos per esdeveniment, assistència i les teves millors comunitats. Apple prorrateja el canvi.",
+  "venueProUpgradeButton": "Millorar a Venue Pro"
 }

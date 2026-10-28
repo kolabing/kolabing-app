@@ -10327,5 +10327,11 @@
   "hotelPlanNoteTitle": "Hotels: Venue Pro is {price} per month",
   "@hotelPlanNoteTitle": {"description": "Onboarding note shown when a business picks the hotel type: the plan price", "placeholders": {"price": {"type": "String"}}},
   "hotelPlanNoteBody": "Everything in Kolabing plus venue insights. Billed through the App Store when you subscribe.",
-  "@hotelPlanNoteBody": {"description": "Onboarding note shown when a business picks the hotel type: what the plan includes and how it is billed"}
+  "@hotelPlanNoteBody": {"description": "Onboarding note shown when a business picks the hotel type: what the plan includes and how it is billed"},
+  "venueProUpgradeTitle": "Upgrade to Venue Pro, {price} per month",
+  "@venueProUpgradeTitle": {"description": "Subscription screen: upgrade card title for a hotel on a standard plan", "placeholders": {"price": {"type": "String"}}},
+  "venueProUpgradeBody": "Adds venue insights: revenue per event, attendance and your best communities. Apple prorates the change.",
+  "@venueProUpgradeBody": {"description": "Subscription screen: what the Venue Pro upgrade adds"},
+  "venueProUpgradeButton": "Upgrade to Venue Pro",
+  "@venueProUpgradeButton": {"description": "Subscription screen: button that starts the Venue Pro purchase"}
 }
