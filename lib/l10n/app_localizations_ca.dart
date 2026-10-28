@@ -9018,4 +9018,53 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get communityDirectoryVerified => 'Verificada';
+
+  @override
+  String get chatSectionKolabingTeam => 'Equip de Kolabing';
+
+  @override
+  String get chatKolabingTeamName => 'Equip de Kolabing';
+
+  @override
+  String get teamOfferAccept => 'Accepta';
+
+  @override
+  String get teamOfferNotNow => 'Ara no';
+
+  @override
+  String get teamOfferAccepted => 'Acceptada';
+
+  @override
+  String get teamOfferDeclined => 'Ara no';
+
+  @override
+  String teamOfferDate(String date) {
+    return 'Data: $date';
+  }
+
+  @override
+  String teamOfferWithCommunity(String community) {
+    return 'Amb: $community';
+  }
+
+  @override
+  String teamOfferBusinessGets(String text) {
+    return 'El local rep: $text';
+  }
+
+  @override
+  String teamOfferCommunityGets(String text) {
+    return 'La comunitat rep: $text';
+  }
+
+  @override
+  String get teamOfferAcceptedApplied =>
+      'Fet. La teva sol·licitud s\'ha enviat al local.';
+
+  @override
+  String get teamOfferAcceptedProposed =>
+      'Fet. Hem enviat la teva proposta a la comunitat.';
+
+  @override
+  String get teamOfferDeclinedSnack => 'D\'acord, no l\'enviarem.';
 }

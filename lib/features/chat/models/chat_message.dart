@@ -1,3 +1,5 @@
+import 'kolabing_team_offer.dart';
+
 /// The sender of a [ChatMessage] (lightweight profile summary).
 class ChatSender {
   const ChatSender({
@@ -35,6 +37,8 @@ class ChatMessage {
     required this.body,
     required this.createdAt,
     this.isMine = false,
+    this.isFromTeam = false,
+    this.offer,
   });
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
@@ -51,6 +55,11 @@ class ChatMessage {
     createdAt: DateTime.parse(json['created_at'] as String),
     // is_own (ChatMessageResource) or is_mine.
     isMine: (json['is_own'] ?? json['is_mine']) as bool? ?? false,
+    // 'team' when Kolabing wrote it (no sender profile); `offer` is the card.
+    isFromTeam: json['sender_type'] == 'team',
+    offer: json['offer'] is Map<String, dynamic>
+        ? KolabingTeamOffer.fromJson(json['offer'] as Map<String, dynamic>)
+        : null,
   );
 
   final String id;
@@ -61,6 +70,12 @@ class ChatMessage {
 
   /// True when the authenticated user sent it (right-aligned bubble).
   final bool isMine;
+
+  /// True when the Kolabing team sent it (shown as "Kolabing team").
+  final bool isFromTeam;
+
+  /// The offer card attached to a team message, if any.
+  final KolabingTeamOffer? offer;
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -78,6 +93,8 @@ class ChatMessage {
     String? body,
     DateTime? createdAt,
     bool? isMine,
+    bool? isFromTeam,
+    KolabingTeamOffer? offer,
   }) => ChatMessage(
     id: id ?? this.id,
     threadId: threadId ?? this.threadId,
@@ -85,5 +102,7 @@ class ChatMessage {
     body: body ?? this.body,
     createdAt: createdAt ?? this.createdAt,
     isMine: isMine ?? this.isMine,
+    isFromTeam: isFromTeam ?? this.isFromTeam,
+    offer: offer ?? this.offer,
   );
 }

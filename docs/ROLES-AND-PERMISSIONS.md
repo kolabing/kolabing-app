@@ -966,3 +966,7 @@ This file and `docs/ROLES-BACKEND-DB-MAP.md` are read by every Claude session th
 5. If the change adds or removes a role surface entirely, update the project `CLAUDE.md` "MUST READ" block too.
 
 Treat this maintenance as part of the change, not optional.
+
+## Kolabing team offers (SERR-658, mirrors kolabing-v2 ROLES §2.22)
+
+Kolabing can message one profile as itself from a `kolabing_team` chat thread, with an offer card (Accept / Not now). A business accepting such an offer creates a direct proposal to the named community **without the active-subscription check**; the card names the community only to a subscribed business. A community accepting applies to the Kolab. The app never creates or sends these; it only renders and answers them.

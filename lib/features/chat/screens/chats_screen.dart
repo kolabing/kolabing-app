@@ -244,6 +244,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
     List<ChatThread> of(ChatThreadType t) =>
         threads.where((x) => x.type == t).toList();
     final groups = <_Section>[
+      _Section(l10n.chatSectionKolabingTeam, of(ChatThreadType.kolabingTeam)),
       _Section(l10n.chatSectionMain, of(ChatThreadType.communityMain)),
       _Section(
         l10n.chatSectionCommunityChats,
@@ -268,6 +269,9 @@ class _ThreadTile extends ConsumerWidget {
   final ChatThread thread;
 
   String _titleFor(AppLocalizations l10n, WidgetRef ref) {
+    if (thread.type == ChatThreadType.kolabingTeam) {
+      return l10n.chatKolabingTeamName;
+    }
     if (thread.name != null && thread.name!.isNotEmpty) return thread.name!;
     if (thread.participants.isNotEmpty) {
       // Show the counterpart(s), not the viewer's own name — a 1:1
@@ -320,7 +324,9 @@ class _ThreadTile extends ConsumerWidget {
           leading: CircleAvatar(
             backgroundColor: context.colors.primary.withValues(alpha: 0.2),
             child: Icon(
-              thread.type == ChatThreadType.event
+              thread.type == ChatThreadType.kolabingTeam
+                  ? LucideIcons.sparkles
+                  : thread.type == ChatThreadType.event
                   ? LucideIcons.calendar
                   : thread.type == ChatThreadType.collaboration
                   ? LucideIcons.briefcase

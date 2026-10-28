@@ -15553,6 +15553,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verified'**
   String get communityDirectoryVerified;
+
+  /// Chat inbox section label for the Kolabing team thread.
+  ///
+  /// In en, this message translates to:
+  /// **'Kolabing team'**
+  String get chatSectionKolabingTeam;
+
+  /// Title of the Kolabing team thread and the sender name on its messages.
+  ///
+  /// In en, this message translates to:
+  /// **'Kolabing team'**
+  String get chatKolabingTeamName;
+
+  /// Accept button on a Kolabing team offer card.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get teamOfferAccept;
+
+  /// Decline button on a Kolabing team offer card.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get teamOfferNotNow;
+
+  /// Status chip on an accepted Kolabing team offer card.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get teamOfferAccepted;
+
+  /// Status chip on a declined Kolabing team offer card.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get teamOfferDeclined;
+
+  /// Proposed date line on an offer card.
+  ///
+  /// In en, this message translates to:
+  /// **'Date: {date}'**
+  String teamOfferDate(String date);
+
+  /// Names the community on a business offer card.
+  ///
+  /// In en, this message translates to:
+  /// **'With: {community}'**
+  String teamOfferWithCommunity(String community);
+
+  /// What the business gets, on an offer card.
+  ///
+  /// In en, this message translates to:
+  /// **'The business gets: {text}'**
+  String teamOfferBusinessGets(String text);
+
+  /// What the community gets, on an offer card.
+  ///
+  /// In en, this message translates to:
+  /// **'The community gets: {text}'**
+  String teamOfferCommunityGets(String text);
+
+  /// Snackbar after a community accepts an offer (it applied to the Kolab).
+  ///
+  /// In en, this message translates to:
+  /// **'Done. Your request was sent to the business.'**
+  String get teamOfferAcceptedApplied;
+
+  /// Snackbar after a business accepts an offer (a proposal was created).
+  ///
+  /// In en, this message translates to:
+  /// **'Done. We sent your proposal to the community.'**
+  String get teamOfferAcceptedProposed;
+
+  /// Snackbar after declining an offer.
+  ///
+  /// In en, this message translates to:
+  /// **'Okay, we will not send this one.'**
+  String get teamOfferDeclinedSnack;
 }
 
 class _AppLocalizationsDelegate

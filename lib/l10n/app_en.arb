@@ -10317,5 +10317,77 @@
   "communityDirectoryEmpty": "No communities yet",
   "@communityDirectoryEmpty": {"description": "Community directory empty state"},
   "communityDirectoryVerified": "Verified",
-  "@communityDirectoryVerified": {"description": "Badge on a verified community"}
+  "@communityDirectoryVerified": {"description": "Badge on a verified community"},
+  "chatSectionKolabingTeam": "Kolabing team",
+  "@chatSectionKolabingTeam": {
+    "description": "Chat inbox section label for the Kolabing team thread."
+  },
+  "chatKolabingTeamName": "Kolabing team",
+  "@chatKolabingTeamName": {
+    "description": "Title of the Kolabing team thread and the sender name on its messages."
+  },
+  "teamOfferAccept": "Accept",
+  "@teamOfferAccept": {
+    "description": "Accept button on a Kolabing team offer card."
+  },
+  "teamOfferNotNow": "Not now",
+  "@teamOfferNotNow": {
+    "description": "Decline button on a Kolabing team offer card."
+  },
+  "teamOfferAccepted": "Accepted",
+  "@teamOfferAccepted": {
+    "description": "Status chip on an accepted Kolabing team offer card."
+  },
+  "teamOfferDeclined": "Not now",
+  "@teamOfferDeclined": {
+    "description": "Status chip on a declined Kolabing team offer card."
+  },
+  "teamOfferDate": "Date: {date}",
+  "@teamOfferDate": {
+    "description": "Proposed date line on an offer card.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "teamOfferWithCommunity": "With: {community}",
+  "@teamOfferWithCommunity": {
+    "description": "Names the community on a business offer card.",
+    "placeholders": {
+      "community": {
+        "type": "String"
+      }
+    }
+  },
+  "teamOfferBusinessGets": "The business gets: {text}",
+  "@teamOfferBusinessGets": {
+    "description": "What the business gets, on an offer card.",
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "teamOfferCommunityGets": "The community gets: {text}",
+  "@teamOfferCommunityGets": {
+    "description": "What the community gets, on an offer card.",
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "teamOfferAcceptedApplied": "Done. Your request was sent to the business.",
+  "@teamOfferAcceptedApplied": {
+    "description": "Snackbar after a community accepts an offer (it applied to the Kolab)."
+  },
+  "teamOfferAcceptedProposed": "Done. We sent your proposal to the community.",
+  "@teamOfferAcceptedProposed": {
+    "description": "Snackbar after a business accepts an offer (a proposal was created)."
+  },
+  "teamOfferDeclinedSnack": "Okay, we will not send this one.",
+  "@teamOfferDeclinedSnack": {
+    "description": "Snackbar after declining an offer."
+  }
 }

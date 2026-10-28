@@ -2595,5 +2595,18 @@
   "communityDirectoryPeople": "{count} personas",
   "communityDirectoryOpenKolabs": "{count, plural, =0{Aún sin kolabs} =1{1 kolab publicado} other{{count} kolabs publicados}}",
   "communityDirectoryEmpty": "Aún no hay comunidades",
-  "communityDirectoryVerified": "Verificada"
+  "communityDirectoryVerified": "Verificada",
+  "chatSectionKolabingTeam": "Equipo de Kolabing",
+  "chatKolabingTeamName": "Equipo de Kolabing",
+  "teamOfferAccept": "Aceptar",
+  "teamOfferNotNow": "Ahora no",
+  "teamOfferAccepted": "Aceptada",
+  "teamOfferDeclined": "Ahora no",
+  "teamOfferDate": "Fecha: {date}",
+  "teamOfferWithCommunity": "Con: {community}",
+  "teamOfferBusinessGets": "El local recibe: {text}",
+  "teamOfferCommunityGets": "La comunidad recibe: {text}",
+  "teamOfferAcceptedApplied": "Hecho. Tu solicitud se ha enviado al local.",
+  "teamOfferAcceptedProposed": "Hecho. Hemos enviado tu propuesta a la comunidad.",
+  "teamOfferDeclinedSnack": "De acuerdo, no la enviaremos."
 }

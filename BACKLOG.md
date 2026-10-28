@@ -43,6 +43,8 @@ _Planned work that does not exist yet._
 ---
 
 ## 🚧 Incomplete Features
+
+- **NF — Kolabing team thread + offer card (SERR-658; backend kolabing-v2 #392).** New thread type `kolabing_team` (section "Kolabing team" at the top of Chats), team messages with no sender profile, and an offer card with Accept / Not now (`POST /kolabing-team/offers/{id}/accept|decline`). Community Accept = applied to the Kolab; business Accept = direct proposal created for the named community. **Open:** push tap opens `/chats` (not the thread); not yet tried on a device against the deployed backend.
 _Started or partially shipped; not yet fully working end-to-end._
 
 | # | Feature | What's done / what's missing | Status |
