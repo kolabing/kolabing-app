@@ -36,6 +36,9 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
+          # Pinned to what the app is developed and tested on. `stable` moved past
+          # it and broke lucide_icons (IconData is now final): first CI run, 28 Oct.
+          flutter-version: '3.41.8'
           channel: stable
           cache: true
 
