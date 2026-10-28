@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.6.7+49 — 2026-10-28
+
+Explore gets a **Communities** tab for businesses. Ships with kolabing-v2#386
+(BE-NF-78), already deployed.
+
+### Added
+
+- **Every community, for a venue to scroll (IF-47, #243).** A fourth Explore
+  segment lists every community on Kolabing, paged to the end. A business without
+  a subscription sees each name and logo hidden (the server withholds them; the
+  app only draws what it is sent) and a tap opens the paywall. A subscribed
+  business sees names and opens the profile. Community and attendee Explore are
+  unchanged.
+- Also in this build since 1.6.3: the K logomark login, Welcome and Forgot
+  password redesign, and the cloud logo removal (1.6.4 to 1.6.6).
+
 ## 1.6.1+44 — 2026-09-22
 
 Explore renders exactly what the API returns. Ships with kolabing-v2#316, which
