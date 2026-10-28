@@ -34,6 +34,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Apple rejects uploads built with an SDK older than iOS 26 (validation 409,
+      # first CI run 28 Oct) and the runner's default is Xcode 16.4.
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Show Xcode
+        run: xcodebuild -version
+
       - uses: subosito/flutter-action@v2
         with:
           # Pinned to what the app is developed and tested on. `stable` moved past
