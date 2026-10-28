@@ -2467,3 +2467,8 @@ for Postgres and SQLite.
 against the unfixed service). Issues: kolabing-v2#316, kolabing-app#208.
 
 ---
+
+## Kolabing team offers (SERR-658, mirrors kolabing-v2 map §42)
+
+- App: `ChatThreadType.kolabingTeam`, `ChatMessage.isFromTeam` / `offer`, `KolabingTeamOffer`, `TeamOfferCard`, `ChatService.acceptTeamOffer|declineTeamOffer`.
+- Backend: `POST /api/v1/kolabing-team/offers/{offer}/accept|decline`; tables `kolabing_team_offers`, `chat_threads.team_profile_id`, `chat_messages.sender_type`.

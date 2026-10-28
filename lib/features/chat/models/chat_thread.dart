@@ -14,7 +14,11 @@ enum ChatThreadType {
   communityCustom,
 
   /// A chat tied to an event; only members who signed up (RSVP) may join.
-  event;
+  event,
+
+  /// Kolabing itself writing to the viewer (SERR-658): one per profile, carries
+  /// offer cards. Read and reply only; never managed or joined.
+  kolabingTeam;
 
   static ChatThreadType fromString(String value) {
     switch (value) {
@@ -26,6 +30,8 @@ enum ChatThreadType {
         return ChatThreadType.communityCustom;
       case 'event':
         return ChatThreadType.event;
+      case 'kolabing_team':
+        return ChatThreadType.kolabingTeam;
       default:
         return ChatThreadType.communityCustom;
     }
@@ -41,6 +47,8 @@ enum ChatThreadType {
         return 'community_custom';
       case ChatThreadType.event:
         return 'event';
+      case ChatThreadType.kolabingTeam:
+        return 'kolabing_team';
     }
   }
 

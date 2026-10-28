@@ -9,6 +9,7 @@ import '../../../services/analytics/analytics_service.dart';
 import '../../auth/services/auth_service.dart';
 import '../models/chat_message.dart';
 import '../models/chat_thread.dart';
+import '../models/kolabing_team_offer.dart';
 
 const String _baseUrl = ApiConfig.baseUrl;
 
@@ -249,4 +250,29 @@ class ChatService {
         );
         return message;
       }, 'sendMessage');
+
+  // ---------------------------------------------------------------------------
+  // Kolabing team offers (SERR-658)
+  // ---------------------------------------------------------------------------
+
+  /// `POST /kolabing-team/offers/{offer}/accept` — a community applies to the
+  /// offered Kolab; a business creates the proposed direct proposal.
+  Future<KolabingTeamOffer> acceptTeamOffer(String offerId) =>
+      _answerTeamOffer(offerId, 'accept');
+
+  /// `POST /kolabing-team/offers/{offer}/decline` — "Not now", final.
+  Future<KolabingTeamOffer> declineTeamOffer(String offerId) =>
+      _answerTeamOffer(offerId, 'decline');
+
+  Future<KolabingTeamOffer> _answerTeamOffer(String offerId, String action) =>
+      _guard(() async {
+        final res = await _httpClient.post(
+          Uri.parse('$_baseUrl/kolabing-team/offers/$offerId/$action'),
+          headers: await _headers(),
+        );
+        final data = _unwrap(res) as Map<String, dynamic>;
+        return KolabingTeamOffer.fromJson(
+          data['offer'] as Map<String, dynamic>,
+        );
+      }, 'teamOffer.$action');
 }

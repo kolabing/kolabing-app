@@ -21,6 +21,7 @@ import '../models/chat_thread.dart';
 import '../providers/chat_providers.dart';
 import '../services/chat_service.dart';
 import '../services/realtime_chat_service.dart';
+import '../widgets/team_offer_card.dart';
 
 /// A single conversation: message list + composer. Messages are held in local
 /// state (the screen is ephemeral) — no provider needed.
@@ -41,6 +42,9 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
   bool _sending = false;
   String? _error;
   RealtimeThreadSubscription? _realtimeSub;
+
+  /// The offer being answered right now; locks every card's buttons.
+  String? _answeringOfferId;
 
   /// Local copy so a rename updates the title without leaving the screen.
   late ChatThread _thread = widget.thread;
@@ -110,6 +114,41 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     }
   }
 
+  /// Accept / Not now on an offer card. The backend answers once; a stale or
+  /// already-answered offer comes back as an error and the card is refreshed
+  /// from the server so it shows the real state.
+  Future<void> _answerOffer(ChatMessage message, {required bool accept}) async {
+    final offer = message.offer;
+    if (offer == null || _answeringOfferId != null) return;
+    final l10n = AppLocalizations.of(context);
+    setState(() => _answeringOfferId = offer.id);
+    try {
+      final updated = accept
+          ? await _svc.acceptTeamOffer(offer.id)
+          : await _svc.declineTeamOffer(offer.id);
+      if (!mounted) return;
+      setState(() {
+        _messages = [
+          for (final m in _messages)
+            m.id == message.id ? m.copyWith(offer: updated) : m,
+        ];
+        _answeringOfferId = null;
+      });
+      _snack(
+        !accept
+            ? l10n.teamOfferDeclinedSnack
+            : offer.kind == 'business_propose'
+            ? l10n.teamOfferAcceptedProposed
+            : l10n.teamOfferAcceptedApplied,
+      );
+    } on ChatException catch (e) {
+      if (!mounted) return;
+      setState(() => _answeringOfferId = null);
+      _snack(e.message);
+      unawaited(_load());
+    }
+  }
+
   Future<void> _markRead() async {
     try {
       await _svc.markRead(widget.thread.id);
@@ -137,9 +176,8 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     } on ChatException catch (e) {
       if (!mounted) return;
       setState(() => _sending = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
     }
   }
 
@@ -164,7 +202,11 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
     return Scaffold(
       backgroundColor: context.colors.background,
       appBar: AppBar(
-        title: Text(_thread.name ?? l10n.chatThreadFallbackTitle),
+        title: Text(
+          _thread.type == ChatThreadType.kolabingTeam
+              ? l10n.chatKolabingTeamName
+              : (_thread.name ?? l10n.chatThreadFallbackTitle),
+        ),
         actions: [
           // (7) Event chats: jump to the event detail page.
           if (isEvent &&
@@ -633,6 +675,13 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
         message: _messages[i],
         showSenderName: showSenderNames,
         senderLabel: showSenderNames ? _senderLabel(_messages[i], l10n) : null,
+        offerBusy: _answeringOfferId != null,
+        onAcceptOffer: _messages[i].offer == null
+            ? null
+            : () => _answerOffer(_messages[i], accept: true),
+        onDeclineOffer: _messages[i].offer == null
+            ? null
+            : () => _answerOffer(_messages[i], accept: false),
       ),
     );
   }
@@ -641,6 +690,7 @@ class _ChatThreadScreenState extends ConsumerState<ChatThreadScreen> {
   /// sender's own name, then a matching participant's name/handle, and finally a
   /// generic localized fallback — never blank, never "Unknown".
   String _senderLabel(ChatMessage message, AppLocalizations l10n) {
+    if (message.isFromTeam) return l10n.chatKolabingTeamName;
     final name = message.sender.name.trim();
     if (name.isNotEmpty) return name;
     final pid = message.sender.profileId;
@@ -660,6 +710,9 @@ class _MessageBubble extends StatelessWidget {
     required this.message,
     required this.showSenderName,
     this.senderLabel,
+    this.offerBusy = false,
+    this.onAcceptOffer,
+    this.onDeclineOffer,
   });
 
   final ChatMessage message;
@@ -669,6 +722,11 @@ class _MessageBubble extends StatelessWidget {
 
   /// Resolved, guaranteed non-empty sender label (only used for incoming).
   final String? senderLabel;
+
+  /// Kolabing team offer card (SERR-658): busy while an answer is in flight.
+  final bool offerBusy;
+  final VoidCallback? onAcceptOffer;
+  final VoidCallback? onDeclineOffer;
 
   @override
   Widget build(BuildContext context) {
@@ -695,7 +753,9 @@ class _MessageBubble extends StatelessWidget {
               ? CrossAxisAlignment.end
               : CrossAxisAlignment.start,
           children: [
-            if (!mine && showSenderName && senderLabel != null)
+            if (!mine &&
+                (showSenderName || message.isFromTeam) &&
+                senderLabel != null)
               Text(
                 senderLabel!,
                 style: KolabingTextStyles.bodySmall.copyWith(
@@ -712,6 +772,13 @@ class _MessageBubble extends StatelessWidget {
                     : context.colors.onSurface,
               ),
             ),
+            if (message.offer != null)
+              TeamOfferCard(
+                offer: message.offer!,
+                busy: offerBusy,
+                onAccept: onAcceptOffer ?? () {},
+                onDecline: onDeclineOffer ?? () {},
+              ),
           ],
         ),
       ),
