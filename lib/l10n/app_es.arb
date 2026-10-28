@@ -2595,5 +2595,13 @@
   "communityDirectoryPeople": "{count} personas",
   "communityDirectoryOpenKolabs": "{count, plural, =0{Aún sin kolabs} =1{1 kolab publicado} other{{count} kolabs publicados}}",
   "communityDirectoryEmpty": "Aún no hay comunidades",
-  "communityDirectoryVerified": "Verificada"
+  "communityDirectoryVerified": "Verificada",
+  "subscriptionPlanVenueProLabel": "Venue Pro",
+  "subscriptionPlanVenueProDescription": "Todo Kolabing, más estadísticas del local: ingresos por evento, asistencia y tus mejores comunidades.",
+  "subscriptionPlanVenueProBadge": "Para hoteles",
+  "hotelPlanNoteTitle": "Hoteles: Venue Pro cuesta {price} al mes",
+  "hotelPlanNoteBody": "Todo Kolabing más estadísticas del local. Se cobra a través de la App Store cuando te suscribes.",
+  "venueProUpgradeTitle": "Mejora a Venue Pro, {price} al mes",
+  "venueProUpgradeBody": "Añade estadísticas del local: ingresos por evento, asistencia y tus mejores comunidades. Apple prorratea el cambio.",
+  "venueProUpgradeButton": "Mejorar a Venue Pro"
 }

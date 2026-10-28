@@ -6,6 +6,7 @@ import 'package:kolabing_app/features/subscription/providers/iap_provider.dart';
 import 'package:kolabing_app/features/subscription/services/iap_service.dart';
 
 void main() {
+  venueProTests();
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test(
@@ -278,3 +279,74 @@ class _FakeInAppPurchase implements InAppPurchase {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
+
+void venueProTests() {
+  group('Venue Pro (hotels, EUR 299)', () {
+    test('uses the App Store product id the backend allows', () {
+      expect(
+        kBundleProMonthlySubscriptionId,
+        'com.kolabing.kolabingApp.subscription.pro_monthly',
+      );
+      expect(
+        kSubscriptionProductIds,
+        contains(kBundleProMonthlySubscriptionId),
+      );
+    });
+
+    test('resolves the Pro product and quotes it in euro', () {
+      final state = IAPState(
+        isAvailable: true,
+        products: <ProductDetails>[_monthlyProduct, _proProductUs],
+      );
+
+      expect(state.venueProProduct?.id, kBundleProMonthlySubscriptionId);
+      expect(state.productFor(SubscriptionPlan.venuePro), isNotNull);
+      expect(state.displayPriceFor(SubscriptionPlan.venuePro), '€299.00');
+      expect(SubscriptionPlan.venuePro.durationMonths, 1);
+    });
+
+    test('is null until the store has the product', () {
+      final state = IAPState(
+        isAvailable: true,
+        products: <ProductDetails>[_monthlyProduct],
+      );
+
+      expect(state.venueProProduct, isNull);
+      expect(state.displayPriceFor(SubscriptionPlan.venuePro), isNull);
+    });
+
+    test('never stands in for the monthly plan', () {
+      final onlyPro = IAPState(
+        isAvailable: true,
+        products: <ProductDetails>[_proProductUs],
+      );
+
+      expect(onlyPro.monthlyProduct, isNull);
+      expect(onlyPro.productFor(SubscriptionPlan.monthly), isNull);
+    });
+
+    test('does not change the savings maths of the standard plans', () {
+      final state = IAPState(
+        isAvailable: true,
+        products: <ProductDetails>[
+          _monthlyProduct,
+          _threeMonthsProductUs,
+          _proProductUs,
+        ],
+      );
+
+      expect(state.perMonthEquivalent(SubscriptionPlan.threeMonths), '€30.00');
+      expect(state.perMonthEquivalent(SubscriptionPlan.venuePro), isNull);
+    });
+  });
+}
+
+final ProductDetails _proProductUs = ProductDetails(
+  id: kBundleProMonthlySubscriptionId,
+  title: 'Venue Pro',
+  description: 'Venue Pro monthly',
+  price: r'$349.99',
+  rawPrice: 299,
+  currencyCode: 'USD',
+  currencySymbol: r'$',
+);

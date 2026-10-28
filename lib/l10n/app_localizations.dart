@@ -15553,6 +15553,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verified'**
   String get communityDirectoryVerified;
+
+  /// Paywall: name of the plan for hotels
+  ///
+  /// In en, this message translates to:
+  /// **'Venue Pro'**
+  String get subscriptionPlanVenueProLabel;
+
+  /// Paywall: what the Venue Pro plan adds for a hotel
+  ///
+  /// In en, this message translates to:
+  /// **'Everything in Kolabing, plus venue insights: revenue per event, attendance and your best communities.'**
+  String get subscriptionPlanVenueProDescription;
+
+  /// Paywall: badge on the Venue Pro plan card
+  ///
+  /// In en, this message translates to:
+  /// **'For hotels'**
+  String get subscriptionPlanVenueProBadge;
+
+  /// Onboarding note shown when a business picks the hotel type: the plan price
+  ///
+  /// In en, this message translates to:
+  /// **'Hotels: Venue Pro is {price} per month'**
+  String hotelPlanNoteTitle(String price);
+
+  /// Onboarding note shown when a business picks the hotel type: what the plan includes and how it is billed
+  ///
+  /// In en, this message translates to:
+  /// **'Everything in Kolabing plus venue insights. Billed through the App Store when you subscribe.'**
+  String get hotelPlanNoteBody;
+
+  /// Subscription screen: upgrade card title for a hotel on a standard plan
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Venue Pro, {price} per month'**
+  String venueProUpgradeTitle(String price);
+
+  /// Subscription screen: what the Venue Pro upgrade adds
+  ///
+  /// In en, this message translates to:
+  /// **'Adds venue insights: revenue per event, attendance and your best communities. Apple prorates the change.'**
+  String get venueProUpgradeBody;
+
+  /// Subscription screen: button that starts the Venue Pro purchase
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Venue Pro'**
+  String get venueProUpgradeButton;
 }
 
 class _AppLocalizationsDelegate

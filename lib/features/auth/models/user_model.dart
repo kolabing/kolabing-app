@@ -166,6 +166,12 @@ class BusinessProfile {
   final String? about;
   final String? businessType;
   final List<String> businessTypes;
+
+  /// Whether this business is a hotel (one of its types is the `hotel` slug).
+  /// Hotels are offered the Venue Pro plan on the paywall (ROLES §2.19).
+  bool get isHotel =>
+      businessTypes.any((t) => t.toLowerCase() == 'hotel') ||
+      businessType?.toLowerCase() == 'hotel';
   final City? city;
   final String? instagram;
   final String? website;

@@ -17,7 +17,9 @@ import '../../auth/models/auth_response.dart';
 import '../../business/models/subscription.dart';
 import '../../business/providers/profile_provider.dart';
 import '../providers/iap_provider.dart';
+import '../services/iap_service.dart';
 import '../widgets/subscription_legal_footer.dart';
+import '../widgets/venue_pro_upgrade_card.dart';
 
 /// Subscription management screen for business users.
 ///
@@ -47,6 +49,45 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         ref.read(iapProvider.notifier).refreshProducts();
       }
     });
+  }
+
+  bool _canOfferVenuePro(
+    Subscription? subscription,
+    bool isActive,
+    IAPState? iapState,
+  ) => shouldOfferVenueProUpgrade(
+    isIos: Platform.isIOS,
+    isActive: isActive,
+    subscription: subscription,
+    hasProProduct: iapState?.venueProProduct != null,
+    isHotel:
+        ref.read(profileProvider).profile?.businessProfile?.isHotel ?? false,
+  );
+
+  Future<void> _handleUpgradeToVenuePro() async {
+    try {
+      await ref
+          .read(iapProvider.notifier)
+          .purchase(plan: SubscriptionPlan.venuePro);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.error.message),
+          backgroundColor: context.colors.error,
+        ),
+      );
+    } on Exception {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).subscriptionScreenAppleError,
+          ),
+          backgroundColor: context.colors.error,
+        ),
+      );
+    }
   }
 
   Future<void> _handleSubscribe() async {
@@ -354,6 +395,18 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           // Plan details (when active)
           if (isActive) ...[
             _buildPlanDetails(subscription!),
+            const SizedBox(height: KolabingSpacing.lg),
+          ],
+
+          // A hotel on a standard App Store plan can move up to Venue Pro.
+          if (_canOfferVenuePro(subscription, isActive, iapState)) ...[
+            VenueProUpgradeCard(
+              price:
+                  iapState!.displayPriceFor(SubscriptionPlan.venuePro) ??
+                  IAPState.kFallbackVenueProPrice,
+              isLoading: iapState.isPurchasing || _isSubscribing,
+              onUpgrade: iapState.canPurchase ? _handleUpgradeToVenuePro : null,
+            ),
             const SizedBox(height: KolabingSpacing.lg),
           ],
 

@@ -42,7 +42,10 @@ class IAPState {
     final byPriority = _productByPriority(SubscriptionPlan.monthly);
     if (byPriority != null) return byPriority;
     for (final p in products) {
-      if (!kThreeMonthsProductIdPriority.contains(p.id)) return p;
+      if (!kThreeMonthsProductIdPriority.contains(p.id) &&
+          !kProMonthlyProductIdPriority.contains(p.id)) {
+        return p;
+      }
     }
     return null;
   }
@@ -51,15 +54,25 @@ class IAPState {
   ProductDetails? get threeMonthsProduct =>
       _productByPriority(SubscriptionPlan.threeMonths);
 
+  /// The Venue Pro product for hotels (null until it exists in the store).
+  ProductDetails? get venueProProduct =>
+      _productByPriority(SubscriptionPlan.venuePro);
+
   /// Resolve the product for a given plan.
-  ProductDetails? productFor(SubscriptionPlan plan) =>
-      plan == SubscriptionPlan.monthly ? monthlyProduct : threeMonthsProduct;
+  ProductDetails? productFor(SubscriptionPlan plan) => switch (plan) {
+    SubscriptionPlan.monthly => monthlyProduct,
+    SubscriptionPlan.threeMonths => threeMonthsProduct,
+    SubscriptionPlan.venuePro => venueProProduct,
+  };
 
   /// Shown when the store has not returned a product yet (and on the non-iOS /
   /// Stripe path). Kolabing's base price is €49.99; once the store answers, the
   /// real amount is used — still formatted in euro, see [formatEuro].
   static const String kFallbackMonthlyPrice = '€49.99';
   static const String kFallbackThreeMonthsPrice = '€99.99';
+
+  /// Venue Pro for hotels, shown before the store answers (it is €299/month).
+  static const String kFallbackVenueProPrice = '€299.00';
 
   /// Kolabing quotes subscriptions in euro everywhere — the Stripe path, the
   /// marketing copy and the App Store base price all use €. StoreKit hands back
