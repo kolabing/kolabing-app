@@ -141,7 +141,7 @@ void main() {
           child: SubscriptionPaywall(isIosOverride: true),
         ),
       ),
-      const Size(1179, 2556),
+      const Size(1242, 2688),
     );
   });
 
