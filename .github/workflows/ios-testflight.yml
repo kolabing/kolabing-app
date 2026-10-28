@@ -71,6 +71,8 @@ jobs:
           echo "Building for ${ENV_NAME}"
 
           export ASC_KEY_PATH="$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+          # No Xcode account on a runner: archive unsigned, sign at export with the API key.
+          export UNSIGNED_ARCHIVE=1
           ./scripts/release-ios.sh "$ENV_NAME"
 
       - name: Always remove the key
