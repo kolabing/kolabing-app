@@ -117,9 +117,18 @@ fi
 # Archive
 # -----------------------------------------------------------------------------
 say "Archiving ($ENV_NAME)…"
+# On CI there is no Xcode account, so automatic signing cannot work at archive
+# time ("No Accounts"). CI sets UNSIGNED_ARCHIVE=1: archive without signing, then
+# the export below signs with cloud-managed distribution signing through the
+# App Store Connect API key (-allowProvisioningUpdates). Local runs are unchanged.
+ARCHIVE_FLAGS=()
+if [ "${UNSIGNED_ARCHIVE:-0}" = "1" ]; then
+  ARCHIVE_FLAGS+=(--no-codesign)
+fi
 flutter build ipa \
   --dart-define=APP_ENV="$ENV_NAME" \
   --export-options-plist=ios/ExportOptions.plist \
+  ${ARCHIVE_FLAGS[@]+"${ARCHIVE_FLAGS[@]}"} \
   || {
     # Flutter's own export is what fails on an expired Xcode session. The archive
     # itself will have succeeded, so fall through and export it ourselves with

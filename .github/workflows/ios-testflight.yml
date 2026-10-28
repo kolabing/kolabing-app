@@ -34,8 +34,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Apple rejects uploads built with an SDK older than iOS 26 (validation 409,
+      # first CI run 28 Oct) and the runner's default is Xcode 16.4.
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Show Xcode
+        run: xcodebuild -version
+
       - uses: subosito/flutter-action@v2
         with:
+          # Pinned to what the app is developed and tested on. `stable` moved past
+          # it and broke lucide_icons (IconData is now final): first CI run, 28 Oct.
+          flutter-version: '3.41.8'
           channel: stable
           cache: true
 
@@ -71,6 +83,8 @@ jobs:
           echo "Building for ${ENV_NAME}"
 
           export ASC_KEY_PATH="$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+          # No Xcode account on a runner: archive unsigned, sign at export with the API key.
+          export UNSIGNED_ARCHIVE=1
           ./scripts/release-ios.sh "$ENV_NAME"
 
       - name: Always remove the key
