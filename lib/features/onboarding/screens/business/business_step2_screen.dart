@@ -17,6 +17,7 @@ import '../../../kolab/enums/venue_type.dart';
 import '../../../kolab/models/offer_option.dart';
 import '../../../kolab/providers/offer_option_provider.dart';
 import '../../providers/onboarding_provider.dart';
+import '../../widgets/hotel_plan_note.dart';
 import '../../widgets/onboarding_header.dart';
 import '../../widgets/photo_upload_widget.dart';
 import '../../widgets/type_selection_card.dart';
@@ -425,6 +426,9 @@ class _BusinessStep2ScreenState extends ConsumerState<BusinessStep2Screen> {
                         color: context.colors.onSurfaceVariant,
                       ),
                     ),
+                    const SizedBox(height: 12),
+                    if (data.selectedBusinessTypeSlugs.contains('hotel'))
+                      const HotelPlanNote(),
                     const SizedBox(height: 12),
                     businessTypes.when(
                       data: (types) => GridView.builder(

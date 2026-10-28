@@ -28,7 +28,10 @@ import 'subscription_legal_footer.dart';
 /// if (canPublish) { /* proceed with publish */ }
 /// ```
 class SubscriptionPaywall extends ConsumerStatefulWidget {
-  const SubscriptionPaywall({super.key});
+  const SubscriptionPaywall({super.key, @visibleForTesting this.isIosOverride});
+
+  /// Tests run on a non-iOS host; this lets them render the iOS paywall.
+  final bool? isIosOverride;
 
   /// Check subscription status and show paywall if not active.
   /// Returns true if user has an active subscription and can publish.
@@ -60,13 +63,30 @@ class SubscriptionPaywall extends ConsumerStatefulWidget {
 
 class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   bool _isLoading = false;
-  // 3-month plan is preselected (best value).
-  SubscriptionPlan _selectedPlan = SubscriptionPlan.threeMonths;
+
+  bool get _isIos => widget.isIosOverride ?? Platform.isIOS;
+  // What the user tapped, if anything. Until then: Venue Pro for a hotel that
+  // can buy it, otherwise the 3-month plan (best value).
+  SubscriptionPlan? _pickedPlan;
+
+  /// Whether this viewer is a hotel (read from their business profile).
+  bool get _isHotel =>
+      ref.read(profileProvider).profile?.businessProfile?.isHotel ?? false;
+
+  /// Venue Pro is offered to hotels once the store has the product.
+  bool _showsVenuePro(IAPState iapState) =>
+      _isIos && _isHotel && iapState.venueProProduct != null;
+
+  SubscriptionPlan _selectedPlanFor(IAPState iapState) =>
+      _pickedPlan ??
+      (_showsVenuePro(iapState)
+          ? SubscriptionPlan.venuePro
+          : SubscriptionPlan.threeMonths);
 
   @override
   void initState() {
     super.initState();
-    if (Platform.isIOS) {
+    if (_isIos) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(iapProvider.notifier).refreshProducts();
       });
@@ -74,7 +94,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   }
 
   Future<void> _handleSubscribe() async {
-    if (Platform.isIOS) {
+    if (_isIos) {
       await _handleAppleSubscribe();
     } else {
       await _handleStripeSubscribe();
@@ -86,8 +106,9 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
     final iapNotifier = ref.read(iapProvider.notifier);
     // Fall back to monthly if the selected plan's product didn't load.
     final iapState = ref.read(iapProvider);
-    final plan = iapState.productFor(_selectedPlan) != null
-        ? _selectedPlan
+    final selected = _selectedPlanFor(iapState);
+    final plan = iapState.productFor(selected) != null
+        ? selected
         : SubscriptionPlan.monthly;
     try {
       await iapNotifier.purchase(plan: plan);
@@ -183,16 +204,16 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
     final l10n = AppLocalizations.of(context);
     // Always watch/listen unconditionally (Riverpod hooks must be stable)
     final iapState = ref.watch(iapProvider);
-    final isLoading = Platform.isIOS
+    final isLoading = _isIos
         ? iapState.isPurchasing || iapState.isRestoring
         : _isLoading;
-    final canStartApplePurchase = !Platform.isIOS || iapState.canPurchase;
+    final canStartApplePurchase = !_isIos || iapState.canPurchase;
     final purchaseStatusMessage =
         iapState.error ??
-        (Platform.isIOS ? iapState.purchaseAvailabilityMessage : null);
+        (_isIos ? iapState.purchaseAvailabilityMessage : null);
 
     ref.listen<IAPState>(iapProvider, (prev, next) {
-      if (!Platform.isIOS) return;
+      if (!_isIos) return;
       if ((prev?.isPurchasing ?? false) &&
           !next.isPurchasing &&
           next.error == null) {
@@ -313,7 +334,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               ),
 
               // Restore Purchases (iOS only — Apple requires this)
-              if (Platform.isIOS) ...[
+              if (_isIos) ...[
                 TextButton(
                   onPressed: isLoading
                       ? null
@@ -329,7 +350,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
               ],
 
               // IAP status / error message
-              if (Platform.isIOS) ...[
+              if (_isIos) ...[
                 Builder(
                   builder: (context) {
                     if (purchaseStatusMessage == null) {
@@ -366,7 +387,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
   /// Builds the plan picker. On iOS, renders selectable plan cards when the
   /// store products are loaded; otherwise (Android/Stripe) a single monthly box.
   Widget _buildPlanPicker(AppLocalizations l10n, IAPState iapState) {
-    if (!Platform.isIOS) {
+    if (!_isIos) {
       // Android/Stripe really is euro-priced, so the euro base price is right.
       return _buildSinglePriceBox(
         price: IAPState.kFallbackMonthlyPrice,
@@ -376,6 +397,31 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
     final monthly = iapState.monthlyProduct;
     final threeMonths = iapState.threeMonthsProduct;
+    final selectedPlan = _selectedPlanFor(iapState);
+
+    // A hotel sees its own plan first, then the standard ones below.
+    if (_showsVenuePro(iapState)) {
+      return Column(
+        children: [
+          _buildPlanCard(
+            l10n: l10n,
+            plan: SubscriptionPlan.venuePro,
+            label: l10n.subscriptionPlanVenueProLabel,
+            price:
+                iapState.displayPriceFor(SubscriptionPlan.venuePro) ??
+                IAPState.kFallbackVenueProPrice,
+            suffix: l10n.subscriptionPaywallPerMonth,
+            subtitle: l10n.subscriptionPlanVenueProDescription,
+            badge: l10n.subscriptionPlanVenueProBadge,
+            selected: selectedPlan == SubscriptionPlan.venuePro,
+          ),
+          if (monthly != null || threeMonths != null) ...[
+            const SizedBox(height: KolabingSpacing.sm),
+            _buildStandardPlans(l10n, iapState, selectedPlan),
+          ],
+        ],
+      );
+    }
 
     // Nothing loaded yet — loading / unavailable message.
     if (monthly == null && threeMonths == null) {
@@ -388,6 +434,17 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
 
     // The amount the store will charge, always rendered in euro — Kolabing
     // quotes a single currency across the app, App Store and Stripe alike.
+    return _buildStandardPlans(l10n, iapState, selectedPlan);
+  }
+
+  /// The two standard plans: a choice when both loaded, a single box otherwise.
+  Widget _buildStandardPlans(
+    AppLocalizations l10n,
+    IAPState iapState,
+    SubscriptionPlan selectedPlan,
+  ) {
+    final monthly = iapState.monthlyProduct;
+    final threeMonths = iapState.threeMonthsProduct;
     final monthlyPrice =
         iapState.displayPriceFor(SubscriptionPlan.monthly) ??
         IAPState.kFallbackMonthlyPrice;
@@ -420,7 +477,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
           perMonthEq: iapState.perMonthEquivalent(SubscriptionPlan.threeMonths),
           savingsPercent: iapState.savingsPercent(SubscriptionPlan.threeMonths),
           badge: l10n.subscriptionPlanBestValueBadge,
-          selected: _selectedPlan == SubscriptionPlan.threeMonths,
+          selected: selectedPlan == SubscriptionPlan.threeMonths,
         ),
         const SizedBox(height: KolabingSpacing.sm),
         _buildPlanCard(
@@ -429,7 +486,7 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
           label: l10n.subscriptionPlanMonthlyLabel,
           price: monthlyPrice,
           suffix: l10n.subscriptionPaywallPerMonth,
-          selected: _selectedPlan == SubscriptionPlan.monthly,
+          selected: selectedPlan == SubscriptionPlan.monthly,
         ),
       ],
     );
@@ -485,10 +542,11 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
     required String suffix,
     required bool selected,
     String? perMonthEq,
+    String? subtitle,
     int? savingsPercent,
     String? badge,
   }) => GestureDetector(
-    onTap: () => setState(() => _selectedPlan = plan),
+    onTap: () => setState(() => _pickedPlan = plan),
     child: AnimatedContainer(
       duration: const Duration(milliseconds: 150),
       width: double.infinity,
@@ -517,18 +575,21 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                // A Wrap, not a Row: beside the price column the badge can be
+                // wider than the room left, and it should drop to its own line
+                // rather than overflow.
+                Wrap(
+                  spacing: KolabingSpacing.xs,
+                  runSpacing: 2,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Flexible(
-                      child: Text(
-                        label,
-                        style: KolabingTextStyles.titleMedium.copyWith(
-                          color: KolabingColors.onSurface,
-                        ),
+                    Text(
+                      label,
+                      style: KolabingTextStyles.titleMedium.copyWith(
+                        color: KolabingColors.onSurface,
                       ),
                     ),
-                    if (badge != null) ...[
-                      const SizedBox(width: KolabingSpacing.xs),
+                    if (badge != null)
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 6,
@@ -545,9 +606,18 @@ class _SubscriptionPaywallState extends ConsumerState<SubscriptionPaywall> {
                           ),
                         ),
                       ),
-                    ],
                   ],
                 ),
+                if (subtitle != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      subtitle,
+                      style: KolabingTextStyles.bodySmall.copyWith(
+                        color: KolabingColors.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
                 if (perMonthEq != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 2),

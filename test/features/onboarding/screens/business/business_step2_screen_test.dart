@@ -10,6 +10,7 @@ import 'package:kolabing_app/features/onboarding/models/place_suggestion.dart';
 import 'package:kolabing_app/features/onboarding/providers/onboarding_provider.dart';
 import 'package:kolabing_app/features/onboarding/screens/business/business_step2_screen.dart';
 import 'package:kolabing_app/features/onboarding/services/onboarding_service.dart';
+import 'package:kolabing_app/features/onboarding/widgets/hotel_plan_note.dart';
 
 void main() {
   testWidgets('normalizes the business phone field to digits-only E.164 text', (
@@ -49,6 +50,39 @@ void main() {
 
     final updatedWidget = tester.widget<TextField>(phoneField);
     expect(updatedWidget.controller?.text, '+34611223344');
+  });
+
+  testWidgets('the hotel plan note is only in the tree once hotel is picked', (
+    WidgetTester tester,
+  ) async {
+    Future<void> pump(OnboardingData data) async {
+      // Unmount first: a ProviderScope in the same spot keeps its old state.
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            onboardingProvider.overrideWith(
+              () => _FakeOnboardingNotifier(data),
+            ),
+            onboardingServiceProvider.overrideWith(
+              (ref) => _FakeOnboardingService(),
+            ),
+          ],
+          child: const MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: BusinessStep2Screen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    await pump(_businessOnboardingData);
+    expect(find.byType(HotelPlanNote), findsNothing);
+
+    await pump(_businessOnboardingData.copyWith(businessTypeSlugs: ['hotel']));
+    expect(find.byType(HotelPlanNote), findsOneWidget);
   });
 }
 

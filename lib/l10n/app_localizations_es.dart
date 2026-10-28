@@ -8973,4 +8973,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get communityDirectoryVerified => 'Verificada';
+
+  @override
+  String get subscriptionPlanVenueProLabel => 'Venue Pro';
+
+  @override
+  String get subscriptionPlanVenueProDescription =>
+      'Todo Kolabing, más estadísticas del local: ingresos por evento, asistencia y tus mejores comunidades.';
+
+  @override
+  String get subscriptionPlanVenueProBadge => 'Para hoteles';
+
+  @override
+  String hotelPlanNoteTitle(String price) {
+    return 'Hoteles: Venue Pro cuesta $price al mes';
+  }
+
+  @override
+  String get hotelPlanNoteBody =>
+      'Todo Kolabing más estadísticas del local. Se cobra a través de la App Store cuando te suscribes.';
 }

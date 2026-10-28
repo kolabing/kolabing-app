@@ -20,6 +20,10 @@ const String kBundleMonthlySubscriptionId =
 const String kBundleThreeMonthsSubscriptionId =
     'com.kolabing.kolabingApp.subscription.three_months';
 
+/// App Store product ID for Venue Pro (EUR 299/month, sold to hotels).
+const String kBundleProMonthlySubscriptionId =
+    'com.kolabing.kolabingApp.subscription.pro_monthly';
+
 /// Prefer the current bundle-scoped product id first, but keep the legacy
 /// identifier as a fallback so existing App Store Connect setups continue to
 /// work during migration.
@@ -33,6 +37,11 @@ const List<String> kThreeMonthsProductIdPriority = <String>[
   kBundleThreeMonthsSubscriptionId,
 ];
 
+/// Product id priority for Venue Pro.
+const List<String> kProMonthlyProductIdPriority = <String>[
+  kBundleProMonthlySubscriptionId,
+];
+
 /// Backwards-compatible alias for the monthly priority list.
 const List<String> kSubscriptionProductIdPriority = kMonthlyProductIdPriority;
 
@@ -40,6 +49,7 @@ const List<String> kSubscriptionProductIdPriority = kMonthlyProductIdPriority;
 final Set<String> kSubscriptionProductIds = <String>{
   ...kMonthlyProductIdPriority,
   ...kThreeMonthsProductIdPriority,
+  ...kProMonthlyProductIdPriority,
 };
 
 /// A purchasable subscription plan.
@@ -48,7 +58,10 @@ enum SubscriptionPlan {
   threeMonths(
     durationMonths: 3,
     productIdPriority: kThreeMonthsProductIdPriority,
-  );
+  ),
+  // Hotels only (ROLES §2.19). Same subscription group as the two above, at the
+  // highest level, so moving between them is an Apple upgrade or downgrade.
+  venuePro(durationMonths: 1, productIdPriority: kProMonthlyProductIdPriority);
 
   const SubscriptionPlan({
     required this.durationMonths,
@@ -103,9 +116,13 @@ class IAPService {
   ProductDetails? get monthlyProduct {
     final byPriority = productFor(SubscriptionPlan.monthly);
     if (byPriority != null) return byPriority;
-    // Legacy fallback: any loaded product that isn't the 3-month plan.
+    // Legacy fallback: any loaded product that isn't the 3-month or Pro plan.
+    // Pro must never stand in for the monthly plan.
     for (final product in _products) {
-      if (!kThreeMonthsProductIdPriority.contains(product.id)) return product;
+      if (!kThreeMonthsProductIdPriority.contains(product.id) &&
+          !kProMonthlyProductIdPriority.contains(product.id)) {
+        return product;
+      }
     }
     return null;
   }
@@ -113,6 +130,9 @@ class IAPService {
   /// Get the 3-month subscription product
   ProductDetails? get threeMonthsProduct =>
       productFor(SubscriptionPlan.threeMonths);
+
+  /// Get the Venue Pro product (null until it exists in App Store Connect)
+  ProductDetails? get venueProProduct => productFor(SubscriptionPlan.venuePro);
 
   /// Initialize the IAP service — call once at app start on iOS
   Future<void> initialize() async {

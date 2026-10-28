@@ -10317,5 +10317,15 @@
   "communityDirectoryEmpty": "No communities yet",
   "@communityDirectoryEmpty": {"description": "Community directory empty state"},
   "communityDirectoryVerified": "Verified",
-  "@communityDirectoryVerified": {"description": "Badge on a verified community"}
+  "@communityDirectoryVerified": {"description": "Badge on a verified community"},
+  "subscriptionPlanVenueProLabel": "Venue Pro",
+  "@subscriptionPlanVenueProLabel": {"description": "Paywall: name of the plan for hotels"},
+  "subscriptionPlanVenueProDescription": "Everything in Kolabing, plus venue insights: revenue per event, attendance and your best communities.",
+  "@subscriptionPlanVenueProDescription": {"description": "Paywall: what the Venue Pro plan adds for a hotel"},
+  "subscriptionPlanVenueProBadge": "For hotels",
+  "@subscriptionPlanVenueProBadge": {"description": "Paywall: badge on the Venue Pro plan card"},
+  "hotelPlanNoteTitle": "Hotels: Venue Pro is {price} per month",
+  "@hotelPlanNoteTitle": {"description": "Onboarding note shown when a business picks the hotel type: the plan price", "placeholders": {"price": {"type": "String"}}},
+  "hotelPlanNoteBody": "Everything in Kolabing plus venue insights. Billed through the App Store when you subscribe.",
+  "@hotelPlanNoteBody": {"description": "Onboarding note shown when a business picks the hotel type: what the plan includes and how it is billed"}
 }
