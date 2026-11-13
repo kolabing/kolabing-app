@@ -8938,4 +8938,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teamOfferDeclinedSnack => 'Okay, we will not send this one.';
+
+  @override
+  String get teamOfferExpired => 'Expired';
+
+  @override
+  String get teamLinkNotFound =>
+      'We could not open this offer. It may have been sent to another account.';
+
+  @override
+  String get teamLinkOpenChats => 'Open chats';
+
+  @override
+  String get teamClaimTitle => 'Claim your page';
+
+  @override
+  String teamClaimIntro(String name) {
+    return 'The Kolabing team has an offer for $name. Sign in to claim the page and answer it.';
+  }
+
+  @override
+  String get teamClaimDeleteLine =>
+      'You can delete this page whenever you like after you claim it.';
+
+  @override
+  String get teamClaimWithGoogle => 'Claim with Google';
+
+  @override
+  String get teamClaimWithApple => 'Claim with Apple';
+
+  @override
+  String get teamClaimExpired =>
+      'This offer expired. Ask the Kolabing team to send it again.';
+
+  @override
+  String get teamClaimInvalid =>
+      'This claim link is not valid or was already used.';
+
+  @override
+  String get teamClaimDone => 'Done. The page is yours.';
+
+  @override
+  String get teamClaimFailed => 'We could not claim this page. Try again.';
 }

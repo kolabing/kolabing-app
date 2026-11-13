@@ -8,6 +8,8 @@ import '../../l10n/app_localizations.dart';
 import '../../features/application/screens/application_review_screen.dart';
 import '../../features/application/screens/chat_screen.dart';
 import '../../features/chat/screens/chats_screen.dart';
+import '../../features/chat/screens/team_claim_screen.dart';
+import '../../features/chat/screens/team_link_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/attendee_register_screen.dart';
 import '../../features/auth/screens/forgot_password_screen.dart';
@@ -320,6 +322,16 @@ abstract final class KolabingRoutes {
   /// Standalone chats list (e.g. opened from a community/group chat notification).
   static const String chats = '/chats';
 
+  /// A "Kolabing team" thread opened from a push for a team message (carries the
+  /// thread id).
+  static const String teamThread = '/chats/:threadId';
+
+  /// A tapped Kolabing team offer link (`/o/{offerId}`), resolved to its thread.
+  static const String teamOffer = '/team-offer/:id';
+
+  /// A claim link for a profile the Kolabing team created (`/claim/{token}`).
+  static const String teamClaim = '/team-claim/:token';
+
   /// Notifications screen
   static const String notifications = '/notifications';
 
@@ -477,6 +489,13 @@ void connectDeepLinks() {
       // splash's stack-replacing `go` and lands on the Kolab.
       onKolab: (kolabId) =>
           _notificationNavGate.navigate('/opportunity/$kolabId'),
+      // Kolabing team message links (SERR-1344): the offer card in its thread,
+      // and the claim screen for a profile the team created. Same gate, so a
+      // cold start from the link survives splash.
+      onTeamOffer: (offerId) =>
+          _notificationNavGate.navigate('/team-offer/$offerId'),
+      onTeamClaim: (token) =>
+          _notificationNavGate.navigate('/team-claim/$token'),
       // Not a destination either: the Instagram card that started the
       // connect refreshes itself in place. (The router's redirect catches the
       // same link when Flutter's deep linking delivers it; the bus keeps one.)
@@ -1089,6 +1108,24 @@ final GoRouter kolabingRouter = GoRouter(
       name: 'chats',
       builder: (BuildContext context, GoRouterState state) =>
           const ChatsScreen(),
+    ),
+    GoRoute(
+      path: KolabingRoutes.teamThread,
+      name: 'teamThread',
+      builder: (BuildContext context, GoRouterState state) =>
+          TeamLinkScreen(threadId: state.pathParameters['threadId']),
+    ),
+    GoRoute(
+      path: KolabingRoutes.teamOffer,
+      name: 'teamOffer',
+      builder: (BuildContext context, GoRouterState state) =>
+          TeamLinkScreen(offerId: state.pathParameters['id']),
+    ),
+    GoRoute(
+      path: KolabingRoutes.teamClaim,
+      name: 'teamClaim',
+      builder: (BuildContext context, GoRouterState state) =>
+          TeamClaimScreen(token: state.pathParameters['token']!),
     ),
     GoRoute(
       path: KolabingRoutes.notifications,

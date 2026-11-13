@@ -970,3 +970,7 @@ Treat this maintenance as part of the change, not optional.
 ## Kolabing team offers (SERR-658, mirrors kolabing-v2 ROLES §2.22)
 
 Kolabing can message one profile as itself from a `kolabing_team` chat thread, with an offer card (Accept / Not now). A business accepting such an offer creates a direct proposal to the named community **without the active-subscription check**; the card names the community only to a subscribed business. A community accepting applies to the Kolab. The app never creates or sends these; it only renders and answers them.
+
+### Kolabing team links, expiry, claim (SERR-1344, mirrors kolabing-v2 ROLES §2.22.1)
+
+An offer link opens the card in the thread; an offer unanswered for 7 days is expired (Accept refused, the team can resend once); an unclaimed profile is claimed by signing in through its claim link, which accepts the offer. The claim screen carries the line that the owner can delete the page afterwards. Unclaimed profiles never appear in Explore, the directory or the stats (backend). Sending to them is off by default. Last updated: 2026-11-13.

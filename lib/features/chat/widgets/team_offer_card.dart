@@ -115,6 +115,8 @@ class TeamOfferCard extends StatelessWidget {
               label: Text(
                 offer.isAccepted
                     ? l10n.teamOfferAccepted
+                    : offer.expired
+                    ? l10n.teamOfferExpired
                     : l10n.teamOfferDeclined,
               ),
             ),

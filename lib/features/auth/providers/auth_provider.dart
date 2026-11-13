@@ -280,6 +280,54 @@ class AuthNotifier extends Notifier<AuthState> {
     }
   }
 
+  /// Claim an unclaimed profile through a Kolabing team claim link (SERR-1344).
+  /// The backend signs the new owner in, so success leaves the app
+  /// authenticated as the claimed profile.
+  Future<AuthResult> claimTeamProfile(
+    String claimToken, {
+    required bool apple,
+  }) async {
+    state = state.copyWith(status: AuthStatus.loading, error: null);
+
+    try {
+      final response = await _authService.claimTeamProfile(
+        claimToken,
+        apple: apple,
+      );
+
+      state = state.copyWith(
+        status: AuthStatus.authenticated,
+        user: response.user,
+        token: response.token,
+        isNewUser: false,
+      );
+      _invalidateAfterSignIn();
+      unawaited(_syncPushIdentity(response.user));
+
+      return AuthResult(success: true, isNewUser: false, user: response.user);
+    } on AuthCancelledException {
+      state = state.copyWith(status: AuthStatus.unauthenticated);
+      return const AuthResult(success: false, cancelled: true);
+    } on ApiException catch (e) {
+      state = state.copyWith(status: AuthStatus.unauthenticated);
+      return AuthResult(success: false, error: e.error);
+    } on NetworkException catch (e) {
+      state = state.copyWith(status: AuthStatus.unauthenticated);
+      return AuthResult(
+        success: false,
+        errorMessage: e.message,
+        isNetworkError: true,
+      );
+    } on Object catch (e) {
+      debugPrint('Claim error: $e');
+      state = state.copyWith(status: AuthStatus.unauthenticated);
+      return const AuthResult(
+        success: false,
+        errorMessage: 'An unexpected error occurred',
+      );
+    }
+  }
+
   /// Check current authentication status
   Future<void> checkAuthStatus() async {
     state = state.copyWith(status: AuthStatus.loading);

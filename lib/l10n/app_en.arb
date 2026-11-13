@@ -10389,5 +10389,58 @@
   "teamOfferDeclinedSnack": "Okay, we will not send this one.",
   "@teamOfferDeclinedSnack": {
     "description": "Snackbar after declining an offer."
+  },
+  "teamOfferExpired": "Expired",
+  "@teamOfferExpired": {
+    "description": "Status chip on a Kolabing team offer card that was not answered within 7 days."
+  },
+  "teamLinkNotFound": "We could not open this offer. It may have been sent to another account.",
+  "@teamLinkNotFound": {
+    "description": "Shown when a Kolabing team offer link cannot be opened."
+  },
+  "teamLinkOpenChats": "Open chats",
+  "@teamLinkOpenChats": {
+    "description": "Button after a team offer link failed, goes to the chats list."
+  },
+  "teamClaimTitle": "Claim your page",
+  "@teamClaimTitle": {
+    "description": "Title of the screen where an owner claims an unclaimed profile."
+  },
+  "teamClaimIntro": "The Kolabing team has an offer for {name}. Sign in to claim the page and answer it.",
+  "@teamClaimIntro": {
+    "description": "Intro on the claim screen.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "teamClaimDeleteLine": "You can delete this page whenever you like after you claim it.",
+  "@teamClaimDeleteLine": {
+    "description": "Disclaimer line on the claim confirmation screen."
+  },
+  "teamClaimWithGoogle": "Claim with Google",
+  "@teamClaimWithGoogle": {
+    "description": "Button: claim the page signing in with Google."
+  },
+  "teamClaimWithApple": "Claim with Apple",
+  "@teamClaimWithApple": {
+    "description": "Button: claim the page signing in with Apple."
+  },
+  "teamClaimExpired": "This offer expired. Ask the Kolabing team to send it again.",
+  "@teamClaimExpired": {
+    "description": "Claim screen when the 7 days passed."
+  },
+  "teamClaimInvalid": "This claim link is not valid or was already used.",
+  "@teamClaimInvalid": {
+    "description": "Claim screen for an unknown or used link."
+  },
+  "teamClaimDone": "Done. The page is yours.",
+  "@teamClaimDone": {
+    "description": "Snackbar after a successful claim."
+  },
+  "teamClaimFailed": "We could not claim this page. Try again.",
+  "@teamClaimFailed": {
+    "description": "Generic claim failure."
   }
 }

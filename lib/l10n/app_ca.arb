@@ -2608,5 +2608,17 @@
   "teamOfferCommunityGets": "La comunitat rep: {text}",
   "teamOfferAcceptedApplied": "Fet. La teva sol·licitud s'ha enviat al local.",
   "teamOfferAcceptedProposed": "Fet. Hem enviat la teva proposta a la comunitat.",
-  "teamOfferDeclinedSnack": "D'acord, no l'enviarem."
+  "teamOfferDeclinedSnack": "D'acord, no l'enviarem.",
+  "teamOfferExpired": "Caducada",
+  "teamLinkNotFound": "No hem pogut obrir aquesta oferta. Pot ser que s'hagi enviat a un altre compte.",
+  "teamLinkOpenChats": "Obrir xats",
+  "teamClaimTitle": "Reclama la teva pàgina",
+  "teamClaimIntro": "L'equip de Kolabing té una oferta per a {name}. Inicia la sessió per reclamar la pàgina i respondre-la.",
+  "teamClaimDeleteLine": "Pots eliminar aquesta pàgina quan vulguis després de reclamar-la.",
+  "teamClaimWithGoogle": "Reclamar amb Google",
+  "teamClaimWithApple": "Reclamar amb Apple",
+  "teamClaimExpired": "Aquesta oferta ha caducat. Demana a l'equip de Kolabing que te l'enviï de nou.",
+  "teamClaimInvalid": "Aquest enllaç no és vàlid o ja s'ha fet servir.",
+  "teamClaimDone": "Fet. La pàgina és teva.",
+  "teamClaimFailed": "No hem pogut reclamar la pàgina. Torna-ho a provar."
 }

@@ -2608,5 +2608,17 @@
   "teamOfferCommunityGets": "La comunidad recibe: {text}",
   "teamOfferAcceptedApplied": "Hecho. Tu solicitud se ha enviado al local.",
   "teamOfferAcceptedProposed": "Hecho. Hemos enviado tu propuesta a la comunidad.",
-  "teamOfferDeclinedSnack": "De acuerdo, no la enviaremos."
+  "teamOfferDeclinedSnack": "De acuerdo, no la enviaremos.",
+  "teamOfferExpired": "Caducada",
+  "teamLinkNotFound": "No hemos podido abrir esta oferta. Puede que se haya enviado a otra cuenta.",
+  "teamLinkOpenChats": "Abrir chats",
+  "teamClaimTitle": "Reclama tu página",
+  "teamClaimIntro": "El equipo de Kolabing tiene una oferta para {name}. Inicia sesión para reclamar la página y responderla.",
+  "teamClaimDeleteLine": "Puedes eliminar esta página cuando quieras después de reclamarla.",
+  "teamClaimWithGoogle": "Reclamar con Google",
+  "teamClaimWithApple": "Reclamar con Apple",
+  "teamClaimExpired": "Esta oferta ha caducado. Pide al equipo de Kolabing que la envíe de nuevo.",
+  "teamClaimInvalid": "Este enlace no es válido o ya se usó.",
+  "teamClaimDone": "Hecho. La página es tuya.",
+  "teamClaimFailed": "No hemos podido reclamar la página. Inténtalo de nuevo."
 }

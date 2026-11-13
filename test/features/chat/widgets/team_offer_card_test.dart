@@ -99,4 +99,29 @@ void main() {
     expect(find.byKey(const ValueKey('team-offer-decline')), findsNothing);
     expect(find.text('Accepted'), findsOneWidget);
   });
+
+  testWidgets(
+    'an expired offer says Expired, not Not now, and has no buttons',
+    (tester) async {
+      await tester.pumpWidget(
+        _host(
+          TeamOfferCard(
+            offer: const KolabingTeamOffer(
+              id: 'o2',
+              kind: 'community_apply',
+              status: 'sent',
+              title: 'Host your run club at Cafe Mallorca',
+              expired: true,
+            ),
+            onAccept: () {},
+            onDecline: () {},
+          ),
+        ),
+      );
+
+      expect(find.byKey(const ValueKey('team-offer-accept')), findsNothing);
+      expect(find.text('Expired'), findsOneWidget);
+      expect(find.text('Not now'), findsNothing);
+    },
+  );
 }

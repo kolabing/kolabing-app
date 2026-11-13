@@ -119,4 +119,48 @@ void main() {
 
     expect(route, '/opportunity/kolab-3');
   });
+
+  group('Kolabing team message push (SERR-1344)', () {
+    test('a push for a team message opens that thread, not the chats list', () {
+      final route = resolveNotificationRoute(
+        type: 'kolabing_team_message',
+        id: 'thread-1',
+        // What the backend still sends, so an older app lands on the list.
+        deeplink: '/chats',
+      );
+
+      expect(route, '/chats/thread-1');
+    });
+
+    test(
+      'the in-app notification list tap (chat_thread target) opens it too',
+      () {
+        final route = resolveNotificationRoute(
+          type: 'kolabing_team_message',
+          id: 'thread-1',
+          targetType: 'chat_thread',
+        );
+
+        expect(route, '/chats/thread-1');
+      },
+    );
+
+    test('without a thread id it falls back to the chats list', () {
+      expect(
+        resolveNotificationRoute(type: 'kolabing_team_message', id: ''),
+        KolabingRoutes.chats,
+      );
+    });
+
+    test('other chat_thread notifications still open the chats list', () {
+      expect(
+        resolveNotificationRoute(
+          type: 'new_message',
+          id: 'thread-2',
+          targetType: 'chat_thread',
+        ),
+        KolabingRoutes.chats,
+      );
+    });
+  });
 }

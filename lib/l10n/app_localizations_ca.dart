@@ -9067,4 +9067,47 @@ class AppLocalizationsCa extends AppLocalizations {
 
   @override
   String get teamOfferDeclinedSnack => 'D\'acord, no l\'enviarem.';
+
+  @override
+  String get teamOfferExpired => 'Caducada';
+
+  @override
+  String get teamLinkNotFound =>
+      'No hem pogut obrir aquesta oferta. Pot ser que s\'hagi enviat a un altre compte.';
+
+  @override
+  String get teamLinkOpenChats => 'Obrir xats';
+
+  @override
+  String get teamClaimTitle => 'Reclama la teva pàgina';
+
+  @override
+  String teamClaimIntro(String name) {
+    return 'L\'equip de Kolabing té una oferta per a $name. Inicia la sessió per reclamar la pàgina i respondre-la.';
+  }
+
+  @override
+  String get teamClaimDeleteLine =>
+      'Pots eliminar aquesta pàgina quan vulguis després de reclamar-la.';
+
+  @override
+  String get teamClaimWithGoogle => 'Reclamar amb Google';
+
+  @override
+  String get teamClaimWithApple => 'Reclamar amb Apple';
+
+  @override
+  String get teamClaimExpired =>
+      'Aquesta oferta ha caducat. Demana a l\'equip de Kolabing que te l\'enviï de nou.';
+
+  @override
+  String get teamClaimInvalid =>
+      'Aquest enllaç no és vàlid o ja s\'ha fet servir.';
+
+  @override
+  String get teamClaimDone => 'Fet. La pàgina és teva.';
+
+  @override
+  String get teamClaimFailed =>
+      'No hem pogut reclamar la pàgina. Torna-ho a provar.';
 }
