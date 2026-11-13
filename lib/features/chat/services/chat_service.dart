@@ -275,4 +275,15 @@ class ChatService {
           data['offer'] as Map<String, dynamic>,
         );
       }, 'teamOffer.$action');
+
+  /// `GET /kolabing-team/offers/{offer}` — the card plus the thread it sits in.
+  /// What a tapped offer link (`/o/{id}`) resolves to. Recipient only.
+  Future<KolabingTeamOffer> getTeamOffer(String offerId) => _guard(() async {
+    final res = await _httpClient.get(
+      Uri.parse('$_baseUrl/kolabing-team/offers/$offerId'),
+      headers: await _headers(),
+    );
+    final data = _unwrap(res) as Map<String, dynamic>;
+    return KolabingTeamOffer.fromJson(data['offer'] as Map<String, dynamic>);
+  }, 'teamOffer.get');
 }

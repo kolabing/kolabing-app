@@ -17,6 +17,9 @@ class KolabingTeamOffer {
     this.whatBusinessGets,
     this.whatCommunityGets,
     this.canRespond = false,
+    this.expired = false,
+    this.expiresAt,
+    this.threadId,
     this.resultKolabId,
     this.resultApplicationId,
   });
@@ -37,6 +40,11 @@ class KolabingTeamOffer {
         whatBusinessGets: json['what_business_gets'] as String?,
         whatCommunityGets: json['what_community_gets'] as String?,
         canRespond: json['can_respond'] as bool? ?? false,
+        expired: json['expired'] as bool? ?? false,
+        expiresAt: json['expires_at'] != null
+            ? DateTime.tryParse(json['expires_at'] as String)
+            : null,
+        threadId: json['thread_id'] as String?,
         resultKolabId: json['result_kolab_id'] as String?,
         resultApplicationId: json['result_application_id'] as String?,
       );
@@ -60,6 +68,15 @@ class KolabingTeamOffer {
 
   /// True while Accept / Not now are still available.
   final bool canRespond;
+
+  /// Sent, never answered, and past its 7 days (SERR-1344). The team can
+  /// resend it once; until then Accept is refused by the backend.
+  final bool expired;
+  final DateTime? expiresAt;
+
+  /// The "Kolabing team" thread this card sits in. Only the single-offer
+  /// endpoint fills it (a tapped offer link resolves to the thread with it).
+  final String? threadId;
   final String? resultKolabId;
   final String? resultApplicationId;
 

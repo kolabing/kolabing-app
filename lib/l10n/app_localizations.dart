@@ -15631,6 +15631,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Okay, we will not send this one.'**
   String get teamOfferDeclinedSnack;
+
+  /// Status chip on a Kolabing team offer card that was not answered within 7 days.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get teamOfferExpired;
+
+  /// Shown when a Kolabing team offer link cannot be opened.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not open this offer. It may have been sent to another account.'**
+  String get teamLinkNotFound;
+
+  /// Button after a team offer link failed, goes to the chats list.
+  ///
+  /// In en, this message translates to:
+  /// **'Open chats'**
+  String get teamLinkOpenChats;
+
+  /// Title of the screen where an owner claims an unclaimed profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim your page'**
+  String get teamClaimTitle;
+
+  /// Intro on the claim screen.
+  ///
+  /// In en, this message translates to:
+  /// **'The Kolabing team has an offer for {name}. Sign in to claim the page and answer it.'**
+  String teamClaimIntro(String name);
+
+  /// Disclaimer line on the claim confirmation screen.
+  ///
+  /// In en, this message translates to:
+  /// **'You can delete this page whenever you like after you claim it.'**
+  String get teamClaimDeleteLine;
+
+  /// Button: claim the page signing in with Google.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim with Google'**
+  String get teamClaimWithGoogle;
+
+  /// Button: claim the page signing in with Apple.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim with Apple'**
+  String get teamClaimWithApple;
+
+  /// Claim screen when the 7 days passed.
+  ///
+  /// In en, this message translates to:
+  /// **'This offer expired. Ask the Kolabing team to send it again.'**
+  String get teamClaimExpired;
+
+  /// Claim screen for an unknown or used link.
+  ///
+  /// In en, this message translates to:
+  /// **'This claim link is not valid or was already used.'**
+  String get teamClaimInvalid;
+
+  /// Snackbar after a successful claim.
+  ///
+  /// In en, this message translates to:
+  /// **'Done. The page is yours.'**
+  String get teamClaimDone;
+
+  /// Generic claim failure.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not claim this page. Try again.'**
+  String get teamClaimFailed;
 }
 
 class _AppLocalizationsDelegate

@@ -6,6 +6,19 @@ String resolveNotificationRoute({
   String? deeplink,
   String? targetType,
 }) {
+  // A Kolabing team message carries its THREAD id: open that thread (the offer
+  // card is in it). It used to open the chats list (SERR-1344). Before the
+  // `chat_thread` rule below, which would send the in-app notification list's
+  // tap (it also carries targetType 'chat_thread') to the list again. The
+  // backend deeplink stays `/chats` so an older app still lands on the list.
+  if (type == 'kolabing_team_message') {
+    final threadId = id?.trim();
+    if (threadId != null && threadId.isNotEmpty) {
+      return KolabingRoutes.teamThread.replaceFirst(':threadId', threadId);
+    }
+    return KolabingRoutes.chats;
+  }
+
   // Community / group / event chat messages carry targetType 'chat_thread' and a
   // THREAD id (not an application id). There is no path route to a specific thread
   // (they open ChatThreadScreen with the loaded object), and the backend deeplink

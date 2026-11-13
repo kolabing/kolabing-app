@@ -2,8 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:kolabing_app/features/chat/models/chat_message.dart';
 import 'package:kolabing_app/features/chat/models/chat_thread.dart';
+import 'package:kolabing_app/features/chat/models/kolabing_team_offer.dart';
 
 void main() {
+  expiryTests();
+
   test('the kolabing_team thread type round-trips and is not a community', () {
     expect(
       ChatThreadType.fromString('kolabing_team'),
@@ -57,5 +60,35 @@ void main() {
     expect(message.offer, isNull);
     expect(message.sender.name, 'Ana');
     expect(message.isMine, isTrue);
+  });
+}
+
+void expiryTests() {
+  test('an offer card carries its expiry and the thread it sits in', () {
+    final offer = KolabingTeamOffer.fromJson(<String, dynamic>{
+      'id': 'o1',
+      'kind': 'community_apply',
+      'status': 'sent',
+      'title': 'Host your run club',
+      'can_respond': false,
+      'expired': true,
+      'expires_at': '2026-11-05T10:00:00+00:00',
+      'thread_id': 'thread-9',
+    });
+
+    expect(offer.expired, isTrue);
+    expect(offer.canRespond, isFalse);
+    expect(offer.expiresAt, DateTime.utc(2026, 11, 5, 10));
+    expect(offer.threadId, 'thread-9');
+  });
+
+  test('an older backend without the new fields reads as not expired', () {
+    final offer = KolabingTeamOffer.fromJson(<String, dynamic>{
+      'id': 'o1',
+      'title': 'x',
+    });
+
+    expect(offer.expired, isFalse);
+    expect(offer.threadId, isNull);
   });
 }

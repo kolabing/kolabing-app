@@ -15,6 +15,7 @@ import 'config/theme/theme.dart';
 import 'features/settings/providers/theme_provider.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/auth/widgets/reconsent_gate.dart';
+import 'features/chat/services/pending_team_link.dart';
 import 'features/settings/providers/locale_provider.dart';
 import 'features/settings/services/locale_service.dart';
 import 'l10n/app_localizations.dart';
@@ -235,6 +236,25 @@ class _AuthSessionRedirectorState extends ConsumerState<_AuthSessionRedirector>
     }
   }
 
+  /// A Kolabing team offer link tapped while signed out was parked
+  /// ([PendingTeamLink]); once the person is signed in, open it so they land on
+  /// the card (SERR-1344). Waits for the sign-in's own navigation to settle and
+  /// never interrupts onboarding: a parked link survives until the next sign-in
+  /// state change.
+  Future<void> _openParkedTeamLink() async {
+    await Future<void>.delayed(const Duration(milliseconds: 800));
+    if (!mounted) return;
+
+    final path = kolabingRouter.routeInformationProvider.value.uri.path;
+    if (path.startsWith(KolabingRoutes.onboarding) ||
+        path == KolabingRoutes.permissions) {
+      return;
+    }
+
+    final route = await PendingTeamLink.take();
+    if (route != null) unawaited(kolabingRouter.push(route));
+  }
+
   @override
   Widget build(BuildContext context) {
     final needsConsent = ref.watch(
@@ -244,6 +264,9 @@ class _AuthSessionRedirectorState extends ConsumerState<_AuthSessionRedirector>
     ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.isAuthenticated) {
         _hadAuthenticatedSession = true;
+        if (!(previous?.isAuthenticated ?? false)) {
+          unawaited(_openParkedTeamLink());
+        }
         return;
       }
 

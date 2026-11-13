@@ -2472,3 +2472,8 @@ against the unfixed service). Issues: kolabing-v2#316, kolabing-app#208.
 
 - App: `ChatThreadType.kolabingTeam`, `ChatMessage.isFromTeam` / `offer`, `KolabingTeamOffer`, `TeamOfferCard`, `ChatService.acceptTeamOffer|declineTeamOffer`.
 - Backend: `POST /api/v1/kolabing-team/offers/{offer}/accept|decline`; tables `kolabing_team_offers`, `chat_threads.team_profile_id`, `chat_messages.sender_type`.
+
+### Kolabing team links, expiry, claim (SERR-1344, mirrors kolabing-v2 map §42.1)
+
+- App: `DeepLinkService.teamOfferIdFrom|teamClaimTokenFrom`, `TeamLinkScreen` (`/team-offer/:id`, `/chats/:threadId`), `TeamClaimScreen` (`/team-claim/:token`), `TeamClaimService`, `AuthService.claimTeamProfile`, `PendingTeamLink`, `resolveNotificationRoute` (`kolabing_team_message`).
+- Backend: `GET /api/v1/kolabing-team/offers/{offer}`, `GET|POST /api/v1/kolabing-team/claim/{token}`; `kolabing_team_offers.expires_at|resend_count|claim_token_hash`, `profiles.is_unclaimed`.

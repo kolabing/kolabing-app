@@ -70,4 +70,60 @@ void main() {
       expect(Environment.kolabShareHost, isNotEmpty);
     }
   });
+
+  group('Kolabing team links (SERR-1344)', () {
+    const offerId = '0191a2b3-c4d5-7e6f-8a9b-0c1d2e3f4a5b';
+
+    test('an offer link is /o/{uuid} and only that shape', () {
+      expect(
+        DeepLinkService.teamOfferIdFrom(
+          Uri.parse('https://app.kolabing.com/o/$offerId'),
+        ),
+        offerId,
+      );
+      expect(
+        DeepLinkService.teamOfferIdFrom(
+          Uri.parse('https://app.kolabing.com/o/not-a-uuid'),
+        ),
+        isNull,
+      );
+      expect(
+        DeepLinkService.teamOfferIdFrom(
+          Uri.parse('https://app.kolabing.com/c/$offerId'),
+        ),
+        isNull,
+      );
+    });
+
+    test(
+      'a claim link is /claim/{token}; short or odd tokens are not ours',
+      () {
+        const token = 'abcDEF1234567890abcDEF1234567890abcDEF1234567890';
+        expect(
+          DeepLinkService.teamClaimTokenFrom(
+            Uri.parse('https://app.kolabing.com/claim/$token'),
+          ),
+          token,
+        );
+        expect(
+          DeepLinkService.teamClaimTokenFrom(
+            Uri.parse('https://app.kolabing.com/claim/short'),
+          ),
+          isNull,
+        );
+        expect(
+          DeepLinkService.teamClaimTokenFrom(
+            Uri.parse('https://app.kolabing.com/claim/$token/extra'),
+          ),
+          isNull,
+        );
+      },
+    );
+
+    test('they are not mistaken for a Kolab or an invite', () {
+      final offer = Uri.parse('https://app.kolabing.com/o/$offerId');
+      expect(DeepLinkService.kolabIdFrom(offer), isNull);
+      expect(DeepLinkService.inviteCodeFrom(offer), isNull);
+    });
+  });
 }

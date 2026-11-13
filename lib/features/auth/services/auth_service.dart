@@ -820,6 +820,64 @@ class AuthService {
     }
   }
 
+  /// Claim an unclaimed profile with a Kolabing team claim link (SERR-1344).
+  ///
+  /// POST /api/v1/kolabing-team/claim/{token}
+  ///
+  /// Signs in with Google or Apple, and the backend makes that identity the
+  /// holder of the profile, accepts the offer, and answers like a login. The
+  /// session is saved exactly as a login's is.
+  Future<AuthResponse> claimTeamProfile(
+    String claimToken, {
+    required bool apple,
+  }) async {
+    final Map<String, dynamic> credentials;
+    try {
+      if (apple) {
+        final credential = await getAppleCredential();
+        credentials = {
+          'provider': 'apple',
+          'identity_token': credential.identityToken,
+        };
+      } else {
+        credentials = {
+          'provider': 'google',
+          'id_token': await getGoogleIdToken(),
+        };
+      }
+    } on AuthCancelledException {
+      rethrow;
+    }
+
+    try {
+      final response = await _httpClient.post(
+        Uri.parse(
+          '$_baseUrl/kolabing-team/claim/${Uri.encodeComponent(claimToken)}',
+        ),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(credentials),
+      );
+
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      if (response.statusCode == 200) {
+        final authResponse = AuthResponse.fromJson(json);
+        await _saveAuthData(authResponse);
+        return authResponse;
+      }
+      throw ApiException(
+        error: ApiError.fromJson(json, statusCode: response.statusCode),
+      );
+    } catch (e) {
+      if (e is ApiException || e is NetworkException) {
+        rethrow;
+      }
+      throw NetworkException('Failed to connect to server: $e');
+    }
+  }
+
   @visibleForTesting
   Future<AuthResponse> authenticateWithApple(
     String identityToken,

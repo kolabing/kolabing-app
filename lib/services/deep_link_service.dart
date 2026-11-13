@@ -12,8 +12,10 @@ import '../features/instagram/models/instagram_return_link.dart';
 /// served from there, and a link on `kolabing.com` would open a browser even on
 /// a phone that has Kolabing installed.
 ///
-/// Two kinds of link are claimed: an invite (`/i/{code}`) and a Kolab
-/// (`/c/{kolabId}` or `/kolabs/{kolabId}`, kolabing-v2 BE-NF-69).
+/// Four kinds of link are claimed: an invite (`/i/{code}`), a Kolab
+/// (`/c/{kolabId}` or `/kolabs/{kolabId}`, kolabing-v2 BE-NF-69), and, from the
+/// Kolabing team (SERR-1344), an offer card (`/o/{offerId}`) and a claim link
+/// for an unclaimed profile (`/claim/{token}`).
 ///
 /// This handles the half of an invite that a link *can* do — the phone that
 /// already has the app. The other half cannot be done with a link at all: a
@@ -40,9 +42,17 @@ class DeepLinkService {
     required void Function(String code) onInviteCode,
     required void Function(String kolabId) onKolab,
     void Function(InstagramReturnLink link)? onInstagramReturn,
+    void Function(String offerId)? onTeamOffer,
+    void Function(String token)? onTeamClaim,
   }) async {
-    void dispatch(Uri uri) =>
-        _dispatch(uri, onInviteCode, onKolab, onInstagramReturn);
+    void dispatch(Uri uri) => _dispatch(
+      uri,
+      onInviteCode,
+      onKolab,
+      onInstagramReturn,
+      onTeamOffer,
+      onTeamClaim,
+    );
 
     try {
       final initial = await _appLinks.getInitialLink();
@@ -69,6 +79,8 @@ class DeepLinkService {
     void Function(String code) onInviteCode,
     void Function(String kolabId) onKolab, [
     void Function(InstagramReturnLink link)? onInstagramReturn,
+    void Function(String offerId)? onTeamOffer,
+    void Function(String token)? onTeamClaim,
   ]) {
     final instagram = InstagramReturnLink.tryParse(uri);
     if (instagram != null) {
@@ -88,7 +100,44 @@ class DeepLinkService {
     if (kolabId != null) {
       debugPrint('🔗 Kolab link: $kolabId');
       onKolab(kolabId);
+      return;
     }
+
+    final offerId = teamOfferIdFrom(uri);
+    if (offerId != null) {
+      debugPrint('🔗 Team offer link');
+      onTeamOffer?.call(offerId);
+      return;
+    }
+
+    final claimToken = teamClaimTokenFrom(uri);
+    if (claimToken != null) {
+      // The token is a credential: never logged.
+      debugPrint('🔗 Team claim link');
+      onTeamClaim?.call(claimToken);
+    }
+  }
+
+  /// The offer id in a Kolabing team offer link (`/o/{uuid}`), or null.
+  /// Same UUID-only rule as the backend's app-link pattern.
+  @visibleForTesting
+  static String? teamOfferIdFrom(Uri uri) {
+    final segments = uri.pathSegments;
+    if (segments.length != 2 || segments.first != 'o') return null;
+
+    final id = segments[1].trim().toLowerCase();
+    return _uuid.hasMatch(id) ? id : null;
+  }
+
+  /// The claim token in a claim link (`/claim/{token}`), or null. The token is
+  /// opaque; only its character set and length are checked.
+  @visibleForTesting
+  static String? teamClaimTokenFrom(Uri uri) {
+    final segments = uri.pathSegments;
+    if (segments.length != 2 || segments.first != 'claim') return null;
+
+    final token = segments[1].trim();
+    return RegExp(r'^[A-Za-z0-9]{16,128}$').hasMatch(token) ? token : null;
   }
 
   /// The Kolab id in a shared Kolab URL, or null if this is not one.
